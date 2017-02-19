@@ -13,9 +13,9 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
-    <description>A neural network library for Java 8</description>
+    <description>Miscellaneous utilities for Java 8</description>
     <name>${project.groupId}:${project.artifactId}</name>
-    <url>http://github.com/SimiaCryptus/MindsEye</url>
+    <url>http://github.com/acharneski/utilities</url>
     <licenses>
         <license>
             <name>The Apache License, Version 2.0</name>
@@ -31,9 +31,9 @@
         </developer>
     </developers>
     <scm>
-        <connection>scm:git:git@github.com:SimiaCryptus/MindsEye.git</connection>
-        <developerConnection>scm:git:ssh://github.com:SimiaCryptus/MindsEye.git</developerConnection>
-        <url>http://github.com/SimiaCryptus/MindsEye/tree/master</url>
+        <connection>scm:git:git@github.com:acharneski/utilities.git</connection>
+        <developerConnection>scm:git:ssh://github.com:acharneski/utilities.git</developerConnection>
+        <url>http://github.com/acharneski/utilities/tree/master</url>
     </scm>
     <distributionManagement>
         <snapshotRepository>
@@ -91,21 +91,6 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-math3</artifactId>
             <version>3.2</version>
-        </dependency>
-        <dependency>
-            <groupId>org.json</groupId>
-            <artifactId>json</artifactId>
-            <version>RELEASE</version>
-        </dependency>
-        <dependency>
-            <groupId>org.json</groupId>
-            <artifactId>json</artifactId>
-            <version>RELEASE</version>
-        </dependency>
-        <dependency>
-            <groupId>org.json</groupId>
-            <artifactId>json</artifactId>
-            <version>RELEASE</version>
         </dependency>
     </dependencies>
 

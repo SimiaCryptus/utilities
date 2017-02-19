@@ -19,13 +19,6 @@ import com.simiacryptus.binary.Bits;
 import com.simiacryptus.bitset.BitsCollection;
 import com.simiacryptus.bitset.CountTreeBitsCollection;
 import com.simiacryptus.bitset.RunLengthBitsCollection;
-import com.simiacryptus.data.ResolutionMapping;
-import com.simiacryptus.data.DoubleRange;
-import com.simiacryptus.data.VolumeMapping;
-import com.simiacryptus.math.GaussianPDF;
-import com.simiacryptus.math.ProbabilitySievePointSource;
-import com.simiacryptus.math.SCRandom;
-import com.simiacryptus.math.UniformPointSource;
 import com.simiacryptus.util.DataTest;
 import com.simiacryptus.util.SerializableObjectTester;
 import com.simiacryptus.util.TestUtil;
@@ -92,97 +85,7 @@ public class BitsCollectionTest
     }
     
   }
-  
-  public final class GaussianTest extends RandomDataTest
-  {
-    private final int bitLength;
-    
-    public GaussianTest(final int bitLength)
-    {
-      this.bitLength = bitLength;
-    }
-    
-    @Override
-    protected <T extends BitsCollection<?>> void fill(final T expected)
-    {
-      final VolumeMapping range = new VolumeMapping(new ResolutionMapping(
-          0,
-          1,
-          Math.pow(0.5, this.bitLength) * 1.1));
-      final GaussianPDF distribution = new GaussianPDF();
-      distribution.mean = 0.5;
-      distribution.stdDev = Math.pow(0.5, 4);
-      final UniformPointSource volumeSource = new UniformPointSource(range.getDoubleRange());
-      final ProbabilitySievePointSource dataSource = new ProbabilitySievePointSource(
-          volumeSource,
-          distribution);
-      final Iterator<double[]> dataIterator = dataSource.iterator();
-      for (int i = 0; i < 5000; i++)
-      {
-        expected.add(range.getLongRange().encode(
-            range.toIndex(dataIterator.next())));
-      }
-    }
-    
-    @Override
-    public String toString()
-    {
-      return "GaussianTest [bitLength=" + this.bitLength + "]";
-    }
-    
-  }
-  
-  public final class NDGaussianTest extends RandomDataTest
-  {
-    private VolumeMapping range;
-    
-    public NDGaussianTest(final VolumeMapping range)
-    {
-      this.range = range;
-    }
-    
-    @Override
-    protected <T extends BitsCollection<?>> void fill(final T expected)
-    {
-      final Random random = new Random();
-      for (int i = 0; i < 5000; i++)
-      {
-        final double[] randomPoint = new double[this.range.size()];
-        for (int d = 0; d < this.range.size(); d++)
-        {
-          final DoubleRange dimRange = this.range.get(d);
-          final double value = this.getRandomComponent(random, dimRange, d);
-          randomPoint[d] = value;
-        }
-        expected.add(this.range.getLongRange().encode(
-            this.range.toIndex(randomPoint)));
-      }
-    }
-    
-    protected double getRandomComponent(final Random random,
-        final DoubleRange dimRange, final int dimension)
-    {
-      final double stdDev = (dimRange.to() - dimRange.from()) / 5;
-      final double mean = dimRange.from() + (dimRange.to() - dimRange.from())
-          / 2;
-      final double value = mean + random.nextGaussian() * stdDev;
-      return value;
-    }
-    
-    @Override
-    public String toString()
-    {
-      final StringBuilder builder = new StringBuilder();
-      builder.append("NDGaussianTest [dimensions=");
-      builder.append(this.range.size());
-      builder.append("; bitDepth=");
-      builder.append(this.range.getLongRange().bitDepth);
-      builder.append("]");
-      return builder.toString();
-    }
-    
-  }
-  
+
   public final class RandomBitsTest extends RandomDataTest
   {
     private final int count;
@@ -200,7 +103,7 @@ public class BitsCollectionTest
       for (int i = 0; i < this.count; i++)
       {
         expected.add(new Bits(
-            BitsCollectionTest.this.random.random(),
+            BitsCollectionTest.this.random,
             this.bitLength));
       }
     }
@@ -280,7 +183,7 @@ public class BitsCollectionTest
     }
   }
   
-  SCRandom random = new SCRandom();
+  Random random = new Random();
   
   @Test
   public void fixedLengthTests24() throws Exception
@@ -294,8 +197,7 @@ public class BitsCollectionTest
     
     final List<DataTest<BitsCollection<?>>> tests = new ArrayList<DataTest<BitsCollection<?>>>();
     tests.add(new RandomBitsTest(count, bitLength));
-    tests.add(new GaussianTest(bitLength));
-    
+
     testMatrix(testers, tests);
   }
   
@@ -311,39 +213,7 @@ public class BitsCollectionTest
     
     final List<DataTest<BitsCollection<?>>> tests = new ArrayList<DataTest<BitsCollection<?>>>();
     tests.add(new RandomBitsTest(count, bitLength));
-    tests.add(new GaussianTest(bitLength));
-    {
-      final VolumeMapping range = new VolumeMapping(new ResolutionMapping(
-          0,
-          1,
-          Math.pow(0.5, 24) * 1.1), new ResolutionMapping(0, 1, Math.pow(0.5,
-          24) * 1.1));
-      Assert.assertEquals(bitLength, range.getLongRange().bitDepth);
-      tests.add(new NDGaussianTest(range));
-    }
-    {
-      final VolumeMapping range = new VolumeMapping(new ResolutionMapping(
-          0,
-          1,
-          Math.pow(0.5, 8) * 1.1), new ResolutionMapping(
-          0,
-          1,
-          Math.pow(0.5, 8) * 1.1), new ResolutionMapping(
-          0,
-          1,
-          Math.pow(0.5, 8) * 1.1), new ResolutionMapping(
-          0,
-          1,
-          Math.pow(0.5, 8) * 1.1), new ResolutionMapping(
-          0,
-          1,
-          Math.pow(0.5, 8) * 1.1), new ResolutionMapping(
-          0,
-          1,
-          Math.pow(0.5, 8) * 1.1));
-      Assert.assertEquals(bitLength, range.getLongRange().bitDepth);
-      tests.add(new NDGaussianTest(range));
-    }
+
     
     testMatrix(testers, tests);
   }
