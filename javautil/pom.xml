@@ -4,7 +4,7 @@
 
     <groupId>com.simiacryptus</groupId>
     <artifactId>java-util</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -15,7 +15,7 @@
 
     <description>Miscellaneous utilities for Java 8</description>
     <name>${project.groupId}:${project.artifactId}</name>
-    <url>http://github.com/acharneski/utilities</url>
+    <url>https://github.com/SimiaCryptus/utilities</url>
     <licenses>
         <license>
             <name>The Apache License, Version 2.0</name>
@@ -31,9 +31,9 @@
         </developer>
     </developers>
     <scm>
-        <connection>scm:git:git@github.com:acharneski/utilities.git</connection>
-        <developerConnection>scm:git:ssh://github.com:acharneski/utilities.git</developerConnection>
-        <url>http://github.com/acharneski/utilities/tree/master</url>
+        <connection>scm:git:git@github.com:SimiaCryptus/utilities.git</connection>
+        <developerConnection>scm:git:ssh://github.com:SimiaCryptus/utilities.git</developerConnection>
+        <url>http://github.com/SimiaCryptus/utilities/tree/master</url>
     </scm>
     <distributionManagement>
         <snapshotRepository>
@@ -44,6 +44,10 @@
             <id>ossrh</id>
             <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
+        <site>
+          <id>website</id>
+          <url>https://simiacryptus.github.io/utilities/javautil/</url>
+        </site>
     </distributionManagement>
 
     <build>
@@ -57,8 +61,48 @@
                     <target>1.8</target>
                 </configuration>
             </plugin>
+    <plugin>
+      <groupId>com.github.github</groupId>
+      <artifactId>site-maven-plugin</artifactId>
+      <version>0.12</version>
+      <configuration>
+        <message>Creating site for ${project.version}</message>
+        <path>javautil/</path>
+      </configuration>
+      <executions>
+        <execution>
+          <goals>
+            <goal>site</goal>
+          </goals>
+          <phase>site</phase>
+        </execution>
+      </executions>
+    </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>2.10.4</version>
+        <configuration>
+          <nohelp>true</nohelp>
+          <detectLinks>true</detectLinks>
+        </configuration>
+      </plugin>
         </plugins>
     </build>
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-project-info-reports-plugin</artifactId>
+        <version>2.6</version>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>2.10.4</version>
+      </plugin>
+    </plugins>
+  </reporting>
 
     <dependencies>
 
