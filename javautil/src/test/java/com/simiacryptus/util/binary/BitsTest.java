@@ -1,4 +1,4 @@
-package com.simiacryptus.binary;
+package com.simiacryptus.util.binary;
 
 import java.io.IOException;
 import java.util.Random;
@@ -6,8 +6,6 @@ import java.util.Random;
 import org.json.JSONException;
 import org.junit.Assert;
 import org.junit.Test;
-
-import com.simiacryptus.binary.Bits;
 
 public class BitsTest
 {

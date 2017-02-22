@@ -1,9 +1,9 @@
-package com.simiacryptus.codes;
+package com.simiacryptus.util.codes;
 
 import java.io.IOException;
 
-import com.simiacryptus.binary.BitInputStream;
-import com.simiacryptus.binary.BitOutputStream;
+import com.simiacryptus.util.binary.BitInputStream;
+import com.simiacryptus.util.binary.BitOutputStream;
 
 public class Gaussian
 {

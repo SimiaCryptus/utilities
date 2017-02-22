@@ -13,7 +13,7 @@ import org.json.JSONObject;
 import org.junit.Assert;
 
 import com.google.common.collect.Multiset;
-import com.simiacryptus.lang.LOG;
+import com.simiacryptus.util.lang.LOG;
 
 public class TestUtil
 {

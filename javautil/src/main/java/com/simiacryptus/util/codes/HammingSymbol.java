@@ -1,4 +1,4 @@
-package com.simiacryptus.codes;
+package com.simiacryptus.util.codes;
 
 public class HammingSymbol<T extends Comparable<T>> implements
     Comparable<HammingSymbol<T>>

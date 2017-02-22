@@ -1,4 +1,4 @@
-package com.simiacryptus.lang;
+package com.simiacryptus.util.lang;
 
 @SuppressWarnings("serial")
 public class NotImplementedException extends RuntimeException

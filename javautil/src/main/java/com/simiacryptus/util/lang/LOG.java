@@ -1,4 +1,4 @@
-package com.simiacryptus.lang;
+package com.simiacryptus.util.lang;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;

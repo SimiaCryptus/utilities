@@ -1,4 +1,4 @@
-package com.simiacryptus.binary;
+package com.simiacryptus.util.binary;
 
 import java.io.IOException;
 import java.io.OutputStream;

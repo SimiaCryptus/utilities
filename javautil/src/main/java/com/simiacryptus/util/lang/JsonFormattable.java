@@ -1,4 +1,4 @@
-package com.simiacryptus.lang;
+package com.simiacryptus.util.lang;
 
 import org.json.JSONException;
 import org.json.JSONObject;

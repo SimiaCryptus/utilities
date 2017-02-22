@@ -1,4 +1,4 @@
-package com.simiacryptus.codes;
+package com.simiacryptus.util.codes;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -9,9 +9,8 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
-import com.simiacryptus.binary.BitInputStream;
-import com.simiacryptus.binary.BitOutputStream;
-import com.simiacryptus.codes.Gaussian;
+import com.simiacryptus.util.binary.BitInputStream;
+import com.simiacryptus.util.binary.BitOutputStream;
 
 public class GaussianTest
 {

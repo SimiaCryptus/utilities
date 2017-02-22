@@ -1,4 +1,4 @@
-package com.simiacryptus.codes;
+package com.simiacryptus.util.codes;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -11,9 +11,9 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import com.simiacryptus.binary.BitInputStream;
-import com.simiacryptus.binary.Bits;
-import com.simiacryptus.bitset.CountTreeBitsCollection;
+import com.simiacryptus.util.binary.BitInputStream;
+import com.simiacryptus.util.binary.Bits;
+import com.simiacryptus.util.bitset.CountTreeBitsCollection;
 
 public class HammingCode<T extends Comparable<T>>
 {

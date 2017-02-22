@@ -1,10 +1,9 @@
-package com.simiacryptus.bitset;
+package com.simiacryptus.util.bitset;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
@@ -13,12 +12,9 @@ import junit.framework.Assert;
 import org.junit.Test;
 
 import com.google.common.collect.HashMultiset;
-import com.simiacryptus.binary.BitInputStream;
-import com.simiacryptus.binary.BitOutputStream;
-import com.simiacryptus.binary.Bits;
-import com.simiacryptus.bitset.BitsCollection;
-import com.simiacryptus.bitset.CountTreeBitsCollection;
-import com.simiacryptus.bitset.RunLengthBitsCollection;
+import com.simiacryptus.util.binary.BitInputStream;
+import com.simiacryptus.util.binary.BitOutputStream;
+import com.simiacryptus.util.binary.Bits;
 import com.simiacryptus.util.DataTest;
 import com.simiacryptus.util.SerializableObjectTester;
 import com.simiacryptus.util.TestUtil;

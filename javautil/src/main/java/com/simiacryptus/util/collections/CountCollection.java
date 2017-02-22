@@ -1,4 +1,4 @@
-package com.simiacryptus.collections;
+package com.simiacryptus.util.collections;
 
 import java.util.ArrayList;
 import java.util.List;

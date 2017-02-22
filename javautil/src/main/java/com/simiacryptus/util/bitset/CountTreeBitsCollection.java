@@ -1,4 +1,4 @@
-package com.simiacryptus.bitset;
+package com.simiacryptus.util.bitset;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -10,10 +10,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Maps.EntryTransformer;
-import com.simiacryptus.binary.BitInputStream;
-import com.simiacryptus.binary.BitOutputStream;
-import com.simiacryptus.binary.Bits;
-import com.simiacryptus.codes.Gaussian;
+import com.simiacryptus.util.binary.BitInputStream;
+import com.simiacryptus.util.binary.BitOutputStream;
+import com.simiacryptus.util.binary.Bits;
+import com.simiacryptus.util.codes.Gaussian;
 
 public class CountTreeBitsCollection extends
     BitsCollection<TreeMap<Bits, AtomicInteger>>

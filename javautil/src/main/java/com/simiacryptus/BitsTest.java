@@ -7,7 +7,7 @@ import org.json.JSONException;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.simiacryptus.binary.Bits;
+import com.simiacryptus.util.binary.Bits;
 
 public class BitsTest
 {
