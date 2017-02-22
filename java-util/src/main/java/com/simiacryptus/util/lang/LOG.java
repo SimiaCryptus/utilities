@@ -5,8 +5,6 @@ import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.function.Consumer;
 
-import com.simiacryptus.util.Util;
-
 public class LOG
 {
 
@@ -16,11 +14,6 @@ public class LOG
   }
 
   private static final long startTime = System.nanoTime();
-
-  public static void d(final Consumer<PrintStream> c)
-  {
-    LOG.d(Util.print(c));
-  }
 
   public static void d(final String msg, final Object... args)
   {
