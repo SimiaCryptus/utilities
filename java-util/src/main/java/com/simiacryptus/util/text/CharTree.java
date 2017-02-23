@@ -4,12 +4,16 @@ import com.simiacryptus.util.data.SerialArrayList;
 import com.simiacryptus.util.data.SerialType;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
+import java.util.zip.DataFormatException;
+import java.util.zip.Deflater;
+import java.util.zip.Inflater;
 
 /**
  * A character sequence index using a prefix tree, commonly known as a full-text index or as the data structure behind markov chains.
@@ -124,6 +128,15 @@ public class CharTree {
             } else {
                 return this;
             }
+        }
+
+        private void decrementCursorCount(int count) {
+            nodes.update(index, data->data.setCursorCount(Math.max(data.cursorCount-count, 0)));
+            if(null != parent) parent.decrementCursorCount(count);
+        }
+
+        public void shadowCursors() {
+            decrementCursorCount(getCursorCount());
         }
     }
 
@@ -315,12 +328,24 @@ public class CharTree {
         }
     }
 
-    private final SerialArrayList<NodeData> nodes = _NodeType.newList(new NodeData(Character.MIN_VALUE, (short) -1, -1, -1, 0));
-    private final SerialArrayList<CursorData> cursors = _CursorType.newList();
-    private final ArrayList<String> documents = new ArrayList<>();
+    private final SerialArrayList<NodeData> nodes;
+    private final SerialArrayList<CursorData> cursors;
+    private final ArrayList<String> documents;
+
+    public CharTree() {
+        this.nodes = _NodeType.newList(new NodeData(Character.MIN_VALUE, (short) -1, -1, -1, 0));
+        this.cursors = _CursorType.newList();
+        this.documents = new ArrayList<>();
+    }
+
+    public CharTree(CharTree copyFrom) {
+        this.nodes = copyFrom.nodes.copy();
+        this.cursors = copyFrom.cursors.copy();
+        this.documents = new ArrayList<>(copyFrom.documents);
+    }
 
     public Node root() {
-        return new Node(nodes.get(0).setCursorCount(cursors.length()), (short) 0, 0, null);
+        return new Node(nodes.get(0), (short) 0, 0, null);
     }
 
     /**
@@ -349,6 +374,10 @@ public class CharTree {
     public CharTree truncate() {
         cursors.clear();
         return this;
+    }
+
+    public CharTree copy() {
+        return new CharTree(this);
     }
 
     /**
@@ -396,7 +425,96 @@ public class CharTree {
         cursors.addAll(IntStream.range(0, document.length())
                 .mapToObj(i->new CursorData(index, i))
                 .collect(Collectors.toList()));
+        nodes.update(0, node->node.setCursorCount(cursors.length()));
         return this;
+    }
+
+    public String generateMarkov(int length, int context) {
+        return generateMarkov(length, context, "");
+    }
+
+    public String generateMarkov(int length, int context, String seed) {
+        String str = seed;
+        while(str.length() < length) {
+            String prefix = str.substring(Math.max(str.length()- context,0),str.length());
+            Node node = traverse(prefix);
+            int cursorCount = node.getCursorCount();
+            int fate = random.nextInt(cursorCount);
+            String next = null;
+            List<Node> children = node.getChildren().collect(Collectors.toList());
+            for(Node child : children) {
+                fate -= child.getCursorCount();
+                if(fate <= 0) {
+                    if(child.getToken() != Character.MIN_VALUE) {
+                        next = new String(new char[]{child.getToken()});
+                    }
+                    break;
+                }
+            }
+            if(null != next) str += next;
+            else break;
+        }
+        return str;
+    }
+
+    public String generateDictionary(int length, int context) {
+        return generateDictionary(length, context, "", 0, false);
+    }
+
+    private static final Random random = new Random();
+    public String generateDictionary(int length, int context, final String seed, int lookahead, boolean destructive) {
+        String str = seed;
+        while(str.length() < length) {
+            String prefix = str.substring(Math.max(str.length()- context,0),str.length());
+            Node node = traverse(prefix);
+            Node nextNode = nextDictionaryNode(node, lookahead);
+            if(null == nextNode) break;
+            if(destructive) nextNode.shadowCursors();
+            String nextNodeString = nextNode.getString();
+            String next = nextNodeString.substring(node.depth);
+            str += next;
+        }
+        return str;
+    }
+
+    private Node nextDictionaryNode(Node node, int lookahead) {
+        int cursorCount = node.getCursorCount();
+        int fate = cursorCount>0?random.nextInt(cursorCount):0;
+        Stream<Node> childStream = node.getChildren();
+        for(int level = 0; level< lookahead; level++) {
+            childStream = childStream.flatMap(child->child.getChildren());
+        }
+        return childStream.max(Comparator.comparingInt(x->x.getCursorCount())).orElse(null);
+    }
+
+    public static byte[] compress(String dictionary, String data) {
+        byte[] output = new byte[data.length()*2];
+        Deflater compresser = new Deflater();
+        try {
+            compresser.setInput(data.getBytes("UTF-8"));
+            compresser.setDictionary(dictionary.getBytes("UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
+        compresser.finish();
+        int compressedDataLength = compresser.deflate(output);
+        compresser.end();
+        return Arrays.copyOf(output, compressedDataLength);
+    }
+
+    public static String decompress(String dictionary, byte[] data) {
+        try {
+            Inflater decompresser = new Inflater();
+            decompresser.setInput(data, 0, data.length);
+            decompresser.setDictionary(dictionary.getBytes("UTF-8"));
+            byte[] result = new byte[100];
+            int resultLength = 0;
+            resultLength = decompresser.inflate(result);
+            decompresser.end();
+            return new String(result, 0, resultLength, "UTF-8");
+        } catch (DataFormatException | UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }

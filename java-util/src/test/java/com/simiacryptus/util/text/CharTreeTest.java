@@ -4,9 +4,12 @@ import junit.framework.Assert;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.util.UUID;
+import java.io.UnsupportedEncodingException;
+import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
+import java.util.zip.Deflater;
 
 public class CharTreeTest
 {
@@ -42,6 +45,89 @@ public class CharTreeTest
   }
 
   @Test
+  public void testDictionaryGeneration() throws IOException
+  {
+    String content = new Scanner(getClass().getClassLoader().getResourceAsStream("earthtomoon.txt")).useDelimiter("\\Z").next().replaceAll("[ \n\r\t]+", " ");
+    List<String> sentances = Arrays.stream(content.split("\\.+")).map(line->line.trim() + ".").filter(line->line.length()>12).collect(Collectors.toList());
+
+    int size = 16 * 1024;
+    int sampleLength = 128;
+
+    Map<String, Long> wordCounts = Arrays.stream(content.replaceAll("[^\\w\\s]","").split(" +")).map(s -> s.trim()).filter(s -> !s.isEmpty())
+            .collect(Collectors.groupingBy(x -> x, Collectors.counting()));
+
+    String commonTerms = wordCounts.entrySet().stream().sorted(Comparator.<Map.Entry<String, Long>>comparingLong(e -> -e.getValue())
+            .thenComparing(Comparator.<Map.Entry<String, Long>>comparingLong(e -> -e.getKey().length())))
+            .map(x -> x.getKey())
+            .reduce((a,b)->a+" "+b).get().substring(0, size);
+    System.out.println(String.format("Common Terms: \t%s\t%s", evaluateDictionary(sentances, commonTerms), commonTerms.substring(0, sampleLength)));
+
+    for(int encodingPenalty = -8;encodingPenalty<8;encodingPenalty++) {
+      int _encodingPenalty = encodingPenalty;
+      String meritTerms = wordCounts.entrySet().stream().sorted(Comparator.<Map.Entry<String, Long>>comparingLong(e -> -e.getValue() * (e.getKey().length() - _encodingPenalty))
+              .thenComparing(Comparator.<Map.Entry<String, Long>>comparingLong(e -> -e.getKey().length())))
+              .map(x -> x.getKey())
+              .reduce((a,b)->a+" "+b).get().substring(0, size);
+      System.out.println(String.format("Merit Terms (%s): \t%s\t%s", encodingPenalty, evaluateDictionary(sentances, meritTerms), meritTerms.substring(0, sampleLength)));
+    }
+
+    String uncommonTerms = wordCounts.entrySet().stream().sorted(Comparator.<Map.Entry<String, Long>>comparingLong(e -> e.getValue())
+            .thenComparing(Comparator.<Map.Entry<String, Long>>comparingLong(e -> e.getKey().length())))
+            .map(x -> x.getKey())
+            .reduce((a,b)->a+" "+b).get().substring(0, size);;
+    System.out.println(String.format("Uncommon Terms: \t%s\t%s", evaluateDictionary(sentances, uncommonTerms), uncommonTerms.substring(0, sampleLength)));
+
+    CharTree tree = new CharTree();
+    long startTime  = System.currentTimeMillis();
+    //sentances.stream().forEach(i->tree.addDocument(i));
+    tree.addDocument(content);
+    int maxLevels = 32;
+    int minWeight = 0;
+    tree.index(maxLevels, minWeight).truncate();
+    long elapsed = System.currentTimeMillis() - startTime;
+    System.out.println(String.format("Built index in time = %s sec",elapsed/1000.));
+    System.out.println(String.format("tree.getIndexedSize = %s KB",tree.getIndexedSize() / 1024));
+    System.out.println(String.format("tree.getMemorySize = %s KB",tree.getMemorySize() / 1024));
+
+    for(int context = 0; context<maxLevels; context++) {
+      CharTree copy = tree.copy();
+      for(int attempt=0;attempt<5;attempt++) {
+        String dictionary = copy.generateMarkov(size, context, ".");
+        System.out.println(String.format("generateMarkov %s:\t%s\t%s", context, evaluateDictionary(sentances, dictionary),
+                dictionary.substring(0, Math.min(sampleLength, dictionary.length()))));
+      }
+    }
+
+    for(int lookahead=0;lookahead<5;lookahead++) {
+      for(int context=0;context<maxLevels-lookahead;context++) {
+        for(int attempt=0;attempt<2;attempt++) {
+          {
+            CharTree copy = tree.copy();
+            {
+              String dictionary = copy.generateDictionary(size, context, ".", lookahead, false);
+              System.out.println(String.format("generateDictionary (nondestructive) %s,%s:\t%s\t%s", context, lookahead, evaluateDictionary(sentances, dictionary),
+                      dictionary.substring(0, Math.min(sampleLength, dictionary.length()))));
+            }
+            {
+              String dictionary = copy.generateDictionary(size, context, ".", lookahead, true);
+              System.out.println(String.format("generateDictionary (destructive) %s,%s:\t%s\t%s", context, lookahead, evaluateDictionary(sentances, dictionary),
+                      dictionary.substring(0, Math.min(sampleLength, dictionary.length()))));
+            }
+          }
+          System.gc();
+        }
+      }
+    }
+
+  }
+
+  private String evaluateDictionary(List<String> sentances, String dictionary) {
+    int without = sentances.stream().mapToInt(line -> CharTree.compress("", line).length).sum();
+    int with = sentances.stream().mapToInt(line -> CharTree.compress(dictionary, line).length).sum();
+    return String.format("Size: %s kB\tControl: %s kB\tSaved: %s", with / 1024, without / 1024, without - with);
+  }
+
+  @Test
   public void testPerformanceMatrix() throws IOException
   {
     for(int count=100;count<50000;count*=2) {
@@ -51,6 +137,7 @@ public class CharTreeTest
         }
       }
     }
+
   }
 
   private void testRow(int maxLevels, int minWeight, Stream<String> documents) {
