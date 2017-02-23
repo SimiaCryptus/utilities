@@ -211,4 +211,5 @@
 			</build>
 		</profile>
 	</profiles>
+	<description>Parent module for java projects</description>
 </project>
