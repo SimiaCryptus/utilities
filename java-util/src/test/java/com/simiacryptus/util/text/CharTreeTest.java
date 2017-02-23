@@ -45,8 +45,8 @@ public class CharTreeTest
   public void testPerformanceMatrix() throws IOException
   {
     for(int count=100;count<50000;count*=2) {
-      for(int maxLevels=1;maxLevels<64;maxLevels=Math.max((int)(maxLevels*1.5),maxLevels+1)) {
-        for(int minWeight=1;minWeight<64;minWeight*=2) {
+      for(int maxLevels=1;maxLevels<64;maxLevels=Math.max((int)(maxLevels*4),maxLevels+1)) {
+        for(int minWeight=1;minWeight<64;minWeight*=4) {
           testRow(maxLevels, minWeight, IntStream.range(0, count).parallel().mapToObj(i -> UUID.randomUUID().toString()));
         }
       }

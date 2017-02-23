@@ -6,12 +6,11 @@
 	    <groupId>com.simiacryptus</groupId>
 	    <artifactId>java-parent</artifactId>
 	    <version>1.0</version>
-	    <relativePath>../java-parent</relativePath>
+	    <relativePath>../java-parent/</relativePath>
 	</parent>
+
     <artifactId>java-util</artifactId>
     <version>1.0.1</version>
-    <packaging>jar</packaging>
-
     <description>Miscellaneous utilities for Java 8</description>
 
     <properties>

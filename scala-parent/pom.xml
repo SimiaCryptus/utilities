@@ -12,6 +12,11 @@
 	<artifactId>scala-parent</artifactId>
 	<packaging>pom</packaging>
 
+	<properties>
+		<github.project>utilities</github.project>
+		<github.path>scala-parent/</github.path>
+	</properties>
+
 	<build>
 		<sourceDirectory>src/main/scala</sourceDirectory>
 		<testSourceDirectory>src/test/scala</testSourceDirectory>
