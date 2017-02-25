@@ -4,7 +4,7 @@
 
 	<groupId>com.simiacryptus</groupId>
 	<artifactId>java-parent</artifactId>
-	<version>1.0</version>
+	<version>1.0-NOJAVADOC</version>
 	<packaging>pom</packaging>
 
 	<properties>
@@ -88,6 +88,7 @@
 					</execution>
 				</executions>
 			</plugin>
+			<!--
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
@@ -97,6 +98,7 @@
 					<detectLinks>true</detectLinks>
 				</configuration>
 			</plugin>
+			-->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>cobertura-maven-plugin</artifactId>
@@ -137,6 +139,7 @@
 							<artifactId>cobertura-maven-plugin</artifactId>
 							<version>2.7</version>
 						</plugin>
+						<!--
 						<plugin>
 							<groupId>org.apache.maven.plugins</groupId>
 							<artifactId>maven-javadoc-plugin</artifactId>
@@ -156,6 +159,7 @@
 								</reportSet>
 							</reportSets>
 						</plugin>
+						-->
 					</reportPlugins>
 				</configuration>
 			</plugin>

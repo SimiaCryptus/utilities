@@ -30,32 +30,46 @@ public class CharTree {
     }
 
     public class Node {
-        private final NodeData data;
+        private transient NodeData data;
         public final short depth;
         private final int index;
         public final Node parent;
 
-        public Node(NodeData data, short depth, int index, Node parent) {
-            this.data = data;
+        private NodeData getData() {
+            if(null == data) {
+                synchronized (this) {
+                    if(null == data) {
+                        this.data = nodes.get(index);
+                    }
+                }
+            }
+            return data;
+        }
+        public Node(short depth, int index, Node parent) {
             this.depth = depth;
             this.index = index;
             this.parent = parent;
         }
 
+        public Node godparent() {
+            return null==parent?null:matchEnd(getString().substring(1));
+        }
+
         public Node refresh() {
-            return new Node(nodes.get(index), depth, index, parent);
+            this.data = null;
+            return this;
         }
 
         public String getString() {
-            return (null == parent ? "" : parent.getString()) + (0 == depth ? "" :data.token);
+            return (null == parent ? "" : parent.getString()) + (0 == depth ? "" : getData().token);
         }
 
         public char getToken() {
-            return data.token;
+            return getData().token;
         }
 
         public short getNumberOfChildren() {
-            return data.numberOfChildren;
+            return getData().numberOfChildren;
         }
 
         public short getDepth() {
@@ -63,7 +77,7 @@ public class CharTree {
         }
 
         public int getCursorCount() {
-            return data.cursorCount;
+            return getData().cursorCount;
         }
 
         public Node visitFirst(Consumer<Node> visitor) {
@@ -80,18 +94,16 @@ public class CharTree {
         }
 
         public Stream<Node> getChildren() {
-            if(data.firstChildIndex >= 0) {
-                return IntStream.range(0, data.numberOfChildren).mapToObj(i->{
-                    int childIndex = data.firstChildIndex + i;
-                    NodeData child = nodes.get(childIndex);
-                    return new Node(child, (short) (depth + 1), childIndex, Node.this);
-                });
+            if(getData().firstChildIndex >= 0) {
+                return IntStream.range(0, getData().numberOfChildren).mapToObj(i->
+                        new Node((short) (depth + 1), getData().firstChildIndex + i, Node.this));
             } else {
                 return Stream.empty();
             }
         }
 
         public Optional<Node> getChild(char token) {
+            //Node[] nodes = getChildren().toArray(i -> new Node[i]);
             return getChildren().filter(x->x.getToken() == token).findFirst();
         }
 
@@ -100,31 +112,35 @@ public class CharTree {
         }
 
         public Stream<Cursor> getCursors() {
-            return IntStream.range(0, data.cursorCount).mapToObj(i->{
-                return new Cursor(cursors.get(i+data.firstCursorIndex), depth);
+            return IntStream.range(0, getData().cursorCount).mapToObj(i->{
+                return new Cursor(cursors.get(i+ getData().firstCursorIndex), depth);
             });
         }
 
         public Node split() {
-            if(data.firstChildIndex < 0) {
+            if(getData().firstChildIndex < 0) {
                 Map<Character, SerialArrayList<CursorData>> sortedChildren = getCursors().parallel()
                     .collect(Collectors.groupingBy(y -> y.next().getToken(),
                     Collectors.reducing(
                         new SerialArrayList<>(_CursorType, 0),
                         cursor -> new SerialArrayList<>(_CursorType, cursor.data),
                         (left, right) -> left.add(right))));
-                int cursorWriteIndex = data.firstCursorIndex;
+                int cursorWriteIndex = getData().firstCursorIndex;
                 ArrayList<NodeData> childNodes = new ArrayList<>(sortedChildren.size());
-                for(Map.Entry<Character, SerialArrayList<CursorData>> e : sortedChildren.entrySet())
+                List<Map.Entry<Character, SerialArrayList<CursorData>>> collect = sortedChildren.entrySet().stream()
+                        .sorted(Comparator.comparing(e->-e.getValue().length()))
+                        .collect(Collectors.toList());
+                for(Map.Entry<Character, SerialArrayList<CursorData>> e : collect)
                 {
                     int length = e.getValue().length();
                     cursors.putAll(e.getValue(), cursorWriteIndex);
                     childNodes.add(new NodeData(e.getKey(), (short) -1, -1, length, cursorWriteIndex));
                     cursorWriteIndex += length;
                 };
-                return new Node(nodes.update(index, data -> data
+                NodeData update = nodes.update(index, data -> data
                         .setFirstChildIndex(nodes.addAll(childNodes))
-                        .setNumberOfChildren((short) childNodes.size())), depth, index, parent);
+                        .setNumberOfChildren((short) childNodes.size()));
+                return new Node(depth, index, parent);
             } else {
                 return this;
             }
@@ -138,6 +154,7 @@ public class CharTree {
         public void shadowCursors() {
             decrementCursorCount(getCursorCount());
         }
+
     }
 
     private static class NodeData {
@@ -345,7 +362,7 @@ public class CharTree {
     }
 
     public Node root() {
-        return new Node(nodes.get(0), (short) 0, 0, null);
+        return new Node((short) 0, 0, null);
     }
 
     /**
@@ -364,6 +381,38 @@ public class CharTree {
             }
         }
         return cursor;
+    }
+
+    public Node matchEnd2(String search) {
+        Node cursor = traverse(search);
+        if(search.endsWith(cursor.getString())) return cursor;
+        return matchEnd2(search.substring(1));
+    }
+
+    public Node matchEnd(String search) {
+        int min = 0;
+        int max = search.length();
+        int winner = -1;
+        int i = Math.min(max, 12);
+        while(max>min){
+            String attempt = search.substring(search.length() - i);
+            Node cursor = traverse(attempt);
+            if(cursor.getString().equals(attempt)) {
+                min = Math.max(min, i+1);
+                winner = Math.max(winner,i);
+                i = (max+min)/2;
+            } else {
+                max = Math.min(max, i-1);
+                i = (max+min)/2;
+            }
+        }
+        return traverse(search.substring(search.length() - i));
+    }
+
+    public Node matchPredictor(String search) {
+        Node cursor = matchEnd(search);
+        if(cursor.getNumberOfChildren() > 0) return cursor;
+        return matchPredictor(cursor.getString().substring(1));
     }
 
     /**
@@ -429,15 +478,11 @@ public class CharTree {
         return this;
     }
 
-    public String generateMarkov(int length, int context) {
-        return generateMarkov(length, context, "");
-    }
-
     public String generateMarkov(int length, int context, String seed) {
         String str = seed;
         while(str.length() < length) {
             String prefix = str.substring(Math.max(str.length()- context,0),str.length());
-            Node node = traverse(prefix);
+            Node node = matchPredictor(prefix);
             int cursorCount = node.getCursorCount();
             int fate = random.nextInt(cursorCount);
             String next = null;
@@ -457,34 +502,87 @@ public class CharTree {
         return str;
     }
 
-    public String generateDictionary(int length, int context) {
-        return generateDictionary(length, context, "", 0, false);
+    public String generateMarkov2(int length, int context, String seed, double smoothness) {
+        String str = seed;
+        while(str.length() < length) {
+            String prefix = str.substring(Math.max(str.length()- context,0),str.length());
+            Node node = matchPredictor(prefix);
+            Map<Character, Double> lookahead = lookahead(node, smoothness);
+            double fate = random.nextDouble()*lookahead.values().stream().mapToDouble(x->x).sum();
+            String next = null;
+            for(Map.Entry<Character, Double> child : lookahead.entrySet()) {
+                fate -= child.getValue();
+                if(fate <= 0) {
+                    if(child.getKey() != Character.MIN_VALUE) {
+                        next = new String(new char[]{child.getKey()});
+                    }
+                    break;
+                }
+            }
+            if(null != next) str += next;
+            else break;
+        }
+        return str;
+    }
+
+    public double encodingBits(String message, double smoothness) {
+        double total = IntStream.range(0, message.length()).parallel().mapToDouble(i->{
+            Character next = message.charAt(i);
+            String prefix = message.substring(0, i);
+            Node node = matchPredictor(prefix);
+            Map<Character, Double> lookahead = lookahead(node, smoothness);
+            double sum = lookahead.values().stream().mapToDouble(x->x).sum();
+            return Math.log(lookahead.getOrDefault(next, 0.0) / sum);
+        }).sum();
+        return - total / Math.log(2.0);
     }
 
     private static final Random random = new Random();
+
     public String generateDictionary(int length, int context, final String seed, int lookahead, boolean destructive) {
         String str = seed;
         while(str.length() < length) {
             String prefix = str.substring(Math.max(str.length()- context,0),str.length());
-            Node node = traverse(prefix);
-            Node nextNode = nextDictionaryNode(node, lookahead);
+            Node node = matchPredictor(prefix);
+            Node nextNode = maxNextNode(node, lookahead);
             if(null == nextNode) break;
             if(destructive) nextNode.shadowCursors();
             String nextNodeString = nextNode.getString();
             String next = nextNodeString.substring(node.depth);
             str += next;
         }
-        return str;
+        return str.substring(0, length);
     }
 
-    private Node nextDictionaryNode(Node node, int lookahead) {
-        int cursorCount = node.getCursorCount();
-        int fate = cursorCount>0?random.nextInt(cursorCount):0;
+    private Map<Character, Double> lookahead(Node node, double smoothness) {
+        HashMap<Character, Double> map = new HashMap<>();
+        lookahead(node, map, 1.0, smoothness);
+        return map;
+    }
+
+    private void lookahead(Node node, HashMap<Character, Double> map, double factor, double smoothness) {
+        node.getChildren().forEach(child->{
+            map.put(child.getToken(),factor * child.getCursorCount() +
+                    map.getOrDefault(child.getToken(), 0.0));
+        });
+        if(null != node.parent) {
+            lookahead(matchPredictor(node.getString().substring(1)), map,
+                    factor * (smoothness / (smoothness+node.getCursorCount())), smoothness);
+        }
+    }
+
+    private Node maxNextNode(Node node, int lookahead) {
         Stream<Node> childStream = node.getChildren();
         for(int level = 0; level< lookahead; level++) {
             childStream = childStream.flatMap(child->child.getChildren());
         }
-        return childStream.max(Comparator.comparingInt(x->x.getCursorCount())).orElse(null);
+        Node result = childStream.max(Comparator.comparingInt(x -> x.getCursorCount())).orElse(null);
+        if(null == result) {
+            if(lookahead > 0) return maxNextNode(node, lookahead-1);
+            Node godparent = node.godparent();
+            if(null != godparent) return maxNextNode(godparent, lookahead);
+        }
+        return result;
     }
 
     public static byte[] compress(String dictionary, String data) {
