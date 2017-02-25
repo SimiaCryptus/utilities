@@ -1,0 +1,13 @@
+{
+  "embeddings": [
+    {
+      "tensorName": "sentenceClassification",
+      "tensorShape": [
+        1000,
+        22
+      ],
+      "tensorPath": "https://simiacryptus.github.io/utilities/java-util/sentenceClassification/tensors.tsv",
+      "metadataPath": "https://simiacryptus.github.io/utilities/java-util/sentenceClassification/metadata.tsv"
+    }
+  ]
+}
