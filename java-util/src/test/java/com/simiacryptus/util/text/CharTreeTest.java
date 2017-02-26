@@ -309,7 +309,7 @@ public class CharTreeTest
                   int a = CharTree.compress("", chunk).length;
                   int b = CharTree.compress(dictionary, chunk).length;
                   return (a - b) * 1.0 / a;
-                }).sum();
+                }).average().orElse(Double.NaN);
         map.put(modelTitle.replaceAll("[^01-9a-zA-Z]",""), bytes);
       });
       output.putRow(map);
@@ -338,7 +338,7 @@ public class CharTreeTest
                   int a = CharTree.compress("", chunk).length;
                   int b = CharTree.compress(dictionary, chunk).length;
                   return (a - b) * 1.0 / a;
-                }).sum();
+                }).average().orElse(Double.NaN);
         map.put(modelTitle.replaceAll("[^01-9a-zA-Z]",""), bytes);
       });
       output.putRow(map);
