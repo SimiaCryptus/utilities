@@ -1,0 +1,24 @@
+-classpath
+'/home/acharnes/.m2/repository/org/apache/commons/commons-compress/1.6/commons-compress-1.6.jar:/home/acharnes/.m2/repository/org/apache/commons/commons-math3/3.2/commons-math3-3.2.jar:/home/acharnes/.m2/repository/org/json/json/20160810/json-20160810.jar:/home/acharnes/.m2/repository/org/tukaani/xz/1.4/xz-1.4.jar:/home/acharnes/.m2/repository/org/hamcrest/hamcrest-core/1.1/hamcrest-core-1.1.jar:/home/acharnes/.m2/repository/com/google/code/findbugs/jsr305/2.0.2/jsr305-2.0.2.jar:/home/acharnes/.m2/repository/junit/junit/4.10/junit-4.10.jar:/home/acharnes/.m2/repository/com/google/guava/guava/18.0/guava-18.0.jar'
+-encoding
+'UTF-8'
+-protected
+-sourcepath
+'/home/acharnes/SimiaCryptus/utilities/java-util/src/main/java'
+-author
+-bottom
+'Copyright &#169; 2017 <a href="https://simiacryptus.com">SimiaCryptus Software</a>. All rights reserved.'
+-charset
+'UTF-8'
+-d
+'/home/acharnes/SimiaCryptus/utilities/java-util/target/site/apidocs'
+-docencoding
+'UTF-8'
+-doctitle
+'java-util 1.0.1 API'
+-linkoffline
+'http://docs.oracle.com/javase/8/docs/api' '/home/acharnes/SimiaCryptus/utilities/java-util/target/javadoc-bundle-options'
+-use
+-version
+-windowtitle
+'java-util 1.0.1 API'
