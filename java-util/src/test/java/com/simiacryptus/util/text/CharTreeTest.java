@@ -296,8 +296,8 @@ public class CharTreeTest
     ProjectorTableOutput output2 = new ProjectorTableOutput();
     sentances.stream().limit(1000).forEach(s -> {
       HashMap<String, Object> map2 = new LinkedHashMap<>();
-      map2.put("rawBits", s.length() * 8);
-      map2.put("decompressBits0", CharTree.compress("", s).length * 8);
+      //map2.put("rawBits", s.length() * 8);
+      //map2.put("decompressBits0", CharTree.compress("", s).length * 8);
       content.keySet().stream().forEach(key->{
         CharTree tree = trees.get(key);
         String dictionary = dictionaries.get(key);
@@ -307,16 +307,16 @@ public class CharTreeTest
         map1.put("decompressBits0", CharTree.compress("", s).length * 8);
         int decompressBits1 = CharTree.compress(dictionary.substring(0, 1024), s).length * 8;
         map1.put(".decompressBits1", decompressBits1);
-        map2.put(key+".decompressBits1", decompressBits1);
+        //map2.put(key+".decompressBits1", decompressBits1);
         int decompressBits4 = CharTree.compress(dictionary.substring(0, 4 * 1024), s).length * 8;
         map1.put(".decompressBits4", decompressBits4);
-        map2.put(key+".decompressBits4", decompressBits4);
+        //map2.put(key+".decompressBits4", decompressBits4);
         int decompressBits16 = CharTree.compress(dictionary.substring(0, 16 * 1024), s).length * 8;
         map1.put(".decompressBits16", decompressBits16);
-        map2.put(key+".decompressBits16", decompressBits16);
+        //map2.put(key+".decompressBits16", decompressBits16);
         double ppmBits = tree.encodingBits(s, smoothness);
         map1.put(".ppmBits", ppmBits);
-        map2.put(key+".ppmBits", ppmBits);
+        //map2.put(key+".ppmBits", ppmBits);
         map1.put(".bitsPerChar", ppmBits / s.length());
         map2.put(key+".bitsPerChar", ppmBits / s.length());
         map1.put("txt", s.substring(0,Math.min(s.length(), 120)));

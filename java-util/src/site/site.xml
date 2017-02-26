@@ -1,5 +1,4 @@
 <project name="java-util">
-    <url>http://maven.apache.org/skins/maven-fluido-skin</url>
     <skin>
         <groupId>org.apache.maven.skins</groupId>
         <artifactId>maven-fluido-skin</artifactId>
@@ -14,7 +13,7 @@
             </googleSearch>
             <sourceLineNumbersEnabled>true</sourceLineNumbersEnabled>
             <gitHub>
-                <projectId>  ?  </projectId>
+                <projectId>SimiaCryptus/utilities</projectId>
                 <ribbonOrientation>left</ribbonOrientation>
                 <ribbonColor>green</ribbonColor>
             </gitHub>
@@ -22,8 +21,14 @@
     </custom>
     <body>
         <menu ref="reports" />
+        <!-- 
+        <menu name="Data Sets">
+	      <item name="Sentence Classification" href="http://projector.tensorflow.org/?config=https://simiacryptus.github.io/utilities/java-util/sentenceClassification/config.json" />
+	    </menu>
         <links>
+        
             <item name="SimiaCryptus" href="http://simiacryptus.com"/>
         </links>
+         -->
     </body>
 </project>
