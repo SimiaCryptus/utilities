@@ -17,6 +17,12 @@
         <github.project>utilities</github.project>
 		<github.path>java-util/</github.path>
     </properties>
+	<distributionManagement>
+		<site>
+			<id>github</id>
+			<url>https://simiacryptus.github.io/${github.project}/${github.path}</url>
+		</site>
+	</distributionManagement>
 
     <dependencies>
         <dependency>
