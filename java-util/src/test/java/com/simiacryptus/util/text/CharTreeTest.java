@@ -264,12 +264,12 @@ public class CharTreeTest
   }
 
   @Test
-  public void testWikiEncoding() throws Exception {
+  public void testWikiCrossEncoding() throws Exception {
 
     int minArticleLength = 16 * 1024;
     int maxLevels = 7;
     int minWeight = 1;
-    int chunkSize = 128;
+    int chunkSize = 256;
     int dictionaryLength = 32 * 1024;
     int articleCount = 20;
     double selectivity = 0.01;
@@ -310,13 +310,12 @@ public class CharTreeTest
       HashMap<String, Object> map = new LinkedHashMap<>();
       map.put("dataTitle", dataTitle);
       dictionaries.forEach((modelTitle, dictionary)->{
-        double bytes = IntStream.range(0, article.length() / chunkSize).mapToObj(i -> article.substring(i * chunkSize, Math.min(article.length(), (i + 1) * chunkSize)))
-                .mapToDouble(chunk -> {
-                  int a = CharTree.compress("", chunk).length;
-                  int b = CharTree.compress(dictionary, chunk).length;
-                  return (a - b) * 1.0 / a;
-                }).average().orElse(Double.NaN);
-        map.put(modelTitle.replaceAll("[^01-9a-zA-Z]",""), bytes);
+        int sumA = IntStream.range(0, article.length() / chunkSize).mapToObj(i -> article.substring(i * chunkSize, Math.min(article.length(), (i + 1) * chunkSize)))
+                .mapToInt(chunk -> CharTree.compress("", chunk).length).sum();
+        int sumB = IntStream.range(0, article.length() / chunkSize).mapToObj(i -> article.substring(i * chunkSize, Math.min(article.length(), (i + 1) * chunkSize)))
+                .mapToInt(chunk -> CharTree.compress(dictionary, chunk).length).sum();
+        double bytes = 1.0 / ((sumA - sumB) * 1.0 / sumA);
+        map.put(modelTitle.replaceAll("[^01-9a-zA-Z]","_"), bytes);
       });
       output.putRow(map);
     });
@@ -330,8 +329,8 @@ public class CharTreeTest
 
     int minArticleLength = 16 * 1024;
     int articleCount = 20;
-    double selectivity = 0.1;
-    int chunkSize = 128;
+    double selectivity = 0.01;
+    int chunkSize = 256;
 
     Map<String, String> articles = WikiArticle.load()
             .filter(x -> x.text.length() > minArticleLength)
@@ -344,13 +343,12 @@ public class CharTreeTest
       HashMap<String, Object> map = new LinkedHashMap<>();
       map.put("dataTitle", dataTitle);
       articles.forEach((modelTitle, dictionary)->{
-        double bytes = IntStream.range(0, article.length() / chunkSize).mapToObj(i -> article.substring(i * chunkSize, Math.min(article.length(), (i + 1) * chunkSize)))
-                .mapToDouble(chunk -> {
-                  int a = CharTree.compress("", chunk).length;
-                  int b = CharTree.compress(dictionary, chunk).length;
-                  return (a - b) * 1.0 / a;
-                }).average().orElse(Double.NaN);
-        map.put(modelTitle.replaceAll("[^01-9a-zA-Z]",""), bytes);
+        int sumA = IntStream.range(0, article.length() / chunkSize).mapToObj(i -> article.substring(i * chunkSize, Math.min(article.length(), (i + 1) * chunkSize)))
+                .mapToInt(chunk -> CharTree.compress("", chunk).length).sum();
+        int sumB = IntStream.range(0, article.length() / chunkSize).mapToObj(i -> article.substring(i * chunkSize, Math.min(article.length(), (i + 1) * chunkSize)))
+                .mapToInt(chunk -> CharTree.compress(dictionary, chunk).length).sum();
+        double bytes = ((sumA - sumB) * 1.0 / sumA);
+        map.put(modelTitle.replaceAll("[^01-9a-zA-Z]","_"), bytes);
       });
       output.putRow(map);
     });
