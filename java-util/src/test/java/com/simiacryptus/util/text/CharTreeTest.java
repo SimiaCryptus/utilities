@@ -271,7 +271,7 @@ public class CharTreeTest
     int minWeight = 1;
     int chunkSize = 256;
     int dictionaryLength = 32 * 1024;
-    int articleCount = 20;
+    int articleCount = 50;
     double selectivity = 0.01;
 
     Map<String, String> articles = WikiArticle.load()
@@ -328,7 +328,7 @@ public class CharTreeTest
   public void computeWikiCrossCompression() throws Exception {
 
     int minArticleLength = 16 * 1024;
-    int articleCount = 20;
+    int articleCount = 50;
     double selectivity = 0.01;
     int chunkSize = 256;
 
