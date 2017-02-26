@@ -6,8 +6,7 @@
         1000,
         4
       ],
-      "tensorPath": "https://simiacryptus.github.io/utilities/java-util/sentenceClassification/tensors.tsv",
-      "metadataPath": "https://simiacryptus.github.io/utilities/java-util/sentenceClassification/metadata.tsv"
+      "tensorPath": "https://simiacryptus.github.io/utilities/java-util/sentenceClassification/tensors.tsv"
     }
   ]
 }
