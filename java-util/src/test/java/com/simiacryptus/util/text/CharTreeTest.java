@@ -1,5 +1,6 @@
 package com.simiacryptus.util.text;
 
+import com.simiacryptus.util.data.DoubleStatistics;
 import junit.framework.Assert;
 import org.junit.Test;
 
@@ -260,7 +261,13 @@ public class CharTreeTest
 //    System.out.println(output2.toTextTable());
 
   }
-
+//
+//  @Test
+//  public void testWikiEncoding() throws IOException, URISyntaxException {
+//    WikiArticle.load().forEach(article->{
+//      System.out.println(String.format("Title: %s", article.title));
+//    });
+//  }
 
   @Test
   public void testEncodingCoords() throws IOException

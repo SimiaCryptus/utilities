@@ -1,4 +1,4 @@
-package com.simiacryptus.util.text;
+package com.simiacryptus.util.data;
 
 import java.util.DoubleSummaryStatistics;
 import java.util.stream.Collector;
