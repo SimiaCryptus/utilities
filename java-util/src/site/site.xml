@@ -21,14 +21,5 @@
     </custom>
     <body>
         <menu ref="reports" />
-        <!-- 
-        <menu name="Data Sets">
-	      <item name="Sentence Classification" href="http://projector.tensorflow.org/?config=https://simiacryptus.github.io/utilities/java-util/sentenceClassification/config.json" />
-	    </menu>
-        <links>
-        
-            <item name="SimiaCryptus" href="http://simiacryptus.com"/>
-        </links>
-         -->
     </body>
 </project>
