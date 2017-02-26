@@ -265,21 +265,25 @@ public class CharTreeTest
 
   @Test
   public void testWikiEncoding() throws Exception {
+
+    int minArticleLength = 16 * 1024;
+    int maxLevels = 7;
+    int minWeight = 1;
+    int chunkSize = 128;
+    int dictionaryLength = 32 * 1024;
+    int articleCount = 20;
+    double selectivity = 0.01;
+
     Map<String, String> articles = WikiArticle.load()
-            .filter(x -> x.text.length() > 16 * 1024)
-            .filter(x -> 0.1 > Math.random())
-            .limit(20).collect(Collectors.toMap(d -> d.title, d -> d.text));
+            .filter(x -> x.text.length() > minArticleLength)
+            .filter(x -> selectivity > Math.random())
+            .limit(articleCount).collect(Collectors.toMap(d -> d.title, d -> d.text));
     Stream<Map.Entry<String, String>> stream = articles.entrySet().stream();
 
     String characterSet = articles.values().stream().flatMapToInt(s -> s.chars())
             .distinct().mapToObj(c -> new String(Character.toChars(c))).sorted()
             .collect(Collectors.joining(""));
     System.out.println("Character Set:" + characterSet);
-
-    int maxLevels = 7;
-    int minWeight = 1;
-    double smoothness = 1.0;
-    int chunkSize = 128;
 
     Map<String, CharTree> models = stream.collect(Collectors.toMap(
             (Map.Entry<String, String> d) -> d.getKey(),
@@ -296,7 +300,9 @@ public class CharTreeTest
             }));
     Map<String, String> dictionaries = models.entrySet().stream().collect(Collectors.toMap(
             (Map.Entry<String, CharTree> d) -> d.getKey(),
-            (Map.Entry<String, CharTree> d) -> d.getValue().copy().generateDictionary(16 * 1024, 5,"", 1, true)
+            (Map.Entry<String, CharTree> d) -> {
+              return d.getValue().copy().generateDictionary(dictionaryLength, 5, "", 1, true);
+            }
     ));
 
     ProjectorTableOutput output = new ProjectorTableOutput();
@@ -321,10 +327,16 @@ public class CharTreeTest
 
   @Test
   public void computeWikiCrossCompression() throws Exception {
+
+    int minArticleLength = 16 * 1024;
+    int articleCount = 20;
+    double selectivity = 0.1;
+    int chunkSize = 128;
+
     Map<String, String> articles = WikiArticle.load()
-            .filter(x -> x.text.length() > 16 * 1024)
-            .filter(x -> 0.1 > Math.random())
-            .limit(20).collect(Collectors.toMap(d -> d.title, d -> d.text));
+            .filter(x -> x.text.length() > minArticleLength)
+            .filter(x -> selectivity > Math.random())
+            .limit(articleCount).collect(Collectors.toMap(d -> d.title, d -> d.text));
     Stream<Map.Entry<String, String>> stream = articles.entrySet().stream();
 
     ProjectorTableOutput output = new ProjectorTableOutput();
@@ -332,7 +344,6 @@ public class CharTreeTest
       HashMap<String, Object> map = new LinkedHashMap<>();
       map.put("dataTitle", dataTitle);
       articles.forEach((modelTitle, dictionary)->{
-        int chunkSize = 128;
         double bytes = IntStream.range(0, article.length() / chunkSize).mapToObj(i -> article.substring(i * chunkSize, Math.min(article.length(), (i + 1) * chunkSize)))
                 .mapToDouble(chunk -> {
                   int a = CharTree.compress("", chunk).length;
