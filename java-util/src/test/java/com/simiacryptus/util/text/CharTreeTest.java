@@ -1,6 +1,7 @@
 package com.simiacryptus.util.text;
 
 import com.simiacryptus.util.data.DoubleStatistics;
+import com.simiacryptus.util.test.WikiArticle;
 import junit.framework.Assert;
 import org.junit.Test;
 
@@ -261,13 +262,91 @@ public class CharTreeTest
 //    System.out.println(output2.toTextTable());
 
   }
-//
-//  @Test
-//  public void testWikiEncoding() throws IOException, URISyntaxException {
-//    WikiArticle.load().forEach(article->{
-//      System.out.println(String.format("Title: %s", article.title));
-//    });
-//  }
+
+  @Test
+  public void testWikiEncoding() throws Exception {
+    Map<String, String> articles = WikiArticle.load()
+            .filter(x -> x.text.length() > 16 * 1024)
+            .filter(x -> 0.1 > Math.random())
+            .limit(20).collect(Collectors.toMap(d -> d.title, d -> d.text));
+    Stream<Map.Entry<String, String>> stream = articles.entrySet().stream();
+
+    String characterSet = articles.values().stream().flatMapToInt(s -> s.chars())
+            .distinct().mapToObj(c -> new String(Character.toChars(c))).sorted()
+            .collect(Collectors.joining(""));
+    System.out.println("Character Set:" + characterSet);
+
+    int maxLevels = 7;
+    int minWeight = 1;
+    double smoothness = 1.0;
+    int chunkSize = 128;
+
+    Map<String, CharTree> models = stream.collect(Collectors.toMap(
+            (Map.Entry<String, String> d) -> d.getKey(),
+            (Map.Entry<String, String> d) -> {
+              String article = d.getValue();
+              String title = d.getKey();
+              CharTree tree = new CharTree();
+              tree.addDocument(characterSet);
+              tree.addDocument(article);
+              tree.index(maxLevels, minWeight).truncate();
+              System.out.println(String.format("Indexing %s; \ntree.getIndexedSize = %s KB", title, tree.getIndexedSize() / 1024));
+              System.out.println(String.format("tree.getMemorySize = %s KB",tree.getMemorySize() / 1024));
+              return tree;
+            }));
+    Map<String, String> dictionaries = models.entrySet().stream().collect(Collectors.toMap(
+            (Map.Entry<String, CharTree> d) -> d.getKey(),
+            (Map.Entry<String, CharTree> d) -> d.getValue().copy().generateDictionary(16 * 1024, 5,"", 1, true)
+    ));
+
+    ProjectorTableOutput output = new ProjectorTableOutput();
+    articles.forEach((dataTitle, article)->{
+      HashMap<String, Object> map = new LinkedHashMap<>();
+      map.put("dataTitle", dataTitle);
+      dictionaries.forEach((modelTitle, dictionary)->{
+        double bytes = IntStream.range(0, article.length() / chunkSize).mapToObj(i -> article.substring(i * chunkSize, Math.min(article.length(), (i + 1) * chunkSize)))
+                .mapToDouble(chunk -> {
+                  int a = CharTree.compress("", chunk).length;
+                  int b = CharTree.compress(dictionary, chunk).length;
+                  return (a - b) * 1.0 / a;
+                }).sum();
+        map.put(modelTitle.replaceAll("[^01-9a-zA-Z]",""), bytes);
+      });
+      output.putRow(map);
+    });
+    System.out.println(output.toTextTable());
+    String outputDirName = "wikiTopics2/";
+    output.writeProjectorData(new File(outPath, outputDirName), new URL(outBaseUrl, outputDirName));
+  }
+
+  @Test
+  public void computeWikiCrossCompression() throws Exception {
+    Map<String, String> articles = WikiArticle.load()
+            .filter(x -> x.text.length() > 16 * 1024)
+            .filter(x -> 0.1 > Math.random())
+            .limit(20).collect(Collectors.toMap(d -> d.title, d -> d.text));
+    Stream<Map.Entry<String, String>> stream = articles.entrySet().stream();
+
+    ProjectorTableOutput output = new ProjectorTableOutput();
+    articles.forEach((dataTitle, article)->{
+      HashMap<String, Object> map = new LinkedHashMap<>();
+      map.put("dataTitle", dataTitle);
+      articles.forEach((modelTitle, dictionary)->{
+        int chunkSize = 128;
+        double bytes = IntStream.range(0, article.length() / chunkSize).mapToObj(i -> article.substring(i * chunkSize, Math.min(article.length(), (i + 1) * chunkSize)))
+                .mapToDouble(chunk -> {
+                  int a = CharTree.compress("", chunk).length;
+                  int b = CharTree.compress(dictionary, chunk).length;
+                  return (a - b) * 1.0 / a;
+                }).sum();
+        map.put(modelTitle.replaceAll("[^01-9a-zA-Z]",""), bytes);
+      });
+      output.putRow(map);
+    });
+    System.out.println(output.toTextTable());
+    String outputDirName = "wikiTopics1/";
+    output.writeProjectorData(new File(outPath, outputDirName), new URL(outBaseUrl, outputDirName));
+  }
 
   @Test
   public void testEncodingCoords() throws IOException

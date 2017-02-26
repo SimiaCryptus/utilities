@@ -24,7 +24,7 @@ public class WikiArticle {
         String file = "enwiki-latest-pages-articles-multistream.xml.bz2";
         LinkedBlockingDeque<WikiArticle> queue = new LinkedBlockingDeque<>();
         AtomicBoolean closed = new AtomicBoolean(false);
-        new Thread(new Runnable() {
+        Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
@@ -43,6 +43,7 @@ public class WikiArticle {
                             @Override
                             public void characters(final char[] ch, final int start,
                                                    final int length) throws SAXException {
+                                if(Thread.currentThread().isInterrupted()) throw new RuntimeException(new InterruptedException());
                                 this.nodeString.append(ch, start, length);
                                 super.characters(ch, start, length);
                             }
@@ -55,6 +56,7 @@ public class WikiArticle {
                             @Override
                             public void endElement(final String uri, final String localName,
                                                    final String qName) throws SAXException {
+                                if(Thread.currentThread().isInterrupted()) throw new RuntimeException(new InterruptedException());
                                 final String pop = this.prefix.pop();
                                 this.indexes.pop();
 
@@ -81,6 +83,7 @@ public class WikiArticle {
                             public void startElement(final String uri, final String localName,
                                                      final String qName, final Attributes attributes)
                                     throws SAXException {
+                                if(Thread.currentThread().isInterrupted()) throw new RuntimeException(new InterruptedException());
                                 int idx;
                                 if (0 < this.indexes.size()) {
                                     final Map<String, AtomicInteger> index = this.indexes.peek();
@@ -106,13 +109,16 @@ public class WikiArticle {
                     }
                 } catch (final IOException e) {
                     // Ignore... end of stream
+                } catch (final RuntimeException e) {
+                    if(!(e.getCause() instanceof InterruptedException)) throw e;
                 } catch (final Exception e) {
                     throw new RuntimeException(e);
                 } finally {
                     closed.set(true);
                 }
             }
-        }).start();
+        });
+        thread.start();
         return StreamSupport.stream(Spliterators.spliteratorUnknownSize(new Iterator<WikiArticle>() {
             @Override
             public boolean hasNext() {
@@ -130,6 +136,12 @@ public class WikiArticle {
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
+            }
+
+            @Override
+            protected void finalize() throws Throwable {
+                thread.interrupt();
+                super.finalize();
             }
         }, Spliterator.DISTINCT), false).filter(x->x!=null);
     }
