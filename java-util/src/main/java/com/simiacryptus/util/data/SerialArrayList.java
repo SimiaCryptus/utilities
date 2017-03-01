@@ -1,7 +1,5 @@
 package com.simiacryptus.util.data;
 
-import com.simiacryptus.util.text.CharTree;
-
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Arrays;

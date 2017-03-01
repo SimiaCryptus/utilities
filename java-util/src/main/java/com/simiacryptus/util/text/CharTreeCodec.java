@@ -93,6 +93,10 @@ public class CharTreeCodec {
   }
 
   public String generateDictionary(int length, int context, final String seed, int lookahead, boolean destructive) {
+    return generateDictionary(length, context, seed, lookahead, destructive, false);
+  }
+
+  public String generateDictionary(int length, int context, final String seed, int lookahead, boolean destructive, boolean terminateAtNull) {
     String str = seed;
     while (str.length() < length) {
       String prefix = str.substring(Math.max(str.length() - context, 0), str.length());
@@ -104,45 +108,45 @@ public class CharTreeCodec {
         nextNode.shadowCursors();
       String nextNodeString = nextNode.getString();
       String next = nextNodeString.substring(node.depth);
+      if(terminateAtNull && next.contains("\u0000")) break;
       str += next;
     }
-    return str.substring(0, length);
+    return str.substring(0, Math.min(length, str.length()));
   }
 
   public byte[] encode(String text, int context) {
     ByteArrayOutputStream buffer = new ByteArrayOutputStream();
     BitOutputStream out = new BitOutputStream(buffer);
     try {
-      encode(text, context, "", out);
+      String prefix = "";
+      while(!text.isEmpty()) {
+        Node fromNode = inner.matchEnd(prefix);
+        Node toNode = fromNode.traverse(text);
+        
+        if(toNode.hasChildren()) {
+          toNode = toNode.getChild(Character.MAX_VALUE).orElse(toNode);
+        }
+        
+        Bits segmentData = fromNode.intervalTo(toNode);
+        out.write(segmentData);
+        int segmentChars = toNode.depth - fromNode.depth;
+        
+        if(0 == segmentChars) {
+          prefix = prefix.substring(1);
+          continue;
+        }
+        prefix = prefix + text.substring(0,segmentChars);
+        int newLen = Math.min(context, prefix.length());
+        int prefixFrom = Math.max(0, prefix.length() - newLen);
+        prefix = prefix.substring(prefixFrom, prefix.length());
+        text = text.substring(segmentChars);
+      }
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
     return buffer.toByteArray();
   }
   
-  private void encode(String text, int context, String prefix, BitOutputStream out) throws IOException {
-    while(!text.isEmpty()) {
-      Node fromNode = inner.matchEnd(prefix);
-      Node toNode = fromNode.traverse(text);
-      
-      if(toNode.hasChildren()) {
-        toNode = toNode.getChild(Character.MAX_VALUE).orElse(toNode);
-      }
-      
-      Bits segmentData = fromNode.intervalTo(toNode);
-      out.write(segmentData);
-      int segmentChars = toNode.depth - fromNode.depth;
-      
-      if(0 == segmentChars) throw new RuntimeException();
-      prefix = prefix + text.substring(0,segmentChars);
-      int newLen = Math.min(context, prefix.length());
-      int prefixFrom = Math.max(0, prefix.length() - newLen);
-      prefix = prefix.substring(prefixFrom, prefix.length());
-      text = text.substring(segmentChars);
-      encode(text, context, prefix, out);
-    }
-  }
-
   private Map<Character, Double> lookahead(Node node, double smoothness) {
     HashMap<Character, Double> map = new HashMap<>();
     lookahead(node, map, 1.0, smoothness);

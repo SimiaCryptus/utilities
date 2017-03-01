@@ -380,10 +380,11 @@ public class CharTreeTest {
   @Test
   public void testTweetGeneration() throws Exception {
 
-    int maxLevels = 5;
+    int maxLevels = 6;
     int minWeight = 1;
     int modelCount = 100000;
-    int articleCount = 10;
+    int articleCount = 100;
+    int lookahead = 1;
 
     CharTree tree_good = new CharTree();
     TweetSentiment.load().filter(x -> x.category == 1).limit(modelCount).map(t -> t.text)
@@ -405,11 +406,11 @@ public class CharTreeTest {
     IntStream.range(0, articleCount).forEach(i -> {
       HashMap<String, Object> goodRow = new LinkedHashMap<>();
       goodRow.put("type", "good");
-      goodRow.put("text", tree_good.codec.generateMarkov(256, maxLevels - 1, ">>>").substring(3));
+      goodRow.put("text", tree_good.codec.generateDictionary(256, maxLevels - 1, ">>>", lookahead, true, true).substring(3).replaceAll("\u0000", "\n\t"));
       output.putRow(goodRow);
       HashMap<String, Object> badRow = new LinkedHashMap<>();
       badRow.put("type", "bad");
-      badRow.put("text", tree_bad.codec.generateMarkov(256, maxLevels - 1, ">>>").substring(3));
+      badRow.put("text", tree_bad.codec.generateDictionary(256, maxLevels - 1, ">>>", lookahead, true, true).substring(3).replaceAll("\u0000", "\n\t"));
       output.putRow(badRow);
     });
     System.out.println(output.toTextTable());
@@ -442,7 +443,7 @@ public class CharTreeTest {
       row.put("text", text);
       row.put("measure", bits / 8);
       row.put("PPM", data.length);
-      row.put("4kLZ", CharTreeCodec.compress(dictionary, text).length);
+      row.put("16kLZ", CharTreeCodec.compress(dictionary, text).length);
       row.put("0kLZ", CharTreeCodec.compress("", text).length);
       row.put("size", text.length());
       output.putRow(row);

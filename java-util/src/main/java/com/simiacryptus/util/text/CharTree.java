@@ -10,19 +10,11 @@ import com.simiacryptus.util.data.SerialArrayList;
 
 public class CharTree {
 
+  protected static final Random random = new Random();
+
   protected final SerialArrayList<NodeData> nodes;
-
-  public int getMemorySize() {
-    return cursors.getMemorySize() + nodes.getMemorySize();
-  }
-
-  public int getIndexedSize() {
-    return documents.stream().mapToInt(doc -> doc.length()).sum();
-  }
-
   protected final SerialArrayList<CursorData> cursors;
   protected final ArrayList<String> documents;
-  protected static final Random random = new Random();
 
   private CharTree(SerialArrayList<NodeData> nodes, SerialArrayList<CursorData> cursors,
       ArrayList<String> documents) {
@@ -43,6 +35,14 @@ public class CharTree {
 
   public Node root() {
     return new Node(this, (short) 0, 0, null);
+  }
+  
+  public int getMemorySize() {
+    return cursors.getMemorySize() + nodes.getMemorySize();
+  }
+  
+  public int getIndexedSize() {
+    return documents.stream().mapToInt(doc -> doc.length()).sum();
   }
 
   /**
