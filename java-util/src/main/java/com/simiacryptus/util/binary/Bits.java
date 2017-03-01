@@ -5,6 +5,18 @@ import java.util.Random;
 
 public class Bits implements Comparable<Bits>
 {
+  public static Bits divide(long numerator, long denominator, long maxBits) {
+    if(maxBits <= 0) return NULL;
+    if(numerator == 0) return ZERO;
+    if(numerator == denominator) return ONE;
+    if((numerator << 1) <= denominator) {
+      return ZERO.concatenate(divide(numerator*2,denominator,maxBits-1));
+    } else {
+      return ONE.concatenate(divide(2*numerator-denominator,denominator,maxBits-1));
+    }
+  }
+  
+  
   public static int dataCompare(final Bits left, final Bits right)
   {
     for (int i = 0; i < left.bytes.length; i++)
@@ -394,6 +406,12 @@ public class Bits implements Comparable<Bits>
   public String toString()
   {
     return this.toBitString();
+  }
+
+
+  public Bits padRight(int peekBits) {
+    if(bitLength >= peekBits) return this;
+    return this.concatenate(ZERO).padRight(peekBits);
   }
   
 }

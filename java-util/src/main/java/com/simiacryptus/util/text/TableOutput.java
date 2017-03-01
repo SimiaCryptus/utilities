@@ -3,9 +3,10 @@ package com.simiacryptus.util.text;
 import java.io.*;
 import java.net.URL;
 import java.util.*;
+import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
-public class ProjectorTableOutput {
+public class TableOutput {
 
     Map<String,Class<?>> schema = new LinkedHashMap<>();
     List<Map<String,Object>> rows = new ArrayList<>();
@@ -24,29 +25,46 @@ public class ProjectorTableOutput {
 
     public void writeProjectorData(File path, URL baseUrl) throws IOException {
         path.mkdirs();
-        List<Map.Entry<String, Class<?>>> scalaCols = schema.entrySet().stream()
+        try(FileOutputStream file = new FileOutputStream(new File(path, "data.tsv"))) {
+            try(PrintStream printStream = new PrintStream(file)) {
+                printStream.println(toTextTable());
+            }
+        }
+        List<Map.Entry<String, Class<?>>> scalarCols = schema.entrySet().stream()
                 .filter(e -> Number.class.isAssignableFrom(e.getValue()))
                 .collect(Collectors.toList());
         try(FileOutputStream file = new FileOutputStream(new File(path, "tensors.tsv"))) {
             try(PrintStream printStream = new PrintStream(file)) {
-                printStream.println(scalaCols.stream()
-                        .map(e->e.getKey()).collect(Collectors.joining("\t")));
                 for(Map<String, Object> row : rows) {
-                    printStream.println(scalaCols.stream()
+                    printStream.println(scalarCols.stream()
                             .map(e->((Number)row.get(e.getKey())).doubleValue())
                             .map(x->x.toString()).collect(Collectors.joining("\t")));
                 }
             }
         }
+        List<Entry<String, Class<?>>> metadataCols = schema.entrySet().stream()
+        		.filter(e->String.class.isAssignableFrom(e.getValue()))
+        		.collect(Collectors.toList());
         try(FileOutputStream file = new FileOutputStream(new File(path, "metadata.tsv"))) {
             try(PrintStream printStream = new PrintStream(file)) {
-                printStream.println(schema.entrySet().stream()
-                        .filter(e->String.class.isAssignableFrom(e.getValue()))
-                        .map(e->e.getKey()).collect(Collectors.joining("\t")));
+            	if(1 < metadataCols.size()) {
+            		printStream.println(metadataCols.stream().map(e->e.getKey()).collect(Collectors.joining("\t")));
+            	}
                 for(Map<String, Object> row : rows) {
-                    printStream.println(schema.entrySet().stream()
-                            .filter(e->String.class.isAssignableFrom(e.getValue()))
+                    printStream.println(metadataCols.stream()
                             .map(e->((String)row.get(e.getKey())))
+                            .collect(Collectors.joining("\t")));
+                }
+            }
+        }
+        List<Entry<String, Class<?>>> urlCols = schema.entrySet().stream()
+        		.filter(e->URL.class.isAssignableFrom(e.getValue()))
+        		.collect(Collectors.toList());
+        try(FileOutputStream file = new FileOutputStream(new File(path, "bookmarks.txt"))) {
+            try(PrintStream printStream = new PrintStream(file)) {
+                for(Map<String, Object> row : rows) {
+                    printStream.println(urlCols.stream()
+                            .map(e->((URL)row.get(e.getKey())).toString())
                             .collect(Collectors.joining("\t")));
                 }
             }
@@ -59,15 +77,38 @@ public class ProjectorTableOutput {
                         "      \"tensorName\": \""+ path.getName() +"\",\n" +
                         "      \"tensorShape\": [\n" +
                         "        "+rows.size()+",\n" +
-                        "        "+scalaCols.size()+"\n" +
+                        "        "+scalarCols.size()+"\n" +
                         "      ],\n" +
-                        "      \"tensorPath\": \"" + new URL(baseUrl,"tensors.tsv") + "\",\n" +
-                        "      \"metadataPath\": \"" + new URL(baseUrl,"metadata.tsv") + "\"\n" +
+                        "      \"tensorPath\": \"" + new URL(baseUrl,"tensors.tsv") + 
+                        ((0==metadataCols.size())?"":("\",\n      \"metadataPath\": \"" + new URL(baseUrl,"metadata.tsv"))) + 
+                        "\"\n" +
                         "    }\n" +
                         "  ]\n" +
                         "}");
             }
         }
+        if(0 < urlCols.size()) {
+            try(FileOutputStream file = new FileOutputStream(new File(path, "config_withLinks.json"))) {
+                try(PrintStream printStream = new PrintStream(file)) {
+                    printStream.println("{\n" +
+                            "  \"embeddings\": [\n" +
+                            "    {\n" +
+                            "      \"tensorName\": \""+ path.getName() +"\",\n" +
+                            "      \"tensorShape\": [\n" +
+                            "        "+rows.size()+",\n" +
+                            "        "+scalarCols.size()+"\n" +
+                            "      ],\n" +
+                            "      \"tensorPath\": \"" + new URL(baseUrl,"tensors.tsv") + 
+                            ((0==metadataCols.size())?"":("\",\n      \"metadataPath\": \"" + new URL(baseUrl,"metadata.tsv"))) + 
+                            ("\",\n      \"bookmarksPath\": \"" + new URL(baseUrl,"bookmarks.txt")) + 
+                            "\"\n" +
+                            "    }\n" +
+                            "  ]\n" +
+                            "}");
+                }
+            }
+        }
+
     }
 
     public String toTextTable() throws IOException {
@@ -77,7 +118,7 @@ public class ProjectorTableOutput {
                         .map(e -> {
                             switch (e.getValue().getSimpleName()) {
                                 case "String":
-                                    return "%" + rows.stream().mapToInt(x -> x.getOrDefault(e.getKey(), "").toString().length()).max().getAsInt() + "s";
+                                    return "%-" + rows.stream().mapToInt(x -> x.getOrDefault(e.getKey(), "").toString().length()).max().getAsInt() + "s";
                                 case "Integer":
                                     return "%6d";
                                 case "Double":

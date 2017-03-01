@@ -7,8 +7,6 @@ import java.util.Arrays;
 public class BitOutputStream
 {
   
-  private boolean      useChecks       = false;
-  
   private OutputStream inner;
   
   private Bits         remainder       = new Bits(0);
@@ -25,17 +23,6 @@ public class BitOutputStream
     this.inner.write(this.remainder.getBytes());
     this.inner.flush();
     this.remainder = new Bits(0);
-  }
-  
-  public boolean isUseChecks()
-  {
-    return this.useChecks;
-  }
-  
-  public BitOutputStream setUseChecks(final boolean useChecks)
-  {
-    this.useChecks = useChecks;
-    return this;
   }
   
   public synchronized void write(final Bits encode) throws IOException
@@ -74,10 +61,6 @@ public class BitOutputStream
   {
     final int bits = 1 >= max ? 0 : (int) Math
         .ceil(Math.log(max) / Math.log(2));
-    if (this.useChecks)
-    {
-      this.write(new Bits(bits, 8));
-    }
     if (0 < bits)
     {
       this.write(new Bits(value, bits));

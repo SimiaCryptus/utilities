@@ -15,7 +15,7 @@ public class BitsTest
   {
     return this.random.nextLong() >> this.random.nextInt(62);
   }
-  
+
   @Test
   public void testConcatenate() throws JSONException, IOException
   {
@@ -23,6 +23,34 @@ public class BitsTest
     {
       this.testConcatenate(this.randomLong(), this.randomLong());
     }
+  }
+
+  @Test
+  public void testDivide() throws JSONException, IOException
+  {
+    Assert.assertEquals("1", Bits.divide(2, 2, 10).toBitString());
+    Assert.assertEquals("0", Bits.divide(0, 2, 10).toBitString());
+    Assert.assertEquals("01", Bits.divide(1, 2, 10).toBitString());
+    Assert.assertEquals("0110011001", Bits.divide(2, 5, 10).toBitString());
+    Assert.assertEquals("01", Bits.divide(2, 4, 10).toBitString());
+  }
+
+  @Test
+  public void testInterval() throws JSONException, IOException
+  {
+    Assert.assertEquals("001", new Interval(0, 1, 2).toBits().toBitString());
+    Assert.assertEquals("1", new Interval(1, 1, 2).toBits().toBitString());
+    Assert.assertEquals("001", new Interval(0, 1, 3).toBits().toBitString());
+    Assert.assertEquals("011", new Interval(1, 1, 3).toBits().toBitString());
+    Assert.assertEquals("11", new Interval(2, 1, 3).toBits().toBitString());
+    Assert.assertEquals("1", new Interval(1, 2, 3).toBits().toBitString());
+    
+    Assert.assertEquals("0001", new Interval(0, 1, 5).toBits().toBitString());
+    Assert.assertEquals("010", new Interval(1, 1, 5).toBits().toBitString());
+    Assert.assertEquals("0111", new Interval(2, 1, 5).toBits().toBitString());
+    Assert.assertEquals("101", new Interval(3, 1, 5).toBits().toBitString());
+    Assert.assertEquals("111", new Interval(4, 1, 5).toBits().toBitString());
+    Assert.assertEquals("001", new Interval(0, 2, 5).toBits().toBitString());
   }
   
   private void testConcatenate(final long a, final long b)

@@ -3,8 +3,8 @@
     {
       "tensorName": "wikiTopics2",
       "tensorShape": [
-        50,
-        50
+        616,
+        20
       ],
       "tensorPath": "https://simiacryptus.github.io/utilities/java-util/wikiTopics2/tensors.tsv",
       "metadataPath": "https://simiacryptus.github.io/utilities/java-util/wikiTopics2/metadata.tsv"
