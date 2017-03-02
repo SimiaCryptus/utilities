@@ -185,6 +185,10 @@ public class CharTreeCodec {
     return result;
   }
 
+  public static byte[] encodeLZ(String data) {
+    return encodeLZ(data, "");
+  }
+
   public static byte[] encodeLZ(String data, String dictionary) {
     byte[] output = new byte[data.length() * 2];
     Deflater compresser = new Deflater();

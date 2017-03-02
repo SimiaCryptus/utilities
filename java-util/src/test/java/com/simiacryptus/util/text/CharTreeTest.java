@@ -489,13 +489,12 @@ public class CharTreeTest {
     TweetSentiment.load().limit(articleCount).map(t -> t.text).forEach(text->{
       HashMap<String, Object> row = new LinkedHashMap<>();
       double bits = tree.codec.encodeSmallPPM(text, smoothness);
-      byte[] data = codec.encodeFastPPM(text, 1);
       row.put("bitsPerChar", bits / text.length());
       row.put("text", text);
       row.put("measure", bits / 8);
-      row.put("PPM", data.length);
+      row.put("PPM", codec.encodeFastPPM(text, 1).length);
       row.put("16kLZ", CharTreeCodec.encodeLZ(text, dictionary).length);
-      row.put("0kLZ", CharTreeCodec.encodeLZ(text, "").length);
+      row.put("0kLZ", CharTreeCodec.encodeLZ(text).length);
       row.put("size", text.length());
       output.putRow(row);
     });
