@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -21,7 +22,7 @@ public class Node {
   private final int index;
   public final Node parent;
 
-  private NodeData getData() {
+  NodeData getData() {
     if (null == data) {
       synchronized (this) {
         if (null == data) {
@@ -119,7 +120,7 @@ public class Node {
       int cursorWriteIndex = getData().firstCursorIndex;
       ArrayList<NodeData> childNodes = new ArrayList<>(sortedChildren.size());
       List<Map.Entry<Character, SerialArrayList<CursorData>>> collect = sortedChildren.entrySet().stream()
-          .sorted(Comparator.comparing(e -> -e.getValue().length())).collect(Collectors.toList());
+          .sorted(Comparator.comparing(e -> e.getKey())).collect(Collectors.toList());
       for (Map.Entry<Character, SerialArrayList<CursorData>> e : collect) {
         int length = e.getValue().length();
         this.charTree.cursors.putAll(e.getValue(), cursorWriteIndex);
@@ -174,6 +175,15 @@ public class Node {
 
   public boolean hasChildren() {
     return 0 < data.numberOfChildren;
+  }
+
+  NodeData update(Function<NodeData, NodeData> update) {
+    data = charTree.nodes.update(index, update);
+    return data;
+  }
+
+  public CharTree getTree() {
+    return charTree;
   }
 
 }

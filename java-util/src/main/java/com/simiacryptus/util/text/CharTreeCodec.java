@@ -80,7 +80,7 @@ public class CharTreeCodec {
     return str;
   }
 
-  public double encodingBits(String message, double smoothness) {
+  public double encodeSmallPPM(String message, double smoothness) {
     double total = IntStream.range(0, message.length()).parallel().mapToDouble(i -> {
       Character next = message.charAt(i);
       String prefix = message.substring(0, i);
@@ -114,7 +114,7 @@ public class CharTreeCodec {
     return str.substring(0, Math.min(length, str.length()));
   }
 
-  public byte[] encode(String text, int context) {
+  public byte[] encodeFastPPM(String text, int context) {
     ByteArrayOutputStream buffer = new ByteArrayOutputStream();
     BitOutputStream out = new BitOutputStream(buffer);
     try {
@@ -123,13 +123,13 @@ public class CharTreeCodec {
         Node fromNode = inner.matchEnd(prefix);
         Node toNode = fromNode.traverse(text);
         
+        int segmentChars = toNode.depth - fromNode.depth;
         if(toNode.hasChildren()) {
-          toNode = toNode.getChild(Character.MAX_VALUE).orElse(toNode);
+          toNode = toNode.getChild(Character.MAX_VALUE).get();
         }
         
         Bits segmentData = fromNode.intervalTo(toNode);
         out.write(segmentData);
-        int segmentChars = toNode.depth - fromNode.depth;
         
         if(0 == segmentChars) {
           if(prefix.isEmpty()) {
@@ -185,7 +185,7 @@ public class CharTreeCodec {
     return result;
   }
 
-  public static byte[] compress(String dictionary, String data) {
+  public static byte[] encodeLZ(String data, String dictionary) {
     byte[] output = new byte[data.length() * 2];
     Deflater compresser = new Deflater();
     try {
@@ -200,7 +200,7 @@ public class CharTreeCodec {
     return Arrays.copyOf(output, compressedDataLength);
   }
 
-  public static String decompress(String dictionary, byte[] data) {
+  public static String decodeLZ(byte[] data, String dictionary) {
     try {
       Inflater decompresser = new Inflater();
       decompresser.setInput(data, 0, data.length);

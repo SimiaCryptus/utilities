@@ -1,9 +1,10 @@
 package com.simiacryptus.util.text;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Random;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -48,10 +49,48 @@ public class CharTree {
   
   public CharTree addEscapeNodes() {
     CharTree result = new CharTree();
-    Node root = root();
-    Map<Character, Node> childrenOfNode = root.getChildren().collect(Collectors.toMap(n->n.getToken(), n->n));
-    int sumOfChildren = childrenOfNode.values().stream().mapToInt(n->n.getCursorCount()).sum();
-    return result;
+    xferEscapeNodes(root(), result.root());
+    return result.recomputeCursorDetails();
+  }
+
+  private CharTree recomputeCursorDetails() {
+    recomputeCursorTotals(root());
+    recomputerCursorPositions(root(), 0);
+    return this;
+  }
+
+  private NodeData recomputeCursorTotals(Node node) {
+    List<NodeData> newChildren = node.getChildren().map(child->recomputeCursorTotals(child)).collect(Collectors.toList());
+    if(newChildren.isEmpty()) return node.getData();
+    int cursorCount = newChildren.stream().mapToInt(n->n.cursorCount).sum();
+    assert(0 < cursorCount);
+    return node.update(d -> d.setCursorCount(cursorCount));
+  }
+
+  private void recomputerCursorPositions(Node node, final int position) {
+    node.update(n->n.setFirstCursorIndex(position));
+    int childPosition = position;
+    for(Node child : node.getChildren().collect(Collectors.toList())) {
+      recomputerCursorPositions(child, childPosition);
+      childPosition += child.getCursorCount();
+    }
+  }
+
+  private void xferEscapeNodes(Node sourceNode, Node destNode) {
+    CharTree result = destNode.getTree();
+    Map<Character, Node> sourceChildren = sourceNode.getChildren().collect(Collectors.toMap(n->n.getToken(), n->n));
+    TreeMap<Character, Integer> newCounts = new TreeMap<Character, Integer>();
+    sourceChildren.forEach((key,value)->newCounts.put(key, value.getCursorCount()));
+    newCounts.put(Character.MAX_VALUE, 1);
+    destNode.update(n->n.setFirstChildIndex(result.nodes.length())
+        .setNumberOfChildren((short) newCounts.size()));
+    newCounts.forEach((k,v)->result.nodes.add(new NodeData(k, (short) -1, -1, v, -1)));
+    Map<Character, Node> newChildren = destNode.getChildren().collect(Collectors.toMap(n->n.getToken(), n->n));
+    newCounts.keySet().forEach(key->{
+      if(sourceChildren.containsKey(key)) {
+        xferEscapeNodes(sourceChildren.get(key), newChildren.get(key));
+      }
+    });
   }
 
   /**

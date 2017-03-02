@@ -7,6 +7,10 @@ public class Interval {
   
   public Interval(int start, int length, int max) {
     super();
+    if(0 >= max) throw new IllegalArgumentException();
+    if(0 > start || max <= start) throw new IllegalArgumentException();
+    if(0 >= length) throw new IllegalArgumentException();
+    if(max < start+length) throw new IllegalArgumentException();
     this.start = start;
     this.max = max;
     this.length = length;

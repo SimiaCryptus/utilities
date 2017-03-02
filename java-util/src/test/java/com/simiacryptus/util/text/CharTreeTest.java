@@ -247,7 +247,7 @@ public class CharTreeTest {
     for (Map.Entry<String, CharTree> ea : trees.entrySet()) {
       for (Map.Entry<String, CharTree> eb : trees.entrySet()) {
         String str = ea.getValue().codec.generateMarkov(sampleSize, maxLevels - 1, "");
-        Double crossEntropy = eb.getValue().codec.encodingBits(str, smoothness) / str.length();
+        Double crossEntropy = eb.getValue().codec.encodeSmallPPM(str, smoothness) / str.length();
         HashMap<String, Object> map = new HashMap<>();
         map.put("source", ea.getKey());
         map.put("model", eb.getKey());
@@ -306,10 +306,10 @@ public class CharTreeTest {
           dictionaries.forEach((modelTitle, dictionary) -> {
             int sumA = IntStream.range(0, article.length() / chunkSize)
                 .mapToObj(i -> article.substring(i * chunkSize, Math.min(article.length(), (i + 1) * chunkSize)))
-                .mapToInt(chunk -> CharTreeCodec.compress("", chunk).length).sum();
+                .mapToInt(chunk -> CharTreeCodec.encodeLZ(chunk, "").length).sum();
             int sumB = IntStream.range(0, article.length() / chunkSize)
                 .mapToObj(i -> article.substring(i * chunkSize, Math.min(article.length(), (i + 1) * chunkSize)))
-                .mapToInt(chunk -> CharTreeCodec.compress(dictionary, chunk).length).sum();
+                .mapToInt(chunk -> CharTreeCodec.encodeLZ(chunk, dictionary).length).sum();
             double bytes = (sumA - sumB) * 1.0 / sumA;
             map.put(modelTitle.replaceAll("[^01-9a-zA-Z]", "_"), bytes);
           });
@@ -363,10 +363,10 @@ public class CharTreeTest {
       dictionaries.forEach((modelTitle, dictionary) -> {
         int sumA = IntStream.range(0, text.length() / chunkSize)
             .mapToObj(i -> text.substring(i * chunkSize, Math.min(text.length(), (i + 1) * chunkSize)))
-            .mapToInt(chunk -> CharTreeCodec.compress("", chunk).length).sum();
+            .mapToInt(chunk -> CharTreeCodec.encodeLZ(chunk, "").length).sum();
         int sumB = IntStream.range(0, text.length() / chunkSize)
             .mapToObj(i -> text.substring(i * chunkSize, Math.min(text.length(), (i + 1) * chunkSize)))
-            .mapToInt(chunk -> CharTreeCodec.compress(dictionary, chunk).length).sum();
+            .mapToInt(chunk -> CharTreeCodec.encodeLZ(chunk, dictionary).length).sum();
         double bytes = (sumA - sumB) * 1.0 / sumA;
         map.put(Integer.toHexString(modelTitle.hashCode()), bytes);
       });
@@ -442,22 +442,23 @@ public class CharTreeTest {
     System.out.println(String.format("tree.getMemorySize = %s KB", tree.getMemorySize() / 1024));
     String dictionary = tree.copy().codec.generateDictionary(16*1024, 2, "", 0, true);
 
+    CharTreeCodec codec = tree.addEscapeNodes().codec;
     TableOutput output = new TableOutput();
     dataset.stream().limit(articleCount).forEach(article->{
       HashMap<String, Object> row = new LinkedHashMap<>();
-      double bits = tree.codec.encodingBits(article.text, smoothness);
+      double bits = tree.codec.encodeSmallPPM(article.text, smoothness);
+      row.put("bitsPerChar", bits / article.text.length());
+      row.put("measure", bits / 8);
       int data;
       try {
-        data = tree.codec.encode(article.text, 1).length;
+        data = codec.encodeFastPPM(article.text, 1).length;
       } catch (Exception e) {
         e.printStackTrace();
         data = -1;
       }
-      row.put("bitsPerChar", bits / article.text.length());
-      row.put("measure", bits / 8);
       row.put("PPM", data);
-      row.put("16kLZ", CharTreeCodec.compress(dictionary, article.text).length);
-      row.put("0kLZ", CharTreeCodec.compress("", article.text).length);
+      row.put("16kLZ", CharTreeCodec.encodeLZ(article.text, dictionary).length);
+      row.put("0kLZ", CharTreeCodec.encodeLZ(article.text, "").length);
       row.put("size", article.text.length());
       row.put("title", article.title);
       output.putRow(row);
@@ -470,7 +471,7 @@ public class CharTreeTest {
 
     int maxLevels = 5;
     int minWeight = 2;
-    int modelCount = 10000;
+    int modelCount = 100000;
     int articleCount = 100;
     double smoothness = 1.0;
 
@@ -482,18 +483,19 @@ public class CharTreeTest {
     tree.index(maxLevels, minWeight).truncate();
     System.out.println(String.format("tree.getMemorySize = %s KB", tree.getMemorySize() / 1024));
     String dictionary = tree.copy().codec.generateDictionary(16*1024, 2, "", 0, true);
+    CharTreeCodec codec = tree.addEscapeNodes().codec;
 
     TableOutput output = new TableOutput();
     TweetSentiment.load().limit(articleCount).map(t -> t.text).forEach(text->{
       HashMap<String, Object> row = new LinkedHashMap<>();
-      double bits = tree.codec.encodingBits(text, smoothness);
-      byte[] data = tree.codec.encode(text, 1);
+      double bits = tree.codec.encodeSmallPPM(text, smoothness);
+      byte[] data = codec.encodeFastPPM(text, 1);
       row.put("bitsPerChar", bits / text.length());
       row.put("text", text);
       row.put("measure", bits / 8);
       row.put("PPM", data.length);
-      row.put("16kLZ", CharTreeCodec.compress(dictionary, text).length);
-      row.put("0kLZ", CharTreeCodec.compress("", text).length);
+      row.put("16kLZ", CharTreeCodec.encodeLZ(text, dictionary).length);
+      row.put("0kLZ", CharTreeCodec.encodeLZ(text, "").length);
       row.put("size", text.length());
       output.putRow(row);
     });
@@ -549,17 +551,17 @@ public class CharTreeTest {
         HashMap<String, Object> map1 = new LinkedHashMap<>();
         map1.put("key", key);
         map1.put("rawBits", s.length() * 8);
-        map1.put("decompressBits0", CharTreeCodec.compress("", s).length * 8);
-        int decompressBits1 = CharTreeCodec.compress(dictionary.substring(0, 1024), s).length * 8;
+        map1.put("decompressBits0", CharTreeCodec.encodeLZ(s, "").length * 8);
+        int decompressBits1 = CharTreeCodec.encodeLZ(s, dictionary.substring(0, 1024)).length * 8;
         map1.put(".decompressBits1", decompressBits1);
         // map2.put(key+".decompressBits1", decompressBits1);
-        int decompressBits4 = CharTreeCodec.compress(dictionary.substring(0, 4 * 1024), s).length * 8;
+        int decompressBits4 = CharTreeCodec.encodeLZ(s, dictionary.substring(0, 4 * 1024)).length * 8;
         map1.put(".decompressBits4", decompressBits4);
         // map2.put(key+".decompressBits4", decompressBits4);
-        int decompressBits16 = CharTreeCodec.compress(dictionary.substring(0, 16 * 1024), s).length * 8;
+        int decompressBits16 = CharTreeCodec.encodeLZ(s, dictionary.substring(0, 16 * 1024)).length * 8;
         map1.put(".decompressBits16", decompressBits16);
         // map2.put(key+".decompressBits16", decompressBits16);
-        double ppmBits = tree.codec.encodingBits(s, smoothness);
+        double ppmBits = tree.codec.encodeSmallPPM(s, smoothness);
         map1.put(".ppmBits", ppmBits);
         // map2.put(key+".ppmBits", ppmBits);
         map1.put(".bitsPerChar", ppmBits / s.length());
@@ -578,8 +580,8 @@ public class CharTreeTest {
   static private Map<String, Object> evaluateDictionary(List<String> sentances, String dictionary, Map<String, Object> map) {
     Arrays.asList(1, 4, 16, 32).stream().forEach(k -> {
       DoubleStatistics statistics = sentances.stream().map(line -> {
-        int length0 = CharTreeCodec.compress("", line).length;
-        int lengthK = CharTreeCodec.compress(dictionary.substring(0, Math.min(k * 1024, dictionary.length())), line).length;
+        int length0 = CharTreeCodec.encodeLZ(line, "").length;
+        int lengthK = CharTreeCodec.encodeLZ(line, dictionary.substring(0, Math.min(k * 1024, dictionary.length()))).length;
         return (length0 - lengthK) * 1.0;
       }).collect(DoubleStatistics.COLLECTOR);
       map.put(String.format("%sk.sum", k), (int) statistics.getSum() / 1024);
