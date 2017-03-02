@@ -9,12 +9,13 @@ public class Bits implements Comparable<Bits>
     if(maxBits <= 0) return NULL;
     if(numerator == 0) return ZERO;
     if(numerator == denominator) return ONE;
-    if((numerator << 1) <= denominator) {
+    if(numerator < denominator) {
       return ZERO.concatenate(divide(numerator*2,denominator,maxBits-1));
     } else {
-      return ONE.concatenate(divide(2*numerator-denominator,denominator,maxBits-1));
+      return ONE.concatenate(divide(2*(numerator-denominator),denominator,maxBits-1));
     }
   }
+  
   
   
   public static int dataCompare(final Bits left, final Bits right)
@@ -317,14 +318,14 @@ public class Bits implements Comparable<Bits>
     return new Bits(this.toLong() + 1, this.bitLength);
   }
   
-  public Bits range(final int i)
+  public Bits range(final int start)
   {
-    return this.range(i, this.bitLength - i);
+    return this.range(start, this.bitLength - start);
   }
   
   public Bits range(final int start, final int length)
   {
-    if (0 == length) { return new Bits(0l); }
+    if (0 == length) { return Bits.NULL; }
     if (start < 0) { throw new IllegalArgumentException(); }
     if (start + length > this.bitLength) { throw new IllegalArgumentException(); }
     final Bits returnValue = new Bits(

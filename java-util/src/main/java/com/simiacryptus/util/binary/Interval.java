@@ -22,9 +22,11 @@ public class Interval {
     Bits endBits = Bits.divide(end(), max, peekBits).padRight(peekBits);
     for(int i=0;i<peekBits;i++) {
       long a = startBits.range(0, i).toLong();
-      long b = (end() == max) ? 1<<i : endBits.range(0, i).toLong();
+      long b = endBits.range(0, i).toLong();
       if(b - a > 1) {
-        return new Bits(a+1, i);
+        Bits bits = new Bits(a+1, i);
+        assert(Bits.ZERO.equals(bits.range(0,1)));
+        return bits.range(1);
       }
     }
     throw new RuntimeException();

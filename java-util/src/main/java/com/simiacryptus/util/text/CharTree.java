@@ -1,6 +1,7 @@
 package com.simiacryptus.util.text;
 
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 import java.util.stream.Collectors;
@@ -44,6 +45,14 @@ public class CharTree {
   public int getIndexedSize() {
     return documents.stream().mapToInt(doc -> doc.length()).sum();
   }
+  
+  public CharTree addEscapeNodes() {
+    CharTree result = new CharTree();
+    Node root = root();
+    Map<Character, Node> childrenOfNode = root.getChildren().collect(Collectors.toMap(n->n.getToken(), n->n));
+    int sumOfChildren = childrenOfNode.values().stream().mapToInt(n->n.getCursorCount()).sum();
+    return result;
+  }
 
   /**
    * Locate a node by finding the maximum prefix match with the given string
@@ -52,23 +61,7 @@ public class CharTree {
    * @return
    */
   public Node traverse(String search) {
-    Node cursor = root();
-    for (char token : search.toCharArray()) {
-      Optional<Node> child = cursor.getChild(token);
-      if (child.isPresent()) {
-        cursor = child.get();
-      } else {
-        break;
-      }
-    }
-    return cursor;
-  }
-
-  public Node matchEnd2(String search) {
-    Node cursor = traverse(search);
-    if (search.endsWith(cursor.getString()))
-      return cursor;
-    return matchEnd2(search.substring(1));
+    return root().traverse(search);
   }
 
   public Node matchEnd(String search) {
@@ -169,6 +162,11 @@ public class CharTree {
     cursors.addAll(
         IntStream.range(0, document.length()).mapToObj(i -> new CursorData(index, i)).collect(Collectors.toList()));
     nodes.update(0, node -> node.setCursorCount(cursors.length()));
+    return this;
+  }
+
+  public CharTree addAlphabet(String document) {
+    document.chars().mapToObj(i->new String(Character.toChars(i))).forEach(s->addDocument(s));
     return this;
   }
   

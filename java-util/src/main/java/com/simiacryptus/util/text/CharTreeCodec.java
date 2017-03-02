@@ -132,8 +132,12 @@ public class CharTreeCodec {
         int segmentChars = toNode.depth - fromNode.depth;
         
         if(0 == segmentChars) {
-          prefix = prefix.substring(1);
-          continue;
+          if(prefix.isEmpty()) {
+            throw new RuntimeException(String.format("Cannot encode %s in model", text.substring(0,1)));
+          } else {
+            prefix = prefix.substring(1);
+            continue;
+          }
         }
         prefix = prefix + text.substring(0,segmentChars);
         int newLen = Math.min(context, prefix.length());

@@ -417,6 +417,55 @@ public class CharTreeTest {
   }
 
   @Test
+  public void testWikiCompression() throws Exception {
+
+    int maxLevels = 5;
+    int minWeight = 2;
+    int modelCount = 100;
+    int articleCount = 10;
+    double smoothness = 1.0;
+
+    List<WikiArticle> dataset = WikiArticle.load().filter(a->a.text.length()>1024)
+        .limit(articleCount + modelCount).collect(Collectors.toList());
+    
+    String characterSet = dataset.stream().flatMapToInt(s -> s.text.chars()).distinct()
+        .mapToObj(c -> new String(Character.toChars(c))).sorted().collect(Collectors.joining(""));
+    System.out.println("Character Set:" + characterSet);
+    
+    CharTree tree = new CharTree();
+    tree.addDocument(characterSet);
+    dataset.stream().skip(articleCount).limit(modelCount).map(t -> t.text)
+        .forEach(txt -> tree.addDocument(txt));
+    System.out.println(String.format("Indexing %s wiki articles; \ntree.getIndexedSize = %s KB", modelCount,
+        tree.getIndexedSize() / 1024));
+    tree.index(maxLevels, minWeight).truncate();
+    System.out.println(String.format("tree.getMemorySize = %s KB", tree.getMemorySize() / 1024));
+    String dictionary = tree.copy().codec.generateDictionary(16*1024, 2, "", 0, true);
+
+    TableOutput output = new TableOutput();
+    dataset.stream().limit(articleCount).forEach(article->{
+      HashMap<String, Object> row = new LinkedHashMap<>();
+      double bits = tree.codec.encodingBits(article.text, smoothness);
+      int data;
+      try {
+        data = tree.codec.encode(article.text, 1).length;
+      } catch (Exception e) {
+        e.printStackTrace();
+        data = -1;
+      }
+      row.put("bitsPerChar", bits / article.text.length());
+      row.put("measure", bits / 8);
+      row.put("PPM", data);
+      row.put("16kLZ", CharTreeCodec.compress(dictionary, article.text).length);
+      row.put("0kLZ", CharTreeCodec.compress("", article.text).length);
+      row.put("size", article.text.length());
+      row.put("title", article.title);
+      output.putRow(row);
+    });
+    System.out.println(output.toTextTable());
+  }
+
+  @Test
   public void testTweetCompression() throws Exception {
 
     int maxLevels = 5;
