@@ -1,14 +1,17 @@
 package com.simiacryptus.util.text;
 
+import com.davidehrmann.vcdiff.VCDiffDecoderBuilder;
+import com.davidehrmann.vcdiff.VCDiffEncoder;
+import com.davidehrmann.vcdiff.VCDiffEncoderBuilder;
 import com.simiacryptus.util.binary.BitInputStream;
 import com.simiacryptus.util.binary.BitOutputStream;
 import com.simiacryptus.util.binary.Bits;
 import com.simiacryptus.util.binary.Interval;
+import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
+import org.apache.commons.compress.compressors.bzip2.BZip2CompressorOutputStream;
+import org.apache.commons.compress.utils.IOUtils;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -47,31 +50,6 @@ public class CharTreeCodec {
         if (fate <= 0) {
           if (child.getChar() != Character.MIN_VALUE) {
             next = child.getToken();
-          }
-          break;
-        }
-      }
-      if (null != next)
-        str += next;
-      else
-        break;
-    }
-    return str;
-  }
-
-  public String generateMarkov2(int length, int context, String seed, double smoothness) {
-    String str = seed;
-    while (str.length() < length) {
-      String prefix = str.substring(Math.max(str.length() - context, 0), str.length());
-      Node node = inner.matchPredictor(prefix);
-      Map<Character, Double> lookahead = lookahead(node, smoothness);
-      double fate = CharTree.random.nextDouble() * lookahead.values().stream().mapToDouble(x -> x).sum();
-      String next = null;
-      for (Map.Entry<Character, Double> child : lookahead.entrySet()) {
-        fate -= child.getValue();
-        if (fate <= 0) {
-          if (child.getKey() != Character.MIN_VALUE) {
-            next = new String(new char[] { child.getKey() });
           }
           break;
         }
@@ -133,16 +111,23 @@ public class CharTreeCodec {
     try {
       BitInputStream in = new BitInputStream(new ByteArrayInputStream(data));
       StringBuilder out = new StringBuilder();
+      String contextStr = "";
       while(true) {
-        String prefix = getContext_FastPPM(out, context);
-        String newSegment = decodeNext(in, prefix);
-        while(newSegment.isEmpty() && !prefix.isEmpty()) {
-          if(verbose) System.out.println(String.format("Empty Segment"));
-          prefix = prefix.substring(1);
-          newSegment = decodeNext(in, prefix);
-          if(!newSegment.isEmpty()) {
-            break;
-          }
+        Node fromNode = inner.matchPredictor(getRight(contextStr, context));
+        String prefix = fromNode.getString();
+        if(0 == fromNode.getNumberOfChildren()) return "";
+        int seek = in.peekIntCoord(fromNode.getCursorCount());
+        Node toNode = fromNode.traverse(seek + fromNode.getCursorIndex());
+        String newSegment = toNode.getString(fromNode);
+        Interval interval = fromNode.intervalTo(toNode);
+        Bits bits = interval.toBits();
+        if(verbose) System.out.println(String.format(
+                "Using prefix \"%s\", seek to %s pos, path \"%s\" with %s -> %s, input buffer = %s",
+                displayStr(prefix), seek, displayStr(newSegment), interval, bits, in.peek(24)));
+        in.expect(bits);
+        if(toNode.isStringTerminal()) {
+          if(verbose) System.out.println("Inserting null char to terminate string");
+          newSegment += Character.MIN_VALUE;
         }
         if(!newSegment.isEmpty()) {
           if(newSegment.endsWith("\u0000")) {
@@ -150,13 +135,22 @@ public class CharTreeCodec {
             if(verbose) System.out.println(String.format("Null char reached"));
             break;
           } else {
+            contextStr += newSegment;
             out.append(newSegment);
           }
         } else if(in.availible() == 0) {
           if(verbose) System.out.println(String.format("No More Data"));
           break;
+        } else if(toNode.getChar() == Character.MIN_VALUE) {
+          if(verbose) System.out.println(String.format("End code"));
+          break;
+          //throw new RuntimeException("Cannot decode text");
+        } else if(toNode.getChar() == Character.MAX_VALUE) {
+          contextStr = prefix.substring(1);
         } else {
-          throw new RuntimeException("Cannot decode text");
+          if(verbose) System.out.println(String.format("Cannot decode text"));
+          break;
+          //throw new RuntimeException("Cannot decode text");
         }
       }
       return out.toString();
@@ -165,44 +159,20 @@ public class CharTreeCodec {
     }
   }
 
-  private String getContext_FastPPM(StringBuilder out, int context) {
-    String prefix = out.toString();
-    int newLen = Math.min(context, prefix.length());
-    int prefixFrom = Math.max(0, prefix.length() - newLen);
-    prefix = prefix.substring(prefixFrom, prefix.length());
-    return prefix;
-  }
-
-  private String decodeNext(BitInputStream in, String prefix) throws IOException {
-    Node fromNode = inner.matchEnd(prefix);
-    int seek = in.peekIntCoord(fromNode.getCursorCount());
-    Node toNode = fromNode.traverse(seek + fromNode.getCursorIndex());
-    String str = toNode.getString(fromNode);
-    Interval interval = fromNode.intervalTo(toNode);
-    Bits bits = interval.toBits();
-    if(verbose) System.out.println(String.format(
-            "Using prefix \"%s\", seek to %s pos, path \"%s\" with %s -> %s, input buffer = %s",
-            prefix, seek, str, interval, bits, in.peek(24)));
-    in.expect(bits);
-    if(toNode.isStringTerminal()) {
-      if(verbose) System.out.println("Inserting null char to terminate string");
-      str += Character.MIN_VALUE;
-    }
-    return str;
-  }
-
   public Bits encodePPM(String text, int context) {
     final String original = text;
-    if(verbose) System.out.println(String.format("Encoding %s with %s chars of context", text, context));
+    //if(verbose) System.out.println(String.format("Encoding %s with %s chars of context", text, context));
     if(!text.endsWith("\u0000")) text += Character.MIN_VALUE;
     ByteArrayOutputStream buffer = new ByteArrayOutputStream();
     BitOutputStream out = new BitOutputStream(buffer);
+    String contextStr = "";
     try {
-      String prefix = "";
       while(!text.isEmpty()) {
-        Node fromNode = inner.matchEnd(prefix);
+        String right = getRight(contextStr, context);
+        Node fromNode = inner.matchPredictor(right);
+        String prefix = fromNode.getString();
+
         Node toNode = fromNode.traverse(text);
-        
         int segmentChars = toNode.depth - fromNode.depth;
         if(toNode.hasChildren()) {
           toNode = toNode.getChild(Character.MAX_VALUE).get();
@@ -212,33 +182,33 @@ public class CharTreeCodec {
         Bits segmentData = interval.toBits();
         if(verbose) System.out.println(String.format(
                 "Using context \"%s\", encoded \"%s\" (%s chars) as %s -> %s",
-                fromNode.getString(), toNode.getString(fromNode), segmentChars, interval, segmentData));
+                displayStr(fromNode.getString()), displayStr(toNode.getString(fromNode)), segmentChars, interval, segmentData));
         out.write(segmentData);
         
         if(0 == segmentChars) {
           if(prefix.isEmpty()) {
             throw new RuntimeException(String.format("Cannot encode %s in model", text.substring(0,1)));
-          } else {
-            prefix = prefix.substring(1);
+          }
+          if("\u0000".equals(text)) break;
+          if(toNode.getChar() == Character.MAX_VALUE) {
+            contextStr = prefix.substring(1);
             continue;
           }
+          throw new RuntimeException("Cannot encode " + text.substring(0,1));
+        } else {
+          contextStr += text.substring(0, segmentChars);
+          text = text.substring(segmentChars);
         }
-
-        prefix = prefix + text.substring(0,segmentChars);
-        int newLen = Math.min(context, prefix.length());
-        int prefixFrom = Math.max(0, prefix.length() - newLen);
-        prefix = prefix.substring(prefixFrom, prefix.length());
-        text = text.substring(segmentChars);
       }
       out.flush();
       Bits bits = new Bits(buffer.toByteArray(), out.getTotalBitsWritten());
-      if(verbose) System.out.println(String.format("Encoded %s to %s", original, bits));
+      //if(verbose) System.out.println(String.format("Encoded %s to %s", original, bits));
       return bits;
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
   }
-  
+
   private Map<Character, Double> lookahead(Node node, double smoothness) {
     HashMap<Character, Double> map = new HashMap<>();
     lookahead(node, map, 1.0, smoothness);
@@ -307,5 +277,92 @@ public class CharTreeCodec {
     }
   }
 
-  
+  public static String decodeBZ(byte[] data) {
+    try {
+      return new String(decodeBZRaw(data), "UTF-8");
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  private static byte[] decodeBZRaw(byte[] data) {
+    try {
+      ByteArrayInputStream output = new ByteArrayInputStream(data);
+      BZip2CompressorInputStream compresser = new BZip2CompressorInputStream(output);
+      return IOUtils.toByteArray(compresser);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  public static byte[] encodeBZ(String data) {
+    try {
+      byte[] bytes = encodeBZ(data.getBytes("UTF-8"));
+      //assert(data.equals(decodeBZ(bytes)));
+      return bytes;
+    } catch (UnsupportedEncodingException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  public static byte[] encodeBZ(byte[] data) {
+    try {
+      int blockSize = 4;
+      ByteArrayOutputStream output = new ByteArrayOutputStream();
+      BZip2CompressorOutputStream compresser = new BZip2CompressorOutputStream(output, blockSize);
+      compresser.write(data);
+      compresser.close();
+      byte[] bytes = output.toByteArray();
+      return bytes;
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  public static String decodeBZ(byte[] data, String dictionary) {
+    try {
+      byte[] dictBytes = dictionary.getBytes("UTF-8");
+      ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+      VCDiffDecoderBuilder.builder().buildSimple().decode(dictBytes, decodeBZRaw(data), buffer);
+      return new String(buffer.toByteArray(), "UTF-8");
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  public static byte[] encodeBZ(String data, String dictionary) {
+    try {
+      byte[] bytes = encodeBZ(data.getBytes("UTF-8"), dictionary);
+      //assert(data.equals(decodeBZ(bytes, dictionary)));
+      return bytes;
+    } catch (Exception e) {
+       throw new RuntimeException(e);
+    }
+  }
+
+  public static byte[] encodeBZ(byte[] asBytes, String dictionary) {
+    try {
+      byte[] dictBytes = dictionary.getBytes("UTF-8");
+      VCDiffEncoder<OutputStream> encoder = VCDiffEncoderBuilder.builder()
+              .withDictionary(dictBytes)
+              .buildSimple();
+      ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+      encoder.encode(asBytes, buffer);
+      return encodeBZ(buffer.toByteArray());
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  private static String getRight(String str, int count) {
+    int newLen = Math.min(count, str.length());
+    int prefixFrom = Math.max(0, str.length() - newLen);
+    String right = str.substring(prefixFrom, str.length());
+    return right;
+  }
+
+  private static String displayStr(String str) {
+    return str.replaceAll("\\\\", "\\\\").replaceAll("\n", "\\n").replaceAll("\0", "\\\\0");
+  }
+
 }
