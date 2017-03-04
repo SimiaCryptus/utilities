@@ -1,38 +1,63 @@
 package com.simiacryptus.util.binary;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Arrays;
+import java.util.function.Consumer;
 
 public class BitOutputStream
 {
+
+  public static Bits toBits(Consumer<BitOutputStream> fn) {
+    try {
+      ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+      BitOutputStream out = new BitOutputStream(buffer);
+      fn.accept(out);
+      out.flush();
+      return new Bits(buffer.toByteArray(), out.getTotalBitsWritten());
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
   
   private OutputStream inner;
   
-  private Bits         remainder       = new Bits(0);
+  private Bits         remainder       = Bits.NULL;
   
   static final int     varLongDepths[] = { 6, 16, 32, 64 };
-  
+  private int totalBitsWritten = 0;
+
   public BitOutputStream(final OutputStream inner)
   {
     this.inner = inner;
   }
-  
+
+  public int getTotalBitsWritten() throws IOException
+  {
+    return totalBitsWritten;
+  }
+
   public synchronized void flush() throws IOException
   {
     this.inner.write(this.remainder.getBytes());
     this.inner.flush();
-    this.remainder = new Bits(0);
+    this.remainder = Bits.NULL;
   }
   
-  public synchronized void write(final Bits encode) throws IOException
+  public synchronized void write(final Bits bits) throws IOException
   {
-    final Bits newRemainder = this.remainder.concatenate(encode);
+    Bits newRemainder = this.remainder.concatenate(bits);
     final int newRemainingBits = newRemainder.bitLength % 8;
-    final Bits toWrite = newRemainder.range(0, newRemainder.bitLength
-        - newRemainingBits);
-    this.inner.write(toWrite.getBytes());
-    this.remainder = newRemainder.range(toWrite.bitLength);
+    int bitsToWrite = newRemainder.bitLength - newRemainingBits;
+    if(bitsToWrite > 0) {
+      assert(0 == bitsToWrite % 8);
+      final Bits toWrite = newRemainder.range(0, bitsToWrite);
+      this.inner.write(toWrite.getBytes());
+      newRemainder = newRemainder.range(bitsToWrite);
+    }
+    this.remainder = newRemainder;
+    this.totalBitsWritten += bits.bitLength;
   }
   
   public void write(final boolean b) throws IOException

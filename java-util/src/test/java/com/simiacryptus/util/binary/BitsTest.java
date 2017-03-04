@@ -1,11 +1,11 @@
 package com.simiacryptus.util.binary;
 
-import java.io.IOException;
-import java.util.Random;
-
 import org.json.JSONException;
 import org.junit.Assert;
 import org.junit.Test;
+
+import java.io.IOException;
+import java.util.Random;
 
 public class BitsTest
 {
@@ -35,6 +35,20 @@ public class BitsTest
     Assert.assertEquals("01", Bits.divide(2, 4, 10).toBitString());
     Assert.assertEquals("0001", Bits.divide(171, 1368, 15).toBitString());
     Assert.assertEquals("000010001000001", Bits.divide(91, 1368, 15).toBitString());
+  }
+
+  @Test
+  public void testBitStream() throws JSONException, IOException
+  {
+    Bits totalBits = BitOutputStream.toBits(out->{
+      try {
+        out.write(Bits.divide(1, 2, 10));
+        out.write(Bits.divide(1, 2, 10));
+      } catch (IOException e) {
+        throw new RuntimeException(e);
+      }
+    });
+    Assert.assertEquals("0101", totalBits.toBitString());
   }
 
   @Test

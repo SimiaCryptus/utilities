@@ -1,6 +1,7 @@
 package com.simiacryptus.util.binary;
 
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.Random;
 
 public class Bits implements Comparable<Bits>
@@ -145,14 +146,14 @@ public class Bits implements Comparable<Bits>
     this(data, data.length * 8);
   }
   
-  private Bits(final byte[] data, final int length)
+  public Bits(final byte[] data, final int length)
   {
     super();
     if (0 > length) { throw new IllegalArgumentException(); }
     if (data.length * 8 < length) { throw new IllegalArgumentException(); }
     if (length < (data.length - 1) * 8) { throw new IllegalArgumentException(); }
     this.bitLength = length;
-    this.bytes = Bits.shiftLeft(data, (data.length * 8 - length) % 8);
+    this.bytes = Arrays.copyOf(data,data.length); // Bits.shiftLeft(data, (data.length * 8 - length) % 8);
   }
   
   public Bits(final long data)
@@ -388,7 +389,11 @@ public class Bits implements Comparable<Bits>
     }
     return sb.substring(0, this.bitLength / 4);
   }
-  
+
+  public String toBase64String() {
+    return Base64.getEncoder().encodeToString(this.bytes);
+  }
+
   public long toLong()
   {
     long value = 0;
@@ -414,5 +419,5 @@ public class Bits implements Comparable<Bits>
     if(bitLength >= peekBits) return this;
     return this.concatenate(ZERO).padRight(peekBits);
   }
-  
+
 }

@@ -1,31 +1,20 @@
 package com.simiacryptus.util.text;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLEncoder;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
-import java.util.UUID;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
-
-import org.junit.Test;
-
+import com.simiacryptus.util.binary.Bits;
 import com.simiacryptus.util.data.DoubleStatistics;
 import com.simiacryptus.util.test.TweetSentiment;
 import com.simiacryptus.util.test.WikiArticle;
-
 import junit.framework.Assert;
+import org.junit.Test;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 public class CharTreeTest {
   public static final File outPath = new File("src/site/resources/");
@@ -247,7 +236,7 @@ public class CharTreeTest {
     for (Map.Entry<String, CharTree> ea : trees.entrySet()) {
       for (Map.Entry<String, CharTree> eb : trees.entrySet()) {
         String str = ea.getValue().codec.generateMarkov(sampleSize, maxLevels - 1, "");
-        Double crossEntropy = eb.getValue().codec.encodeSmallPPM(str, smoothness) / str.length();
+        Double crossEntropy = eb.getValue().codec.measureEntropy(str, smoothness) / str.length();
         HashMap<String, Object> map = new HashMap<>();
         map.put("source", ea.getKey());
         map.put("model", eb.getKey());
@@ -446,12 +435,12 @@ public class CharTreeTest {
     TableOutput output = new TableOutput();
     dataset.stream().limit(articleCount).forEach(article->{
       HashMap<String, Object> row = new LinkedHashMap<>();
-      double bits = tree.codec.encodeSmallPPM(article.text, smoothness);
+      double bits = tree.codec.measureEntropy(article.text, smoothness);
       row.put("bitsPerChar", bits / article.text.length());
       row.put("measure", bits / 8);
       int data;
       try {
-        data = codec.encodeFastPPM(article.text, 1).length;
+        data = codec.encodePPM(article.text, 1).bitLength;
       } catch (Exception e) {
         e.printStackTrace();
         data = -1;
@@ -467,11 +456,37 @@ public class CharTreeTest {
   }
 
   @Test
-  public void testTweetCompression() throws Exception {
+  public void testFastPCMCompression_Tweets() throws Exception {
+    final CharTree tree = new CharTree();
+    long articleCount = 10;
+    long modelCount = 1000;
+    TweetSentiment.load().skip(articleCount).limit(modelCount).map(t -> t.text)
+            .forEach(txt -> tree.addDocument(txt));
+    CharTreeCodec codec = tree.index(2, 0).addEscapeNodes().codec;
+    TweetSentiment.load().limit(articleCount).map(t -> t.text).forEach(txt->{
+      Bits encoded = codec.encodePPM(txt, 1);
+      String decoded = codec.decodePPM(encoded.getBytes(), 1);
+      org.junit.Assert.assertEquals(txt, decoded);
+    });
+  }
 
-    int maxLevels = 5;
-    int minWeight = 2;
-    int modelCount = 100000;
+  @Test
+  public void testFastPCMCompression() throws Exception {
+    CharTree tree = new CharTree();
+    tree.addDocument("ababababab");
+    tree = tree.index(2,0).addEscapeNodes();
+    String txt = "aba";
+    Bits encoded = tree.codec.encodePPM(txt, 1);
+    String decoded = tree.codec.decodePPM(encoded.getBytes(), 1);
+    org.junit.Assert.assertEquals(txt, decoded);
+  }
+
+  @Test
+  public void calcTweetCompression() throws Exception {
+
+    int maxLevels = 6;
+    int minWeight = 1;
+    int modelCount = 10000;
     int articleCount = 100;
     double smoothness = 1.0;
 
@@ -482,20 +497,42 @@ public class CharTreeTest {
         tree.getIndexedSize() / 1024));
     tree.index(maxLevels, minWeight).truncate();
     System.out.println(String.format("tree.getMemorySize = %s KB", tree.getMemorySize() / 1024));
-    String dictionary = tree.copy().codec.generateDictionary(16*1024, 2, "", 0, true);
+    System.out.println("Performing tree modifications...");
+    CharTreeCodec dictCodec = tree.copy().codec;
     CharTreeCodec codec = tree.addEscapeNodes().codec;
+    System.out.println("Generating shared dictionary...");
+    String dictionary = dictCodec.generateDictionary(16*1024, 4, "", 2, true);
+    System.out.println("Suggested shared dictionary: "+ dictionary);
 
     TableOutput output = new TableOutput();
     TweetSentiment.load().limit(articleCount).map(t -> t.text).forEach(text->{
       HashMap<String, Object> row = new LinkedHashMap<>();
-      double bits = tree.codec.encodeSmallPPM(text, smoothness);
+      double bits = tree.codec.measureEntropy(text, smoothness);
       row.put("bitsPerChar", bits / text.length());
       row.put("text", text);
       row.put("measure", bits / 8);
-      row.put("PPM", codec.encodeFastPPM(text, 1).length);
+      Bits bytes = codec.encodePPM(text, 1);
+      row.put("PPM", bytes.bitLength / 8);
       row.put("16kLZ", CharTreeCodec.encodeLZ(text, dictionary).length);
       row.put("0kLZ", CharTreeCodec.encodeLZ(text).length);
       row.put("size", text.length());
+      //row.put("Compressed", bytes.toBase64String());
+      String verified = "ex";
+      try {
+        String decompress = codec.decodePPM(bytes.getBytes(), 1);
+        verified = decompress.equals(text) ? "yes" : "fail";
+      } catch (Exception e) {
+        codec.verbose = true;
+        try {
+          Bits bytes2 = codec.encodePPM(text, 1);
+          String decompress2 = codec.decodePPM(bytes2.getBytes(), 1);
+          verified = decompress2.equals(text) ? "yes" : "fail";
+        } catch (Exception e2) {
+          System.out.println(e2.getMessage());
+        }
+        codec.verbose = false;
+      }
+      //row.put("verified", verified);
       output.putRow(row);
     });
     System.out.println(output.toTextTable());
@@ -560,7 +597,7 @@ public class CharTreeTest {
         int decompressBits16 = CharTreeCodec.encodeLZ(s, dictionary.substring(0, 16 * 1024)).length * 8;
         map1.put(".decompressBits16", decompressBits16);
         // map2.put(key+".decompressBits16", decompressBits16);
-        double ppmBits = tree.codec.encodeSmallPPM(s, smoothness);
+        double ppmBits = tree.codec.measureEntropy(s, smoothness);
         map1.put(".ppmBits", ppmBits);
         // map2.put(key+".ppmBits", ppmBits);
         map1.put(".bitsPerChar", ppmBits / s.length());

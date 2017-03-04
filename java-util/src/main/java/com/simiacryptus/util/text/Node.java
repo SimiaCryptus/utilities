@@ -1,19 +1,15 @@
 package com.simiacryptus.util.text;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import com.simiacryptus.util.binary.Bits;
+import com.simiacryptus.util.binary.Interval;
+import com.simiacryptus.util.data.SerialArrayList;
+
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
-
-import com.simiacryptus.util.binary.Bits;
-import com.simiacryptus.util.binary.Interval;
-import com.simiacryptus.util.data.SerialArrayList;
 
 public class Node {
   private final CharTree charTree;
@@ -49,11 +45,24 @@ public class Node {
     return this;
   }
 
-  public String getString() {
-    return (null == parent ? "" : parent.getString()) + (0 == depth ? "" : getData().token);
+  public String getString(Node root) {
+    if(this == root) return "";
+    String parentStr = null == parent ? "" : parent.getString(root);
+    return parentStr + getToken();
   }
 
-  public char getToken() {
+  public String getString() {
+    return (null == parent ? "" : parent.getString()) + (0 == depth ? "" : getToken());
+  }
+
+  public String getToken() {
+    char asChar = getChar();
+    if(asChar == Character.MAX_VALUE) return "";
+    if(asChar == Character.MIN_VALUE) return "";
+    return new String(new char[]{asChar});
+  }
+
+  public char getChar() {
     return getData().token;
   }
 
@@ -97,7 +106,7 @@ public class Node {
 
   public Optional<Node> getChild(char token) {
     // Node[] nodes = getChildren().toArray(i -> new Node[i]);
-    return getChildren().filter(x -> x.getToken() == token).findFirst();
+    return getChildren().filter(x -> x.getChar() == token).findFirst();
   }
 
   public Map<String, List<Cursor>> getCursorsByDocument() {
@@ -154,9 +163,9 @@ public class Node {
   }
 
   public boolean containsCursor(long cursorId) {
-    if (cursorId < data.firstCursorIndex)
+    if (cursorId < getData().firstCursorIndex)
       return false;
-    if (cursorId >= (data.firstCursorIndex + data.cursorCount))
+    if (cursorId >= (getData().firstCursorIndex + getData().cursorCount))
       return false;
     return true;
   }
@@ -168,9 +177,13 @@ public class Node {
         .orElse(this);
   }
 
-  public Bits intervalTo(Node toNode) {
-    return new Interval(toNode.getCursorIndex() - this.getCursorIndex(), toNode.getCursorCount(), this.getCursorCount())
-        .toBits();
+  public Bits bitsTo(Node toNode) {
+    return intervalTo(toNode).toBits();
+  }
+
+  public Interval intervalTo(Node toNode) {
+    return new Interval(toNode.getCursorIndex() - this.getCursorIndex(),
+            toNode.getCursorCount(), this.getCursorCount());
   }
 
   public boolean hasChildren() {
@@ -186,4 +199,9 @@ public class Node {
     return charTree;
   }
 
+  public boolean isStringTerminal() {
+    if(getChar() == Character.MIN_VALUE) return true;
+    if(getChar() == Character.MAX_VALUE && null != parent) return parent.isStringTerminal();
+    return false;
+  }
 }

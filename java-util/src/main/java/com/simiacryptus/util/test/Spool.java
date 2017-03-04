@@ -3,6 +3,7 @@ package com.simiacryptus.util.test;
 import javax.net.ssl.*;
 import java.io.*;
 import java.net.URL;
+import java.net.URLConnection;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -31,10 +32,13 @@ public class Spool extends InputStream {
       SSLContext ctx = SSLContext.getInstance("TLS");
       ctx.init(null, trustManagers, null);
       SSLSocketFactory sslFactory = ctx.getSocketFactory();
-      HttpsURLConnection conn = (HttpsURLConnection)new URL(url).openConnection();
-      conn.setSSLSocketFactory(sslFactory);
-      conn.setRequestMethod("GET");
-      InputStream inputStream = conn.getInputStream();
+      URLConnection urlConnection = new URL(url).openConnection();
+      if(urlConnection instanceof javax.net.ssl.HttpsURLConnection) {
+        HttpsURLConnection conn = (HttpsURLConnection) urlConnection;
+        conn.setSSLSocketFactory(sslFactory);
+        conn.setRequestMethod("GET");
+      }
+      InputStream inputStream = urlConnection.getInputStream();
       FileOutputStream cache = new FileOutputStream(file);
       return new Spool(inputStream, cache);
     }

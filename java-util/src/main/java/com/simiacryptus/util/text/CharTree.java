@@ -1,14 +1,10 @@
 package com.simiacryptus.util.text;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.TreeMap;
+import com.simiacryptus.util.data.SerialArrayList;
+
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-
-import com.simiacryptus.util.data.SerialArrayList;
 
 public class CharTree {
 
@@ -53,7 +49,7 @@ public class CharTree {
     return result.recomputeCursorDetails();
   }
 
-  private CharTree recomputeCursorDetails() {
+  CharTree recomputeCursorDetails() {
     recomputeCursorTotals(root());
     recomputerCursorPositions(root(), 0);
     return this;
@@ -78,14 +74,14 @@ public class CharTree {
 
   private void xferEscapeNodes(Node sourceNode, Node destNode) {
     CharTree result = destNode.getTree();
-    Map<Character, Node> sourceChildren = sourceNode.getChildren().collect(Collectors.toMap(n->n.getToken(), n->n));
+    Map<Character, Node> sourceChildren = sourceNode.getChildren().collect(Collectors.toMap(n->n.getChar(), n->n));
     TreeMap<Character, Integer> newCounts = new TreeMap<Character, Integer>();
     sourceChildren.forEach((key,value)->newCounts.put(key, value.getCursorCount()));
     newCounts.put(Character.MAX_VALUE, 1);
     destNode.update(n->n.setFirstChildIndex(result.nodes.length())
         .setNumberOfChildren((short) newCounts.size()));
     newCounts.forEach((k,v)->result.nodes.add(new NodeData(k, (short) -1, -1, v, -1)));
-    Map<Character, Node> newChildren = destNode.getChildren().collect(Collectors.toMap(n->n.getToken(), n->n));
+    Map<Character, Node> newChildren = destNode.getChildren().collect(Collectors.toMap(n->n.getChar(), n->n));
     newCounts.keySet().forEach(key->{
       if(sourceChildren.containsKey(key)) {
         xferEscapeNodes(sourceChildren.get(key), newChildren.get(key));
@@ -178,7 +174,7 @@ public class CharTree {
   public CharTree index(int maxLevels, int minWeight) {
     root().visitFirst(node -> {
       if (node.depth < maxLevels && node.getCursorCount() > minWeight
-          && (node.getToken() != Character.MIN_VALUE || node.depth == 0))
+          && (node.getChar() != Character.MIN_VALUE || node.depth == 0))
         node.split();
     });
     return this;

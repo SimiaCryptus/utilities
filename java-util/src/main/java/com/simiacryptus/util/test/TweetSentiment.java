@@ -28,8 +28,7 @@ public class TweetSentiment {
             public void run() {
                 try {
                     InputStream load = Spool.load(url, file);
-                    
-					try (final ZipInputStream in = new ZipInputStream(load)) {
+                    try (final ZipInputStream in = new ZipInputStream(load)) {
 						ZipEntry entry = in.getNextEntry();
 						try (final BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {
 							String[] header = reader.readLine().split(",");

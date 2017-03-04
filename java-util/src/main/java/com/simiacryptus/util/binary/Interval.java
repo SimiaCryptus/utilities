@@ -35,5 +35,14 @@ public class Interval {
     }
     throw new RuntimeException();
   }
-  
+
+  @Override
+  public String toString() {
+    final StringBuffer sb = new StringBuffer("Interval{");
+    sb.append("start=").append(start);
+    sb.append(", length=").append(length);
+    sb.append(", max=").append(max);
+    sb.append('}');
+    return sb.toString();
+  }
 }
