@@ -37,14 +37,15 @@ public class BitInputStream {
   }
 
   public void expect(final Bits bits) throws IOException {
-    Bits read = read(bits.bitLength);
-    if(!bits.equals(read)) throw new RuntimeException(String.format("%s is not expected %s", read, bits));
+    int size = Math.min(availible(), bits.bitLength);
+    Bits read = read(size);
+    if(!bits.range(0,size).equals(read)) throw new RuntimeException(String.format("%s is not expected %s", read, bits));
   }
 
   public Bits read(final int bits) throws IOException {
     final int additionalBitsNeeded = bits - this.remainder.bitLength;
     final int additionalBytesNeeded = (int) Math.ceil(additionalBitsNeeded / 8.);
-    this.readAhead(additionalBytesNeeded);
+    if(additionalBytesNeeded > 0) this.readAhead(additionalBytesNeeded);
     final Bits readBits = this.remainder.range(0, bits);
     this.remainder = this.remainder.range(bits);
     return readBits;
@@ -53,7 +54,7 @@ public class BitInputStream {
   public Bits peek(final int bits) throws IOException {
     final int additionalBitsNeeded = bits - this.remainder.bitLength;
     final int additionalBytesNeeded = (int) Math.ceil(additionalBitsNeeded / 8.);
-    this.readAhead(additionalBytesNeeded);
+    if(additionalBytesNeeded > 0) this.readAhead(additionalBytesNeeded);
     return this.remainder.range(0, Math.min(bits, this.remainder.bitLength));
   }
 
@@ -62,6 +63,7 @@ public class BitInputStream {
   }
 
   public Bits readAhead(final int bytes) throws IOException {
+    assert(0 < bytes);
     if (0 < bytes) {
       final byte[] buffer = new byte[bytes];
       int bytesRead = this.inner.read(buffer);

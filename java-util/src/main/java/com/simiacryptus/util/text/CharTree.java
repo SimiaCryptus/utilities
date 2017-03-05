@@ -51,7 +51,7 @@ public class CharTree {
 
   CharTree recomputeCursorDetails() {
     recomputeCursorTotals(root());
-    recomputerCursorPositions(root(), 0);
+    recomputeCursorPositions(root(), 0);
     return this;
   }
 
@@ -63,11 +63,11 @@ public class CharTree {
     return node.update(d -> d.setCursorCount(cursorCount));
   }
 
-  private void recomputerCursorPositions(Node node, final int position) {
+  private void recomputeCursorPositions(Node node, final int position) {
     node.update(n->n.setFirstCursorIndex(position));
     int childPosition = position;
     for(Node child : node.getChildren().collect(Collectors.toList())) {
-      recomputerCursorPositions(child, childPosition);
+      recomputeCursorPositions(child, childPosition);
       childPosition += child.getCursorCount();
     }
   }

@@ -2,6 +2,8 @@ package com.simiacryptus.util.text;
 
 import com.simiacryptus.util.test.TestDocument;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -13,11 +15,17 @@ public interface Compressor {
     TableOutput tallTable = new TableOutput();
     data.parallel().forEach(item->{
       HashMap<String, Object> rowWide = new LinkedHashMap<>();
-      rowWide.put("title", item.title);
+      String title;
+      try {
+        title = URLEncoder.encode(item.title, "UTF-8");
+      } catch (UnsupportedEncodingException e) {
+        throw new RuntimeException(e);
+      }
+      rowWide.put("title", title);
       compressors.forEach((name,compressor)->{
         try {
           HashMap<String, Object> rowTall = new LinkedHashMap<>();
-          rowTall.put("title", item.title);
+          rowTall.put("title", title);
           rowTall.put("compressor", name);
 
           rowWide.put(name + ".uncompressed", item.text.length());
@@ -43,7 +51,7 @@ public interface Compressor {
     return wide?wideTable:tallTable;
   }
 
-  static void addGenericCompressors(Map<String, Compressor> compressors) {
+  public static void addGenericCompressors(Map<String, Compressor> compressors) {
     compressors.put("BZ0", new Compressor() {
       @Override
       public byte[] compress(String text) {
@@ -68,7 +76,7 @@ public interface Compressor {
     });
   }
 
-  static Compressor buildPPMCompressor(CharTree baseTree, final int encodingContext) {
+  public static Compressor buildPPMCompressor(CharTree baseTree, final int encodingContext) {
     CharTree encodingTree = baseTree.addEscapeNodes();
     System.out.println(String.format("Encoding Tree Memory Size = %s KB", encodingTree.getMemorySize() / 1024));
     CharTreeCodec codec = encodingTree.codec;

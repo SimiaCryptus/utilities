@@ -243,10 +243,6 @@ public class CharTreeCodec {
     return result;
   }
 
-  public static byte[] encodeLZ(String data) {
-    return encodeLZ(data, "");
-  }
-
   public static byte[] encodeLZ(String data, String dictionary) {
     byte[] output = new byte[data.length() * 2];
     Deflater compresser = new Deflater();
@@ -265,26 +261,33 @@ public class CharTreeCodec {
     return Arrays.copyOf(output, compressedDataLength);
   }
 
-    public static String decodeLZ(byte[] data) {
-      return decodeLZ(data, "");
-    }
-
     public static String decodeLZ(byte[] data, String dictionary) {
     try {
       Inflater decompresser = new Inflater();
       decompresser.setInput(data, 0, data.length);
+      byte[] result = new byte[data.length * 32];
+      int resultLength = 0;
       if(!dictionary.isEmpty()) {
+          resultLength = decompresser.inflate(result);
+          assert (0 == resultLength);
+          assert (decompresser.needsDictionary());
           byte[] bytes = dictionary.getBytes("UTF-8");
           decompresser.setDictionary(bytes);
       }
-      byte[] result = new byte[100];
-      int resultLength = 0;
       resultLength = decompresser.inflate(result);
       decompresser.end();
       return new String(result, 0, resultLength, "UTF-8");
     } catch (DataFormatException | UnsupportedEncodingException e) {
       throw new RuntimeException(e);
     }
+  }
+
+  public static byte[] encodeLZ(String data) {
+    return encodeLZ(data, "");
+  }
+
+  public static String decodeLZ(byte[] data) {
+    return decodeLZ(data, "");
   }
 
   public static String decodeBZ(byte[] data) {
