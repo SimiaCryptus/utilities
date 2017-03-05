@@ -55,6 +55,25 @@ public class Node {
     return (null == parent ? "" : parent.getString()) + (0 == depth ? "" : getToken());
   }
 
+  public String getDisplayString() {
+    return getDisplayString(getTree().root());
+  }
+
+  public String getDisplayString(Node root) {
+    if(this == root) return "";
+    String parentStr = null == parent ? "" : parent.getString(root);
+    return parentStr + getDisplayToken();
+  }
+
+  public String getDisplayToken() {
+    char asChar = getChar();
+    if(asChar == Character.MAX_VALUE) return "\\-1";
+    if(asChar == Character.MIN_VALUE) return "\\0";
+    if(asChar == '\\') return "\\\\";
+    if(asChar == '\n') return "\\n";
+    return new String(new char[]{asChar});
+  }
+
   public String getToken() {
     char asChar = getChar();
     if(asChar == Character.MAX_VALUE) return "";
@@ -204,4 +223,5 @@ public class Node {
     if(getChar() == Character.MAX_VALUE && null != parent) return parent.isStringTerminal();
     return false;
   }
+
 }

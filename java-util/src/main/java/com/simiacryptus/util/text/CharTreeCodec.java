@@ -114,7 +114,6 @@ public class CharTreeCodec {
       String contextStr = "";
       while(true) {
         Node fromNode = inner.matchPredictor(getRight(contextStr, context));
-        String prefix = fromNode.getString();
         if(0 == fromNode.getNumberOfChildren()) return "";
         int seek = in.peekIntCoord(fromNode.getCursorCount());
         Node toNode = fromNode.traverse(seek + fromNode.getCursorIndex());
@@ -123,7 +122,7 @@ public class CharTreeCodec {
         Bits bits = interval.toBits();
         if(verbose) System.out.println(String.format(
                 "Using prefix \"%s\", seek to %s pos, path \"%s\" with %s -> %s, input buffer = %s",
-                displayStr(prefix), seek, displayStr(newSegment), interval, bits, in.peek(24)));
+                fromNode.getDisplayString(), seek, toNode.getDisplayString(fromNode), interval, bits, in.peek(24)));
         in.expect(bits);
         if(toNode.isStringTerminal()) {
           if(verbose) System.out.println("Inserting null char to terminate string");
@@ -146,7 +145,7 @@ public class CharTreeCodec {
           break;
           //throw new RuntimeException("Cannot decode text");
         } else if(toNode.getChar() == Character.MAX_VALUE) {
-          contextStr = prefix.substring(1);
+          contextStr = fromNode.getString().substring(1);
         } else {
           if(verbose) System.out.println(String.format("Cannot decode text"));
           break;
@@ -182,14 +181,13 @@ public class CharTreeCodec {
         Bits segmentData = interval.toBits();
         if(verbose) System.out.println(String.format(
                 "Using context \"%s\", encoded \"%s\" (%s chars) as %s -> %s",
-                displayStr(fromNode.getString()), displayStr(toNode.getString(fromNode)), segmentChars, interval, segmentData));
+                fromNode.getDisplayString(), toNode.getDisplayString(fromNode), segmentChars, interval, segmentData));
         out.write(segmentData);
         
         if(0 == segmentChars) {
           if(prefix.isEmpty()) {
             throw new RuntimeException(String.format("Cannot encode %s in model", text.substring(0,1)));
           }
-          if("\u0000".equals(text)) break;
           if(toNode.getChar() == Character.MAX_VALUE) {
             contextStr = prefix.substring(1);
             continue;

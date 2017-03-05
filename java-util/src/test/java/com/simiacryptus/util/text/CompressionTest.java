@@ -6,17 +6,12 @@ import com.simiacryptus.util.test.TweetSentiment;
 import com.simiacryptus.util.test.WikiArticle;
 import org.junit.Test;
 
-import java.io.File;
-import java.net.URL;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 public class CompressionTest {
-
-  public static final File outPath = new File("src/site/resources/");
-  public static final URL outBaseUrl = CharTreeTest.getUrl("https://simiacryptus.github.io/utilities/java-util/");
 
   @Test
   public void testPPMCompression_Basic() throws Exception {
@@ -33,25 +28,24 @@ public class CompressionTest {
 
   @Test
   public void testPPMCompression_Tweets() throws Exception {
-    final CharTree tree = new CharTree();
-    long articleCount = 100;
+    long articleCount = 1000;
     long modelCount = 10000;
     int encodingContext = 3;
     int modelDepth = 9;
 
+    final CharTree tree = new CharTree();
     TweetSentiment.load().skip(articleCount).limit(modelCount).map(t -> t.text)
             .forEach(txt -> tree.addDocument(txt));
     CharTree modelTree = tree.index(modelDepth, 0).addEscapeNodes();
-    //modelTree.codec.verbose = true;
     TweetSentiment.load().limit(articleCount).map(t -> t.text).forEach(txt->{
       try {
         Bits encoded = modelTree.codec.encodePPM(txt, encodingContext);
         String decoded = modelTree.codec.decodePPM(encoded.getBytes(), encodingContext);
         org.junit.Assert.assertEquals(txt, decoded);
-        System.out.println(String.format("Verified \"%s\" - %s chars -> %s bits", txt, txt.length(), encoded.bitLength));
+        //System.out.println(String.format("Verified \"%s\" - %s chars -> %s bits", txt, txt.length(), encoded.bitLength));
       } catch (Throwable e) {
-        System.out.println(String.format("Error encoding \"%s\" - %s", txt, e.getMessage()));
         synchronized (modelTree) {
+          System.out.println(String.format("Error encoding \"%s\" - %s", txt, e.getMessage()));
           try {
             CharTreeCodec codec = modelTree.copy().codec;
             codec.verbose = true;
@@ -60,7 +54,8 @@ public class CompressionTest {
             org.junit.Assert.assertEquals(txt, decoded);
             System.out.println(String.format("Verified \"%s\" - %s chars -> %s bits", txt, txt.length(), encoded.bitLength));
           } catch (Throwable e2) {
-            System.out.println(String.format("Error encoding \"%s\" - %s", txt, e2.getMessage()));
+            e2.printStackTrace();
+            //System.out.println(String.format("Error encoding \"%s\" - %s", txt, e2.getMessage()));
             //throw new RuntimeException(e);
           }
         }
@@ -82,8 +77,7 @@ public class CompressionTest {
     Map<String, Compressor> compressors = buildCompressors(source, ppmModelDepth, model_minPathWeight, dictionary_lookahead, dictionary_context, encodingContext, modelCount);
     TableOutput output = Compressor.evalTable(source.get().skip(modelCount), compressors, true);
     System.out.println(output.toTextTable());
-    String outputDirName = "tweetCompression/";
-    output.writeProjectorData(new File(outPath, outputDirName), new URL(outBaseUrl, outputDirName));
+    System.out.println(output.calcNumberStats().toTextTable());
   }
 
   @Test
@@ -100,9 +94,7 @@ public class CompressionTest {
     Map<String, Compressor> compressors = buildCompressors(source, ppmModelDepth, model_minPathWeight, dictionary_lookahead, dictionary_context, encodingContext, modelCount);
     TableOutput output = Compressor.evalTable(source.get().skip(modelCount), compressors, true);
     System.out.println(output.toTextTable());
-    String outputDirName = "wikiCompression/";
-    output.writeProjectorData(new File(outPath, outputDirName), new URL(outBaseUrl, outputDirName));
-
+    System.out.println(output.calcNumberStats().toTextTable());
   }
 
   protected Map<String, Compressor> buildCompressors(Supplier<Stream<? extends TestDocument>> source, int ppmModelDepth, int model_minPathWeight, final int dictionary_lookahead, final int dictionary_context, final int encodingContext, int modelCount) {

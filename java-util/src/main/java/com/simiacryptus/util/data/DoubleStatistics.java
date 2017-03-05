@@ -16,6 +16,13 @@ public class DoubleStatistics extends DoubleSummaryStatistics {
           d -> d
   );
 
+  public static Collector<Number, DoubleStatistics, DoubleStatistics> NUMBERS = Collector.<Number,DoubleStatistics,DoubleStatistics>of(
+          DoubleStatistics::new,
+          (a,n)->a.accept(n.doubleValue()),
+          DoubleStatistics::combine,
+          d -> d
+  );
+
   private double sumOfSquare = 0.0d;
   private double sumOfSquareCompensation; // Low order bits of sum
   private double simpleSumOfSquare; // Used to compute right sum for non-finite inputs

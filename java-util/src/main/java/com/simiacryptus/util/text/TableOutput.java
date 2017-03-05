@@ -1,5 +1,7 @@
 package com.simiacryptus.util.text;
 
+import com.simiacryptus.util.data.DoubleStatistics;
+
 import java.io.*;
 import java.net.URL;
 import java.util.*;
@@ -111,7 +113,7 @@ public class TableOutput {
 
     }
 
-    public String toTextTable() throws IOException {
+    public String toTextTable() {
         try(ByteArrayOutputStream buffer = new ByteArrayOutputStream()) {
             try(PrintStream printStream = new PrintStream(buffer)) {
                 String formatString = schema.entrySet().stream()
@@ -133,6 +135,24 @@ public class TableOutput {
                 }
             }
             return buffer.toString();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
+    }
+
+    public TableOutput calcNumberStats() {
+        TableOutput tableOutput = new TableOutput();
+        schema.entrySet().stream().filter(x->Number.class.isAssignableFrom(x.getValue())).forEach(col->{
+            String key = col.getKey();
+            DoubleStatistics stats = rows.stream().filter(x->x.containsKey(key)).map(x -> (Number)x.get(key)).collect(DoubleStatistics.NUMBERS);
+            LinkedHashMap<String, Object> row = new LinkedHashMap<>();
+            row.put("field", key);
+            row.put("sum", stats.getSum());
+            row.put("avg", stats.getAverage());
+            row.put("stddev", stats.getStandardDeviation());
+            row.put("nulls", rows.size() - stats.getCount());
+            tableOutput.putRow(row);
+        });
+        return tableOutput;
     }
 }
