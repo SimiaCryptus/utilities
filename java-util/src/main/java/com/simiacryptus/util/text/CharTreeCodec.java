@@ -252,7 +252,10 @@ public class CharTreeCodec {
     Deflater compresser = new Deflater();
     try {
       compresser.setInput(data.getBytes("UTF-8"));
-      compresser.setDictionary(dictionary.getBytes("UTF-8"));
+        if(!dictionary.isEmpty()) {
+            byte[] bytes = dictionary.getBytes("UTF-8");
+            compresser.setDictionary(bytes);
+        }
     } catch (UnsupportedEncodingException e) {
       throw new RuntimeException(e);
     }
@@ -262,11 +265,18 @@ public class CharTreeCodec {
     return Arrays.copyOf(output, compressedDataLength);
   }
 
-  public static String decodeLZ(byte[] data, String dictionary) {
+    public static String decodeLZ(byte[] data) {
+      return decodeLZ(data, "");
+    }
+
+    public static String decodeLZ(byte[] data, String dictionary) {
     try {
       Inflater decompresser = new Inflater();
       decompresser.setInput(data, 0, data.length);
-      decompresser.setDictionary(dictionary.getBytes("UTF-8"));
+      if(!dictionary.isEmpty()) {
+          byte[] bytes = dictionary.getBytes("UTF-8");
+          decompresser.setDictionary(bytes);
+      }
       byte[] result = new byte[100];
       int resultLength = 0;
       resultLength = decompresser.inflate(result);

@@ -17,7 +17,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-public class WikiArticle {
+public class WikiArticle extends TestDocument {
 
     public static Stream<WikiArticle> load() {
         String url = "https://dumps.wikimedia.org/enwiki/latest/enwiki-latest-pages-articles-multistream.xml.bz2";
@@ -146,11 +146,7 @@ public class WikiArticle {
         }, Spliterator.DISTINCT), false).filter(x->x!=null);
     }
 
-    public final String title;
-    public final String text;
-
     public WikiArticle(String title, String text) {
-        this.title = title;
-        this.text = text;
+        super(title, text);
     }
 }

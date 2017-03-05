@@ -15,7 +15,7 @@ import java.util.stream.StreamSupport;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-public class TweetSentiment {
+public class TweetSentiment extends TestDocument {
 
     public static Stream<TweetSentiment> load() {
         String url = "http://thinknook.com/wp-content/uploads/2012/09/Sentiment-Analysis-Dataset.zip";
@@ -79,10 +79,9 @@ public class TweetSentiment {
     }
 
     public final int category;
-    public final String text;
 
     public TweetSentiment(String text, int category) {
+        super(text, text);
         this.category = category;
-        this.text = text;
     }
 }

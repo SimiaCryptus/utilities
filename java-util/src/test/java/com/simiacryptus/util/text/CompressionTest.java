@@ -1,6 +1,7 @@
 package com.simiacryptus.util.text;
 
 import com.simiacryptus.util.binary.Bits;
+import com.simiacryptus.util.test.TestDocument;
 import com.simiacryptus.util.test.TweetSentiment;
 import com.simiacryptus.util.test.WikiArticle;
 import org.junit.Test;
@@ -8,7 +9,9 @@ import org.junit.Test;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -53,7 +56,7 @@ public class CompressionTest {
   }
 
   @Test
-  public void calcTweetCompression() throws Exception {
+  public void calcTweetCompression2() throws Exception {
     int maxLevels = 5;
     int minWeight = 1;
     int modelCount = 100000;
@@ -68,7 +71,7 @@ public class CompressionTest {
   }
 
   @Test
-  public void calcWikiCompression() throws Exception {
+  public void calcWikiCompression2() throws Exception {
     int maxLevels = 9;
     int minWeight = 3;
     int modelCount = 100;
@@ -145,6 +148,93 @@ public class CompressionTest {
       }
     });
     return output;
+  }
+
+  @Test
+  public void calcTweetCompression() throws Exception {
+    int ppmModelDepth = 9;
+    int model_minPathWeight = 3;
+    int dictionary_lookahead = 2;
+    int dictionary_context = 6;
+    int encodingContext = 2;
+    int modelCount = 10000;
+    int testCount = 100;
+    Supplier<Stream<? extends TestDocument>> source = ()->TweetSentiment.load().limit(modelCount + testCount);
+
+    Map<String, Compressor> compressors = buildCompressors(source, ppmModelDepth, model_minPathWeight, dictionary_lookahead, dictionary_context, encodingContext, modelCount);
+    TableOutput output = Compressor.evalTable(source.get().skip(modelCount), compressors, true);
+    System.out.println(output.toTextTable());
+  }
+
+  @Test
+  public void calcWikiCompression() throws Exception {
+    int ppmModelDepth = 9;
+    int model_minPathWeight = 3;
+    int dictionary_lookahead = 2;
+    int dictionary_context = 6;
+    int encodingContext = 2;
+    int modelCount = 100;
+    int testCount = 100;
+    Supplier<Stream<? extends TestDocument>> source = ()->WikiArticle.load().filter(x -> x.text.length() > 8 * 1024).limit(modelCount + testCount);
+
+    Map<String, Compressor> compressors = buildCompressors(source, ppmModelDepth, model_minPathWeight, dictionary_lookahead, dictionary_context, encodingContext, modelCount);
+    TableOutput output = Compressor.evalTable(source.get().skip(modelCount), compressors, true);
+    System.out.println(output.toTextTable());
+  }
+
+  protected Map<String, Compressor> buildCompressors(Supplier<Stream<? extends TestDocument>> source, int ppmModelDepth, int model_minPathWeight, final int dictionary_lookahead, final int dictionary_context, final int encodingContext, int modelCount) {
+    Map<String, Compressor> compressors = new LinkedHashMap<>();
+    Compressor.addGenericCompressors(compressors);
+
+    CharTree baseTree = new CharTree();
+    System.out.println(String.format("Preparing %s documents", modelCount));
+    source.get().limit(modelCount).forEach(txt -> {
+      //System.out.println(String.format("Adding %s", txt.title));
+      baseTree.addDocument(txt.text);
+    });
+    System.out.println(String.format("Indexing %s KB of documents", baseTree.getIndexedSize() / 1024));
+    baseTree.index(ppmModelDepth, model_minPathWeight);
+
+    try {
+      System.out.println(String.format("Generating dictionaries"));
+      addSharedDictionaryCompressors(compressors, baseTree, dictionary_lookahead, dictionary_context, model_minPathWeight);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
+    compressors.put("PPM" + encodingContext, Compressor.buildPPMCompressor(baseTree, encodingContext));
+
+    return compressors;
+  }
+
+  public static void addSharedDictionaryCompressors(
+          Map<String, Compressor> compressors, final CharTree baseTree, final int dictionary_lookahead, final int dictionary_context, int model_minPathWeight) {
+    CharTree dictionaryTree = baseTree.copy().index(dictionary_context + dictionary_lookahead, model_minPathWeight);
+    compressors.put("LZ8k", new Compressor() {
+      String dictionary = dictionaryTree.copy().codec.generateDictionary(8*1024, dictionary_context, "", dictionary_lookahead, true);
+      @Override
+      public byte[] compress(String text) {
+        return CharTreeCodec.encodeLZ(text, dictionary);
+      }
+
+      @Override
+      public String uncompress(byte[] data) {
+        return CharTreeCodec.decodeLZ(data, dictionary);
+      }
+    });
+
+    compressors.put("BZ64k", new Compressor() {
+      String dictionary = dictionaryTree.copy().codec.generateDictionary(64*1024, dictionary_context, "", dictionary_lookahead, true);
+      @Override
+      public byte[] compress(String text) {
+        return CharTreeCodec.encodeBZ(text, dictionary);
+      }
+
+      @Override
+      public String uncompress(byte[] data) {
+        return CharTreeCodec.decodeBZ(data, dictionary);
+      }
+    });
   }
 
 }
