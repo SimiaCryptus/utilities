@@ -42,6 +42,7 @@ public interface Compressor {
           rowWide.put(name + ".verified", uncompress.obj.equals(item.text));
           rowTall.put("verified", uncompress.obj.equals(item.text));
           tallTable.putRow(rowTall);
+          System.out.println(String.format("Evaluated %s with %s", name, title));
         } catch (Exception e) {
           e.printStackTrace();
         }
