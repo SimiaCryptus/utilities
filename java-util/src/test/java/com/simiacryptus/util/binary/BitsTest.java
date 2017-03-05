@@ -1,8 +1,10 @@
 package com.simiacryptus.util.binary;
 
+import com.simiacryptus.util.test.TestCategories;
 import org.json.JSONException;
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import java.io.IOException;
 import java.util.Random;
@@ -17,6 +19,7 @@ public class BitsTest
   }
 
   @Test
+  @Category(TestCategories.UnitTest.class)
   public void testConcatenate() throws JSONException, IOException
   {
     for (int i = 0; i < 1000; i++)
@@ -26,6 +29,7 @@ public class BitsTest
   }
 
   @Test
+  @Category(TestCategories.UnitTest.class)
   public void testDivide() throws JSONException, IOException
   {
     Assert.assertEquals("1", Bits.divide(2, 2, 10).toBitString());
@@ -38,6 +42,7 @@ public class BitsTest
   }
 
   @Test
+  @Category(TestCategories.UnitTest.class)
   public void testBitStream() throws JSONException, IOException
   {
     Bits totalBits = BitOutputStream.toBits(out->{
@@ -52,6 +57,7 @@ public class BitsTest
   }
 
   @Test
+  @Category(TestCategories.UnitTest.class)
   public void testInterval() throws JSONException, IOException
   {
     Assert.assertEquals("1", new Interval(1, 2, 3).toBits().toBitString());
@@ -86,6 +92,7 @@ public class BitsTest
   }
   
   @Test
+  @Category(TestCategories.UnitTest.class)
   public void testFixedLength() throws JSONException, IOException
   {
     for (int i = 0; i < 1000; i++)
@@ -107,6 +114,7 @@ public class BitsTest
   }
   
   @Test
+  @Category(TestCategories.UnitTest.class)
   public void testHardcoded() throws JSONException, IOException
   {
     Assert.assertEquals(new Bits(0), new Bits(0));
@@ -137,6 +145,7 @@ public class BitsTest
   }
   
   @Test
+  @Category(TestCategories.UnitTest.class)
   public void testSubrange() throws JSONException, IOException
   {
     for (int i = 0; i < 1000; i++)
@@ -169,6 +178,7 @@ public class BitsTest
   }
   
   @Test
+  @Category(TestCategories.UnitTest.class)
   public void testToString() throws JSONException, IOException
   {
     for (int i = 0; i < 1000; i++)

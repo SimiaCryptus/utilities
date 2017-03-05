@@ -1,7 +1,9 @@
 package com.simiacryptus.util.text;
 
+import com.simiacryptus.util.test.TestCategories;
 import junit.framework.Assert;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,6 +26,7 @@ public class CharTreeTest {
   }
 
   @Test
+  @Category(TestCategories.UnitTest.class)
   public void testFunctionality() throws IOException {
     CharTree tree = new CharTree().addDocument("a quick brown fox jumped over the lazy dog")
         .addDocument("this is a test. this is only a test. - nikola tesla").index(3).truncate();
@@ -40,6 +43,7 @@ public class CharTreeTest {
   }
 
   @Test
+  @Category(TestCategories.UnitTest.class)
   public void testPerformance() throws IOException {
     CharTree tree = new CharTree();
     IntStream.range(0, 30000).parallel().forEach(i -> tree.addDocument(UUID.randomUUID().toString()));
@@ -50,6 +54,7 @@ public class CharTreeTest {
   }
 
   @Test
+  @Category(TestCategories.UnitTest.class)
   public void testPerformanceMatrix() throws IOException {
     for (int count = 100; count < 50000; count *= 2) {
       for (int maxLevels = 1; maxLevels < 64; maxLevels = Math.max((int) (maxLevels * 4), maxLevels + 1)) {

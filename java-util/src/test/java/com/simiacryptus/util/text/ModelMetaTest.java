@@ -1,11 +1,14 @@
 package com.simiacryptus.util.text;
 
+import com.simiacryptus.util.test.TestCategories;
 import com.simiacryptus.util.test.TestDocument;
 import com.simiacryptus.util.test.TweetSentiment;
 import com.simiacryptus.util.test.WikiArticle;
-import org.testng.annotations.Test;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
@@ -50,20 +53,22 @@ public abstract class ModelMetaTest {
   }
 
   @Test
+  @Category(TestCategories.ResearchCode.class)
   public void calcSharedDictionariesLZ() throws Exception {
+    MarkdownPrintStream log = new MarkdownPrintStream(new FileOutputStream("src/site/markdown/calcSharedDictionariesLZ"+getClass().getSimpleName()+".md")).addCopy(System.out);
     CharTree baseTree = new CharTree();
-    System.out.println(String.format("Preparing %s documents", getModelCount()));
+    log.out("Preparing %s documents", getModelCount());
     source().limit(getModelCount()).forEach(txt -> {
       //System.out.println(String.format("Adding %s", txt.title));
       baseTree.addDocument(txt.text);
     });
-    System.out.println(String.format("Indexing %s KB of documents", baseTree.getIndexedSize() / 1024));
+    log.out("Indexing %s KB of documents", baseTree.getIndexedSize() / 1024);
     Map<String, Compressor> compressors = new LinkedHashMap<>();
 
     for(int dictionary_context : Arrays.asList(4,5,6)) {
       int model_minPathWeight = 3;
       int dictionary_lookahead = 2;
-      System.out.println(String.format("Generating dictionaries"));
+      log.out("Generating dictionaries");
       CharTree dictionaryTree = baseTree.copy().index(dictionary_context + dictionary_lookahead, model_minPathWeight);
 
       compressors.put(String.format("LZ8k_%s", dictionary_context), new Compressor() {
@@ -81,25 +86,28 @@ public abstract class ModelMetaTest {
     }
 
     TableOutput output = Compressor.evalTable(source().skip(getModelCount()), compressors, true);
-    System.out.println(output.toTextTable());
-    System.out.println(output.calcNumberStats().toTextTable());
+    log.out(output.toTextTable());
+    log.out(output.calcNumberStats().toTextTable());
+    log.close();
   }
 
   @Test
+  @Category(TestCategories.ResearchCode.class)
   public void calcSharedDictionariesBZ() throws Exception {
+    MarkdownPrintStream log = new MarkdownPrintStream(new FileOutputStream("src/site/markdown/calcSharedDictionariesBZ"+getClass().getSimpleName()+".md")).addCopy(System.out);
     CharTree baseTree = new CharTree();
-    System.out.println(String.format("Preparing %s documents", getModelCount()));
+    log.out("Preparing %s documents", getModelCount());
     source().limit(getModelCount()).forEach(txt -> {
       //System.out.println(String.format("Adding %s", txt.title));
       baseTree.addDocument(txt.text);
     });
-    System.out.println(String.format("Indexing %s KB of documents", baseTree.getIndexedSize() / 1024));
+    log.out("Indexing %s KB of documents", baseTree.getIndexedSize() / 1024);
     Map<String, Compressor> compressors = new LinkedHashMap<>();
 
     for(int dictionary_context : Arrays.asList(4,5,6)) {
       int model_minPathWeight = 3;
       int dictionary_lookahead = 2;
-      System.out.println(String.format("Generating dictionaries"));
+      log.out("Generating dictionaries");
       CharTree dictionaryTree = baseTree.copy().index(dictionary_context + dictionary_lookahead, model_minPathWeight);
 
       compressors.put(String.format("BZ64k_%s", dictionary_context), new Compressor() {
@@ -116,19 +124,22 @@ public abstract class ModelMetaTest {
       });
     }
     TableOutput output = Compressor.evalTable(source().skip(getModelCount()), compressors, true);
-    System.out.println(output.toTextTable());
-    System.out.println(output.calcNumberStats().toTextTable());
+    log.out(output.toTextTable());
+    log.out(output.calcNumberStats().toTextTable());
+    log.close();
   }
 
   @Test
+  @Category(TestCategories.ResearchCode.class)
   public void calcCompressorPPM() throws Exception {
+    MarkdownPrintStream log = new MarkdownPrintStream(new FileOutputStream("src/site/markdown/calcCompressorPPM"+getClass().getSimpleName()+".md")).addCopy(System.out);
     CharTree baseTree = new CharTree();
-    System.out.println(String.format("Preparing %s documents", getModelCount()));
+    log.out("Preparing %s documents", getModelCount());
     source().limit(getModelCount()).forEach(txt -> {
       //System.out.println(String.format("Adding %s", txt.title));
       baseTree.addDocument(txt.text);
     });
-    System.out.println(String.format("Indexing %s KB of documents", baseTree.getIndexedSize() / 1024));
+    log.out("Indexing %s KB of documents", baseTree.getIndexedSize() / 1024);
 
     Map<String, Compressor> compressors = new LinkedHashMap<>();
 
@@ -142,8 +153,9 @@ public abstract class ModelMetaTest {
     }
 
     TableOutput output = Compressor.evalTable(source().skip(getModelCount()), compressors, true);
-    System.out.println(output.toTextTable());
-    System.out.println(output.calcNumberStats().toTextTable());
+    log.out(output.toTextTable());
+    log.out(output.calcNumberStats().toTextTable());
+    log.close();
   }
 
 

@@ -1,12 +1,16 @@
 package com.simiacryptus.util.text;
 
+import com.simiacryptus.util.test.TestCategories;
 import com.simiacryptus.util.test.TestDocument;
 import com.simiacryptus.util.test.WikiArticle;
-import org.testng.annotations.Test;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.net.URL;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -34,14 +38,18 @@ public abstract class ModelClusterTest {
   }
 
   @Test
-  public void calcSharedDictionariesLZ() throws Exception {
+  @Category(TestCategories.ResearchCode.class)
+  public void clusterSharedDictionariesLZ() throws Exception {
+    MarkdownPrintStream log = new MarkdownPrintStream(new FileOutputStream("src/site/markdown/clusterSharedDictionariesLZ"+getClass().getSimpleName()+".md")).addCopy(System.out);
     int dictionary_context = 5;
     int model_minPathWeight = 3;
     int dictionary_lookahead = 2;
     int index = 0;
 
     Map<String, Compressor> compressors = new LinkedHashMap<>();
-    for(TestDocument text : source().limit(getModelCount()).collect(Collectors.toList())) {
+    Stream<TestDocument> limit = source().limit(getModelCount()).map(x->x);
+    List<TestDocument> collect = limit.collect(Collectors.toList());
+    for(TestDocument text : collect) {
       CharTree baseTree = new CharTree();
       baseTree.addDocument(text.text);
       CharTree dictionaryTree = baseTree.copy().index(dictionary_context + dictionary_lookahead, model_minPathWeight);
@@ -59,20 +67,24 @@ public abstract class ModelClusterTest {
     }
 
     TableOutput output = Compressor.evalTable(source().skip(getModelCount()), compressors, true);
-    System.out.println(output.toTextTable());
+    log.out(output.toTextTable());
+    log.close();
     String outputDirName = String.format("cluster_%s_LZ/", getClass().getSimpleName());
     output.writeProjectorData(new File(outPath, outputDirName), new URL(outBaseUrl, outputDirName));
   }
 
   @Test
+  @Category(TestCategories.ResearchCode.class)
   public void calcCompressorPPM() throws Exception {
+    MarkdownPrintStream log = new MarkdownPrintStream(new FileOutputStream("src/site/markdown/calcCompressorPPM"+getClass().getSimpleName()+".md")).addCopy(System.out);
     int ppmModelDepth = 6;
     int model_minPathWeight = 3;
     int index = 0;
     int encodingContext = 2;
 
     Map<String, Compressor> compressors = new LinkedHashMap<>();
-    for(TestDocument text : source().limit(getModelCount()).collect(Collectors.toList())) {
+    Stream<TestDocument> stream = source().limit(getModelCount()).map(x -> x);
+    for(TestDocument text : stream.collect(Collectors.toList())) {
       CharTree baseTree = new CharTree();
       baseTree.addDocument(text.text);
       CharTree ppmTree = baseTree.copy().index(ppmModelDepth, model_minPathWeight);
@@ -82,7 +94,7 @@ public abstract class ModelClusterTest {
     }
 
     TableOutput output = Compressor.evalTable(source().skip(getModelCount()), compressors, true);
-    System.out.println(output.toTextTable());
+    log.out(output.toTextTable());
     String outputDirName = String.format("cluster_%s_PPM/", getClass().getSimpleName());
     output.writeProjectorData(new File(outPath, outputDirName), new URL(outBaseUrl, outputDirName));
   }

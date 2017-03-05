@@ -1,16 +1,16 @@
 package com.simiacryptus.util.codes;
 
+import com.simiacryptus.util.binary.BitInputStream;
+import com.simiacryptus.util.binary.BitOutputStream;
+import com.simiacryptus.util.test.TestCategories;
+import junit.framework.Assert;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Random;
-
-import junit.framework.Assert;
-
-import org.junit.Test;
-
-import com.simiacryptus.util.binary.BitInputStream;
-import com.simiacryptus.util.binary.BitOutputStream;
 
 public class GaussianTest
 {
@@ -56,6 +56,7 @@ public class GaussianTest
   }
   
   @Test
+  @Category(TestCategories.UnitTest.class)
   public void testBinomialRandom() throws IOException
   {
     final Random random = new Random();
@@ -74,6 +75,7 @@ public class GaussianTest
   }
   
   @Test
+  @Category(TestCategories.UnitTest.class)
   public void testBinomialScan() throws IOException
   {
     for (double probability = 0.01; probability <= 0.99; probability += .01)
@@ -89,6 +91,7 @@ public class GaussianTest
   }
   
   @Test
+  @Category(TestCategories.UnitTest.class)
   public void testHardcodedGaussians() throws IOException
   {
     System.out.println(String.format("T: %s",
@@ -111,6 +114,7 @@ public class GaussianTest
   }
   
   @Test
+  @Category(TestCategories.UnitTest.class)
   public void testZeros() throws IOException
   {
     for (int value = 0; value <= 0; value++)
