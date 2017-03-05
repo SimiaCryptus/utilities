@@ -21,7 +21,7 @@ public class MarkdownPrintStream extends PrintStream {
     @Override
     public void println(String x) {
         super.println(x);
-        teeStreams.forEach(PrintStream::println);
+        teeStreams.forEach(t->t.println(x));
     }
 
     public void out(String fmt, Object... args) {

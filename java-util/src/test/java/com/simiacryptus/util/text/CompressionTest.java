@@ -69,7 +69,7 @@ public class CompressionTest {
   }
 
   @Test
-  @Category(TestCategories.UnitTest.class)
+  @Category(TestCategories.ResearchCode.class)
   public void calcTweetCompression() throws Exception {
     int ppmModelDepth = 9;
     int model_minPathWeight = 3;
@@ -89,7 +89,7 @@ public class CompressionTest {
   }
 
   @Test
-  @Category(TestCategories.UnitTest.class)
+  @Category(TestCategories.ResearchCode.class)
   public void calcWikiCompression() throws Exception {
     int ppmModelDepth = 9;
     int model_minPathWeight = 3;
@@ -100,7 +100,7 @@ public class CompressionTest {
     int testCount = 100;
     Supplier<Stream<? extends TestDocument>> source = ()->WikiArticle.load().filter(x -> x.text.length() > 8 * 1024).limit(modelCount + testCount);
 
-    MarkdownPrintStream log = new MarkdownPrintStream(new FileOutputStream("src/site/markdown/calcTweetCompression.md")).addCopy(System.out);
+    MarkdownPrintStream log = new MarkdownPrintStream(new FileOutputStream("src/site/markdown/calcWikiCompression.md")).addCopy(System.out);
     Map<String, Compressor> compressors = buildCompressors(source, ppmModelDepth, model_minPathWeight, dictionary_lookahead, dictionary_context, encodingContext, modelCount);
     TableOutput output = Compressor.evalTable(source.get().skip(modelCount), compressors, true);
     log.out(output.toTextTable());

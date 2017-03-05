@@ -128,8 +128,13 @@ public class TableOutput {
                                 default:
                                     return "%s";
                             }
-                        }).collect(Collectors.joining("\t"));
-                printStream.println(schema.entrySet().stream().map(x->x.getKey()).collect(Collectors.joining("\t")));
+                        }).collect(Collectors.joining(" | "));
+                printStream.println(schema.entrySet().stream().map(x->x.getKey()).collect(Collectors.joining(" | ")));
+                printStream.println(schema.entrySet().stream().map(x->x.getKey()).map(x->{
+                    char[] t = new char[x.length()];
+                    Arrays.fill(t, '-');
+                    return new String(t);
+                }).collect(Collectors.joining(" | ")));
                 for(Map<String, Object> row : rows) {
                     printStream.println(String.format(formatString, schema.entrySet().stream().map(e->row.get(e.getKey())).toArray()));
                 }
