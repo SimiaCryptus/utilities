@@ -100,7 +100,7 @@
 <tr>  <td class="numLineCover">&nbsp;51</td>  <td class="nbHitsCovered"><a title="Line 51: Conditional coverage 100% (2/2).">&nbsp;6464064</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 51: Conditional coverage 100% (2/2).">    <span class="keyword">if</span> (0 &gt; bits)</a></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;52</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;53</td>  <td class="nbHitsCovered">&nbsp;5838</td>  <td class="src"><pre class="src">&nbsp;      bits = 0;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;53</td>  <td class="nbHitsCovered">&nbsp;20263</td>  <td class="src"><pre class="src">&nbsp;      bits = 0;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;54</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
 <tr>  <td class="numLineCover">&nbsp;55</td>  <td class="nbHitsCovered">&nbsp;6464064</td>  <td class="src"><pre class="src">&nbsp;    <span class="keyword">final</span> <span class="keyword">long</span> centralWindow = 1l &lt;&lt; bits;</pre></td></tr>
@@ -131,7 +131,7 @@
 <tr>  <td class="numLineCover">&nbsp;73</td>  <td class="nbHitsCovered"><a title="Line 73: Conditional coverage 100% (2/2).">&nbsp;6463154</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 73: Conditional coverage 100% (2/2).">    <span class="keyword">if</span> (in.readBool())</a></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;74</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;75</td>  <td class="nbHitsCovered">&nbsp;227455</td>  <td class="src"><pre class="src">&nbsp;      <span class="keyword">return</span> in.readBoundedLong(centralWindow) + stdDevWindowStart;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;75</td>  <td class="nbHitsCovered">&nbsp;224638</td>  <td class="src"><pre class="src">&nbsp;      <span class="keyword">return</span> in.readBoundedLong(centralWindow) + stdDevWindowStart;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;76</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;77</td>  <td class="nbHits">&nbsp;</td>
@@ -140,13 +140,13 @@
   <td class="src"><pre class="src">&nbsp;    {</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;79</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;      <span class="keyword">boolean</span> side;</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;80</td>  <td class="nbHitsCovered"><a title="Line 80: Conditional coverage 100% (2/2).">&nbsp;6235699</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 80: Conditional coverage 100% (2/2).">      <span class="keyword">if</span> (stdDevWindowStart &lt;= 0)</a></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;80</td>  <td class="nbHitsCovered"><a title="Line 80: Conditional coverage 100% (2/2).">&nbsp;6238516</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 80: Conditional coverage 100% (2/2).">      <span class="keyword">if</span> (stdDevWindowStart &lt;= 0)</a></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;81</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;      {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;82</td>  <td class="nbHitsCovered">&nbsp;10468</td>  <td class="src"><pre class="src">&nbsp;        side = <span class="keyword">true</span>;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;82</td>  <td class="nbHitsCovered">&nbsp;43543</td>  <td class="src"><pre class="src">&nbsp;        side = <span class="keyword">true</span>;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;83</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;      }</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;84</td>  <td class="nbHitsCovered"><a title="Line 84: Conditional coverage 100% (2/2).">&nbsp;6225231</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 84: Conditional coverage 100% (2/2).">      <span class="keyword">else</span> <span class="keyword">if</span> (stdDevWindowEnd &gt; max)</a></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;84</td>  <td class="nbHitsCovered"><a title="Line 84: Conditional coverage 100% (2/2).">&nbsp;6194973</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 84: Conditional coverage 100% (2/2).">      <span class="keyword">else</span> <span class="keyword">if</span> (stdDevWindowEnd &gt; max)</a></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;85</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;      {</pre></td></tr>
 <tr>  <td class="numLineCover">&nbsp;86</td>  <td class="nbHitsCovered">&nbsp;248</td>  <td class="src"><pre class="src">&nbsp;        side = <span class="keyword">false</span>;</pre></td></tr>
@@ -156,20 +156,20 @@
   <td class="src"><pre class="src">&nbsp;      <span class="keyword">else</span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;89</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;      {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;90</td>  <td class="nbHitsCovered">&nbsp;6224983</td>  <td class="src"><pre class="src">&nbsp;        side = in.readBool();</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;90</td>  <td class="nbHitsCovered">&nbsp;6194725</td>  <td class="src"><pre class="src">&nbsp;        side = in.readBool();</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;91</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;      }</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;92</td>  <td class="nbHitsCovered"><a title="Line 92: Conditional coverage 100% (2/2).">&nbsp;6235699</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 92: Conditional coverage 100% (2/2).">      <span class="keyword">if</span> (side)</a></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;92</td>  <td class="nbHitsCovered"><a title="Line 92: Conditional coverage 100% (2/2).">&nbsp;6238516</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 92: Conditional coverage 100% (2/2).">      <span class="keyword">if</span> (side)</a></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;93</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;      {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;94</td>  <td class="nbHitsCovered">&nbsp;3117151</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> stdDevWindowEnd + in.readBoundedLong(1 + max - stdDevWindowEnd);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;94</td>  <td class="nbHitsCovered">&nbsp;3334224</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> stdDevWindowEnd + in.readBoundedLong(1 + max - stdDevWindowEnd);</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;95</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;      }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;96</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;      <span class="keyword">else</span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;97</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;      {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;98</td>  <td class="nbHitsCovered">&nbsp;3118548</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> in.readBoundedLong(stdDevWindowStart);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;98</td>  <td class="nbHitsCovered">&nbsp;2904292</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> in.readBoundedLong(stdDevWindowStart);</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;99</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;      }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;100</td>  <td class="nbHits">&nbsp;</td>
@@ -189,7 +189,7 @@
 <tr>  <td class="numLineCover">&nbsp;108</td>  <td class="nbHitsCovered"><a title="Line 108: Conditional coverage 100% (2/2).">&nbsp;6464064</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 108: Conditional coverage 100% (2/2).">    <span class="keyword">if</span> (0 &gt; bits)</a></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;109</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;110</td>  <td class="nbHitsCovered">&nbsp;5838</td>  <td class="src"><pre class="src">&nbsp;      bits = 0;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;110</td>  <td class="nbHitsCovered">&nbsp;20263</td>  <td class="src"><pre class="src">&nbsp;      bits = 0;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;111</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
 <tr>  <td class="numLineCover">&nbsp;112</td>  <td class="nbHitsCovered">&nbsp;6464064</td>  <td class="src"><pre class="src">&nbsp;    <span class="keyword">final</span> <span class="keyword">long</span> centralWindow = 1l &lt;&lt; bits;</pre></td></tr>
@@ -226,35 +226,35 @@
 <tr>  <td class="numLineCover">&nbsp;134</td>  <td class="nbHitsCovered"><a title="Line 134: Conditional coverage 100% (2/2).">&nbsp;6463154</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 134: Conditional coverage 100% (2/2).">    <span class="keyword">if</span> (value &lt; stdDevWindowStart)</a></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;135</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;136</td>  <td class="nbHitsCovered">&nbsp;3118548</td>  <td class="src"><pre class="src">&nbsp;      out.write(<span class="keyword">false</span>);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;137</td>  <td class="nbHitsCovered"><a title="Line 137: Conditional coverage 100% (2/2).">&nbsp;3118548</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 137: Conditional coverage 100% (2/2).">      <span class="keyword">if</span> (stdDevWindowEnd &lt;= max)</a></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;136</td>  <td class="nbHitsCovered">&nbsp;2904292</td>  <td class="src"><pre class="src">&nbsp;      out.write(<span class="keyword">false</span>);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;137</td>  <td class="nbHitsCovered"><a title="Line 137: Conditional coverage 100% (2/2).">&nbsp;2904292</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 137: Conditional coverage 100% (2/2).">      <span class="keyword">if</span> (stdDevWindowEnd &lt;= max)</a></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;138</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;      {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;139</td>  <td class="nbHitsCovered">&nbsp;3118300</td>  <td class="src"><pre class="src">&nbsp;        out.write(<span class="keyword">false</span>);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;139</td>  <td class="nbHitsCovered">&nbsp;2904044</td>  <td class="src"><pre class="src">&nbsp;        out.write(<span class="keyword">false</span>);</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;140</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;      }</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;141</td>  <td class="nbHitsCovered">&nbsp;3118548</td>  <td class="src"><pre class="src">&nbsp;      out.writeBoundedLong(value, stdDevWindowStart);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;141</td>  <td class="nbHitsCovered">&nbsp;2904292</td>  <td class="src"><pre class="src">&nbsp;      out.writeBoundedLong(value, stdDevWindowStart);</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;142</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;143</td>  <td class="nbHitsCovered"><a title="Line 143: Conditional coverage 100% (2/2).">&nbsp;3344606</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 143: Conditional coverage 100% (2/2).">    <span class="keyword">else</span> <span class="keyword">if</span> (value &lt; stdDevWindowEnd)</a></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;143</td>  <td class="nbHitsCovered"><a title="Line 143: Conditional coverage 100% (2/2).">&nbsp;3558862</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 143: Conditional coverage 100% (2/2).">    <span class="keyword">else</span> <span class="keyword">if</span> (value &lt; stdDevWindowEnd)</a></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;144</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;145</td>  <td class="nbHitsCovered">&nbsp;227455</td>  <td class="src"><pre class="src">&nbsp;      out.write(<span class="keyword">true</span>);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;146</td>  <td class="nbHitsCovered">&nbsp;227455</td>  <td class="src"><pre class="src">&nbsp;      out.writeBoundedLong(value - stdDevWindowStart, centralWindow);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;145</td>  <td class="nbHitsCovered">&nbsp;224638</td>  <td class="src"><pre class="src">&nbsp;      out.write(<span class="keyword">true</span>);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;146</td>  <td class="nbHitsCovered">&nbsp;224638</td>  <td class="src"><pre class="src">&nbsp;      out.writeBoundedLong(value - stdDevWindowStart, centralWindow);</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;147</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;148</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    <span class="keyword">else</span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;149</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;150</td>  <td class="nbHitsCovered">&nbsp;3117151</td>  <td class="src"><pre class="src">&nbsp;      out.write(<span class="keyword">false</span>);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;151</td>  <td class="nbHitsCovered"><a title="Line 151: Conditional coverage 100% (2/2).">&nbsp;3117151</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 151: Conditional coverage 100% (2/2).">      <span class="keyword">if</span> (stdDevWindowStart &gt; 0)</a></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;150</td>  <td class="nbHitsCovered">&nbsp;3334224</td>  <td class="src"><pre class="src">&nbsp;      out.write(<span class="keyword">false</span>);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;151</td>  <td class="nbHitsCovered"><a title="Line 151: Conditional coverage 100% (2/2).">&nbsp;3334224</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 151: Conditional coverage 100% (2/2).">      <span class="keyword">if</span> (stdDevWindowStart &gt; 0)</a></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;152</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;      {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;153</td>  <td class="nbHitsCovered">&nbsp;3106683</td>  <td class="src"><pre class="src">&nbsp;        out.write(<span class="keyword">true</span>);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;153</td>  <td class="nbHitsCovered">&nbsp;3290681</td>  <td class="src"><pre class="src">&nbsp;        out.write(<span class="keyword">true</span>);</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;154</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;      }</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;155</td>  <td class="nbHitsCovered">&nbsp;3117151</td>  <td class="src"><pre class="src">&nbsp;      out.writeBoundedLong(value - stdDevWindowEnd, 1 + max - stdDevWindowEnd);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;155</td>  <td class="nbHitsCovered">&nbsp;3334224</td>  <td class="src"><pre class="src">&nbsp;      out.writeBoundedLong(value - stdDevWindowEnd, 1 + max - stdDevWindowEnd);</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;156</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
 <tr>  <td class="numLineCover">&nbsp;157</td>  <td class="nbHitsCovered">&nbsp;6463154</td>  <td class="src"><pre class="src">&nbsp;  }</pre></td></tr>
@@ -264,6 +264,6 @@
   <td class="src"><pre class="src">&nbsp;}</pre></td></tr>
 </table>
 
-<div class="footer">Report generated by <a href="http://cobertura.sourceforge.net/" target="_top">Cobertura</a> 2.1.1 on 3/5/17 1:02 PM.</div>
+<div class="footer">Report generated by <a href="http://cobertura.sourceforge.net/" target="_top">Cobertura</a> 2.1.1 on 3/6/17 12:42 AM.</div>
 </body>
 </html>

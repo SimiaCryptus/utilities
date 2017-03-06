@@ -12,7 +12,7 @@
 <div class="separator">&nbsp;</div>
 <table class="report">
 <thead><tr>  <td class="heading">Classes in this File</td>  <td class="heading"><a class="dfn" href="help.html" onclick="popupwindow('help.html'); return false;">Line Coverage</a></td>  <td class="heading"><a class="dfn" href="help.html" onclick="popupwindow('help.html'); return false;">Branch Coverage</a></td>  <td class="heading"><a class="dfn" href="help.html" onclick="popupwindow('help.html'); return false;">Complexity</a></td></tr></thead>
-  <tr><td><a href="com.simiacryptus.util.data.SerialArrayList.html">SerialArrayList</a></td><td><table cellpadding="0px" cellspacing="0px" class="percentgraph"><tr class="percentgraph"><td align="right" class="percentgraph" width="40">89%</td><td class="percentgraph"><div class="percentgraph"><div class="greenbar" style="width:89px"><span class="text">69/77</span></div></div></td></tr></table></td><td><table cellpadding="0px" cellspacing="0px" class="percentgraph"><tr class="percentgraph"><td align="right" class="percentgraph" width="40">100%</td><td class="percentgraph"><div class="percentgraph"><div class="greenbar" style="width:100px"><span class="text">12/12</span></div></div></td></tr></table></td><td class="value"><span class="hidden">0.0;</span>0</td></tr>
+  <tr><td><a href="com.simiacryptus.util.data.SerialArrayList.html">SerialArrayList</a></td><td><table cellpadding="0px" cellspacing="0px" class="percentgraph"><tr class="percentgraph"><td align="right" class="percentgraph" width="40">93%</td><td class="percentgraph"><div class="percentgraph"><div class="greenbar" style="width:93px"><span class="text">72/77</span></div></div></td></tr></table></td><td><table cellpadding="0px" cellspacing="0px" class="percentgraph"><tr class="percentgraph"><td align="right" class="percentgraph" width="40">100%</td><td class="percentgraph"><div class="percentgraph"><div class="greenbar" style="width:100px"><span class="text">12/12</span></div></div></td></tr></table></td><td class="value"><span class="hidden">0.0;</span>0</td></tr>
 
 </table>
 <div class="separator">&nbsp;</div>
@@ -41,58 +41,58 @@
   <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">int</span> unitSize;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;12</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    <span class="keyword">private</span> <span class="keyword">byte</span>[] buffer;</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;13</td>  <td class="nbHitsCovered">&nbsp;63831263</td>  <td class="src"><pre class="src">&nbsp;    <span class="keyword">private</span> <span class="keyword">int</span> maxByte = 0;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;13</td>  <td class="nbHitsCovered">&nbsp;90135500</td>  <td class="src"><pre class="src">&nbsp;    <span class="keyword">private</span> <span class="keyword">int</span> maxByte = 0;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;14</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;15</td>  <td class="nbHitsCovered">&nbsp;33033527</td>  <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> SerialArrayList(SerialType&lt;U&gt; factory, SerialArrayList&lt;U&gt;... items) {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;16</td>  <td class="nbHitsCovered">&nbsp;33098125</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">this</span>.factory = factory;</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;17</td>  <td class="nbHitsCovered">&nbsp;33137601</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">this</span>.unitSize = factory.getSize();</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;18</td>  <td class="nbHitsCovered">&nbsp;99884656</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">this</span>.maxByte = Arrays.stream(items).mapToInt(item-&gt;item.maxByte).sum();</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;19</td>  <td class="nbHitsCovered">&nbsp;33516329</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">this</span>.buffer = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="keyword">this</span>.maxByte];</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;20</td>  <td class="nbHitsCovered">&nbsp;33137996</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">int</span> cursor = 0;</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;21</td>  <td class="nbHitsCovered"><a title="Line 21: Conditional coverage 100% (2/2).">&nbsp;100510073</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 21: Conditional coverage 100% (2/2).">        <span class="keyword">for</span>(<span class="keyword">int</span> i=0;i&lt;items.length;i++) {</a></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;22</td>  <td class="nbHitsCovered">&nbsp;66120564</td>  <td class="src"><pre class="src">&nbsp;            SerialArrayList&lt;U&gt; item = items[i];</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;23</td>  <td class="nbHitsCovered">&nbsp;66149387</td>  <td class="src"><pre class="src">&nbsp;            System.arraycopy(item.buffer, 0, <span class="keyword">this</span>.buffer, cursor, item.maxByte);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;24</td>  <td class="nbHitsCovered">&nbsp;67058234</td>  <td class="src"><pre class="src">&nbsp;            cursor += item.maxByte;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;15</td>  <td class="nbHitsCovered">&nbsp;47000468</td>  <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> SerialArrayList(SerialType&lt;U&gt; factory, SerialArrayList&lt;U&gt;... items) {</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;16</td>  <td class="nbHitsCovered">&nbsp;47003529</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">this</span>.factory = factory;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;17</td>  <td class="nbHitsCovered">&nbsp;47080359</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">this</span>.unitSize = factory.getSize();</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;18</td>  <td class="nbHitsCovered">&nbsp;140275843</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">this</span>.maxByte = Arrays.stream(items).mapToInt(item-&gt;item.maxByte).sum();</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;19</td>  <td class="nbHitsCovered">&nbsp;47253259</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">this</span>.buffer = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="keyword">this</span>.maxByte];</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;20</td>  <td class="nbHitsCovered">&nbsp;46908561</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">int</span> cursor = 0;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;21</td>  <td class="nbHitsCovered"><a title="Line 21: Conditional coverage 100% (2/2).">&nbsp;141306674</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 21: Conditional coverage 100% (2/2).">        <span class="keyword">for</span>(<span class="keyword">int</span> i=0;i&lt;items.length;i++) {</a></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;22</td>  <td class="nbHitsCovered">&nbsp;93168864</td>  <td class="src"><pre class="src">&nbsp;            SerialArrayList&lt;U&gt; item = items[i];</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;23</td>  <td class="nbHitsCovered">&nbsp;93190090</td>  <td class="src"><pre class="src">&nbsp;            System.arraycopy(item.buffer, 0, <span class="keyword">this</span>.buffer, cursor, item.maxByte);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;24</td>  <td class="nbHitsCovered">&nbsp;94218921</td>  <td class="src"><pre class="src">&nbsp;            cursor += item.maxByte;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;25</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        }</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;26</td>  <td class="nbHitsCovered">&nbsp;34033163</td>  <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;26</td>  <td class="nbHitsCovered">&nbsp;47699243</td>  <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;27</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;28</td>  <td class="nbHitsCovered">&nbsp;1297913</td>  <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> SerialArrayList(SerialType&lt;U&gt; factory, Collection&lt;U&gt; items) {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;29</td>  <td class="nbHitsCovered">&nbsp;1297844</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">this</span>.factory = factory;</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;30</td>  <td class="nbHitsCovered">&nbsp;1297953</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">this</span>.unitSize = factory.getSize();</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;31</td>  <td class="nbHitsCovered">&nbsp;1297948</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">this</span>.buffer = <span class="keyword">new</span> <span class="keyword">byte</span>[items.size() * unitSize];</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;32</td>  <td class="nbHitsCovered">&nbsp;1298021</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">int</span> i=0;</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;33</td>  <td class="nbHitsCovered"><a title="Line 33: Conditional coverage 100% (2/2).">&nbsp;1298016</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 33: Conditional coverage 100% (2/2).">        <span class="keyword">for</span>(U x : items) set(i++, x);</a></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;34</td>  <td class="nbHitsCovered">&nbsp;1297276</td>  <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;28</td>  <td class="nbHitsCovered">&nbsp;1576240</td>  <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> SerialArrayList(SerialType&lt;U&gt; factory, Collection&lt;U&gt; items) {</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;29</td>  <td class="nbHitsCovered">&nbsp;1576085</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">this</span>.factory = factory;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;30</td>  <td class="nbHitsCovered">&nbsp;1576243</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">this</span>.unitSize = factory.getSize();</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;31</td>  <td class="nbHitsCovered">&nbsp;1576325</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">this</span>.buffer = <span class="keyword">new</span> <span class="keyword">byte</span>[items.size() * unitSize];</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;32</td>  <td class="nbHitsCovered">&nbsp;1576395</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">int</span> i=0;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;33</td>  <td class="nbHitsCovered"><a title="Line 33: Conditional coverage 100% (2/2).">&nbsp;1576415</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 33: Conditional coverage 100% (2/2).">        <span class="keyword">for</span>(U x : items) set(i++, x);</a></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;34</td>  <td class="nbHitsCovered">&nbsp;1576855</td>  <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;35</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;36</td>  <td class="nbHitsCovered">&nbsp;28828164</td>  <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> SerialArrayList(SerialType&lt;U&gt; factory, U... items) {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;37</td>  <td class="nbHitsCovered">&nbsp;28625329</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">this</span>.factory = factory;</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;38</td>  <td class="nbHitsCovered">&nbsp;28678110</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">this</span>.unitSize = factory.getSize();</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;39</td>  <td class="nbHitsCovered">&nbsp;28551831</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">this</span>.buffer = <span class="keyword">new</span> <span class="keyword">byte</span>[items.length * unitSize];</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;40</td>  <td class="nbHitsCovered"><a title="Line 40: Conditional coverage 100% (2/2).">&nbsp;28557807</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 40: Conditional coverage 100% (2/2).">        <span class="keyword">for</span>(<span class="keyword">int</span> i=0;i&lt;items.length;i++) set(i, items[i]);</a></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;41</td>  <td class="nbHitsCovered">&nbsp;28400442</td>  <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;36</td>  <td class="nbHitsCovered">&nbsp;40552320</td>  <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> SerialArrayList(SerialType&lt;U&gt; factory, U... items) {</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;37</td>  <td class="nbHitsCovered">&nbsp;40416215</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">this</span>.factory = factory;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;38</td>  <td class="nbHitsCovered">&nbsp;40497573</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">this</span>.unitSize = factory.getSize();</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;39</td>  <td class="nbHitsCovered">&nbsp;40397529</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">this</span>.buffer = <span class="keyword">new</span> <span class="keyword">byte</span>[items.length * unitSize];</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;40</td>  <td class="nbHitsCovered"><a title="Line 40: Conditional coverage 100% (2/2).">&nbsp;40379763</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 40: Conditional coverage 100% (2/2).">        <span class="keyword">for</span>(<span class="keyword">int</span> i=0;i&lt;items.length;i++) set(i, items[i]);</a></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;41</td>  <td class="nbHitsCovered">&nbsp;40318078</td>  <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;42</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;43</td>  <td class="nbHitsCovered">&nbsp;83</td>  <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> SerialArrayList(SerialType&lt;U&gt; factory) {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;44</td>  <td class="nbHitsCovered">&nbsp;83</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">this</span>.factory = factory;</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;45</td>  <td class="nbHitsCovered">&nbsp;83</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">this</span>.unitSize = factory.getSize();</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;46</td>  <td class="nbHitsCovered">&nbsp;83</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">this</span>.buffer = <span class="keyword">new</span> <span class="keyword">byte</span>[1024];</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;47</td>  <td class="nbHitsCovered">&nbsp;83</td>  <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;43</td>  <td class="nbHitsCovered">&nbsp;85</td>  <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> SerialArrayList(SerialType&lt;U&gt; factory) {</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;44</td>  <td class="nbHitsCovered">&nbsp;85</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">this</span>.factory = factory;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;45</td>  <td class="nbHitsCovered">&nbsp;85</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">this</span>.unitSize = factory.getSize();</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;46</td>  <td class="nbHitsCovered">&nbsp;85</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">this</span>.buffer = <span class="keyword">new</span> <span class="keyword">byte</span>[1024];</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;47</td>  <td class="nbHitsCovered">&nbsp;85</td>  <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;48</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;49</td>  <td class="nbHitsCovered">&nbsp;808683</td>  <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> SerialArrayList(SerialType&lt;U&gt; factory, <span class="keyword">int</span> size) {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;50</td>  <td class="nbHitsCovered">&nbsp;808683</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">this</span>.factory = factory;</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;51</td>  <td class="nbHitsCovered">&nbsp;808683</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">this</span>.unitSize = factory.getSize();</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;52</td>  <td class="nbHitsCovered">&nbsp;808683</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">this</span>.buffer = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="keyword">this</span>.unitSize * size];</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;53</td>  <td class="nbHitsCovered">&nbsp;808683</td>  <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;49</td>  <td class="nbHitsCovered">&nbsp;1087383</td>  <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> SerialArrayList(SerialType&lt;U&gt; factory, <span class="keyword">int</span> size) {</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;50</td>  <td class="nbHitsCovered">&nbsp;1087383</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">this</span>.factory = factory;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;51</td>  <td class="nbHitsCovered">&nbsp;1087383</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">this</span>.unitSize = factory.getSize();</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;52</td>  <td class="nbHitsCovered">&nbsp;1087383</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">this</span>.buffer = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="keyword">this</span>.unitSize * size];</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;53</td>  <td class="nbHitsCovered">&nbsp;1087383</td>  <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;54</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;55</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> SerialArrayList&lt;U&gt; add(SerialArrayList&lt;U&gt; right) {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;56</td>  <td class="nbHitsCovered">&nbsp;33656704</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> <span class="keyword">new</span> SerialArrayList&lt;U&gt;(factory, <span class="keyword">this</span>, right);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;56</td>  <td class="nbHitsCovered">&nbsp;47606874</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> <span class="keyword">new</span> SerialArrayList&lt;U&gt;(factory, <span class="keyword">this</span>, right);</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;57</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;58</td>  <td class="nbHits">&nbsp;</td>
@@ -102,15 +102,15 @@
 <tr>  <td class="numLineCover">&nbsp;61</td>  <td class="nbHitsCovered">&nbsp;83</td>  <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;62</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> <span class="keyword">int</span> length() {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;63</td>  <td class="nbHitsCovered">&nbsp;5705151</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> maxByte / unitSize;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;63</td>  <td class="nbHitsCovered">&nbsp;7313309</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> maxByte / unitSize;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;64</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;65</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> U get(<span class="keyword">int</span> i) {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;66</td>  <td class="nbHitsCovered">&nbsp;37598959</td>  <td class="src"><pre class="src">&nbsp;        ByteBuffer view = getView(i);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;66</td>  <td class="nbHitsCovered">&nbsp;51953580</td>  <td class="src"><pre class="src">&nbsp;        ByteBuffer view = getView(i);</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;67</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        <span class="keyword">try</span> {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;68</td>  <td class="nbHitsCovered">&nbsp;37522372</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">return</span> factory.read(view);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;68</td>  <td class="nbHitsCovered">&nbsp;52063248</td>  <td class="src"><pre class="src">&nbsp;            <span class="keyword">return</span> factory.read(view);</pre></td></tr>
 <tr>  <td class="numLineCover">&nbsp;69</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;        } <span class="keyword">catch</span> (IOException e) {</span></pre></td></tr>
 <tr>  <td class="numLineCover">&nbsp;70</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;            <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(e);</span></pre></td></tr>
 <tr>  <td class="numLine">&nbsp;71</td>  <td class="nbHits">&nbsp;</td>
@@ -119,73 +119,73 @@
   <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;73</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">int</span> add(U value) {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;74</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;        <span class="keyword">int</span> length = length();</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;75</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;        set(length, value);</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;76</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;        <span class="keyword">return</span> length;</span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;74</td>  <td class="nbHitsCovered">&nbsp;13</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">int</span> length = length();</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;75</td>  <td class="nbHitsCovered">&nbsp;13</td>  <td class="src"><pre class="src">&nbsp;        set(length, value);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;76</td>  <td class="nbHitsCovered">&nbsp;13</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> length;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;77</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;78</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> <span class="keyword">synchronized</span> U update(<span class="keyword">int</span> i, Function&lt;U,U&gt; updater) {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;79</td>  <td class="nbHitsCovered">&nbsp;1298585</td>  <td class="src"><pre class="src">&nbsp;        U updated = updater.apply(<span class="keyword">this</span>.get(i));</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;80</td>  <td class="nbHitsCovered">&nbsp;1298585</td>  <td class="src"><pre class="src">&nbsp;        set(i, updated);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;81</td>  <td class="nbHitsCovered">&nbsp;1298585</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> updated;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;79</td>  <td class="nbHitsCovered">&nbsp;1577314</td>  <td class="src"><pre class="src">&nbsp;        U updated = updater.apply(<span class="keyword">this</span>.get(i));</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;80</td>  <td class="nbHitsCovered">&nbsp;1577314</td>  <td class="src"><pre class="src">&nbsp;        set(i, updated);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;81</td>  <td class="nbHitsCovered">&nbsp;1577314</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> updated;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;82</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;83</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> <span class="keyword">void</span> set(<span class="keyword">int</span> i, U value) {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;84</td>  <td class="nbHitsCovered">&nbsp;49508911</td>  <td class="src"><pre class="src">&nbsp;        ensureCapacity((i+1) * unitSize);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;85</td>  <td class="nbHitsCovered">&nbsp;49624191</td>  <td class="src"><pre class="src">&nbsp;        ByteBuffer view = getView(i);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;84</td>  <td class="nbHitsCovered">&nbsp;64222576</td>  <td class="src"><pre class="src">&nbsp;        ensureCapacity((i+1) * unitSize);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;85</td>  <td class="nbHitsCovered">&nbsp;64536346</td>  <td class="src"><pre class="src">&nbsp;        ByteBuffer view = getView(i);</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;86</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        <span class="keyword">try</span> {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;87</td>  <td class="nbHitsCovered">&nbsp;49636828</td>  <td class="src"><pre class="src">&nbsp;            factory.write(view, value);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;87</td>  <td class="nbHitsCovered">&nbsp;64402863</td>  <td class="src"><pre class="src">&nbsp;            factory.write(view, value);</pre></td></tr>
 <tr>  <td class="numLineCover">&nbsp;88</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;        } <span class="keyword">catch</span> (IOException e) {</span></pre></td></tr>
 <tr>  <td class="numLineCover">&nbsp;89</td>  <td class="nbHitsUncovered">&nbsp;0</td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;            <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(e);</span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;90</td>  <td class="nbHitsCovered">&nbsp;49588014</td>  <td class="src"><pre class="src">&nbsp;        }</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;91</td>  <td class="nbHitsCovered">&nbsp;49657852</td>  <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;90</td>  <td class="nbHitsCovered">&nbsp;64121956</td>  <td class="src"><pre class="src">&nbsp;        }</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;91</td>  <td class="nbHitsCovered">&nbsp;64257135</td>  <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;92</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;93</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    <span class="keyword">private</span> ByteBuffer getView(<span class="keyword">int</span> i) {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;94</td>  <td class="nbHitsCovered">&nbsp;85529136</td>  <td class="src"><pre class="src">&nbsp;        ByteBuffer duplicate = ByteBuffer.wrap(buffer);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;95</td>  <td class="nbHitsCovered">&nbsp;85426649</td>  <td class="src"><pre class="src">&nbsp;        duplicate.position(unitSize * i);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;96</td>  <td class="nbHitsCovered">&nbsp;85807563</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> duplicate;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;94</td>  <td class="nbHitsCovered">&nbsp;115169070</td>  <td class="src"><pre class="src">&nbsp;        ByteBuffer duplicate = ByteBuffer.wrap(buffer);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;95</td>  <td class="nbHitsCovered">&nbsp;115214348</td>  <td class="src"><pre class="src">&nbsp;        duplicate.position(unitSize * i);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;96</td>  <td class="nbHitsCovered">&nbsp;115555140</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> duplicate;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;97</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;98</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    <span class="keyword">private</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> ensureCapacity(<span class="keyword">int</span> bytes) {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;99</td>  <td class="nbHitsCovered"><a title="Line 99: Conditional coverage 100% (2/2).">&nbsp;54949929</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 99: Conditional coverage 100% (2/2).">        <span class="keyword">if</span>(maxByte &lt; bytes) {</a></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;100</td>  <td class="nbHitsCovered">&nbsp;49602688</td>  <td class="src"><pre class="src">&nbsp;            maxByte = bytes;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;99</td>  <td class="nbHitsCovered"><a title="Line 99: Conditional coverage 100% (2/2).">&nbsp;71384319</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 99: Conditional coverage 100% (2/2).">        <span class="keyword">if</span>(maxByte &lt; bytes) {</a></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;100</td>  <td class="nbHitsCovered">&nbsp;64407424</td>  <td class="src"><pre class="src">&nbsp;            maxByte = bytes;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;101</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        }</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;102</td>  <td class="nbHitsCovered">&nbsp;54259164</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">int</span> targetBytes = buffer.length;</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;103</td>  <td class="nbHitsCovered"><a title="Line 103: Conditional coverage 100% (2/2).">&nbsp;54307986</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 103: Conditional coverage 100% (2/2).">        <span class="keyword">while</span>(targetBytes &lt; bytes) targetBytes = Math.max(targetBytes * 2, 1);</a></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;104</td>  <td class="nbHitsCovered"><a title="Line 104: Conditional coverage 100% (2/2).">&nbsp;54553855</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 104: Conditional coverage 100% (2/2).">        <span class="keyword">if</span>(targetBytes &gt; buffer.length) {</a></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;105</td>  <td class="nbHitsCovered">&nbsp;1318</td>  <td class="src"><pre class="src">&nbsp;            buffer = Arrays.copyOf(buffer, targetBytes);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;102</td>  <td class="nbHitsCovered">&nbsp;71070705</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">int</span> targetBytes = buffer.length;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;103</td>  <td class="nbHitsCovered"><a title="Line 103: Conditional coverage 100% (2/2).">&nbsp;71160125</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 103: Conditional coverage 100% (2/2).">        <span class="keyword">while</span>(targetBytes &lt; bytes) targetBytes = Math.max(targetBytes * 2, 1);</a></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;104</td>  <td class="nbHitsCovered"><a title="Line 104: Conditional coverage 100% (2/2).">&nbsp;71342253</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 104: Conditional coverage 100% (2/2).">        <span class="keyword">if</span>(targetBytes &gt; buffer.length) {</a></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;105</td>  <td class="nbHitsCovered">&nbsp;1396</td>  <td class="src"><pre class="src">&nbsp;            buffer = Arrays.copyOf(buffer, targetBytes);</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;106</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;        }</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;107</td>  <td class="nbHitsCovered">&nbsp;55115875</td>  <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;107</td>  <td class="nbHitsCovered">&nbsp;71440986</td>  <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;108</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;109</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> <span class="keyword">int</span> addAll(Collection&lt;U&gt; data) {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;110</td>  <td class="nbHitsCovered">&nbsp;1297722</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">int</span> startIndex = length();</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;111</td>  <td class="nbHitsCovered">&nbsp;1297598</td>  <td class="src"><pre class="src">&nbsp;        putAll(data, startIndex);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;112</td>  <td class="nbHitsCovered">&nbsp;1298584</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> startIndex;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;110</td>  <td class="nbHitsCovered">&nbsp;1575819</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">int</span> startIndex = length();</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;111</td>  <td class="nbHitsCovered">&nbsp;1575976</td>  <td class="src"><pre class="src">&nbsp;        putAll(data, startIndex);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;112</td>  <td class="nbHitsCovered">&nbsp;1577283</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">return</span> startIndex;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;113</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;114</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;115</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> <span class="keyword">void</span> putAll(Collection&lt;U&gt; data, <span class="keyword">int</span> startIndex) {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;116</td>  <td class="nbHitsCovered">&nbsp;1297917</td>  <td class="src"><pre class="src">&nbsp;        putAll(<span class="keyword">new</span> SerialArrayList&lt;U&gt;(factory, data), startIndex);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;117</td>  <td class="nbHitsCovered">&nbsp;1298584</td>  <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;116</td>  <td class="nbHitsCovered">&nbsp;1576414</td>  <td class="src"><pre class="src">&nbsp;        putAll(<span class="keyword">new</span> SerialArrayList&lt;U&gt;(factory, data), startIndex);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;117</td>  <td class="nbHitsCovered">&nbsp;1577284</td>  <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;118</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;119</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    <span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> putAll(SerialArrayList&lt;U&gt; data, <span class="keyword">int</span> startIndex) {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;120</td>  <td class="nbHitsCovered">&nbsp;5217931</td>  <td class="src"><pre class="src">&nbsp;        ensureCapacity((startIndex * unitSize) + data.maxByte);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;121</td>  <td class="nbHitsCovered">&nbsp;5217931</td>  <td class="src"><pre class="src">&nbsp;        System.arraycopy(data.buffer, 0, <span class="keyword">this</span>.buffer, startIndex * unitSize, data.maxByte);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;122</td>  <td class="nbHitsCovered">&nbsp;5217931</td>  <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;120</td>  <td class="nbHitsCovered">&nbsp;6826283</td>  <td class="src"><pre class="src">&nbsp;        ensureCapacity((startIndex * unitSize) + data.maxByte);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;121</td>  <td class="nbHitsCovered">&nbsp;6826283</td>  <td class="src"><pre class="src">&nbsp;        System.arraycopy(data.buffer, 0, <span class="keyword">this</span>.buffer, startIndex * unitSize, data.maxByte);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;122</td>  <td class="nbHitsCovered">&nbsp;6826283</td>  <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;123</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;124</td>  <td class="nbHits">&nbsp;</td>
@@ -204,6 +204,6 @@
   <td class="src"><pre class="src">&nbsp;}</pre></td></tr>
 </table>
 
-<div class="footer">Report generated by <a href="http://cobertura.sourceforge.net/" target="_top">Cobertura</a> 2.1.1 on 3/5/17 1:02 PM.</div>
+<div class="footer">Report generated by <a href="http://cobertura.sourceforge.net/" target="_top">Cobertura</a> 2.1.1 on 3/6/17 12:42 AM.</div>
 </body>
 </html>
