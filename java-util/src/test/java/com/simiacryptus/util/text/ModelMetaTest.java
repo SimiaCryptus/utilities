@@ -55,7 +55,7 @@ public abstract class ModelMetaTest {
   @Test
   @Category(TestCategories.ResearchCode.class)
   public void calcSharedDictionariesLZ() throws Exception {
-    MarkdownPrintStream log = new MarkdownPrintStream(new FileOutputStream("src/site/markdown/calcSharedDictionariesLZ"+getClass().getSimpleName()+".md")).addCopy(System.out);
+    MarkdownPrintStream log = new MarkdownPrintStream(new FileOutputStream("reports/calcSharedDictionariesLZ"+getClass().getSimpleName()+".md")).addCopy(System.out);
     CharTree baseTree = new CharTree();
     log.out("Preparing %s documents", getModelCount());
     source().limit(getModelCount()).forEach(txt -> {
@@ -94,7 +94,7 @@ public abstract class ModelMetaTest {
   @Test
   @Category(TestCategories.Report.class)
   public void calcSharedDictionariesBZ() throws Exception {
-    MarkdownPrintStream log = new MarkdownPrintStream(new FileOutputStream("src/site/markdown/calcSharedDictionariesBZ"+getClass().getSimpleName()+".md")).addCopy(System.out);
+    MarkdownPrintStream log = new MarkdownPrintStream(new FileOutputStream("reports/calcSharedDictionariesBZ"+getClass().getSimpleName()+".md")).addCopy(System.out);
     CharTree baseTree = new CharTree();
     log.out("Preparing %s documents", getModelCount());
     source().limit(getModelCount()).forEach(txt -> {
@@ -132,7 +132,7 @@ public abstract class ModelMetaTest {
   @Test
   @Category(TestCategories.Report.class)
   public void calcCompressorPPM() throws Exception {
-    MarkdownPrintStream log = new MarkdownPrintStream(new FileOutputStream("src/site/markdown/calcCompressorPPM"+getClass().getSimpleName()+".md")).addCopy(System.out);
+    MarkdownPrintStream log = new MarkdownPrintStream(new FileOutputStream("reports/calcCompressorPPM"+getClass().getSimpleName()+".md")).addCopy(System.out);
     CharTree baseTree = new CharTree();
     log.out("Preparing %s documents", getModelCount());
     source().limit(getModelCount()).forEach(txt -> {

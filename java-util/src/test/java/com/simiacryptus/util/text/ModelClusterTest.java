@@ -40,7 +40,7 @@ public abstract class ModelClusterTest {
   @Test
   @Category(TestCategories.ResearchCode.class)
   public void clusterSharedDictionariesLZ() throws Exception {
-    try(MarkdownPrintStream log = new MarkdownPrintStream(new FileOutputStream("src/site/markdown/clusterSharedDictionariesLZ"+getClass().getSimpleName()+".md")).addCopy(System.out)) {
+    try(MarkdownPrintStream log = new MarkdownPrintStream(new FileOutputStream("reports/clusterSharedDictionariesLZ"+getClass().getSimpleName()+".md")).addCopy(System.out)) {
       int dictionary_context = 5;
       int model_minPathWeight = 3;
       int dictionary_lookahead = 2;
@@ -77,7 +77,7 @@ public abstract class ModelClusterTest {
   @Test
   @Category(TestCategories.ResearchCode.class)
   public void calcCompressorPPM() throws Exception {
-    try(MarkdownPrintStream log = new MarkdownPrintStream(new FileOutputStream("src/site/markdown/calcCompressorPPM"+getClass().getSimpleName()+".md")).addCopy(System.out)){
+    try(MarkdownPrintStream log = new MarkdownPrintStream(new FileOutputStream("reports/calcCompressorPPM"+getClass().getSimpleName()+".md")).addCopy(System.out)){
       int ppmModelDepth = 6;
       int model_minPathWeight = 3;
       int index = 0;

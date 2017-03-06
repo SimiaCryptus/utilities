@@ -17,7 +17,7 @@ Code:
 ```
 Returns: 
 ```
-    com.simiacryptus.util.text.CharTreeCodec@b3d7190
+    com.simiacryptus.util.text.CharTreeCodec@368239c8
 ```
 Logging: 
 ```
@@ -120,7 +120,7 @@ Returns:
     ==Air travel==
     * [[Ada Air]], a regional airline based in Tirana, Albania
     * [[Ada International Airport]] or Saipan International Airport, Saipan Island, Northern Mariana Islands
-    * [[AerolÃ­nea de Antioquia]], a Colombian airline
+    * [[Aerolínea de Antioquia]], a Colombian airline
     * [[Airline Deregulation Act]], a 1978 US bill removing governmental control from commercial aviation
     
     == Schools ==

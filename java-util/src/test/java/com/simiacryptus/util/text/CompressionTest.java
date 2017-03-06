@@ -1,10 +1,7 @@
 package com.simiacryptus.util.text;
 
 import com.simiacryptus.util.binary.Bits;
-import com.simiacryptus.util.test.TestCategories;
-import com.simiacryptus.util.test.TestDocument;
-import com.simiacryptus.util.test.TweetSentiment;
-import com.simiacryptus.util.test.WikiArticle;
+import com.simiacryptus.util.test.*;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -80,7 +77,26 @@ public class CompressionTest {
     int testCount = 100;
     Supplier<Stream<? extends TestDocument>> source = ()->TweetSentiment.load().limit(modelCount + testCount);
 
-    MarkdownPrintStream log = new MarkdownPrintStream(new FileOutputStream("src/site/markdown/calcTweetCompression.md")).addCopy(System.out);
+    MarkdownPrintStream log = new MarkdownPrintStream(new FileOutputStream("reports/calcTweetCompression.md")).addCopy(System.out);
+    Map<String, Compressor> compressors = buildCompressors(source, ppmModelDepth, model_minPathWeight, dictionary_lookahead, dictionary_context, encodingContext, modelCount);
+    TableOutput output = Compressor.evalTable(source.get().skip(modelCount), compressors, true);
+    //log.out(output.toTextTable());
+    log.out(output.calcNumberStats().toTextTable());
+    log.close();
+  }
+
+  @Test
+  @Category(TestCategories.Report.class)
+  public void calcTermCompression() throws Exception {
+    int ppmModelDepth = 5;
+    int model_minPathWeight = 0;
+    int dictionary_lookahead = 2;
+    int dictionary_context = 6;
+    int encodingContext = 2;
+    int modelCount = 10000;
+    int testCount = 100;
+    Supplier<Stream<? extends TestDocument>> source = ()-> EnglishWords.load().limit(modelCount + testCount);
+    MarkdownPrintStream log = new MarkdownPrintStream(new FileOutputStream("reports/calcTermCompression.md")).addCopy(System.out);
     Map<String, Compressor> compressors = buildCompressors(source, ppmModelDepth, model_minPathWeight, dictionary_lookahead, dictionary_context, encodingContext, modelCount);
     TableOutput output = Compressor.evalTable(source.get().skip(modelCount), compressors, true);
     log.out(output.toTextTable());
@@ -100,7 +116,7 @@ public class CompressionTest {
     int testCount = 100;
     Supplier<Stream<? extends TestDocument>> source = ()->WikiArticle.load().filter(x -> x.text.length() > 8 * 1024).limit(modelCount + testCount);
 
-    MarkdownPrintStream log = new MarkdownPrintStream(new FileOutputStream("src/site/markdown/calcWikiCompression.md")).addCopy(System.out);
+    MarkdownPrintStream log = new MarkdownPrintStream(new FileOutputStream("reports/calcWikiCompression.md")).addCopy(System.out);
     Map<String, Compressor> compressors = buildCompressors(source, ppmModelDepth, model_minPathWeight, dictionary_lookahead, dictionary_context, encodingContext, modelCount);
     TableOutput output = Compressor.evalTable(source.get().skip(modelCount), compressors, true);
     log.out(output.toTextTable());

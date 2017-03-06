@@ -82,7 +82,10 @@ public class CharTreeCodec {
     String str = seed;
     String prefix = "";
     while (str.length() < length) {
-      Node node = inner.matchPredictor(prefix);
+      Node node = prefix.isEmpty()?inner.root():inner.matchPredictor(prefix);
+      if(null == node) {
+        prefix = prefix.substring(1);
+      }
       Node nextNode = maxNextNode(node, lookahead);
       if (null == nextNode) break;
       if (destructive) nextNode.shadowCursors();
@@ -268,9 +271,10 @@ public class CharTreeCodec {
       if(!dictionary.isEmpty()) {
           resultLength = decompresser.inflate(result);
           assert (0 == resultLength);
-          assert (decompresser.needsDictionary());
-          byte[] bytes = dictionary.getBytes("UTF-8");
-          decompresser.setDictionary(bytes);
+          if(decompresser.needsDictionary()) {
+            byte[] bytes = dictionary.getBytes("UTF-8");
+            decompresser.setDictionary(bytes);
+          }
       }
       resultLength = decompresser.inflate(result);
       decompresser.end();

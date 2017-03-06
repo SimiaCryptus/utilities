@@ -1,10 +1,10 @@
-package com.simiacryptus.util.text;
+package com.simiacryptus.util.lang;
 
 import java.util.function.Supplier;
 
 public class TimedResult<T> {
-  T obj;
-  long timeNanos;
+  public final T obj;
+  public final long timeNanos;
 
   public TimedResult(T obj, long timeNanos) {
     this.obj = obj;

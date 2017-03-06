@@ -1,5 +1,6 @@
 package com.simiacryptus.util.text;
 
+import com.simiacryptus.util.lang.TimedResult;
 import com.simiacryptus.util.test.TestDocument;
 
 import java.util.HashMap;

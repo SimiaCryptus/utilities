@@ -87,7 +87,7 @@ public class CharTreeTest {
   @Test
   @Category(TestCategories.Report.class)
   public void demoCharTree() throws IOException {
-    try (MarkdownPrintStream log = new MarkdownPrintStream(new FileOutputStream("src/site/markdown/demoCharTree.md")).addCopy(System.out)) {
+    try (MarkdownPrintStream log = new MarkdownPrintStream(new FileOutputStream("reports/demoCharTree.md")).addCopy(System.out)) {
 
       log.out("This will demonstrate how to use the CharTree class for PPM compression\n");
 

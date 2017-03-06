@@ -124,7 +124,7 @@ public class CharTree {
     if (cursor.getNumberOfChildren() > 0)
       return cursor;
     String string = cursor.getString();
-    if(string.isEmpty()) throw new RuntimeException("No predictor node availible for " + search);
+    if(string.isEmpty()) return null;
     return matchPredictor(string.substring(1));
   }
 
