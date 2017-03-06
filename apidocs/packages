@@ -1,7 +1,6 @@
 com.simiacryptus.util.data
 com.simiacryptus.util.collections
 com.simiacryptus.util.text
-com.simiacryptus.util.test
 com.simiacryptus.util.codes
 com.simiacryptus.util.binary
 com.simiacryptus.util.bitset
