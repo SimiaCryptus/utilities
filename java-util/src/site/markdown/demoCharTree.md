@@ -17,7 +17,7 @@ Code:
 ```
 Returns: 
 ```
-    com.simiacryptus.util.text.CharTreeCodec@17211155
+    com.simiacryptus.util.text.CharTreeCodec@b3d7190
 ```
 Logging: 
 ```
