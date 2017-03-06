@@ -15,8 +15,10 @@ Code:
     System.out.print("Tree Size: " + codecTree.getMemorySize());
     return codecTree.codec;
 ```
+
 Returns: 
       com.simiacryptus.util.text.CharTreeCodec@52525845
+
 Logging: 
       Tree Size: 2098176
 
