@@ -13,72 +13,69 @@ Code:
 ```
 Returns: 
 ```
-    {LZ8k_4_2_3_generateDictionary=com.simiacryptus.util.text.DictionaryMethodTest$2@39a054a5, LZ8k_4_2_3_generateMarkov=com.simiacryptus.util.text.DictionaryMethodTest$3@71bc1ae4, LZ8k_5_2_3_generateDictionary=com.simiacryptus.util.text.DictionaryMethodTest$2@6ed3ef1, LZ8k_5_2_3_generateMarkov=com.simiacryptus.util.text.DictionaryMethodTest$3@2437c6dc, LZ8k_6_2_3_generateDictionary=com.simiacryptus.util.text.DictionaryMethodTest$2@1f89ab83, LZ8k_6_2_3_generateMarkov=com.simiacryptus.util.text.DictionaryMethodTest$3@e73f9ac, LZ8k_commonWords=com.simiacryptus.util.text.DictionaryMethodTest$1@61064425, BZ0=com.simiacryptus.util.text.Compressor$1@7b1d7fff, LZ0=com.simiacryptus.util.text.Compressor$2@299a06ac}
+    {LZ8k_4_2_3_generateDictionary=com.simiacryptus.util.text.DictionaryMethodTest$2@71bc1ae4, LZ8k_4_2_3_generateMarkov=com.simiacryptus.util.text.DictionaryMethodTest$3@6ed3ef1, LZ8k_5_2_3_generateDictionary=com.simiacryptus.util.text.DictionaryMethodTest$2@2437c6dc, LZ8k_5_2_3_generateMarkov=com.simiacryptus.util.text.DictionaryMethodTest$3@1f89ab83, LZ8k_6_2_3_generateDictionary=com.simiacryptus.util.text.DictionaryMethodTest$2@e73f9ac, LZ8k_6_2_3_generateMarkov=com.simiacryptus.util.text.DictionaryMethodTest$3@61064425, LZ8k_commonWords=com.simiacryptus.util.text.DictionaryMethodTest$1@7b1d7fff, BZ0=com.simiacryptus.util.text.Compressor$1@299a06ac, LZ0=com.simiacryptus.util.text.Compressor$2@383534aa}
 ```
 Logging: 
 ```
     LZ8k_4_2_3_generateDictionary:        13
       Or else of the stars in thee to their a hourse untain convert:
         That thou art but though the stars in the world a...
-    LZ8k_4_2_3_generateMarkov: nted by even I more aboan; 
-     b utpe read summer some worth
-      Has them fair who love other lace,
-      If it way
-      My love your seali...
+    LZ8k_4_2_3_generateMarkov: JECT GUTENBERG ETEXT If you lived phold cease,
+      The Works of MADE ****  Or else in coo hourse excloan, no quide laws,
+      This go...
     LZ8k_5_2_3_generateDictionary:          13
       O than thou art more blessed that beauty's day
       And that thou the stars in their age to thee to come
       To the wor...
-    LZ8k_5_2_3_generateMarkov: s ten time debarred beauty's rage of times shade,
-      Tene most not with let barren rhyme....
+    LZ8k_5_2_3_generateMarkov: eque song as men make you living forbid friends but heaven's eye,
+      Which I beauteous lovided by the Project Gutenberg eBy REmal...
     LZ8k_6_2_3_generateDictionary:          13
        BY ANY
     SHAKESPEARE ****  So should bear your self in eternal cold?
       
       And summer's day
       And by adding the objs...
-    LZ8k_6_2_3_generateMarkov: epart broofd th,
-    ime
-      If itnidg eBeu eoduth  unfnboeat the conceit of the FORo sisgrowh eaapyp of from that were neo nontrenigh...
+    LZ8k_6_2_3_generateMarkov: eaves ne'eer s ofher, raasingo thnood,nd e thy worsaanraged  d ane o lefty  d o'instn  m evirtnsgees rquess, 
+    iwhn  c hate with ...
     Common Words Dictionary: the of in to and And I my thou thy with that your you thee a not this self all is by from for it love But do his as be or me but...
     
 ```
 field | sum | avg | stddev | nulls
 ----- | --- | --- | ------ | -----
-LZ8k_4_2_3_generateDictionary.uncompressed | 46396.0000 | 463.9600 | 747.9211 | 0
-LZ8k_4_2_3_generateDictionary.compressed   | 23959.0000 | 239.5900 | 345.4236 | 0
-LZ8k_4_2_3_generateDictionary.compressMs   | 32.3620 | 0.3236 | 0.4487 | 0
-LZ8k_4_2_3_generateDictionary.uncompressMs | 15.7207 | 0.1572 | 0.4105 | 0
-LZ8k_4_2_3_generateMarkov.uncompressed     | 46396.0000 | 463.9600 | 747.9211 | 0
-LZ8k_4_2_3_generateMarkov.compressed       | 26372.0000 | 263.7200 | 363.2705 | 0
-LZ8k_4_2_3_generateMarkov.compressMs       | 9.4096 | 0.0941 | 0.0720 | 0
-LZ8k_4_2_3_generateMarkov.uncompressMs     | 6.4108 | 0.0641 | 0.2042 | 0
-LZ8k_5_2_3_generateDictionary.uncompressed | 46396.0000 | 463.9600 | 747.9211 | 0
-LZ8k_5_2_3_generateDictionary.compressed   | 25584.0000 | 255.8400 | 358.0165 | 0
-LZ8k_5_2_3_generateDictionary.compressMs   | 19.4485 | 0.1945 | 0.0818 | 0
-LZ8k_5_2_3_generateDictionary.uncompressMs | 8.5018 | 0.0850 | 0.0366 | 0
-LZ8k_5_2_3_generateMarkov.uncompressed     | 46396.0000 | 463.9600 | 747.9211 | 0
-LZ8k_5_2_3_generateMarkov.compressed       | 26625.0000 | 266.2500 | 365.2477 | 0
-LZ8k_5_2_3_generateMarkov.compressMs       | 13.8121 | 0.1381 | 0.5255 | 0
-LZ8k_5_2_3_generateMarkov.uncompressMs     | 5.0967 | 0.0510 | 0.1224 | 0
-LZ8k_6_2_3_generateDictionary.uncompressed | 46396.0000 | 463.9600 | 747.9211 | 0
-LZ8k_6_2_3_generateDictionary.compressed   | 25300.0000 | 253.0000 | 358.7086 | 0
-LZ8k_6_2_3_generateDictionary.compressMs   | 20.3710 | 0.2037 | 0.0823 | 0
-LZ8k_6_2_3_generateDictionary.uncompressMs | 10.0867 | 0.1009 | 0.1341 | 0
-LZ8k_6_2_3_generateMarkov.uncompressed     | 46396.0000 | 463.9600 | 747.9211 | 0
-LZ8k_6_2_3_generateMarkov.compressed       | 26494.0000 | 264.9400 | 364.2587 | 0
-LZ8k_6_2_3_generateMarkov.compressMs       | 9.4727 | 0.0947 | 0.0640 | 0
-LZ8k_6_2_3_generateMarkov.uncompressMs     | 5.0145 | 0.0501 | 0.0867 | 0
-LZ8k_commonWords.uncompressed              | 46396.0000 | 463.9600 | 747.9211 | 0
-LZ8k_commonWords.compressed                | 23909.0000 | 239.0900 | 346.7361 | 0
-LZ8k_commonWords.compressMs                | 22.9397 | 0.2294 | 0.2123 | 0
-LZ8k_commonWords.uncompressMs              | 12.2525 | 0.1225 | 0.3150 | 0
-BZ0.uncompressed                           | 46396.0000 | 463.9600 | 747.9211 | 0
-BZ0.compressed                             | 29344.0000 | 293.4400 | 351.1990 | 0
-BZ0.compressMs                             | 500.4042 | 5.0040 | 2.7470 | 0
-BZ0.uncompressMs                           | 104.6467 | 1.0465 | 1.6285 | 0
-LZ0.uncompressed                           | 46396.0000 | 463.9600 | 747.9211 | 0
-LZ0.compressed                             | 26431.0000 | 264.3100 | 366.5197 | 0
-LZ0.compressMs                             | 17.0813 | 0.1708 | 0.2981 | 0
-LZ0.uncompressMs                           | 3.8500 | 0.0385 | 0.0295 | 0
+LZ8k_4_2_3_generateDictionary.uncompressed | 57740.0000 | 577.4000 | 999.3024 | 0
+LZ8k_4_2_3_generateDictionary.compressed   | 28909.0000 | 289.0900 | 447.6089 | 0
+LZ8k_4_2_3_generateDictionary.compressMs   | 29.2698 | 0.2927 | 0.2623 | 0
+LZ8k_4_2_3_generateDictionary.uncompressMs | 10.7272 | 0.1073 | 0.1041 | 0
+LZ8k_4_2_3_generateMarkov.uncompressed     | 57740.0000 | 577.4000 | 999.3024 | 0
+LZ8k_4_2_3_generateMarkov.compressed       | 30224.0000 | 302.2400 | 460.3511 | 0
+LZ8k_4_2_3_generateMarkov.compressMs       | 12.6617 | 0.1266 | 0.1119 | 0
+LZ8k_4_2_3_generateMarkov.uncompressMs     | 5.6423 | 0.0564 | 0.0793 | 0
+LZ8k_5_2_3_generateDictionary.uncompressed | 57740.0000 | 577.4000 | 999.3024 | 0
+LZ8k_5_2_3_generateDictionary.compressed   | 30478.0000 | 304.7800 | 465.1042 | 0
+LZ8k_5_2_3_generateDictionary.compressMs   | 20.7455 | 0.2075 | 0.1044 | 0
+LZ8k_5_2_3_generateDictionary.uncompressMs | 8.5976 | 0.0860 | 0.0364 | 0
+LZ8k_5_2_3_generateMarkov.uncompressed     | 57740.0000 | 577.4000 | 999.3024 | 0
+LZ8k_5_2_3_generateMarkov.compressed       | 30791.0000 | 307.9100 | 466.8800 | 0
+LZ8k_5_2_3_generateMarkov.compressMs       | 13.4723 | 0.1347 | 0.2909 | 0
+LZ8k_5_2_3_generateMarkov.uncompressMs     | 7.5230 | 0.0752 | 0.2767 | 0
+LZ8k_6_2_3_generateDictionary.uncompressed | 57740.0000 | 577.4000 | 999.3024 | 0
+LZ8k_6_2_3_generateDictionary.compressed   | 30305.0000 | 303.0500 | 463.9884 | 0
+LZ8k_6_2_3_generateDictionary.compressMs   | 21.2173 | 0.2122 | 0.1199 | 0
+LZ8k_6_2_3_generateDictionary.uncompressMs | 8.7267 | 0.0873 | 0.0435 | 0
+LZ8k_6_2_3_generateMarkov.uncompressed     | 57740.0000 | 577.4000 | 999.3024 | 0
+LZ8k_6_2_3_generateMarkov.compressed       | 31368.0000 | 313.6800 | 470.7271 | 0
+LZ8k_6_2_3_generateMarkov.compressMs       | 12.2555 | 0.1226 | 0.1153 | 0
+LZ8k_6_2_3_generateMarkov.uncompressMs     | 8.9711 | 0.0897 | 0.2967 | 0
+LZ8k_commonWords.uncompressed              | 57740.0000 | 577.4000 | 999.3024 | 0
+LZ8k_commonWords.compressed                | 29191.0000 | 291.9100 | 448.3195 | 0
+LZ8k_commonWords.compressMs                | 22.3637 | 0.2236 | 0.1176 | 0
+LZ8k_commonWords.uncompressMs              | 8.9129 | 0.0891 | 0.0615 | 0
+BZ0.uncompressed                           | 57740.0000 | 577.4000 | 999.3024 | 0
+BZ0.compressed                             | 33891.0000 | 338.9100 | 447.0806 | 0
+BZ0.compressMs                             | 581.0333 | 5.8103 | 7.1051 | 0
+BZ0.uncompressMs                           | 89.7683 | 0.8977 | 0.7487 | 0
+LZ0.uncompressed                           | 57740.0000 | 577.4000 | 999.3024 | 0
+LZ0.compressed                             | 31384.0000 | 313.8400 | 474.5454 | 0
+LZ0.compressMs                             | 19.2720 | 0.1927 | 0.5379 | 0
+LZ0.uncompressMs                           | 7.8970 | 0.0790 | 0.3398 | 0
 

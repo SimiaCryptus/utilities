@@ -86,7 +86,7 @@ public abstract class ModelMetaTest {
     }
 
     TableOutput output = Compressor.evalTable(source().skip(getModelCount()), compressors, true);
-    log.out(output.toTextTable());
+    //log.out(output.toTextTable());
     log.out(output.calcNumberStats().toTextTable());
     log.close();
   }
@@ -124,7 +124,7 @@ public abstract class ModelMetaTest {
       });
     }
     TableOutput output = Compressor.evalTable(source().skip(getModelCount()), compressors, true);
-    log.out(output.toTextTable());
+    //log.out(output.toTextTable());
     log.out(output.calcNumberStats().toTextTable());
     log.close();
   }
@@ -153,7 +153,7 @@ public abstract class ModelMetaTest {
     }
 
     TableOutput output = Compressor.evalTable(source().skip(getModelCount()), compressors, true);
-    log.out(output.toTextTable());
+    //log.out(output.toTextTable());
     log.out(output.calcNumberStats().toTextTable());
     log.close();
   }

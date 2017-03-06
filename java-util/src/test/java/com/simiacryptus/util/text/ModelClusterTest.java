@@ -24,7 +24,7 @@ public abstract class ModelClusterTest {
   public abstract int getModelCount();
 
   public static class Wikipedia extends ModelClusterTest {
-    int testCount = 100;
+    int testCount = 1000;
 
     @Override
     protected Stream<? extends TestDocument> source() {
@@ -33,7 +33,7 @@ public abstract class ModelClusterTest {
 
     @Override
     public int getModelCount() {
-      return 20;
+      return 50;
     }
   }
 

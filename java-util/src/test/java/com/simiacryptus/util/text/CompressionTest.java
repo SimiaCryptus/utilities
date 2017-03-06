@@ -88,18 +88,18 @@ public class CompressionTest {
   @Test
   @Category(TestCategories.Report.class)
   public void calcTermCompression() throws Exception {
-    int ppmModelDepth = 5;
+    int ppmModelDepth = 10;
     int model_minPathWeight = 0;
     int dictionary_lookahead = 2;
     int dictionary_context = 6;
-    int encodingContext = 2;
-    int modelCount = 10000;
+    int encodingContext = 3;
+    int modelCount = 15000;
     int testCount = 100;
     Supplier<Stream<? extends TestDocument>> source = ()-> EnglishWords.load().limit(modelCount + testCount);
     MarkdownPrintStream log = new MarkdownPrintStream(new FileOutputStream("reports/calcTermCompression.md")).addCopy(System.out);
     Map<String, Compressor> compressors = buildCompressors(source, ppmModelDepth, model_minPathWeight, dictionary_lookahead, dictionary_context, encodingContext, modelCount);
     TableOutput output = Compressor.evalTable(source.get().skip(modelCount), compressors, true);
-    log.out(output.toTextTable());
+    //log.out(output.toTextTable());
     log.out(output.calcNumberStats().toTextTable());
     log.close();
   }
@@ -119,7 +119,7 @@ public class CompressionTest {
     MarkdownPrintStream log = new MarkdownPrintStream(new FileOutputStream("reports/calcWikiCompression.md")).addCopy(System.out);
     Map<String, Compressor> compressors = buildCompressors(source, ppmModelDepth, model_minPathWeight, dictionary_lookahead, dictionary_context, encodingContext, modelCount);
     TableOutput output = Compressor.evalTable(source.get().skip(modelCount), compressors, true);
-    log.out(output.toTextTable());
+    //log.out(output.toTextTable());
     log.out(output.calcNumberStats().toTextTable());
     log.close();
   }

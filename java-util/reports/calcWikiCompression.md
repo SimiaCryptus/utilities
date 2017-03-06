@@ -18,15 +18,14 @@ Returns:
 Logging: 
 ```
     LZ8k_4_2_3_generateDictionary:  that the [[United States of the [[Academy Awards and the state = 2008 | pages = 10.1016/j.bbc.co.uk/sportant to the states, and...
-    LZ8k_4_2_3_generateMarkov: Club anthropology]]). ASCII was a comment people and Film/2009080220, 2014|r=2}}
-    |-
-    | [[Reisel is Rev | url = http://archive-dat...
+    LZ8k_4_2_3_generateMarkov: an president the time to sea meteorology Presider: Accordinary example of Apoll | volutions literarchived 2009|p=344}}
+    
+    ===Thoma...
     LZ8k_5_2_3_generateDictionary:  that the [[United States of the [[Alabama |publisher=[[American American Party (United States, and the state of Alabamily in th...
-    LZ8k_5_2_3_generateMarkov: dian.co.uk/1/100-691-006-05-226-15-6931/1.646, Lincolns-P0rgaard|authorlink=Steel, 1970s this family,
-    ** In Decembers";  r=Henry...
+    LZ8k_5_2_3_generateMarkov: ts admire was into Anarchive.org/faces, ethnology is magician)|and|124; Ras?r?a,?rhaepohnson]]
+    | [[Daphne". Rubenefits">[[Amazon...
     LZ8k_6_2_3_generateDictionary:  that the [[United States of Algerian Church]] in the [[Alabama |publisher=[[American American in Paris'' is considered an inter...
-    LZ8k_6_2_3_generateMarkov: 3088307, /u>{g{ {c{iCmaoisfi,st 1 1|D1e .f rao thBoDoalst at [[Didey  J E |mr = 2007 |accessdate=15 January 10, 2010, p. 43419
-    /...
+    LZ8k_6_2_3_generateMarkov: ln honor. <brb t heorrogwy/ecocriksto non-commentary Feter-gasiasnd o:rAerine saved as "Ocreetna Pmeiaof]]al a nor to the U.S. I...
     Common Words Dictionary: the of and in to a is The as for that was by with on from his at an or are which br be A he journal have it were not Lincoln In ...
     
 ```
@@ -34,38 +33,38 @@ field | sum | avg | stddev | nulls
 ----- | --- | --- | ------ | -----
 LZ8k_4_2_3_generateDictionary.uncompressed | 3218757.0000 | 32187.5700 | 50604.0314 | 0
 LZ8k_4_2_3_generateDictionary.compressed   | 1165899.0000 | 11658.9900 | 17954.2717 | 0
-LZ8k_4_2_3_generateDictionary.compressMs   | 447.3055 | 4.4731 | 7.1807 | 0
-LZ8k_4_2_3_generateDictionary.uncompressMs | 78.1817 | 0.7818 | 1.7070 | 0
+LZ8k_4_2_3_generateDictionary.compressMs   | 444.1493 | 4.4415 | 6.9157 | 0
+LZ8k_4_2_3_generateDictionary.uncompressMs | 75.0679 | 0.7507 | 1.6844 | 0
 LZ8k_4_2_3_generateMarkov.uncompressed     | 3218757.0000 | 32187.5700 | 50604.0314 | 0
-LZ8k_4_2_3_generateMarkov.compressed       | 1170244.0000 | 11702.4400 | 17986.8116 | 0
-LZ8k_4_2_3_generateMarkov.compressMs       | 427.0020 | 4.2700 | 6.6008 | 0
-LZ8k_4_2_3_generateMarkov.uncompressMs     | 65.2329 | 0.6523 | 0.9431 | 0
+LZ8k_4_2_3_generateMarkov.compressed       | 1170196.0000 | 11701.9600 | 17991.2528 | 0
+LZ8k_4_2_3_generateMarkov.compressMs       | 431.2426 | 4.3124 | 6.7047 | 0
+LZ8k_4_2_3_generateMarkov.uncompressMs     | 64.1237 | 0.6412 | 0.9072 | 0
 LZ8k_5_2_3_generateDictionary.uncompressed | 3218757.0000 | 32187.5700 | 50604.0314 | 0
 LZ8k_5_2_3_generateDictionary.compressed   | 1166946.0000 | 11669.4600 | 17960.9352 | 0
-LZ8k_5_2_3_generateDictionary.compressMs   | 429.3926 | 4.2939 | 6.6822 | 0
-LZ8k_5_2_3_generateDictionary.uncompressMs | 63.4676 | 0.6347 | 0.9341 | 0
+LZ8k_5_2_3_generateDictionary.compressMs   | 433.0192 | 4.3302 | 6.6827 | 0
+LZ8k_5_2_3_generateDictionary.uncompressMs | 64.5529 | 0.6455 | 0.9097 | 0
 LZ8k_5_2_3_generateMarkov.uncompressed     | 3218757.0000 | 32187.5700 | 50604.0314 | 0
-LZ8k_5_2_3_generateMarkov.compressed       | 1170619.0000 | 11706.1900 | 17989.9323 | 0
-LZ8k_5_2_3_generateMarkov.compressMs       | 430.7605 | 4.3076 | 6.6405 | 0
-LZ8k_5_2_3_generateMarkov.uncompressMs     | 67.2506 | 0.6725 | 0.9508 | 0
+LZ8k_5_2_3_generateMarkov.compressed       | 1168814.0000 | 11688.1400 | 17975.8905 | 0
+LZ8k_5_2_3_generateMarkov.compressMs       | 436.4708 | 4.3647 | 6.7691 | 0
+LZ8k_5_2_3_generateMarkov.uncompressMs     | 67.6080 | 0.6761 | 0.9568 | 0
 LZ8k_6_2_3_generateDictionary.uncompressed | 3218757.0000 | 32187.5700 | 50604.0314 | 0
 LZ8k_6_2_3_generateDictionary.compressed   | 1167546.0000 | 11675.4600 | 17967.7210 | 0
-LZ8k_6_2_3_generateDictionary.compressMs   | 428.5068 | 4.2851 | 6.6636 | 0
-LZ8k_6_2_3_generateDictionary.uncompressMs | 64.6913 | 0.6469 | 0.9291 | 0
+LZ8k_6_2_3_generateDictionary.compressMs   | 438.0895 | 4.3809 | 6.7693 | 0
+LZ8k_6_2_3_generateDictionary.uncompressMs | 62.2942 | 0.6229 | 0.8693 | 0
 LZ8k_6_2_3_generateMarkov.uncompressed     | 3218757.0000 | 32187.5700 | 50604.0314 | 0
-LZ8k_6_2_3_generateMarkov.compressed       | 1188583.0000 | 11885.8300 | 18134.0513 | 0
-LZ8k_6_2_3_generateMarkov.compressMs       | 394.7641 | 3.9476 | 6.5394 | 0
-LZ8k_6_2_3_generateMarkov.uncompressMs     | 60.9718 | 0.6097 | 0.8895 | 0
+LZ8k_6_2_3_generateMarkov.compressed       | 1175776.0000 | 11757.7600 | 18030.1177 | 0
+LZ8k_6_2_3_generateMarkov.compressMs       | 425.4561 | 4.2546 | 6.6917 | 0
+LZ8k_6_2_3_generateMarkov.uncompressMs     | 64.8878 | 0.6489 | 0.8678 | 0
 LZ8k_commonWords.uncompressed              | 3218757.0000 | 32187.5700 | 50604.0314 | 0
 LZ8k_commonWords.compressed                | 1167532.0000 | 11675.3200 | 17968.8035 | 0
-LZ8k_commonWords.compressMs                | 425.1188 | 4.2512 | 6.7067 | 0
-LZ8k_commonWords.uncompressMs              | 59.5838 | 0.5958 | 0.8526 | 0
+LZ8k_commonWords.compressMs                | 424.9970 | 4.2500 | 6.6535 | 0
+LZ8k_commonWords.uncompressMs              | 59.1663 | 0.5917 | 0.8240 | 0
 BZ0.uncompressed                           | 3218757.0000 | 32187.5700 | 50604.0314 | 0
 BZ0.compressed                             | 1046973.0000 | 10469.7300 | 15355.9676 | 0
-BZ0.compressMs                             | 1282.1582 | 12.8216 | 21.5110 | 0
-BZ0.uncompressMs                           | 356.9745 | 3.5697 | 5.0505 | 0
+BZ0.compressMs                             | 1278.3160 | 12.7832 | 21.5460 | 0
+BZ0.uncompressMs                           | 389.8889 | 3.8989 | 5.9557 | 0
 LZ0.uncompressed                           | 3218757.0000 | 32187.5700 | 50604.0314 | 0
 LZ0.compressed                             | 1194685.0000 | 11946.8500 | 18177.3498 | 0
-LZ0.compressMs                             | 404.4383 | 4.0444 | 6.4810 | 0
-LZ0.uncompressMs                           | 59.6249 | 0.5962 | 0.8673 | 0
+LZ0.compressMs                             | 415.1405 | 4.1514 | 6.7009 | 0
+LZ0.uncompressMs                           | 63.1195 | 0.6312 | 0.9835 | 0
 
