@@ -40,63 +40,65 @@ public abstract class ModelClusterTest {
   @Test
   @Category(TestCategories.ResearchCode.class)
   public void clusterSharedDictionariesLZ() throws Exception {
-    MarkdownPrintStream log = new MarkdownPrintStream(new FileOutputStream("src/site/markdown/clusterSharedDictionariesLZ"+getClass().getSimpleName()+".md")).addCopy(System.out);
-    int dictionary_context = 5;
-    int model_minPathWeight = 3;
-    int dictionary_lookahead = 2;
-    int index = 0;
+    try(MarkdownPrintStream log = new MarkdownPrintStream(new FileOutputStream("src/site/markdown/clusterSharedDictionariesLZ"+getClass().getSimpleName()+".md")).addCopy(System.out)) {
+      int dictionary_context = 5;
+      int model_minPathWeight = 3;
+      int dictionary_lookahead = 2;
+      int index = 0;
 
-    Map<String, Compressor> compressors = new LinkedHashMap<>();
-    Stream<TestDocument> limit = source().limit(getModelCount()).map(x->x);
-    List<TestDocument> collect = limit.collect(Collectors.toList());
-    for(TestDocument text : collect) {
-      CharTree baseTree = new CharTree();
-      baseTree.addDocument(text.text);
-      CharTree dictionaryTree = baseTree.copy().index(dictionary_context + dictionary_lookahead, model_minPathWeight);
-      compressors.put(String.format("LZ_%s", index++), new Compressor() {
-        String dictionary = dictionaryTree.copy().codec.generateDictionary(8*1024, dictionary_context, "", dictionary_lookahead, true);
-        @Override
-        public byte[] compress(String text) {
-          return CharTreeCodec.encodeLZ(text, dictionary);
-        }
-        @Override
-        public String uncompress(byte[] data) {
-          return CharTreeCodec.decodeLZ(data, dictionary);
-        }
-      });
+      Map<String, Compressor> compressors = new LinkedHashMap<>();
+      Stream<TestDocument> limit = source().limit(getModelCount()).map(x->x);
+      List<TestDocument> collect = limit.collect(Collectors.toList());
+      for(TestDocument text : collect) {
+        CharTree baseTree = new CharTree();
+        baseTree.addDocument(text.text);
+        CharTree dictionaryTree = baseTree.copy().index(dictionary_context + dictionary_lookahead, model_minPathWeight);
+        compressors.put(String.format("LZ_%s", index++), new Compressor() {
+          String dictionary = dictionaryTree.copy().codec.generateDictionary(8*1024, dictionary_context, "", dictionary_lookahead, true);
+          @Override
+          public byte[] compress(String text) {
+            return CharTreeCodec.encodeLZ(text, dictionary);
+          }
+          @Override
+          public String uncompress(byte[] data) {
+            return CharTreeCodec.decodeLZ(data, dictionary);
+          }
+        });
+      }
+
+      TableOutput output = Compressor.evalTable(source().skip(getModelCount()), compressors, true);
+      log.out(output.toTextTable());
+      log.close();
+      String outputDirName = String.format("cluster_%s_LZ/", getClass().getSimpleName());
+      output.writeProjectorData(new File(outPath, outputDirName), new URL(outBaseUrl, outputDirName));
     }
-
-    TableOutput output = Compressor.evalTable(source().skip(getModelCount()), compressors, true);
-    log.out(output.toTextTable());
-    log.close();
-    String outputDirName = String.format("cluster_%s_LZ/", getClass().getSimpleName());
-    output.writeProjectorData(new File(outPath, outputDirName), new URL(outBaseUrl, outputDirName));
   }
 
   @Test
   @Category(TestCategories.ResearchCode.class)
   public void calcCompressorPPM() throws Exception {
-    MarkdownPrintStream log = new MarkdownPrintStream(new FileOutputStream("src/site/markdown/calcCompressorPPM"+getClass().getSimpleName()+".md")).addCopy(System.out);
-    int ppmModelDepth = 6;
-    int model_minPathWeight = 3;
-    int index = 0;
-    int encodingContext = 2;
+    try(MarkdownPrintStream log = new MarkdownPrintStream(new FileOutputStream("src/site/markdown/calcCompressorPPM"+getClass().getSimpleName()+".md")).addCopy(System.out)){
+      int ppmModelDepth = 6;
+      int model_minPathWeight = 3;
+      int index = 0;
+      int encodingContext = 2;
 
-    Map<String, Compressor> compressors = new LinkedHashMap<>();
-    Stream<TestDocument> stream = source().limit(getModelCount()).map(x -> x);
-    for(TestDocument text : stream.collect(Collectors.toList())) {
-      CharTree baseTree = new CharTree();
-      baseTree.addDocument(text.text);
-      CharTree ppmTree = baseTree.copy().index(ppmModelDepth, model_minPathWeight);
+      Map<String, Compressor> compressors = new LinkedHashMap<>();
+      Stream<TestDocument> stream = source().limit(getModelCount()).map(x -> x);
+      for(TestDocument text : stream.collect(Collectors.toList())) {
+        CharTree baseTree = new CharTree();
+        baseTree.addDocument(text.text);
+        CharTree ppmTree = baseTree.copy().index(ppmModelDepth, model_minPathWeight);
 
-      String name = String.format("LZ_%s", index++);
-      compressors.put(name, Compressor.buildPPMCompressor(ppmTree, encodingContext));
+        String name = String.format("LZ_%s", index++);
+        compressors.put(name, Compressor.buildPPMCompressor(ppmTree, encodingContext));
+      }
+
+      TableOutput output = Compressor.evalTable(source().skip(getModelCount()), compressors, true);
+      log.out(output.toTextTable());
+      String outputDirName = String.format("cluster_%s_PPM/", getClass().getSimpleName());
+      output.writeProjectorData(new File(outPath, outputDirName), new URL(outBaseUrl, outputDirName));
     }
-
-    TableOutput output = Compressor.evalTable(source().skip(getModelCount()), compressors, true);
-    log.out(output.toTextTable());
-    String outputDirName = String.format("cluster_%s_PPM/", getClass().getSimpleName());
-    output.writeProjectorData(new File(outPath, outputDirName), new URL(outBaseUrl, outputDirName));
   }
 
 

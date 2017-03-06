@@ -17,7 +17,7 @@ import java.util.stream.Stream;
 public class CompressionTest {
 
   @Test
-  @Category(TestCategories.ResearchCode.class)
+  @Category(TestCategories.UnitTest.class)
   public void testPPMCompression_Basic() throws Exception {
     CharTree tree = new CharTree();
     tree.addDocument("ababababab");
@@ -69,7 +69,7 @@ public class CompressionTest {
   }
 
   @Test
-  @Category(TestCategories.ResearchCode.class)
+  @Category(TestCategories.Report.class)
   public void calcTweetCompression() throws Exception {
     int ppmModelDepth = 9;
     int model_minPathWeight = 3;
@@ -89,7 +89,7 @@ public class CompressionTest {
   }
 
   @Test
-  @Category(TestCategories.ResearchCode.class)
+  @Category(TestCategories.Report.class)
   public void calcWikiCompression() throws Exception {
     int ppmModelDepth = 9;
     int model_minPathWeight = 3;

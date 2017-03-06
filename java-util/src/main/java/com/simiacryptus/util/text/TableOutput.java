@@ -39,7 +39,7 @@ public class TableOutput {
             try(PrintStream printStream = new PrintStream(file)) {
                 for(Map<String, Object> row : rows) {
                     printStream.println(scalarCols.stream()
-                            .map(e->((Number)row.get(e.getKey())).doubleValue())
+                            .map(e->((Number)row.getOrDefault(e.getKey(), 0)).doubleValue())
                             .map(x->x.toString()).collect(Collectors.joining("\t")));
                 }
             }
@@ -54,7 +54,7 @@ public class TableOutput {
             	}
                 for(Map<String, Object> row : rows) {
                     printStream.println(metadataCols.stream()
-                            .map(e->((String)row.get(e.getKey())))
+                            .map(e->((String)row.getOrDefault(e.getKey(), "")))
                             .collect(Collectors.joining("\t")));
                 }
             }

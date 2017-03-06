@@ -1,5 +1,7 @@
 package com.simiacryptus.util.test;
 
+import com.simiacryptus.util.text.Spool;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;

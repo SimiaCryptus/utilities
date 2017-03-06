@@ -1,5 +1,6 @@
 package com.simiacryptus.util.text;
 
+import com.simiacryptus.util.binary.Bits;
 import com.simiacryptus.util.data.DoubleStatistics;
 import com.simiacryptus.util.test.TestCategories;
 import com.simiacryptus.util.test.TweetSentiment;
@@ -9,6 +10,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -80,6 +82,48 @@ public class CharTreeTest {
     System.out.println(
             String.format("%s\t%s\t%s KB\t%s sec\t%s KB\t%s KB", maxLevels, minWeight, tree.getIndexedSize() / 1024,
                     elapsed / 1000., tree.getMemorySize() / 1024, tree.truncate().getMemorySize() / 1024));
+  }
+
+  @Test
+  @Category(TestCategories.Report.class)
+  public void demoCharTree() throws IOException {
+    try (MarkdownPrintStream log = new MarkdownPrintStream(new FileOutputStream("src/site/markdown/demoCharTree.md")).addCopy(System.out)) {
+
+      log.out("This will demonstrate how to use the CharTree class for PPM compression\n");
+
+      log.out("First, we load some data into an index:");
+      CharTreeCodec codec = log.code(()->{
+        CharTree charTree = new CharTree();
+        WikiArticle.load().limit(100).forEach(article -> {
+          charTree.addDocument(article.text);
+        });
+        charTree.index(3,1);
+        // Remove Cursor Data:
+        charTree.truncate();
+        // This must be called before using the tree as a PPM model:
+        CharTree codecTree = charTree.addEscapeNodes();
+        System.out.print("Tree Size: " + codecTree.getMemorySize());
+        return codecTree.codec;
+      });
+
+      log.out("\nThen, we compress data:");
+      WikiArticle wikiArticle = log.code(()->{
+        return WikiArticle.load().skip(100).findFirst().get();
+      });
+
+      String compressed = log.code(()->{
+        System.out.print("Topic: " + wikiArticle.text);
+        Bits bits = codec.encodePPM(wikiArticle.text, 2);
+        return bits.toBase64String();
+      });
+
+      log.out("\nAnd decompress to verify:");
+      String uncompressed = log.code(()->{
+        byte[] bytes = Base64.getDecoder().decode(compressed);
+        return codec.decodePPM(bytes, 2);
+      });
+
+    }
   }
 
   @Test

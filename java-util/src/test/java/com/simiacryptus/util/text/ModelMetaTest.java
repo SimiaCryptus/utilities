@@ -92,7 +92,7 @@ public abstract class ModelMetaTest {
   }
 
   @Test
-  @Category(TestCategories.ResearchCode.class)
+  @Category(TestCategories.Report.class)
   public void calcSharedDictionariesBZ() throws Exception {
     MarkdownPrintStream log = new MarkdownPrintStream(new FileOutputStream("src/site/markdown/calcSharedDictionariesBZ"+getClass().getSimpleName()+".md")).addCopy(System.out);
     CharTree baseTree = new CharTree();
@@ -104,7 +104,7 @@ public abstract class ModelMetaTest {
     log.out("Indexing %s KB of documents", baseTree.getIndexedSize() / 1024);
     Map<String, Compressor> compressors = new LinkedHashMap<>();
 
-    for(int dictionary_context : Arrays.asList(4,5,6)) {
+    for(int dictionary_context : Arrays.asList(4,6,8)) {
       int model_minPathWeight = 3;
       int dictionary_lookahead = 2;
       log.out("Generating dictionaries");
@@ -130,7 +130,7 @@ public abstract class ModelMetaTest {
   }
 
   @Test
-  @Category(TestCategories.ResearchCode.class)
+  @Category(TestCategories.Report.class)
   public void calcCompressorPPM() throws Exception {
     MarkdownPrintStream log = new MarkdownPrintStream(new FileOutputStream("src/site/markdown/calcCompressorPPM"+getClass().getSimpleName()+".md")).addCopy(System.out);
     CharTree baseTree = new CharTree();

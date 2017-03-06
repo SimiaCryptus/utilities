@@ -1,5 +1,6 @@
 package com.simiacryptus.util.test;
 
+import com.simiacryptus.util.text.Spool;
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;

@@ -7,4 +7,7 @@ public class TestCategories {
 
     public static class ResearchCode {
     }
+
+    public static class Report {
+    }
 }

@@ -1,4 +1,4 @@
-package com.simiacryptus.util.test;
+package com.simiacryptus.util.text;
 
 import javax.net.ssl.*;
 import java.io.*;
