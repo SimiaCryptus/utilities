@@ -106,7 +106,7 @@ public class CharTreeTest {
         return codecTree.codec;
       });
 
-      log.out("\nThen, we compress data:");
+      log.out("\n\nThen, we compress data:");
       WikiArticle wikiArticle = log.code(()->{
         return WikiArticle.load().skip(100)
                 .filter(article->article.text.length() > 1024 && article.text.length() < 4096)
@@ -114,12 +114,12 @@ public class CharTreeTest {
       });
 
       String compressed = log.code(()->{
-        System.out.print("Topic: " + wikiArticle.text);
         Bits bits = codec.encodePPM(wikiArticle.text, 2);
+        System.out.print("Bit Length: " + bits.bitLength);
         return bits.toBase64String();
       });
 
-      log.out("\nAnd decompress to verify:");
+      log.out("\n\nAnd decompress to verify:");
       String uncompressed = log.code(()->{
         byte[] bytes = Base64.getDecoder().decode(compressed);
         return codec.decodePPM(bytes, 2);
