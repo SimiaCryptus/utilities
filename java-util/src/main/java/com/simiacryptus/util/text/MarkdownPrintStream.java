@@ -59,10 +59,14 @@ public class MarkdownPrintStream extends PrintStream {
             out("```");
             T eval = result.obj;
             out("Returns: ");
-            out("      " + eval.toString().replaceAll("\n","\n      "));
+            out("```");
+            out("    " + eval.toString().replaceAll("\n","\n    "));
+            out("```");
             if(!result.log.isEmpty()) {
                 out("Logging: ");
-                out("      " + result.log.replaceAll("\n","\n      "));
+                out("```");
+                out("    " + result.log.replaceAll("\n","\n    "));
+                out("```");
             }
             return eval;
         } catch (IOException e) {
