@@ -54,13 +54,15 @@ public class MarkdownPrintStream extends PrintStream {
             SysOutInterceptor.LoggedResult<T> result = SysOutInterceptor.withOutput(() -> fn.get());
             String sourceCode = getInnerText(callingFrame);
             out("Code: ");
+            out("```java");
             out("  " + sourceCode.replaceAll("\n","\n  "));
+            out("```");
             T eval = result.obj;
             out("Returns: ");
-            out("  " + eval.toString().replaceAll("\n","\n  "));
+            out("      " + eval.toString().replaceAll("\n","\n      "));
             if(!result.log.isEmpty()) {
                 out("Logging: ");
-                out("  " + result.log.replaceAll("\n","\n  "));
+                out("      " + result.log.replaceAll("\n","\n      "));
             }
             return eval;
         } catch (IOException e) {

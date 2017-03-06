@@ -108,7 +108,9 @@ public class CharTreeTest {
 
       log.out("\nThen, we compress data:");
       WikiArticle wikiArticle = log.code(()->{
-        return WikiArticle.load().skip(100).findFirst().get();
+        return WikiArticle.load().skip(100)
+                .filter(article->article.text.length() > 1024 && article.text.length() < 4096)
+                .findFirst().get();
       });
 
       String compressed = log.code(()->{
