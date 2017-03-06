@@ -15,10 +15,10 @@
 -docencoding
 'UTF-8'
 -doctitle
-'java-util 1.0.1 API'
+'java-util 1.0.2 API'
 -linkoffline
 'http://docs.oracle.com/javase/8/docs/api' '/home/acharnes/SimiaCryptus/utilities/java-util/target/javadoc-bundle-options'
 -use
 -version
 -windowtitle
-'java-util 1.0.1 API'
+'java-util 1.0.2 API'

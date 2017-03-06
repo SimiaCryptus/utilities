@@ -88,12 +88,12 @@
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;45</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;  <span class="keyword">public</span> Bits read(<span class="keyword">final</span> <span class="keyword">int</span> bits) <span class="keyword">throws</span> IOException {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;46</td>  <td class="nbHitsCovered">&nbsp;19115883</td>  <td class="src"><pre class="src">&nbsp;    <span class="keyword">final</span> <span class="keyword">int</span> additionalBitsNeeded = bits - <span class="keyword">this</span>.remainder.bitLength;</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;47</td>  <td class="nbHitsCovered">&nbsp;19115883</td>  <td class="src"><pre class="src">&nbsp;    <span class="keyword">final</span> <span class="keyword">int</span> additionalBytesNeeded = (<span class="keyword">int</span>) Math.ceil(additionalBitsNeeded / 8.);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;48</td>  <td class="nbHitsCovered"><a title="Line 48: Conditional coverage 100% (2/2).">&nbsp;19115883</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 48: Conditional coverage 100% (2/2).">    <span class="keyword">if</span>(additionalBytesNeeded &gt; 0) <span class="keyword">this</span>.readAhead(additionalBytesNeeded);</a></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;49</td>  <td class="nbHitsCovered">&nbsp;19115883</td>  <td class="src"><pre class="src">&nbsp;    <span class="keyword">final</span> Bits readBits = <span class="keyword">this</span>.remainder.range(0, bits);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;50</td>  <td class="nbHitsCovered">&nbsp;19115883</td>  <td class="src"><pre class="src">&nbsp;    <span class="keyword">this</span>.remainder = <span class="keyword">this</span>.remainder.range(bits);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;51</td>  <td class="nbHitsCovered">&nbsp;19115883</td>  <td class="src"><pre class="src">&nbsp;    <span class="keyword">return</span> readBits;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;46</td>  <td class="nbHitsCovered">&nbsp;19117894</td>  <td class="src"><pre class="src">&nbsp;    <span class="keyword">final</span> <span class="keyword">int</span> additionalBitsNeeded = bits - <span class="keyword">this</span>.remainder.bitLength;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;47</td>  <td class="nbHitsCovered">&nbsp;19117894</td>  <td class="src"><pre class="src">&nbsp;    <span class="keyword">final</span> <span class="keyword">int</span> additionalBytesNeeded = (<span class="keyword">int</span>) Math.ceil(additionalBitsNeeded / 8.);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;48</td>  <td class="nbHitsCovered"><a title="Line 48: Conditional coverage 100% (2/2).">&nbsp;19117894</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 48: Conditional coverage 100% (2/2).">    <span class="keyword">if</span>(additionalBytesNeeded &gt; 0) <span class="keyword">this</span>.readAhead(additionalBytesNeeded);</a></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;49</td>  <td class="nbHitsCovered">&nbsp;19117894</td>  <td class="src"><pre class="src">&nbsp;    <span class="keyword">final</span> Bits readBits = <span class="keyword">this</span>.remainder.range(0, bits);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;50</td>  <td class="nbHitsCovered">&nbsp;19117894</td>  <td class="src"><pre class="src">&nbsp;    <span class="keyword">this</span>.remainder = <span class="keyword">this</span>.remainder.range(bits);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;51</td>  <td class="nbHitsCovered">&nbsp;19117894</td>  <td class="src"><pre class="src">&nbsp;    <span class="keyword">return</span> readBits;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;52</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;  }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;53</td>  <td class="nbHits">&nbsp;</td>
@@ -117,24 +117,24 @@
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;65</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;  <span class="keyword">public</span> Bits readAhead(<span class="keyword">final</span> <span class="keyword">int</span> bytes) <span class="keyword">throws</span> IOException {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;66</td>  <td class="nbHitsUncovered"><a title="Line 66: Conditional coverage 50% (2/4) [each condition: 50%, 50%].">&nbsp;11124231</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 66: Conditional coverage 50% (2/4) [each condition: 50%, 50%].">    <span class="keyword">assert</span>(0 &lt; bytes);</a></span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;67</td>  <td class="nbHitsUncovered"><a title="Line 67: Conditional coverage 50% (1/2).">&nbsp;11124231</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 67: Conditional coverage 50% (1/2).">    <span class="keyword">if</span> (0 &lt; bytes) {</a></span></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;68</td>  <td class="nbHitsCovered">&nbsp;11124231</td>  <td class="src"><pre class="src">&nbsp;      <span class="keyword">final</span> <span class="keyword">byte</span>[] buffer = <span class="keyword">new</span> <span class="keyword">byte</span>[bytes];</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;69</td>  <td class="nbHitsCovered">&nbsp;11124231</td>  <td class="src"><pre class="src">&nbsp;      <span class="keyword">int</span> bytesRead = <span class="keyword">this</span>.inner.read(buffer);</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;70</td>  <td class="nbHitsCovered"><a title="Line 70: Conditional coverage 100% (2/2).">&nbsp;11124231</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 70: Conditional coverage 100% (2/2).">      <span class="keyword">if</span>(bytesRead &gt; 0) {</a></pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;71</td>  <td class="nbHitsCovered">&nbsp;11124228</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">this</span>.remainder = <span class="keyword">this</span>.remainder.concatenate(<span class="keyword">new</span> Bits(Arrays.copyOf(buffer, bytesRead)));</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;66</td>  <td class="nbHitsUncovered"><a title="Line 66: Conditional coverage 50% (2/4) [each condition: 50%, 50%].">&nbsp;11129958</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 66: Conditional coverage 50% (2/4) [each condition: 50%, 50%].">    <span class="keyword">assert</span>(0 &lt; bytes);</a></span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;67</td>  <td class="nbHitsUncovered"><a title="Line 67: Conditional coverage 50% (1/2).">&nbsp;11129958</a></td>  <td class="src"><pre class="src"><span class="srcUncovered">&nbsp;<a title="Line 67: Conditional coverage 50% (1/2).">    <span class="keyword">if</span> (0 &lt; bytes) {</a></span></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;68</td>  <td class="nbHitsCovered">&nbsp;11129958</td>  <td class="src"><pre class="src">&nbsp;      <span class="keyword">final</span> <span class="keyword">byte</span>[] buffer = <span class="keyword">new</span> <span class="keyword">byte</span>[bytes];</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;69</td>  <td class="nbHitsCovered">&nbsp;11129958</td>  <td class="src"><pre class="src">&nbsp;      <span class="keyword">int</span> bytesRead = <span class="keyword">this</span>.inner.read(buffer);</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;70</td>  <td class="nbHitsCovered"><a title="Line 70: Conditional coverage 100% (2/2).">&nbsp;11129958</a></td>  <td class="src"><pre class="src">&nbsp;<a title="Line 70: Conditional coverage 100% (2/2).">      <span class="keyword">if</span>(bytesRead &gt; 0) {</a></pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;71</td>  <td class="nbHitsCovered">&nbsp;11129955</td>  <td class="src"><pre class="src">&nbsp;        <span class="keyword">this</span>.remainder = <span class="keyword">this</span>.remainder.concatenate(<span class="keyword">new</span> Bits(Arrays.copyOf(buffer, bytesRead)));</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;72</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;      }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;73</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;    }</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;74</td>  <td class="nbHitsCovered">&nbsp;11124231</td>  <td class="src"><pre class="src">&nbsp;    <span class="keyword">return</span> <span class="keyword">this</span>.remainder;</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;74</td>  <td class="nbHitsCovered">&nbsp;11129958</td>  <td class="src"><pre class="src">&nbsp;    <span class="keyword">return</span> <span class="keyword">this</span>.remainder;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;75</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;  }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;76</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;77</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;  <span class="keyword">public</span> <span class="keyword">boolean</span> readBool() <span class="keyword">throws</span> IOException {</pre></td></tr>
-<tr>  <td class="numLineCover">&nbsp;78</td>  <td class="nbHitsCovered">&nbsp;12657879</td>  <td class="src"><pre class="src">&nbsp;    <span class="keyword">return</span> Bits.ONE.equals(<span class="keyword">this</span>.read(1));</pre></td></tr>
+<tr>  <td class="numLineCover">&nbsp;78</td>  <td class="nbHitsCovered">&nbsp;12659623</td>  <td class="src"><pre class="src">&nbsp;    <span class="keyword">return</span> Bits.ONE.equals(<span class="keyword">this</span>.read(1));</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;79</td>  <td class="nbHits">&nbsp;</td>
   <td class="src"><pre class="src">&nbsp;  }</pre></td></tr>
 <tr>  <td class="numLine">&nbsp;80</td>  <td class="nbHits">&nbsp;</td>
@@ -189,6 +189,6 @@
   <td class="src"><pre class="src">&nbsp;}</pre></td></tr>
 </table>
 
-<div class="footer">Report generated by <a href="http://cobertura.sourceforge.net/" target="_top">Cobertura</a> 2.1.1 on 3/6/17 12:42 AM.</div>
+<div class="footer">Report generated by <a href="http://cobertura.sourceforge.net/" target="_top">Cobertura</a> 2.1.1 on 3/6/17 7:52 AM.</div>
 </body>
 </html>
