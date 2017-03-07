@@ -26,16 +26,14 @@ public class IndexNode extends TrieNode {
 
   public TrieNode split() {
     if (getData().firstChildIndex < 0) {
-      Map<Character, SerialArrayList<CursorData>> sortedChildren = getCursors().parallel()
-          .collect(Collectors.groupingBy(y -> y.next().getToken(),
-              Collectors.reducing(new SerialArrayList<>(CursorType.INSTANCE, 0),
-                  cursor -> new SerialArrayList<>(CursorType.INSTANCE, cursor.data),
-                  (left, right) -> left.add(right))));
+      TreeMap<Character, SerialArrayList<CursorData>> sortedChildren = new TreeMap<>(getCursors().parallel()
+              .collect(Collectors.groupingBy(y -> y.next().getToken(),
+                      Collectors.reducing(new SerialArrayList<>(CursorType.INSTANCE, 0),
+                              cursor -> new SerialArrayList<>(CursorType.INSTANCE, cursor.data),
+                              (left, right) -> left.add(right)))));
       int cursorWriteIndex = getData().firstCursorIndex;
       ArrayList<NodeData> childNodes = new ArrayList<>(sortedChildren.size());
-      List<Map.Entry<Character, SerialArrayList<CursorData>>> collect = sortedChildren.entrySet().stream()
-          .sorted(Comparator.comparing(e -> e.getKey())).collect(Collectors.toList());
-      for (Map.Entry<Character, SerialArrayList<CursorData>> e : collect) {
+      for (Map.Entry<Character, SerialArrayList<CursorData>> e : sortedChildren.entrySet()) {
         int length = e.getValue().length();
         ((CharTrieIndex)this.trie).cursors.putAll(e.getValue(), cursorWriteIndex);
         childNodes.add(new NodeData(e.getKey(), (short) -1, -1, length, cursorWriteIndex));
@@ -86,7 +84,26 @@ public class IndexNode extends TrieNode {
 
   @Override
   public Optional<? extends IndexNode> getChild(char token) {
-    return super.getChild(token).map(x->(IndexNode)x);
+    NodeData data = getData();
+    int min = data.firstChildIndex;
+    int max = data.firstChildIndex + data.numberOfChildren - 1;
+    while(min <= max) {
+        int i = (min + max) / 2;
+        IndexNode node = new IndexNode(this.trie, (short) (depth + 1), i, this);
+        char c = node.getChar();
+        int compare = Character.compare(c, token);
+        if(c < token) {
+            // node.getChar() < token
+            min = i + 1;
+        } else if(c > token) {
+            // node.getChar() > token
+            max = i - 1;
+        } else {
+            return Optional.of(node);
+        }
+    }
+    //assert !getChildren().filter(x -> x.getChar() == token).findFirst().isPresent();
+    return Optional.empty();
   }
 
   @Override

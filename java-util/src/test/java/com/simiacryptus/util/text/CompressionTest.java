@@ -39,20 +39,21 @@ public class CompressionTest {
     TweetSentiment.load().skip(articleCount).limit(modelCount).map(t -> t.text)
             .forEach(txt -> tree.addDocument(txt));
     CharTrie modelTree = tree.index(modelDepth, 0);
-    TweetSentiment.load().limit(articleCount).map(t -> t.text).forEach(txt->{
+    PPMCodec codec = modelTree.getCodec();
+    TweetSentiment.load().limit(articleCount).parallel().map(t -> t.text).forEach(txt->{
       try {
-        Bits encoded = modelTree.getCodec().encodePPM(txt, encodingContext);
-        String decoded = modelTree.getCodec().decodePPM(encoded.getBytes(), encodingContext);
+        Bits encoded = codec.encodePPM(txt, encodingContext);
+        String decoded = codec.decodePPM(encoded.getBytes(), encodingContext);
         org.junit.Assert.assertEquals(txt, decoded);
-        //System.out.println(String.format("Verified \"%s\" - %s chars -> %s bits", txt, txt.length(), encoded.bitLength));
+        System.out.println(String.format("Verified \"%s\" - %s chars -> %s bits", txt, txt.length(), encoded.bitLength));
       } catch (Throwable e) {
         synchronized (modelTree) {
           System.out.println(String.format("Error encoding \"%s\" - %s", txt, e.getMessage()));
           try {
-            PPMCodec codec = modelTree.copy().getCodec();
-            codec.verbose = true;
-            Bits encoded = codec.encodePPM(txt, encodingContext);
-            String decoded = codec.decodePPM(encoded.getBytes(), encodingContext);
+            PPMCodec codec2 = codec.copy();
+            codec2.verbose = true;
+            Bits encoded = codec2.encodePPM(txt, encodingContext);
+            String decoded = codec2.decodePPM(encoded.getBytes(), encodingContext);
             org.junit.Assert.assertEquals(txt, decoded);
             System.out.println(String.format("Verified \"%s\" - %s chars -> %s bits", txt, txt.length(), encoded.bitLength));
           } catch (Throwable e2) {
@@ -79,7 +80,7 @@ public class CompressionTest {
 
     MarkdownPrintStream log = new MarkdownPrintStream(new FileOutputStream("reports/calcTweetCompression.md")).addCopy(System.out);
     Map<String, Compressor> compressors = buildCompressors(source, ppmModelDepth, model_minPathWeight, dictionary_lookahead, dictionary_context, encodingContext, modelCount);
-    TableOutput output = Compressor.evalTable(source.get().skip(modelCount), compressors, true);
+    TableOutput output = Compressor.evalCompressor(source.get().skip(modelCount), compressors, true);
     //log.out(output.toTextTable());
     log.out(output.calcNumberStats().toTextTable());
     log.close();
@@ -98,7 +99,7 @@ public class CompressionTest {
     Supplier<Stream<? extends TestDocument>> source = ()-> EnglishWords.load().limit(modelCount + testCount);
     MarkdownPrintStream log = new MarkdownPrintStream(new FileOutputStream("reports/calcTermCompression.md")).addCopy(System.out);
     Map<String, Compressor> compressors = buildCompressors(source, ppmModelDepth, model_minPathWeight, dictionary_lookahead, dictionary_context, encodingContext, modelCount);
-    TableOutput output = Compressor.evalTable(source.get().skip(modelCount), compressors, true);
+    TableOutput output = Compressor.evalCompressor(source.get().skip(modelCount), compressors, true);
     //log.out(output.toTextTable());
     log.out(output.calcNumberStats().toTextTable());
     log.close();
@@ -118,7 +119,7 @@ public class CompressionTest {
 
     MarkdownPrintStream log = new MarkdownPrintStream(new FileOutputStream("reports/calcWikiCompression.md")).addCopy(System.out);
     Map<String, Compressor> compressors = buildCompressors(source, ppmModelDepth, model_minPathWeight, dictionary_lookahead, dictionary_context, encodingContext, modelCount);
-    TableOutput output = Compressor.evalTable(source.get().skip(modelCount), compressors, true);
+    TableOutput output = Compressor.evalCompressor(source.get().skip(modelCount), compressors, true);
     //log.out(output.toTextTable());
     log.out(output.calcNumberStats().toTextTable());
     log.close();

@@ -11,9 +11,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.net.URL;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 public abstract class ModelClusterTest {
@@ -29,7 +29,10 @@ public abstract class ModelClusterTest {
 
     @Override
     protected Stream<? extends TestDocument> source() {
-      return WikiArticle.load().filter(wikiArticle -> wikiArticle.text.length() > 4 * 1024).limit(getModelCount() + testCount);
+      return WikiArticle.load().filter(wikiArticle -> {
+        int kb = wikiArticle.text.length() / 1024;
+        return kb > 50 && kb < 150;
+      }).limit(getModelCount() + testCount);
     }
 
     @Override
@@ -47,15 +50,14 @@ public abstract class ModelClusterTest {
       int dictionary_context = 7;
       int model_minPathWeight = 3;
       int dictionary_lookahead = 2;
-      int index = 0;
+      AtomicInteger index = new AtomicInteger(0);
       Map<String, Compressor> compressors = new LinkedHashMap<>();
-      Stream<TestDocument> limit = source().limit(getModelCount()).map(x->x);
-      List<TestDocument> collect = limit.collect(Collectors.toList());
-      for(TestDocument text : collect) {
+      source().parallel().limit(getModelCount()).forEach(text->{
         CharTrieIndex baseTree = new CharTrieIndex();
         baseTree.addDocument(text.text);
         CharTrie dictionaryTree = baseTree.copy().index(dictionary_context + dictionary_lookahead, model_minPathWeight);
-        compressors.put(String.format("LZ_%s", ++index), new Compressor() {
+        int i = index.incrementAndGet();
+        compressors.put(String.format("LZ_%s", i), new Compressor() {
           String dictionary = dictionaryTree.copy().getGenerator().generateDictionary(8*1024, dictionary_context, "", dictionary_lookahead, true);
           @Override
           public byte[] compress(String text) {
@@ -67,7 +69,7 @@ public abstract class ModelClusterTest {
           }
         });
 
-        compressors.put(String.format("LZ_raw_%s", index), new Compressor() {
+        compressors.put(String.format("LZ_raw_%s", i), new Compressor() {
           String dictionary = text.text;
           @Override
           public byte[] compress(String text) {
@@ -78,10 +80,10 @@ public abstract class ModelClusterTest {
             return CompressionUtil.decodeLZ(data, dictionary);
           }
         });
-      }
+      });
 
 
-      TableOutput output = Compressor.evalTable(source().skip(getModelCount()), compressors, true);
+      TableOutput output = Compressor.evalCompressorCluster(source().skip(getModelCount()), compressors, true);
       log.out(output.toTextTable());
       log.close();
       String outputDirName = String.format("cluster_%s_LZ/", getClass().getSimpleName());
@@ -95,23 +97,60 @@ public abstract class ModelClusterTest {
     try(MarkdownPrintStream log = new MarkdownPrintStream(new FileOutputStream("reports/calcCompressorPPM"+getClass().getSimpleName()+".md")).addCopy(System.out)){
       int ppmModelDepth = 6;
       int model_minPathWeight = 3;
-      int index = 0;
+      AtomicInteger index = new AtomicInteger(0);
       int encodingContext = 2;
 
+      log.out("Generating Compressor Models");
       Map<String, Compressor> compressors = new LinkedHashMap<>();
-      Stream<TestDocument> stream = source().limit(getModelCount()).map(x -> x);
-      for(TestDocument text : stream.collect(Collectors.toList())) {
-        CharTrieIndex baseTree = new CharTrieIndex();
-        baseTree.addDocument(text.text);
-        CharTrie ppmTree = baseTree.copy().index(ppmModelDepth, model_minPathWeight);
+      source().parallel().limit(getModelCount()).forEach(text->{
+        CharTrieIndex tree = new CharTrieIndex();
+        tree.addDocument(text.text);
+        tree = tree.index(ppmModelDepth, model_minPathWeight);
+        String name = String.format("LZ_%s", index.incrementAndGet());
+        Compressor ppmCompressor = Compressor.buildPPMCompressor(tree, encodingContext);
+        synchronized (compressors) {
+          compressors.put(name, ppmCompressor);
+        }
+        log.out("Completed Model %s", name);
+      });
 
-        String name = String.format("LZ_%s", index++);
-        compressors.put(name, Compressor.buildPPMCompressor(ppmTree, encodingContext));
-      }
-
-      TableOutput output = Compressor.evalTable(source().skip(getModelCount()), compressors, true);
+      log.out("Calculating Metrics Table");
+      TableOutput output = Compressor.evalCompressorCluster(source().skip(getModelCount()), compressors, true);
       log.out(output.toTextTable());
       String outputDirName = String.format("cluster_%s_PPM/", getClass().getSimpleName());
+      output.writeProjectorData(new File(outPath, outputDirName), new URL(outBaseUrl, outputDirName));
+    }
+  }
+
+  @Test
+  @Ignore
+  @Category(TestCategories.ResearchCode.class)
+  public void calcEntropyPPM() throws Exception {
+    try(MarkdownPrintStream log = new MarkdownPrintStream(new FileOutputStream("reports/calcEntropyPPM"+getClass().getSimpleName()+".md")).addCopy(System.out)){
+      int ppmModelDepth = 6;
+      int model_minPathWeight = 3;
+      AtomicInteger index = new AtomicInteger(0);
+      int encodingContext = 2;
+
+      log.out("Generating Compressor Models");
+      Map<String, Function<TestDocument,Double>> compressors = new LinkedHashMap<>();
+      source().parallel().limit(getModelCount()).forEach(text->{
+        CharTrieIndex tree = new CharTrieIndex();
+        tree.addDocument(text.text);
+        tree = tree.index(ppmModelDepth, model_minPathWeight);
+        String name = String.format("LZ_%s", index.incrementAndGet());
+        TextGenerator generator = tree.getGenerator();
+        Function<TestDocument,Double> ppmCompressor = t -> generator.measureEntropy(t.text, 1.0);
+        synchronized (compressors) {
+          compressors.put(name, ppmCompressor);
+        }
+        log.out("Completed Model %s", name);
+      });
+
+      log.out("Calculating Metrics Table");
+      TableOutput output = Compressor.evalCluster(source().skip(getModelCount()), compressors, true);
+      log.out(output.toTextTable());
+      String outputDirName = String.format("cluster_%s_Entropy/", getClass().getSimpleName());
       output.writeProjectorData(new File(outPath, outputDirName), new URL(outBaseUrl, outputDirName));
     }
   }

@@ -6,19 +6,26 @@ import com.simiacryptus.util.test.TestDocument;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public interface Compressor {
-  public static <T> TableOutput evalTable(Stream<? extends TestDocument> data, Map<String, Compressor> compressors, boolean wide) {
+  public static <T> TableOutput evalCompressor(Stream<? extends TestDocument> data, Map<String, Compressor> compressors, boolean wide) {
     TableOutput wideTable = new TableOutput();
     TableOutput tallTable = new TableOutput();
+    AtomicInteger index = new AtomicInteger(0);
     data.parallel().forEach(item->{
       HashMap<String, Object> rowWide = new LinkedHashMap<>();
       String title;
       title = item.title.replaceAll("\0","").replaceAll("\n","\\n");
       rowWide.put("title", title);
-      compressors.forEach((name,compressor)->{
+      compressors.entrySet().parallelStream().forEach((e)->{
         try {
+          String name = e.getKey();
+          Compressor compressor = e.getValue();
           HashMap<String, Object> rowTall = new LinkedHashMap<>();
           rowTall.put("title", title);
           rowTall.put("compressor", name);
@@ -37,9 +44,51 @@ public interface Compressor {
           rowWide.put(name + ".verified", uncompress.obj.equals(item.text));
           rowTall.put("verified", uncompress.obj.equals(item.text));
           tallTable.putRow(rowTall);
-          //System.out.println(String.format("Evaluated %s with %s", name, title));
-        } catch (Exception e) {
-          e.printStackTrace();
+          System.out.println(String.format("Evaluated #%s: %s with %s - %s chars -> %s bytes in %s sec", index.incrementAndGet(), name, title, item.text.length(), compress.obj.length, compress.timeNanos / 1000000000.0));
+        } catch (Exception ex) {
+          ex.printStackTrace();
+        }
+      });
+      wideTable.putRow(rowWide);
+    });
+    return wide?wideTable:tallTable;
+  }
+  public static <T> TableOutput evalCompressorCluster(Stream<? extends TestDocument> data, Map<String, Compressor> compressors, boolean wide) {
+    Stream<Map.Entry<String, Compressor>> stream = compressors.entrySet().stream();
+    Collector<Map.Entry<String, Compressor>, ?, Map<String, Function<TestDocument, Double>>> collector =
+            Collectors.toMap(e -> e.getKey(), e -> {
+              Compressor value = e.getValue();
+              return x->(value.compress(x.text).length*1.0/x.text.length());
+            });
+    return evalCluster(data, stream.collect(collector), wide);
+  }
+  public static <T> TableOutput evalCluster(Stream<? extends TestDocument> data, Map<String, Function<TestDocument, Double>> compressors, boolean wide) {
+    TableOutput wideTable = new TableOutput();
+    TableOutput tallTable = new TableOutput();
+    AtomicInteger index = new AtomicInteger(0);
+    data.parallel().forEach(item->{
+      HashMap<String, Object> rowWide = new LinkedHashMap<>();
+      String title;
+      title = item.title.replaceAll("\0","").replaceAll("\n","\\n");
+      rowWide.put("title", title);
+      compressors.entrySet().parallelStream().forEach((e)->{
+        try {
+          String name = e.getKey();
+          Function<TestDocument, Double> compressor = e.getValue();
+          HashMap<String, Object> rowTall = new LinkedHashMap<>();
+          rowTall.put("title", title);
+          rowTall.put("compressor", name);
+
+          TimedResult<Double> compress = TimedResult.time(()->compressor.apply(item));
+          rowWide.put(name + ".value", compress.obj);
+          rowTall.put("value", compress.obj);
+//          double ONE_MILLION = 1000000.0;
+//          rowWide.put(name + ".compressMs", compress.timeNanos / ONE_MILLION);
+//          rowTall.put("compressMs", compress.timeNanos / ONE_MILLION);
+          tallTable.putRow(rowTall);
+          System.out.println(String.format("Evaluated #%s: %s with %s - %s chars -> %s in %s sec", index.incrementAndGet(), name, title, item.text.length(), compress.obj, compress.timeNanos / 1000000000.0));
+        } catch (Exception ex) {
+          ex.printStackTrace();
         }
       });
       wideTable.putRow(rowWide);

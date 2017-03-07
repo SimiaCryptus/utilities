@@ -10,9 +10,7 @@ import java.util.function.Function;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-/**
- * Created by Andrew Charneski on 3/6/2017.
- */
+
 public class TrieNode {
     public final short depth;
     public final TrieNode parent;
@@ -69,10 +67,10 @@ public class TrieNode {
     public String getDebugString(TrieNode root) {
       if(this == root) return "";
       String parentStr = null == parent ? "" : parent.getDebugString(root);
-      return parentStr + getTokenToken();
+      return parentStr + getDebugToken();
     }
 
-    public String getTokenToken() {
+    public String getDebugToken() {
       char asChar = getChar();
       if(asChar == PPMCodec.FALLBACK) return "<STOP>";
       if(asChar == PPMCodec.END_OF_STRING) return "<NULL>";
@@ -133,7 +131,26 @@ public class TrieNode {
     }
 
     public Optional<? extends TrieNode> getChild(char token) {
-      return getChildren().filter(x -> x.getChar() == token).findFirst();
+        NodeData data = getData();
+        int min = data.firstChildIndex;
+        int max = data.firstChildIndex + data.numberOfChildren - 1;
+        while(min <= max) {
+            int i = (min + max) / 2;
+            TrieNode node = new TrieNode(this.trie, (short) (depth + 1), i, TrieNode.this);
+            char c = node.getChar();
+            int compare = Character.compare(c, token);
+            if(c < token) {
+                // node.getChar() < token
+                min = i + 1;
+            } else if(c > token) {
+                // node.getChar() > token
+                max = i - 1;
+            } else {
+                return Optional.of(node);
+            }
+        }
+        //assert !getChildren().filter(x -> x.getChar() == token).findFirst().isPresent();
+        return Optional.empty();
     }
 
     protected void decrementCursorCount(int count) {

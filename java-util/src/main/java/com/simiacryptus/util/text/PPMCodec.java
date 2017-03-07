@@ -148,4 +148,8 @@ public class PPMCodec {
   public int getMemorySize() {
     return inner.getMemorySize();
   }
+
+  public PPMCodec copy() {
+      return new PPMCodec(inner.copy());
+  }
 }

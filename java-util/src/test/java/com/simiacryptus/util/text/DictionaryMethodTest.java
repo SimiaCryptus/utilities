@@ -55,7 +55,7 @@ public class DictionaryMethodTest {
             Compressor.addGenericCompressors(map);
             return map;
         });
-        TableOutput output = Compressor.evalTable(source.get().skip(modelCount), compressors, true);
+        TableOutput output = Compressor.evalCompressor(source.get().skip(modelCount), compressors, true);
         //log.out(output.toTextTable());
         log.out(output.calcNumberStats().toTextTable());
     }

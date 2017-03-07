@@ -44,7 +44,7 @@ public class TermMetaTest {
       }
     }
 
-    TableOutput output = Compressor.evalTable(source().skip(modelCount), compressors, true);
+    TableOutput output = Compressor.evalCompressor(source().skip(modelCount), compressors, true);
     log.out(output.toTextTable());
     log.out(output.calcNumberStats().toTextTable());
     log.close();
