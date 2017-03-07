@@ -51,31 +51,30 @@ public interface Compressor {
     compressors.put("BZ0", new Compressor() {
       @Override
       public byte[] compress(String text) {
-        return CharTreeCodec.encodeBZ(text);
+        return CompressionUtil.encodeBZ(text);
       }
 
       @Override
       public String uncompress(byte[] data) {
-        return CharTreeCodec.decodeBZ(data);
+        return CompressionUtil.decodeBZ(data);
       }
     });
     compressors.put("LZ0", new Compressor() {
       @Override
       public byte[] compress(String text) {
-        return CharTreeCodec.encodeLZ(text);
+        return CompressionUtil.encodeLZ(text);
       }
 
       @Override
       public String uncompress(byte[] data) {
-        return CharTreeCodec.decodeLZ(data);
+        return CompressionUtil.decodeLZ(data);
       }
     });
   }
 
-  public static Compressor buildPPMCompressor(CharTree baseTree, final int encodingContext) {
-    CharTree encodingTree = baseTree.addEscapeNodes();
-    System.out.println(String.format("Encoding Tree Memory Size = %s KB", encodingTree.getMemorySize() / 1024));
-    CharTreeCodec codec = encodingTree.codec;
+  public static Compressor buildPPMCompressor(CharTrie baseTree, final int encodingContext) {
+    PPMCodec codec = baseTree.getCodec();
+    System.out.println(String.format("Encoding Tree Memory Size = %s KB", codec.getMemorySize() / 1024));
     return new Compressor() {
       @Override
       public byte[] compress(String text) {

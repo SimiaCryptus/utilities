@@ -4,18 +4,18 @@ public class Cursor {
   /**
    * 
    */
-  private final CharTree charTree;
+  private final CharTrieIndex charTrieIndex;
   final CursorData data;
   private final short depth;
 
-  public Cursor(CharTree charTree, CursorData data, short depth) {
-    this.charTree = charTree;
+  public Cursor(CharTrieIndex charTrieIndex, CursorData data, short depth) {
+    this.charTrieIndex = charTrieIndex;
     this.data = data;
     this.depth = depth;
   }
 
   public String getDocument() {
-    return this.charTree.documents.get(data.documentId);
+    return this.charTrieIndex.documents.get(data.documentId);
   }
 
   public boolean hasNext() {
@@ -25,11 +25,11 @@ public class Cursor {
   public char getToken() {
     int index = depth + data.position;
     String document = getDocument();
-    return index >= document.length() ? Character.MIN_VALUE : document.charAt(index);
+    return index >= document.length() ? PPMCodec.END_OF_STRING : document.charAt(index);
   }
 
   public Cursor next() {
-    return new Cursor(this.charTree, data, (short) (depth + 1));
+    return new Cursor(this.charTrieIndex, data, (short) (depth + 1));
   }
 
   public int getPosition() {

@@ -387,7 +387,7 @@ public class Bits implements Comparable<Bits>
     {
       sb.append(Integer.toHexString(b & 0xFF));
     }
-    return sb.substring(0, this.bitLength / 4);
+    return sb.substring(0, Math.min(this.bitLength / 4, sb.length()));
   }
 
   public String toBase64String() {

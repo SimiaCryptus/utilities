@@ -6,6 +6,7 @@ import com.simiacryptus.util.test.TestCategories;
 import com.simiacryptus.util.test.TweetSentiment;
 import com.simiacryptus.util.test.WikiArticle;
 import junit.framework.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -19,7 +20,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-public class CharTreeTest {
+public class CharTrieIndexTest {
   public static final File outPath = new File("src/site/resources/");
   public static final URL outBaseUrl = getUrl("https://simiacryptus.github.io/utilities/java-util/");
 
@@ -34,7 +35,7 @@ public class CharTreeTest {
   @Test
   @Category(TestCategories.UnitTest.class)
   public void testFunctionality() throws IOException {
-    CharTree tree = new CharTree().addDocument("a quick brown fox jumped over the lazy dog")
+    CharTrie tree = new CharTrieIndex().addDocument("a quick brown fox jumped over the lazy dog")
         .addDocument("this is a test. this is only a test. - nikola tesla").index(3).truncate();
     Assert.assertEquals(7, tree.traverse("t").getCursorCount());
     Assert.assertEquals("t", tree.traverse("t").getString());
@@ -51,7 +52,7 @@ public class CharTreeTest {
   @Test
   @Category(TestCategories.UnitTest.class)
   public void testPerformance() throws IOException {
-    CharTree tree = new CharTree();
+    CharTrieIndex tree = new CharTrieIndex();
     IntStream.range(0, 30000).parallel().forEach(i -> tree.addDocument(UUID.randomUUID().toString()));
     tree.index();
     System.out.println(String.format("tree.getIndexedSize = %s", tree.getIndexedSize()));
@@ -74,7 +75,7 @@ public class CharTreeTest {
   }
 
   static private void testRow(int maxLevels, int minWeight, Stream<String> documents) {
-    CharTree tree = new CharTree();
+    CharTrieIndex tree = new CharTrieIndex();
     long startTime = System.currentTimeMillis();
     documents.forEach(i -> tree.addDocument(i));
     tree.index(maxLevels, minWeight);
@@ -89,21 +90,16 @@ public class CharTreeTest {
   public void demoCharTree() throws IOException {
     try (MarkdownPrintStream log = new MarkdownPrintStream(new FileOutputStream("reports/demoCharTree.md")).addCopy(System.out)) {
 
-      log.out("This will demonstrate how to use the CharTree class for PPM compression\n");
+      log.out("This will demonstrate how to use the CharTrieIndex class for PPM compression\n");
 
       log.out("First, we load some data into an index:");
-      CharTreeCodec codec = log.code(()->{
-        CharTree charTree = new CharTree();
+      PPMCodec codec = log.code(()->{
+        CharTrieIndex charTrieIndex = new CharTrieIndex();
         WikiArticle.load().limit(100).forEach(article -> {
-          charTree.addDocument(article.text);
+          charTrieIndex.addDocument(article.text);
         });
-        charTree.index(3,1);
-        // Remove Cursor Data:
-        charTree.truncate();
-        // This must be called before using the tree as a PPM model:
-        CharTree codecTree = charTree.addEscapeNodes();
-        System.out.print("Tree Size: " + codecTree.getMemorySize());
-        return codecTree.codec;
+        charTrieIndex.index(3,1);
+        return charTrieIndex.getCodec();
       });
 
       log.out("\n\nThen, we compress data:");
@@ -129,6 +125,42 @@ public class CharTreeTest {
   }
 
   @Test
+  @Category(TestCategories.Report.class)
+  public void demoSerialization() throws IOException {
+    try (MarkdownPrintStream log = new MarkdownPrintStream(new FileOutputStream("reports/demoSerialization.md")).addCopy(System.out)) {
+
+      log.out("This will demonstrate how to serialize a CharTrie class in compressed format\n");
+
+      log.out("First, we load some data into an index:");
+      CharTrie tree = log.code(()->{
+        CharTrieIndex charTrieIndex = new CharTrieIndex();
+        WikiArticle.load().limit(100).forEach(article -> {
+          charTrieIndex.addDocument(article.text);
+        });
+        System.out.println(String.format("Indexing %s KB of documents", charTrieIndex.getIndexedSize() / 1024));
+        charTrieIndex.index(5,0);
+        return charTrieIndex.truncate();
+      });
+
+      log.out("\n\nThen, we compress the tree:");
+      String serialized = log.code(()->{
+        byte[] bytes = new FullTrieSerializer().serialize(tree.copy());
+        System.out.println(String.format("%s in ram, %s bytes in serialized form, %s%% compression", tree.getMemorySize(), bytes.length, 100 - (bytes.length * 100.0 / tree.getMemorySize())));
+        return Base64.getEncoder().encodeToString(bytes);
+      });
+
+      log.out("\n\nAnd decompress to verify:");
+      boolean ok = log.code(()->{
+        byte[] bytes = Base64.getDecoder().decode(serialized);
+        CharTrie restored = new FullTrieSerializer().deserialize(bytes);
+        return restored.root().equals(tree.root());
+      });
+
+    }
+  }
+
+  @Test
+  @Ignore
   @Category(TestCategories.ResearchCode.class)
   public void testDictionaryGenerationMetaParameters() throws IOException {
     TableOutput output = new TableOutput();
@@ -193,7 +225,7 @@ public class CharTreeTest {
     System.out.println(output.toTextTable());
     output = new TableOutput();
 
-    CharTree tree = new CharTree();
+    CharTrieIndex tree = new CharTrieIndex();
     long startTime = System.currentTimeMillis();
     // sentances.stream().forEach(i->tree.addDocument(i));
     tree.addDocument(content);
@@ -209,9 +241,9 @@ public class CharTreeTest {
     output = new TableOutput();
 
     for (int context = 0; context < maxLevels; context++) {
-      CharTree copy = tree.copy();
+      CharTrie copy = tree.copy();
       for (int attempt = 0; attempt < 1; attempt++) {
-        String dictionary = copy.codec.generateMarkov(size, context, ".");
+        String dictionary = copy.getGenerator().generateMarkov(size, context, ".");
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("type", "generateMarkov");
         map.put("context", context);
@@ -227,7 +259,7 @@ public class CharTreeTest {
     for (int lookahead = 0; lookahead < 3; lookahead++) {
       for (int context = 0; context < maxLevels - lookahead; context++) {
         for (int attempt = 0; attempt < 1; attempt++) {
-          String dictionary = tree.copy().codec.generateDictionary(size, context, ".", lookahead, true);
+          String dictionary = tree.copy().getGenerator().generateDictionary(size, context, ".", lookahead, true);
           Map<String, Object> map = new LinkedHashMap<>();
           map.put("type", "generateDictionary1");
           map.put("context", context);
@@ -245,7 +277,7 @@ public class CharTreeTest {
 
     for (int lookahead = 0; lookahead < 3; lookahead++) {
       for (int context = 0; context < maxLevels - lookahead; context++) {
-        String dictionary = tree.codec.generateDictionary(size, context, ".", lookahead, false);
+        String dictionary = tree.getGenerator().generateDictionary(size, context, ".", lookahead, false);
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("type", "generateDictionary2");
         map.put("context", context);
@@ -261,6 +293,7 @@ public class CharTreeTest {
   }
 
   @Test
+  @Ignore
   @Category(TestCategories.ResearchCode.class)
   public void testModelMetric() throws IOException {
     Map<String, String> content = new HashMap<>();
@@ -278,15 +311,15 @@ public class CharTreeTest {
     int sampleSize = 64 * 1024;
 
     long startTime = System.currentTimeMillis();
-    Map<String, CharTree> trees = new HashMap<>();
+    Map<String, CharTrie> trees = new HashMap<>();
     Map<String, String> dictionaries = new HashMap<>();
     for (Map.Entry<String, String> e : content.entrySet()) {
-      CharTree tree = new CharTree();
+      CharTrieIndex tree = new CharTrieIndex();
       tree.addDocument(characterSet);
       tree.addDocument(e.getValue());
       tree.index(maxLevels, minWeight).truncate();
       trees.put(e.getKey(), tree);
-      dictionaries.put(e.getKey(), tree.copy().codec.generateDictionary(16 * 1024, 5, "", 1, true));
+      dictionaries.put(e.getKey(), tree.copy().getGenerator().generateDictionary(16 * 1024, 5, "", 1, true));
       System.out.println(
           String.format("Indexing %s; \ntree.getIndexedSize = %s KB", e.getKey(), tree.getIndexedSize() / 1024));
       System.out.println(String.format("tree.getMemorySize = %s KB", tree.getMemorySize() / 1024));
@@ -296,10 +329,10 @@ public class CharTreeTest {
 
     System.out.println("\nMCMC Similarity Measures:");
     TableOutput output1 = new TableOutput();
-    for (Map.Entry<String, CharTree> ea : trees.entrySet()) {
-      for (Map.Entry<String, CharTree> eb : trees.entrySet()) {
-        String str = ea.getValue().codec.generateMarkov(sampleSize, maxLevels - 1, "");
-        Double crossEntropy = eb.getValue().codec.measureEntropy(str, smoothness) / str.length();
+    for (Map.Entry<String, CharTrie> ea : trees.entrySet()) {
+      for (Map.Entry<String, CharTrie> eb : trees.entrySet()) {
+        String str = ea.getValue().getGenerator().generateMarkov(sampleSize, maxLevels - 1, "");
+        Double crossEntropy = eb.getValue().getGenerator().measureEntropy(str, smoothness) / str.length();
         HashMap<String, Object> map = new HashMap<>();
         map.put("source", ea.getKey());
         map.put("model", eb.getKey());
@@ -312,6 +345,7 @@ public class CharTreeTest {
   }
 
   @Test
+  @Ignore
   @Category(TestCategories.ResearchCode.class)
   public void calcWikiCoords() throws Exception {
 
@@ -333,11 +367,11 @@ public class CharTreeTest {
     System.out.println("Character Set:" + characterSet);
 
     Stream<Map.Entry<String, String>> stream = articles.entrySet().stream().limit(dictionaryCount);
-    Map<String, CharTree> models = stream
+    Map<String, CharTrie> models = stream
         .collect(Collectors.toMap((Map.Entry<String, String> d) -> d.getKey(), (Map.Entry<String, String> d) -> {
           String article = d.getValue();
           String title = d.getKey();
-          CharTree tree = new CharTree();
+          CharTrieIndex tree = new CharTrieIndex();
           tree.addDocument(characterSet);
           tree.addDocument(article);
           tree.index(maxLevels, minWeight).truncate();
@@ -347,8 +381,8 @@ public class CharTreeTest {
           return tree;
         }));
     Map<String, String> dictionaries = models.entrySet().stream()
-        .collect(Collectors.toMap((Map.Entry<String, CharTree> d) -> d.getKey(), (Map.Entry<String, CharTree> d) -> {
-          return d.getValue().copy().codec.generateDictionary(dictionaryLength, 5, "", 1, true);
+        .collect(Collectors.toMap((Map.Entry<String, CharTrie> d) -> d.getKey(), (Map.Entry<String, CharTrie> d) -> {
+          return d.getValue().copy().getGenerator().generateDictionary(dictionaryLength, 5, "", 1, true);
         }));
 
     TableOutput output = new TableOutput();
@@ -359,10 +393,10 @@ public class CharTreeTest {
           dictionaries.forEach((modelTitle, dictionary) -> {
             int sumA = IntStream.range(0, article.length() / chunkSize)
                 .mapToObj(i -> article.substring(i * chunkSize, Math.min(article.length(), (i + 1) * chunkSize)))
-                .mapToInt(chunk -> CharTreeCodec.encodeLZ(chunk, "").length).sum();
+                .mapToInt(chunk -> CompressionUtil.encodeLZ(chunk, "").length).sum();
             int sumB = IntStream.range(0, article.length() / chunkSize)
                 .mapToObj(i -> article.substring(i * chunkSize, Math.min(article.length(), (i + 1) * chunkSize)))
-                .mapToInt(chunk -> CharTreeCodec.encodeLZ(chunk, dictionary).length).sum();
+                .mapToInt(chunk -> CompressionUtil.encodeLZ(chunk, dictionary).length).sum();
             double bytes = (sumA - sumB) * 1.0 / sumA;
             map.put(modelTitle.replaceAll("[^01-9a-zA-Z]", "_"), bytes);
           });
@@ -374,6 +408,7 @@ public class CharTreeTest {
   }
 
   @Test
+  @Ignore
   @Category(TestCategories.ResearchCode.class)
   public void calcTweetVectors() throws Exception {
 
@@ -394,9 +429,9 @@ public class CharTreeTest {
         .mapToObj(c -> new String(Character.toChars(c))).sorted().collect(Collectors.joining(""));
     System.out.println("Character Set:" + characterSet);
 
-    Map<String, CharTree> models = articles.stream().limit(dictionaryCount)
+    Map<String, CharTrie> models = articles.stream().limit(dictionaryCount)
         .collect(Collectors.toMap((String d) -> d, (String text) -> {
-          CharTree tree = new CharTree();
+          CharTrieIndex tree = new CharTrieIndex();
           tree.addDocument(characterSet);
           tree.addDocument(text);
           tree.index(maxLevels, minWeight).truncate();
@@ -406,8 +441,8 @@ public class CharTreeTest {
           return tree;
         }));
     Map<String, String> dictionaries = models.entrySet().stream()
-        .collect(Collectors.toMap((Map.Entry<String, CharTree> d) -> d.getKey(), (Map.Entry<String, CharTree> d) -> {
-          return d.getValue().copy().codec.generateDictionary(dictionaryLength, 5, "", 1, true);
+        .collect(Collectors.toMap((Map.Entry<String, CharTrie> d) -> d.getKey(), (Map.Entry<String, CharTrie> d) -> {
+          return d.getValue().copy().getGenerator().generateDictionary(dictionaryLength, 5, "", 1, true);
         }));
 
     TableOutput output = new TableOutput();
@@ -417,10 +452,10 @@ public class CharTreeTest {
       dictionaries.forEach((modelTitle, dictionary) -> {
         int sumA = IntStream.range(0, text.length() / chunkSize)
             .mapToObj(i -> text.substring(i * chunkSize, Math.min(text.length(), (i + 1) * chunkSize)))
-            .mapToInt(chunk -> CharTreeCodec.encodeLZ(chunk, "").length).sum();
+            .mapToInt(chunk -> CompressionUtil.encodeLZ(chunk, "").length).sum();
         int sumB = IntStream.range(0, text.length() / chunkSize)
             .mapToObj(i -> text.substring(i * chunkSize, Math.min(text.length(), (i + 1) * chunkSize)))
-            .mapToInt(chunk -> CharTreeCodec.encodeLZ(chunk, dictionary).length).sum();
+            .mapToInt(chunk -> CompressionUtil.encodeLZ(chunk, dictionary).length).sum();
         double bytes = (sumA - sumB) * 1.0 / sumA;
         map.put(Integer.toHexString(modelTitle.hashCode()), bytes);
       });
@@ -432,6 +467,7 @@ public class CharTreeTest {
   }
 
   @Test
+  @Ignore
   @Category(TestCategories.ResearchCode.class)
   public void testTweetGeneration() throws Exception {
 
@@ -441,7 +477,7 @@ public class CharTreeTest {
     int articleCount = 100;
     int lookahead = 1;
 
-    CharTree tree_good = new CharTree();
+    CharTrieIndex tree_good = new CharTrieIndex();
     TweetSentiment.load().filter(x -> x.category == 1).limit(modelCount).map(t -> t.text)
         .forEach(txt -> tree_good.addDocument(">>>" + txt));
     System.out.println(String.format("Indexing %s positive tweets; \ntree.getIndexedSize = %s KB", modelCount,
@@ -449,7 +485,7 @@ public class CharTreeTest {
     tree_good.index(maxLevels, minWeight).truncate();
     System.out.println(String.format("tree.getMemorySize = %s KB", tree_good.getMemorySize() / 1024));
 
-    CharTree tree_bad = new CharTree();
+    CharTrieIndex tree_bad = new CharTrieIndex();
     TweetSentiment.load().filter(x -> x.category == 0).limit(modelCount).map(t -> t.text)
         .forEach(txt -> tree_bad.addDocument(">>>" + txt));
     System.out.println(String.format("Indexing %s negative tweets; \ntree.getIndexedSize = %s KB", modelCount,
@@ -461,17 +497,18 @@ public class CharTreeTest {
     IntStream.range(0, articleCount).forEach(i -> {
       HashMap<String, Object> goodRow = new LinkedHashMap<>();
       goodRow.put("type", "good");
-      goodRow.put("text", tree_good.codec.generateDictionary(256, maxLevels - 1, ">>>", lookahead, true, true).substring(3).replaceAll("\u0000", "\n\t"));
+      goodRow.put("text", tree_good.getGenerator().generateDictionary(256, maxLevels - 1, ">>>", lookahead, true, true).substring(3).replaceAll("\u0000", "\n\t"));
       output.putRow(goodRow);
       HashMap<String, Object> badRow = new LinkedHashMap<>();
       badRow.put("type", "bad");
-      badRow.put("text", tree_bad.codec.generateDictionary(256, maxLevels - 1, ">>>", lookahead, true, true).substring(3).replaceAll("\u0000", "\n\t"));
+      badRow.put("text", tree_bad.getGenerator().generateDictionary(256, maxLevels - 1, ">>>", lookahead, true, true).substring(3).replaceAll("\u0000", "\n\t"));
       output.putRow(badRow);
     });
     System.out.println(output.toTextTable());
   }
 
   @Test
+  @Ignore
   public void calcSentenceCoords() throws IOException {
     Map<String, String> content = new HashMap<>();
     for (String name : Arrays.asList("earthtomoon.txt", "20000leagues.txt", "macbeth.txt", "randj.txt")) {
@@ -492,15 +529,15 @@ public class CharTreeTest {
     double smoothness = 1.0;
 
     long startTime = System.currentTimeMillis();
-    Map<String, CharTree> trees = new HashMap<>();
+    Map<String, CharTrie> trees = new HashMap<>();
     Map<String, String> dictionaries = new HashMap<>();
     for (Map.Entry<String, String> e : content.entrySet()) {
-      CharTree tree = new CharTree();
+      CharTrieIndex tree = new CharTrieIndex();
       tree.addDocument(characterSet);
       tree.addDocument(e.getValue());
       tree.index(maxLevels, minWeight).truncate();
       trees.put(e.getKey(), tree);
-      dictionaries.put(e.getKey(), tree.copy().codec.generateDictionary(16 * 1024, 5, "", 1, true));
+      dictionaries.put(e.getKey(), tree.copy().getGenerator().generateDictionary(16 * 1024, 5, "", 1, true));
       System.out.println(
           String.format("Indexing %s; \ntree.getIndexedSize = %s KB", e.getKey(), tree.getIndexedSize() / 1024));
       System.out.println(String.format("tree.getMemorySize = %s KB", tree.getMemorySize() / 1024));
@@ -515,22 +552,22 @@ public class CharTreeTest {
       // map2.put("rawBits", s.length() * 8);
       // map2.put("decompressBits0", CharTreeUtil.compress("", s).length * 8);
       content.keySet().stream().forEach(key -> {
-        CharTree tree = trees.get(key);
+        CharTrie tree = trees.get(key);
         String dictionary = dictionaries.get(key);
         HashMap<String, Object> map1 = new LinkedHashMap<>();
         map1.put("key", key);
         map1.put("rawBits", s.length() * 8);
-        map1.put("decompressBits0", CharTreeCodec.encodeLZ(s, "").length * 8);
-        int decompressBits1 = CharTreeCodec.encodeLZ(s, dictionary.substring(0, 1024)).length * 8;
+        map1.put("decompressBits0", CompressionUtil.encodeLZ(s, "").length * 8);
+        int decompressBits1 = CompressionUtil.encodeLZ(s, dictionary.substring(0, 1024)).length * 8;
         map1.put(".decompressBits1", decompressBits1);
         // map2.put(key+".decompressBits1", decompressBits1);
-        int decompressBits4 = CharTreeCodec.encodeLZ(s, dictionary.substring(0, 4 * 1024)).length * 8;
+        int decompressBits4 = CompressionUtil.encodeLZ(s, dictionary.substring(0, 4 * 1024)).length * 8;
         map1.put(".decompressBits4", decompressBits4);
         // map2.put(key+".decompressBits4", decompressBits4);
-        int decompressBits16 = CharTreeCodec.encodeLZ(s, dictionary.substring(0, 16 * 1024)).length * 8;
+        int decompressBits16 = CompressionUtil.encodeLZ(s, dictionary.substring(0, 16 * 1024)).length * 8;
         map1.put(".decompressBits16", decompressBits16);
         // map2.put(key+".decompressBits16", decompressBits16);
-        double ppmBits = tree.codec.measureEntropy(s, smoothness);
+        double ppmBits = tree.getGenerator().measureEntropy(s, smoothness);
         map1.put(".ppmBits", ppmBits);
         // map2.put(key+".ppmBits", ppmBits);
         map1.put(".bitsPerChar", ppmBits / s.length());
@@ -549,8 +586,8 @@ public class CharTreeTest {
   static private Map<String, Object> evaluateDictionary(List<String> sentances, String dictionary, Map<String, Object> map) {
     Arrays.asList(1, 4, 16, 32).stream().forEach(k -> {
       DoubleStatistics statistics = sentances.stream().map(line -> {
-        int length0 = CharTreeCodec.encodeLZ(line, "").length;
-        int lengthK = CharTreeCodec.encodeLZ(line, dictionary.substring(0, Math.min(k * 1024, dictionary.length()))).length;
+        int length0 = CompressionUtil.encodeLZ(line, "").length;
+        int lengthK = CompressionUtil.encodeLZ(line, dictionary.substring(0, Math.min(k * 1024, dictionary.length()))).length;
         return (length0 - lengthK) * 1.0;
       }).collect(DoubleStatistics.COLLECTOR);
       map.put(String.format("%sk.sum", k), (int) statistics.getSum() / 1024);

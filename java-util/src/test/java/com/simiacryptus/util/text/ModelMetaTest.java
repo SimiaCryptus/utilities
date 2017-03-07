@@ -18,7 +18,7 @@ import java.util.stream.Stream;
 public abstract class ModelMetaTest {
 
   public static final File outPath = new File("src/site/resources/");
-  public static final URL outBaseUrl = CharTreeTest.getUrl("https://simiacryptus.github.io/utilities/java-util/");
+  public static final URL outBaseUrl = CharTrieIndexTest.getUrl("https://simiacryptus.github.io/utilities/java-util/");
 
   protected abstract Stream<? extends TestDocument> source();
   public abstract int getModelCount();
@@ -56,7 +56,7 @@ public abstract class ModelMetaTest {
   @Category(TestCategories.ResearchCode.class)
   public void calcSharedDictionariesLZ() throws Exception {
     MarkdownPrintStream log = new MarkdownPrintStream(new FileOutputStream("reports/calcSharedDictionariesLZ"+getClass().getSimpleName()+".md")).addCopy(System.out);
-    CharTree baseTree = new CharTree();
+    CharTrieIndex baseTree = new CharTrieIndex();
     log.out("Preparing %s documents", getModelCount());
     source().limit(getModelCount()).forEach(txt -> {
       //System.out.println(String.format("Adding %s", txt.title));
@@ -69,18 +69,18 @@ public abstract class ModelMetaTest {
       int model_minPathWeight = 3;
       int dictionary_lookahead = 2;
       log.out("Generating dictionaries");
-      CharTree dictionaryTree = baseTree.copy().index(dictionary_context + dictionary_lookahead, model_minPathWeight);
+      CharTrie dictionaryTree = baseTree.copy().index(dictionary_context + dictionary_lookahead, model_minPathWeight);
 
       compressors.put(String.format("LZ8k_%s", dictionary_context), new Compressor() {
-        String dictionary = dictionaryTree.copy().codec.generateDictionary(8*1024, dictionary_context, "", dictionary_lookahead, true);
+        String dictionary = dictionaryTree.copy().getGenerator().generateDictionary(8*1024, dictionary_context, "", dictionary_lookahead, true);
         @Override
         public byte[] compress(String text) {
-          return CharTreeCodec.encodeLZ(text, dictionary);
+          return CompressionUtil.encodeLZ(text, dictionary);
         }
 
         @Override
         public String uncompress(byte[] data) {
-          return CharTreeCodec.decodeLZ(data, dictionary);
+          return CompressionUtil.decodeLZ(data, dictionary);
         }
       });
     }
@@ -95,7 +95,7 @@ public abstract class ModelMetaTest {
   @Category(TestCategories.Report.class)
   public void calcSharedDictionariesBZ() throws Exception {
     MarkdownPrintStream log = new MarkdownPrintStream(new FileOutputStream("reports/calcSharedDictionariesBZ"+getClass().getSimpleName()+".md")).addCopy(System.out);
-    CharTree baseTree = new CharTree();
+    CharTrieIndex baseTree = new CharTrieIndex();
     log.out("Preparing %s documents", getModelCount());
     source().limit(getModelCount()).forEach(txt -> {
       //System.out.println(String.format("Adding %s", txt.title));
@@ -108,18 +108,18 @@ public abstract class ModelMetaTest {
       int model_minPathWeight = 3;
       int dictionary_lookahead = 2;
       log.out("Generating dictionaries");
-      CharTree dictionaryTree = baseTree.copy().index(dictionary_context + dictionary_lookahead, model_minPathWeight);
+      CharTrie dictionaryTree = baseTree.copy().index(dictionary_context + dictionary_lookahead, model_minPathWeight);
 
       compressors.put(String.format("BZ64k_%s", dictionary_context), new Compressor() {
-        String dictionary = dictionaryTree.copy().codec.generateDictionary(64*1024, dictionary_context, "", dictionary_lookahead, true);
+        String dictionary = dictionaryTree.copy().getGenerator().generateDictionary(64*1024, dictionary_context, "", dictionary_lookahead, true);
         @Override
         public byte[] compress(String text) {
-          return CharTreeCodec.encodeBZ(text, dictionary);
+          return CompressionUtil.encodeBZ(text, dictionary);
         }
 
         @Override
         public String uncompress(byte[] data) {
-          return CharTreeCodec.decodeBZ(data, dictionary);
+          return CompressionUtil.decodeBZ(data, dictionary);
         }
       });
     }
@@ -133,7 +133,7 @@ public abstract class ModelMetaTest {
   @Category(TestCategories.Report.class)
   public void calcCompressorPPM() throws Exception {
     MarkdownPrintStream log = new MarkdownPrintStream(new FileOutputStream("reports/calcCompressorPPM"+getClass().getSimpleName()+".md")).addCopy(System.out);
-    CharTree baseTree = new CharTree();
+    CharTrieIndex baseTree = new CharTrieIndex();
     log.out("Preparing %s documents", getModelCount());
     source().limit(getModelCount()).forEach(txt -> {
       //System.out.println(String.format("Adding %s", txt.title));
@@ -146,7 +146,7 @@ public abstract class ModelMetaTest {
     int model_minPathWeight = 1;
     for(int ppmModelDepth : Arrays.asList(4,6,8)) {
       for(int encodingContext : Arrays.asList(1,2,3)) {
-        CharTree ppmTree = baseTree.copy().index(ppmModelDepth, model_minPathWeight);
+        CharTrie ppmTree = baseTree.copy().index(ppmModelDepth, model_minPathWeight);
         String name = String.format("PPM%s_%s", encodingContext, ppmModelDepth);
         compressors.put(name, Compressor.buildPPMCompressor(ppmTree, encodingContext));
       }

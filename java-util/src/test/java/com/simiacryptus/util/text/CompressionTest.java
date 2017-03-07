@@ -16,12 +16,12 @@ public class CompressionTest {
   @Test
   @Category(TestCategories.UnitTest.class)
   public void testPPMCompression_Basic() throws Exception {
-    CharTree tree = new CharTree();
+    CharTrieIndex tree = new CharTrieIndex();
     tree.addDocument("ababababab");
-    tree = tree.index(2,0).addEscapeNodes();
-    String txt = "aba";
-    CharTreeCodec codec = tree.codec;
+    tree = tree.index(2,0);
+    PPMCodec codec = tree.getCodec();
     codec.verbose = true;
+    String txt = "ab ba";
     Bits encoded = codec.encodePPM(txt, 1);
     String decoded = codec.decodePPM(encoded.getBytes(), 1);
     org.junit.Assert.assertEquals(txt, decoded);
@@ -35,21 +35,21 @@ public class CompressionTest {
     int encodingContext = 3;
     int modelDepth = 9;
 
-    final CharTree tree = new CharTree();
+    final CharTrieIndex tree = new CharTrieIndex();
     TweetSentiment.load().skip(articleCount).limit(modelCount).map(t -> t.text)
             .forEach(txt -> tree.addDocument(txt));
-    CharTree modelTree = tree.index(modelDepth, 0).addEscapeNodes();
+    CharTrie modelTree = tree.index(modelDepth, 0);
     TweetSentiment.load().limit(articleCount).map(t -> t.text).forEach(txt->{
       try {
-        Bits encoded = modelTree.codec.encodePPM(txt, encodingContext);
-        String decoded = modelTree.codec.decodePPM(encoded.getBytes(), encodingContext);
+        Bits encoded = modelTree.getCodec().encodePPM(txt, encodingContext);
+        String decoded = modelTree.getCodec().decodePPM(encoded.getBytes(), encodingContext);
         org.junit.Assert.assertEquals(txt, decoded);
         //System.out.println(String.format("Verified \"%s\" - %s chars -> %s bits", txt, txt.length(), encoded.bitLength));
       } catch (Throwable e) {
         synchronized (modelTree) {
           System.out.println(String.format("Error encoding \"%s\" - %s", txt, e.getMessage()));
           try {
-            CharTreeCodec codec = modelTree.copy().codec;
+            PPMCodec codec = modelTree.copy().getCodec();
             codec.verbose = true;
             Bits encoded = codec.encodePPM(txt, encodingContext);
             String decoded = codec.decodePPM(encoded.getBytes(), encodingContext);
@@ -128,7 +128,7 @@ public class CompressionTest {
     Map<String, Compressor> compressors = new LinkedHashMap<>();
     Compressor.addGenericCompressors(compressors);
     System.out.println(String.format("Preparing %s documents", modelCount));
-    CharTree baseTree = new CharTree();
+    CharTrieIndex baseTree = new CharTrieIndex();
     source.get().limit(modelCount).forEach(txt -> {
       //System.out.println(String.format("Adding %s", txt.title));
       baseTree.addDocument(txt.text);
@@ -142,31 +142,31 @@ public class CompressionTest {
   }
 
   static void addSharedDictionaryCompressors(
-          Map<String, Compressor> compressors, final CharTree baseTree, final int dictionary_lookahead, final int dictionary_context, int model_minPathWeight) {
-    CharTree dictionaryTree = baseTree.copy().index(dictionary_context + dictionary_lookahead, model_minPathWeight);
+          Map<String, Compressor> compressors, final CharTrieIndex baseTree, final int dictionary_lookahead, final int dictionary_context, int model_minPathWeight) {
+    CharTrie dictionaryTree = baseTree.copy().index(dictionary_context + dictionary_lookahead, model_minPathWeight);
     compressors.put("LZ8k", new Compressor() {
-      String dictionary = dictionaryTree.copy().codec.generateDictionary(8*1024, dictionary_context, "", dictionary_lookahead, true);
+      String dictionary = dictionaryTree.copy().getGenerator().generateDictionary(8*1024, dictionary_context, "", dictionary_lookahead, true);
       @Override
       public byte[] compress(String text) {
-        return CharTreeCodec.encodeLZ(text, dictionary);
+        return CompressionUtil.encodeLZ(text, dictionary);
       }
 
       @Override
       public String uncompress(byte[] data) {
-        return CharTreeCodec.decodeLZ(data, dictionary);
+        return CompressionUtil.decodeLZ(data, dictionary);
       }
     });
 
     compressors.put("BZ64k", new Compressor() {
-      String dictionary = dictionaryTree.copy().codec.generateDictionary(64*1024, dictionary_context, "", dictionary_lookahead, true);
+      String dictionary = dictionaryTree.copy().getGenerator().generateDictionary(64*1024, dictionary_context, "", dictionary_lookahead, true);
       @Override
       public byte[] compress(String text) {
-        return CharTreeCodec.encodeBZ(text, dictionary);
+        return CompressionUtil.encodeBZ(text, dictionary);
       }
 
       @Override
       public String uncompress(byte[] data) {
-        return CharTreeCodec.decodeBZ(data, dictionary);
+        return CompressionUtil.decodeBZ(data, dictionary);
       }
     });
   }

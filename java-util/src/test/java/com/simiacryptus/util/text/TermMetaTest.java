@@ -25,7 +25,7 @@ public class TermMetaTest {
   @Category(TestCategories.Report.class)
   public void calcCompressorPPM() throws Exception {
     MarkdownPrintStream log = new MarkdownPrintStream(new FileOutputStream("reports/calcCompressorPPM" + getClass().getSimpleName() + ".md")).addCopy(System.out);
-    CharTree baseTree = new CharTree();
+    CharTrieIndex baseTree = new CharTrieIndex();
     log.out("Preparing %s documents", modelCount);
     source().limit(modelCount).forEach(txt -> {
       //System.out.println(String.format("Adding %s", txt.title));
@@ -38,7 +38,7 @@ public class TermMetaTest {
     int model_minPathWeight = 1;
     for (int ppmModelDepth : Arrays.asList(8, 9, 10, 11, 12)) {
       for (int encodingContext : Arrays.asList(0, 1, 2, 3, 4, 5)) {
-        CharTree ppmTree = baseTree.copy().index(ppmModelDepth, model_minPathWeight);
+        CharTrie ppmTree = baseTree.copy().index(ppmModelDepth, model_minPathWeight);
         String name = String.format("PPM%s_%s", encodingContext, ppmModelDepth);
         compressors.put(name, Compressor.buildPPMCompressor(ppmTree, encodingContext));
       }

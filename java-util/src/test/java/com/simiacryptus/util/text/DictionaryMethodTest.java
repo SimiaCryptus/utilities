@@ -44,7 +44,7 @@ public class DictionaryMethodTest {
 
     private void test(MarkdownPrintStream log, Supplier<Stream<? extends TestDocument>> source, int modelCount) {
         Map<String, Compressor> compressors = log.code(()->{
-            CharTree baseTree = new CharTree();
+            CharTrieIndex baseTree = new CharTrieIndex();
             source.get().limit(modelCount).forEach(txt -> baseTree.addDocument(txt.text));
             Map<String, Compressor> map = new LinkedHashMap<>();
             addCompressors(map, baseTree, 4, 2, 3);
@@ -72,46 +72,46 @@ public class DictionaryMethodTest {
 
             @Override
             public byte[] compress(String text) {
-                return CharTreeCodec.encodeLZ(text, dictionary);
+                return CompressionUtil.encodeLZ(text, dictionary);
             }
 
             @Override
             public String uncompress(byte[] data) {
-                return CharTreeCodec.decodeLZ(data, dictionary);
+                return CompressionUtil.decodeLZ(data, dictionary);
             }
         });
     }
 
-    private void addCompressors(Map<String, Compressor> compressors, CharTree baseTree, final int dictionary_context, final int dictionary_lookahead, int model_minPathWeight) {
-        CharTree dictionaryTree = baseTree.copy().index(dictionary_context + dictionary_lookahead, model_minPathWeight);
-        String genDictionary = dictionaryTree.copy().codec.generateDictionary(8 * 1024, dictionary_context, "", dictionary_lookahead, true);
+    private void addCompressors(Map<String, Compressor> compressors, CharTrieIndex baseTree, final int dictionary_context, final int dictionary_lookahead, int model_minPathWeight) {
+        CharTrie dictionaryTree = baseTree.copy().index(dictionary_context + dictionary_lookahead, model_minPathWeight);
+        String genDictionary = dictionaryTree.copy().getGenerator().generateDictionary(8 * 1024, dictionary_context, "", dictionary_lookahead, true);
         String keyDictionary = String.format("LZ8k_%s_%s_%s_generateDictionary", dictionary_context, dictionary_lookahead, model_minPathWeight);
         System.out.println(keyDictionary + ": " + genDictionary.substring(0, 128) + "...");
         compressors.put(keyDictionary, new Compressor() {
 
             @Override
             public byte[] compress(String text) {
-                return CharTreeCodec.encodeLZ(text, genDictionary);
+                return CompressionUtil.encodeLZ(text, genDictionary);
             }
 
             @Override
             public String uncompress(byte[] data) {
-                return CharTreeCodec.decodeLZ(data, genDictionary);
+                return CompressionUtil.decodeLZ(data, genDictionary);
             }
         });
-        String genMarkov = dictionaryTree.copy().codec.generateMarkov(8 * 1024, dictionary_context, "");
+        String genMarkov = dictionaryTree.copy().getGenerator().generateMarkov(8 * 1024, dictionary_context, "");
         String keyMarkov = String.format("LZ8k_%s_%s_%s_generateMarkov", dictionary_context, dictionary_lookahead, model_minPathWeight);
         System.out.println(keyMarkov + ": " + genMarkov.substring(0, Math.min(genMarkov.length(), 128)) + "...");
         compressors.put(keyMarkov, new Compressor() {
 
             @Override
             public byte[] compress(String text) {
-                return CharTreeCodec.encodeLZ(text, genMarkov);
+                return CompressionUtil.encodeLZ(text, genMarkov);
             }
 
             @Override
             public String uncompress(byte[] data) {
-                return CharTreeCodec.decodeLZ(data, genMarkov);
+                return CompressionUtil.decodeLZ(data, genMarkov);
             }
         });
     }

@@ -88,7 +88,7 @@ public class BitInputStream {
    * @throws IOException
    */
   public long readBoundedLong(final long max) throws IOException {
-    final int bits = 1 >= max ? 0 : (int) Math.ceil(Math.log(max) / Math.log(2));
+    final int bits = 0 >= max ? 0 : (int) (Math.floor(Math.log(max) / Math.log(2))+1);
     return 0 < bits ? this.read(bits).toLong() : 0;
   }
 

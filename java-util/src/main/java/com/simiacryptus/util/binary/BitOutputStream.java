@@ -6,7 +6,7 @@ import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.function.Consumer;
 
-public class BitOutputStream
+public class BitOutputStream implements AutoCloseable
 {
 
   public static Bits toBits(Consumer<BitOutputStream> fn) {
@@ -75,17 +75,27 @@ public class BitOutputStream
     final long ordinal = value.ordinal();
     this.write(new Bits(ordinal, 8));
   }
-  
+
+  public void write(final short value) throws IOException
+  {
+    this.write(new Bits(value, 16));
+  }
+
+  public void write(final char value) throws IOException
+  {
+    this.write(new Bits(value, 16));
+  }
+
   public void write(final int value) throws IOException
   {
     this.write(new Bits(value, 32));
   }
-  
+
   public void writeBoundedLong(final long value, final long max)
       throws IOException
   {
-    final int bits = 1 >= max ? 0 : (int) Math
-        .ceil(Math.log(max) / Math.log(2));
+    final int bits = 0 >= max ? 0 : (int) (Math
+            .floor(Math.log(max) / Math.log(2))+1);
     if (0 < bits)
     {
       this.write(new Bits(value, bits));
@@ -103,5 +113,10 @@ public class BitOutputStream
     this.write(new Bits(type, 2));
     this.write(new Bits(value, varLongDepths[type]));
   }
-  
+
+  @Override
+  public void close() throws IOException {
+    flush();
+    inner.close();
+  }
 }

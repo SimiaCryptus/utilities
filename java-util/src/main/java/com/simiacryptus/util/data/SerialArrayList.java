@@ -128,4 +128,26 @@ public class SerialArrayList<U> {
     public SerialArrayList<U> copy() {
         return new SerialArrayList<U>(factory, this);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        SerialArrayList<?> that = (SerialArrayList<?>) o;
+
+        if (unitSize != that.unitSize) return false;
+        if (maxByte != that.maxByte) return false;
+        if (!factory.equals(that.factory)) return false;
+        return Arrays.equals(buffer, that.buffer);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = factory.hashCode();
+        result = 31 * result + unitSize;
+        result = 31 * result + Arrays.hashCode(buffer);
+        result = 31 * result + maxByte;
+        return result;
+    }
 }
