@@ -11,7 +11,6 @@ import javax.xml.parsers.SAXParserFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -20,7 +19,6 @@ public class WikiArticle extends TestDocument {
     private static volatile Thread thread;
     private final static String url = "https://dumps.wikimedia.org/enwiki/latest/enwiki-latest-pages-articles-multistream.xml.bz2";
     private final static String file = "enwiki-latest-pages-articles-multistream.xml.bz2";
-    private final static AtomicBoolean closed = new AtomicBoolean(false);
     private final static ArrayList<WikiArticle> queue = new ArrayList<>();
 
     public static Stream<WikiArticle> load() {
@@ -119,11 +117,10 @@ public class WikiArticle extends TestDocument {
                                 if (!(e.getCause() instanceof InterruptedException)) throw e;
                             } catch (final Exception e) {
                                 throw new RuntimeException(e);
-                            } finally {
-                                closed.set(true);
                             }
                         }
                     });
+                    thread.setDaemon(true);
                     thread.start();
                 }
             }
@@ -133,7 +130,7 @@ public class WikiArticle extends TestDocument {
 
             @Override
             public boolean hasNext() {
-                return index < queue.size() || !closed.get();
+                return index < queue.size() || thread.isAlive();
             }
 
             @Override

@@ -19,13 +19,13 @@ import java.util.stream.Stream;
 public abstract class ModelClusterTest {
 
   public static final File outPath = new File("src/site/resources/");
-  public static final URL outBaseUrl = CharTrieIndexTest.getUrl("https://simiacryptus.github.io/utilities/java-util/");
+  public static final URL outBaseUrl = TrieTest.getUrl("https://simiacryptus.github.io/utilities/java-util/");
 
   protected abstract Stream<? extends TestDocument> source();
   public abstract int getModelCount();
 
   public static class Wikipedia extends ModelClusterTest {
-    int testCount = 1000;
+    int testCount = 100;
 
     @Override
     protected Stream<? extends TestDocument> source() {
@@ -37,7 +37,7 @@ public abstract class ModelClusterTest {
 
     @Override
     public int getModelCount() {
-      return 50;
+      return 20;
     }
   }
 
@@ -85,6 +85,7 @@ public abstract class ModelClusterTest {
 
       TableOutput output = Compressor.evalCompressorCluster(source().skip(getModelCount()), compressors, true);
       log.out(output.toTextTable());
+      log.out(output.calcNumberStats().toTextTable());
       log.close();
       String outputDirName = String.format("cluster_%s_LZ/", getClass().getSimpleName());
       output.writeProjectorData(new File(outPath, outputDirName), new URL(outBaseUrl, outputDirName));
@@ -106,7 +107,7 @@ public abstract class ModelClusterTest {
         CharTrieIndex tree = new CharTrieIndex();
         tree.addDocument(text.text);
         tree = tree.index(ppmModelDepth, model_minPathWeight);
-        String name = String.format("LZ_%s", index.incrementAndGet());
+        String name = String.format("PPM_%s", index.incrementAndGet());
         Compressor ppmCompressor = Compressor.buildPPMCompressor(tree, encodingContext);
         synchronized (compressors) {
           compressors.put(name, ppmCompressor);
@@ -138,7 +139,7 @@ public abstract class ModelClusterTest {
         CharTrieIndex tree = new CharTrieIndex();
         tree.addDocument(text.text);
         tree = tree.index(ppmModelDepth, model_minPathWeight);
-        String name = String.format("LZ_%s", index.incrementAndGet());
+        String name = String.format("ENT_%s", index.incrementAndGet());
         TextGenerator generator = tree.getGenerator();
         Function<TestDocument,Double> ppmCompressor = t -> generator.measureEntropy(t.text, 1.0);
         synchronized (compressors) {

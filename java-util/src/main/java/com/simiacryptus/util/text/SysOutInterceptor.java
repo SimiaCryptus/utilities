@@ -33,6 +33,21 @@ public class SysOutInterceptor extends PrintStream {
         }
     }
 
+    public static LoggedResult<Void> withOutput(Runnable fn) {
+        try {
+            ByteArrayOutputStream buff = new ByteArrayOutputStream();
+            try(PrintStream ps = new PrintStream(buff)) {
+                INSTANCE.threadHandler.set(ps);
+                fn.run();
+                return new LoggedResult<Void>(null, buff.toString());
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        } finally {
+            INSTANCE.threadHandler.remove();
+        }
+    }
+
     private static SysOutInterceptor init() {
         SysOutInterceptor out = new SysOutInterceptor(System.out);
         System.setOut(out);

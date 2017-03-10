@@ -3,25 +3,25 @@ This will demonstrate how to use the CharTrieIndex class for PPM compression
 First, we load some data into an index:
 Code: 
 ```java
-    CharTrieIndex trie = new CharTrieIndex();
-    WikiArticle.load().limit(100).forEach(article -> {
-      trie.addDocument(article.text);
-    });
-    trie.index(3,1);
-    return trie.getCodec();
+      CharTrieIndex charTrieIndex = new CharTrieIndex();
+      WikiArticle.load().limit(100).forEach(article -> {
+          charTrieIndex.addDocument(article.text);
+      });
+      charTrieIndex.index(3, 1);
+      return charTrieIndex.getCodec();
 ```
 Returns: 
 ```
-    com.simiacryptus.util.text.PPMCodec@4c762604
+    com.simiacryptus.util.text.PPMCodec@5c072e3f
 ```
 
 
 Then, we compress data:
 Code: 
 ```java
-    return WikiArticle.load().skip(100)
-            .filter(article->article.text.length() > 1024 && article.text.length() < 4096)
-            .findFirst().get();
+      return WikiArticle.load().skip(100)
+              .filter(article -> article.text.length() > 1024 && article.text.length() < 4096)
+              .findFirst().get();
 ```
 Returns: 
 ```
@@ -29,9 +29,9 @@ Returns:
 ```
 Code: 
 ```java
-    Bits bits = codec.encodePPM(wikiArticle.text, 2);
-    System.out.print("Bit Length: " + bits.bitLength);
-    return bits.toBase64String();
+      Bits bits = codec.encodePPM(wikiArticle.text, 2);
+      System.out.print("Bit Length: " + bits.bitLength);
+      return bits.toBase64String();
 ```
 Returns: 
 ```
@@ -46,8 +46,8 @@ Logging:
 And decompress to verify:
 Code: 
 ```java
-    byte[] bytes = Base64.getDecoder().decode(compressed);
-    return codec.decodePPM(bytes, 2);
+      byte[] bytes = Base64.getDecoder().decode(compressed);
+      return codec.decodePPM(bytes, 2);
 ```
 Returns: 
 ```

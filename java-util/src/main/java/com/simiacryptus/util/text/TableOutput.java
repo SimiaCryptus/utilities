@@ -147,7 +147,7 @@ public class TableOutput {
 
     public TableOutput calcNumberStats() {
         TableOutput tableOutput = new TableOutput();
-        schema.entrySet().stream().filter(x->Number.class.isAssignableFrom(x.getValue())).forEach(col->{
+        schema.entrySet().stream().filter(x->Number.class.isAssignableFrom(x.getValue())).map(col->{
             String key = col.getKey();
             DoubleStatistics stats = rows.stream().filter(x->x.containsKey(key)).map(x -> (Number)x.get(key)).collect(DoubleStatistics.NUMBERS);
             LinkedHashMap<String, Object> row = new LinkedHashMap<>();
@@ -156,8 +156,9 @@ public class TableOutput {
             row.put("avg", stats.getAverage());
             row.put("stddev", stats.getStandardDeviation());
             row.put("nulls", rows.size() - stats.getCount());
-            tableOutput.putRow(row);
-        });
+            return row;
+        }).sorted(Comparator.comparing(x->x.get("field").toString()))
+        .forEach(row->tableOutput.putRow(row));
         return tableOutput;
     }
 }

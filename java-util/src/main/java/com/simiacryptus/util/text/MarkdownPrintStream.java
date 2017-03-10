@@ -49,8 +49,12 @@ public class MarkdownPrintStream extends PrintStream {
     }
 
     public <T> T code(Supplier<T> fn) {
+        return code(fn, 4 * 1024, 3);
+    }
+
+    public <T> T code(Supplier<T> fn, int maxLog, int framesNo) {
         try {
-            StackTraceElement callingFrame = Thread.currentThread().getStackTrace()[2];
+            StackTraceElement callingFrame = Thread.currentThread().getStackTrace()[framesNo];
             SysOutInterceptor.LoggedResult<T> result = SysOutInterceptor.withOutput(() -> fn.get());
             String sourceCode = getInnerText(callingFrame);
             out("Code: ");
@@ -60,15 +64,51 @@ public class MarkdownPrintStream extends PrintStream {
             T eval = result.obj;
             out("Returns: ");
             out("```");
-            out("    " + eval.toString().replaceAll("\n","\n    "));
+            String valTxt = eval.toString().replaceAll("\n", "\n    ");
+            if(valTxt.length() > maxLog) {
+                valTxt = valTxt.substring(0, maxLog) + String.format("... and %s more bytes", valTxt.length() - maxLog);
+            }
+            out("    " + valTxt);
             out("```");
             if(!result.log.isEmpty()) {
                 out("Logging: ");
                 out("```");
-                out("    " + result.log.replaceAll("\n","\n    "));
+                String logSrc = result.log.replaceAll("\n", "\n    ");
+                if(logSrc.length() > maxLog) {
+                    logSrc = logSrc.substring(0, maxLog) + String.format("... and %s more bytes", logSrc.length() - maxLog);
+                }
+                out("    " + logSrc);
                 out("```");
             }
             return eval;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void code(Runnable fn) {
+        code(fn, 4 * 1024, 3);
+    }
+
+    public void code(Runnable fn, int maxLog, int framesNo) {
+        try {
+            StackTraceElement callingFrame = Thread.currentThread().getStackTrace()[framesNo];
+            SysOutInterceptor.LoggedResult<Void> result = SysOutInterceptor.withOutput(() -> fn.run());
+            String sourceCode = getInnerText(callingFrame);
+            out("Code: ");
+            out("```java");
+            out("  " + sourceCode.replaceAll("\n","\n  "));
+            out("```");
+            if(!result.log.isEmpty()) {
+                out("Logging: ");
+                out("```");
+                String logSrc = result.log.replaceAll("\n", "\n    ");
+                if(logSrc.length() > maxLog) {
+                    logSrc = logSrc.substring(0, maxLog) + String.format("... and %s more bytes", logSrc.length() - maxLog);
+                }
+                out("    " + logSrc);
+                out("```");
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

@@ -18,7 +18,7 @@ import java.util.stream.Stream;
 public abstract class ModelMetaTest {
 
   public static final File outPath = new File("src/site/resources/");
-  public static final URL outBaseUrl = CharTrieIndexTest.getUrl("https://simiacryptus.github.io/utilities/java-util/");
+  public static final URL outBaseUrl = TrieTest.getUrl("https://simiacryptus.github.io/utilities/java-util/");
 
   protected abstract Stream<? extends TestDocument> source();
   public abstract int getModelCount();

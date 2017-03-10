@@ -95,11 +95,10 @@ public class CharTrie {
         if (cursor.getString().equals(attempt)) {
           min = Math.max(min, i + 1);
           winner = Math.max(winner, i);
-          i = (max + min) / 2;
         } else {
           max = Math.min(max, i - 1);
-          i = (max + min) / 2;
         }
+        i = (3 * max + min) / 4;
       }
       return traverse(search.substring(search.length() - i));
     }
@@ -129,6 +128,10 @@ public class CharTrie {
             newCounts.put(PPMCodec.FALLBACK, 1);
             return newCounts;
         }));
+    }
+
+    public PPMCodec getPackingCodec() {
+        return new PPMCodec(this.truncate());
     }
 
     public TextGenerator getGenerator() {

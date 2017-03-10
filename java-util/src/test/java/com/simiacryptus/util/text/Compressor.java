@@ -44,7 +44,7 @@ public interface Compressor {
           rowWide.put(name + ".verified", uncompress.obj.equals(item.text));
           rowTall.put("verified", uncompress.obj.equals(item.text));
           tallTable.putRow(rowTall);
-          System.out.println(String.format("Evaluated #%s: %s with %s - %s chars -> %s bytes in %s sec", index.incrementAndGet(), name, title, item.text.length(), compress.obj.length, compress.timeNanos / 1000000000.0));
+          //System.out.println(String.format("Evaluated #%s: %s with %s - %s chars -> %s bytes in %s sec", index.incrementAndGet(), name, title, item.text.length(), compress.obj.length, compress.timeNanos / 1000000000.0));
         } catch (Exception ex) {
           ex.printStackTrace();
         }
