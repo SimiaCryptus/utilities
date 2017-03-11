@@ -115,7 +115,7 @@ public class MarkdownPrintStream extends PrintStream {
         Path fromUrl = from.toPath();
         Path toUrl = to.toPath();
         Path relativize = fromUrl.relativize(toUrl);
-        return relativize.toString();
+        return relativize.toString().replaceAll("\\\\","/");
     }
 
     public void code(Runnable fn) {
