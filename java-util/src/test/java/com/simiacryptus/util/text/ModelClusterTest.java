@@ -83,8 +83,8 @@ public abstract class ModelClusterTest {
 
 
       TableOutput output = Compressor.evalCompressorCluster(source().skip(getModelCount()), compressors, true);
-      log.out(output.toTextTable());
-      log.out(output.calcNumberStats().toTextTable());
+      log.p(output.toTextTable());
+      log.p(output.calcNumberStats().toTextTable());
       log.close();
       String outputDirName = String.format("cluster_%s_LZ/", getClass().getSimpleName());
       output.writeProjectorData(new File(outPath, outputDirName), new URL(outBaseUrl, outputDirName));
@@ -94,13 +94,13 @@ public abstract class ModelClusterTest {
   @Test
   @Category(TestCategories.ResearchCode.class)
   public void calcCompressorPPM() throws Exception {
-    try(MarkdownPrintStream log = new MarkdownPrintStream(new FileOutputStream("reports/calcCompressorPPM"+getClass().getSimpleName()+".md")).addCopy(System.out)){
+    try(MarkdownPrintStream log = new MarkdownPrintStream(new FileOutputStream("reports/clusterCompressorPPM"+getClass().getSimpleName()+".md")).addCopy(System.out)){
       int ppmModelDepth = 6;
       int model_minPathWeight = 3;
       AtomicInteger index = new AtomicInteger(0);
       int encodingContext = 2;
 
-      log.out("Generating Compressor Models");
+      log.p("Generating Compressor Models");
       Map<String, Compressor> compressors = new LinkedHashMap<>();
       source().parallel().limit(getModelCount()).forEach(text->{
         CharTrieIndex tree = new CharTrieIndex();
@@ -111,12 +111,12 @@ public abstract class ModelClusterTest {
         synchronized (compressors) {
           compressors.put(name, ppmCompressor);
         }
-        log.out("Completed Model %s", name);
+        log.p("Completed Model %s", name);
       });
 
-      log.out("Calculating Metrics Table");
+      log.p("Calculating Metrics Table");
       TableOutput output = Compressor.evalCompressorCluster(source().skip(getModelCount()), compressors, true);
-      log.out(output.toTextTable());
+      log.p(output.calcNumberStats().toTextTable());
       String outputDirName = String.format("cluster_%s_PPM/", getClass().getSimpleName());
       output.writeProjectorData(new File(outPath, outputDirName), new URL(outBaseUrl, outputDirName));
     }
@@ -126,13 +126,13 @@ public abstract class ModelClusterTest {
   @Ignore
   @Category(TestCategories.ResearchCode.class)
   public void calcEntropyPPM() throws Exception {
-    try(MarkdownPrintStream log = new MarkdownPrintStream(new FileOutputStream("reports/calcEntropyPPM"+getClass().getSimpleName()+".md")).addCopy(System.out)){
+    try(MarkdownPrintStream log = new MarkdownPrintStream(new FileOutputStream("reports/clusterEntropyPPM"+getClass().getSimpleName()+".md")).addCopy(System.out)){
       int ppmModelDepth = 6;
       int model_minPathWeight = 3;
       AtomicInteger index = new AtomicInteger(0);
       int encodingContext = 2;
 
-      log.out("Generating Compressor Models");
+      log.p("Generating Compressor Models");
       Map<String, Function<TestDocument,Double>> compressors = new LinkedHashMap<>();
       source().parallel().limit(getModelCount()).forEach(text->{
         CharTrieIndex tree = new CharTrieIndex();
@@ -144,12 +144,12 @@ public abstract class ModelClusterTest {
         synchronized (compressors) {
           compressors.put(name, ppmCompressor);
         }
-        log.out("Completed Model %s", name);
+        log.p("Completed Model %s", name);
       });
 
-      log.out("Calculating Metrics Table");
+      log.p("Calculating Metrics Table");
       TableOutput output = Compressor.evalCluster(source().skip(getModelCount()), compressors, true);
-      log.out(output.toTextTable());
+      log.p(output.calcNumberStats().toTextTable());
       String outputDirName = String.format("cluster_%s_Entropy/", getClass().getSimpleName());
       output.writeProjectorData(new File(outPath, outputDirName), new URL(outBaseUrl, outputDirName));
     }

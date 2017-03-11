@@ -58,7 +58,7 @@ public class CompressionTest {
             System.out.println(String.format("Verified \"%s\" - %s chars -> %s bits", txt, txt.length(), encoded.bitLength));
           } catch (Throwable e2) {
             e2.printStackTrace();
-            //System.out.println(String.format("Error encoding \"%s\" - %s", txt, e2.getMessage()));
+            //System.p.println(String.format("Error encoding \"%s\" - %s", txt, e2.getMessage()));
             //throw new RuntimeException(e);
           }
         }
@@ -81,8 +81,8 @@ public class CompressionTest {
     MarkdownPrintStream log = new MarkdownPrintStream(new FileOutputStream("reports/calcTweetCompression.md")).addCopy(System.out);
     Map<String, Compressor> compressors = buildCompressors(source, ppmModelDepth, model_minPathWeight, dictionary_lookahead, dictionary_context, encodingContext, modelCount);
     TableOutput output = Compressor.evalCompressor(source.get().skip(modelCount), compressors, true);
-    //log.out(output.toTextTable());
-    log.out(output.calcNumberStats().toTextTable());
+    //log.p(output.toTextTable());
+    log.p(output.calcNumberStats().toTextTable());
     log.close();
   }
 
@@ -100,8 +100,8 @@ public class CompressionTest {
     MarkdownPrintStream log = new MarkdownPrintStream(new FileOutputStream("reports/calcTermCompression.md")).addCopy(System.out);
     Map<String, Compressor> compressors = buildCompressors(source, ppmModelDepth, model_minPathWeight, dictionary_lookahead, dictionary_context, encodingContext, modelCount);
     TableOutput output = Compressor.evalCompressor(source.get().skip(modelCount), compressors, true);
-    //log.out(output.toTextTable());
-    log.out(output.calcNumberStats().toTextTable());
+    //log.p(output.toTextTable());
+    log.p(output.calcNumberStats().toTextTable());
     log.close();
   }
 
@@ -120,8 +120,8 @@ public class CompressionTest {
     MarkdownPrintStream log = new MarkdownPrintStream(new FileOutputStream("reports/calcWikiCompression.md")).addCopy(System.out);
     Map<String, Compressor> compressors = buildCompressors(source, ppmModelDepth, model_minPathWeight, dictionary_lookahead, dictionary_context, encodingContext, modelCount);
     TableOutput output = Compressor.evalCompressor(source.get().skip(modelCount), compressors, true);
-    //log.out(output.toTextTable());
-    log.out(output.calcNumberStats().toTextTable());
+    //log.p(output.toTextTable());
+    log.p(output.calcNumberStats().toTextTable());
     log.close();
   }
 
@@ -131,7 +131,7 @@ public class CompressionTest {
     System.out.println(String.format("Preparing %s documents", modelCount));
     CharTrieIndex baseTree = new CharTrieIndex();
     source.get().limit(modelCount).forEach(txt -> {
-      //System.out.println(String.format("Adding %s", txt.title));
+      //System.p.println(String.format("Adding %s", txt.title));
       baseTree.addDocument(txt.getText());
     });
     System.out.println(String.format("Indexing %s KB of documents", baseTree.getIndexedSize() / 1024));

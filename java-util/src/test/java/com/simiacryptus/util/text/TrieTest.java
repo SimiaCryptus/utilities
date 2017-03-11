@@ -387,7 +387,7 @@ public class TrieTest {
             });
             output.putRow(map);
         });
-        // System.out.println(output.toTextTable());
+        // System.p.println(output.toTextTable());
         String outputDirName = "tweets/";
         output.writeProjectorData(new File(outPath, outputDirName), new URL(outBaseUrl, outputDirName));
     }
@@ -504,7 +504,7 @@ public class TrieTest {
             map2.put("txt", s);
             output2.putRow(map2);
         });
-        // System.out.println(output1.toTextTable());
+        // System.p.println(output1.toTextTable());
         String outputDirName = "sentenceClassification/";
         output2.writeProjectorData(new File(outPath, outputDirName), new URL(outBaseUrl, outputDirName));
     }

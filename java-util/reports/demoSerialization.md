@@ -1,45 +1,63 @@
 This will demonstrate how to serialize a CharTrie class in compressed format
 
+
 First, we load some data into an index:
+
 Code: 
 ```java
-      charTrieIndex.addDocument(article.getText());
+      CharTrieIndex charTrieIndex = new CharTrieIndex();
+      WikiArticle.load().limit(100).forEach(article -> {
+          charTrieIndex.addDocument(article.getText());
+      });
+      System.out.println(String.format("Indexing %s KB of documents",
+              charTrieIndex.getIndexedSize() / 1024));
+      charTrieIndex.index(6, 0);
+      return charTrieIndex;
 ```
 Returns: 
 ```
-    com.simiacryptus.util.text.CharTrieIndex@358a2322
+    com.simiacryptus.util.text.CharTrieIndex@1fba03d4
 ```
 Logging: 
 ```
-    Indexing 1978 KB of documents
+    Indexing 1564 KB of documents
     
 ```
 
 
 Then, we compress the tree:
+
 Code: 
 ```java
-          tree.getMemorySize(), bytes.length, 100 - (bytes.length * 100.0 / tree.getMemorySize())));
+      byte[] bytes = new FullTrieSerializer().serialize(tree.copy());
+      System.out.println(String.format("%s in ram, %s bytes in serialized form, %s%% compression",
+              tree.getMemorySize(), bytes.length, 100 - (bytes.length * 100.0 / tree.getMemorySize())));
+      return Base64.getEncoder().encodeToString(bytes);
 ```
 Returns: 
 ```
-    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... and 1246708 more bytes
+    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... and 1072592 more bytes
 ```
 Logging: 
 ```
-    33554432 in ram, 938101 bytes in serialized form, 97.20424115657806% compression
+    16777216 in ram, 807516 bytes in serialized form, 95.18682956695557% compression
     
 ```
 
 
 And decompress to verify:
+
 Code: 
 ```java
-  
+      byte[] bytes = Base64.getDecoder().decode(serialized);
+      CharTrie restored = new FullTrieSerializer().deserialize(bytes);
+      boolean verified = restored.root().equals(tree.root());
+      System.out.println(String.format("Tree Verified: %s", verified));
+      return bytes.length;
 ```
 Returns: 
 ```
-    938101
+    807516
 ```
 Logging: 
 ```
@@ -47,95 +65,106 @@ Logging:
     
 ```
 Then, we encode the data used to create the dictionary:
+
 Code: 
 ```java
-      TimedResult<Bits> compressed = TimedResult.time(()->codec.encodePPM(article.getText(), 4));
-      System.out.println(String.format("Serialized %s: %s chars -> %s bytes (%s%%) in %s sec",
-              article.getTitle(), article.getText().length(), compressed.obj.bitLength * 100.0 / 8.0,
-              compressed.obj.bitLength / (8.0 * article.getText().length()),
-              compressed.timeNanos / 1000000000.0));
-      return compressed.obj.getBytes();
+      PPMCodec codec = tree.getCodec();
+      int totalSize = WikiArticle.load().limit(100).map(article -> {
+          TimedResult<Bits> compressed = TimedResult.time(()->codec.encodePPM(article.getText(), 4));
+          System.out.println(String.format("Serialized %s: %s chars -> %s bytes (%s%%) in %s sec",
+                  article.getTitle(), article.getText().length(), compressed.obj.bitLength * 100.0 / 8.0,
+                  compressed.obj.bitLength / (8.0 * article.getText().length()),
+                  compressed.timeNanos / 1000000000.0));
+          return compressed.obj.getBytes();
+      }).mapToInt(bytes->bytes.length).sum();
+      return String.format("Compressed %s KB of documents -> %s KB (%s dictionary + %s ppm)",
+              index.getIndexedSize() / 1024, (totalSize + dictionaryLength)/ 1024,
+              dictionaryLength / 1024, totalSize / 1024);
 ```
 Returns: 
 ```
-    Compressed 1978 KB of documents -> 1599 KB (916 dictionary + 683 ppm)
+    Compressed 1564 KB of documents -> 1861 KB (788 dictionary + 1072 ppm)
 ```
 Logging: 
 ```
-    Serialized AccessibleComputing: 69 chars -> 2425.0 bytes (0.35144927536231885%) in 4.06756E-4 sec
-    Serialized Anarchism: 186232 chars -> 6497337.5 bytes (0.34888405322393573%) in 35.189800868 sec
-    Serialized AfghanistanHistory: 57 chars -> 2200.0 bytes (0.38596491228070173%) in 3.51022E-4 sec
-    Serialized AfghanistanGeography: 59 chars -> 2162.5 bytes (0.3665254237288136%) in 3.28044E-4 sec
-    Serialized AfghanistanPeople: 62 chars -> 2275.0 bytes (0.36693548387096775%) in 3.45644E-4 sec
-    Serialized AfghanistanCommunications: 64 chars -> 2400.0 bytes (0.375%) in 3.432E-4 sec
-    Serialized AfghanistanTransportations: 79 chars -> 2737.5 bytes (0.34651898734177217%) in 4.01378E-4 sec
-    Serialized AfghanistanMilitary: 54 chars -> 1962.5 bytes (0.36342592592592593%) in 2.67911E-4 sec
-    Serialized AfghanistanTransnationalIssues: 67 chars -> 2487.5 bytes (0.3712686567164179%) in 3.46623E-4 sec
-    Serialized AssistiveTechnology: 55 chars -> 2075.0 bytes (0.37727272727272726%) in 2.93822E-4 sec
-    Serialized AmoeboidTaxa: 41 chars -> 1537.5 bytes (0.375%) in 2.244E-4 sec
-    Serialized Autism: 149779 chars -> 5082450.0 bytes (0.33932994612061773%) in 22.907184642 sec
-    Serialized AlbaniaHistory: 53 chars -> 2100.0 bytes (0.39622641509433965%) in 3.82312E-4 sec
-    Serialized AlbaniaPeople: 58 chars -> 2187.5 bytes (0.3771551724137931%) in 3.24622E-4 sec
-    Serialized AsWeMayThink: 50 chars -> 1662.5 bytes (0.3325%) in 2.35644E-4 sec
-    Serialized AlbaniaGovernment: 54 chars -> 2075.0 bytes (0.38425925925925924%) in 2.78178E-4 sec
-    Serialized AlbaniaEconomy: 53 chars -> 2050.0 bytes (0.3867924528301887%) in 2.90889E-4 sec
-    Serialized Albedo: 35354 chars -> 1202337.5 bytes (0.34008528030774454%) in 1.427916048 sec
-    Serialized AfroAsiaticLanguages: 56 chars -> 1987.5 bytes (0.3549107142857143%) in 3.02622E-4 sec
-    Serialized ArtificalLanguages: 142 chars -> 4650.0 bytes (0.3274647887323944%) in 7.27955E-4 sec
-    Serialized AbacuS: 41 chars -> 1587.5 bytes (0.3871951219512195%) in 2.11689E-4 sec
-    Serialized AbalonE: 42 chars -> 1537.5 bytes (0.36607142857142855%) in 2.69378E-4 sec
-    Serialized AbbadideS: 50 chars -> 1725.0 bytes (0.345%) in 2.39555E-4 sec
-    Serialized AbbesS: 41 chars -> 1612.5 bytes (0.3932926829268293%) in 2.17067E-4 sec
-    Serialized AbbevilleFrance: 44 chars -> 1650.0 bytes (0.375%) in 2.728E-4 sec
-    Serialized AbbeY: 40 chars -> 1450.0 bytes (0.3625%) in 1.90666E-4 sec
-    Serialized AbboT: 40 chars -> 1450.0 bytes (0.3625%) in 1.89689E-4 sec
-    Serialized Abbreviations: 44 chars -> 1700.0 bytes (0.38636363636363635%) in 3.17288E-4 sec
-    Serialized AtlasShrugged: 50 chars -> 1775.0 bytes (0.355%) in 2.49333E-4 sec
-    Serialized ArtificialLanguages: 55 chars -> 2112.5 bytes (0.3840909090909091%) in 2.98223E-4 sec
-    Serialized AtlasShruggedCharacters: 68 chars -> 2500.0 bytes (0.36764705882352944%) in 3.48089E-4 sec
-    Serialized AtlasShruggedCompanies: 49 chars -> 1825.0 bytes (0.37244897959183676%) in 2.97733E-4 sec
-    Serialized AyersMusicPublishingCompany: 67 chars -> 2350.0 bytes (0.35074626865671643%) in 3.29511E-4 sec
-    Serialized AfricanAmericanPeople: 52 chars -> 1987.5 bytes (0.38221153846153844%) in 2.63512E-4 sec
-    Serialized AdolfHitler: 47 chars -> 1800.0 bytes (0.3829787234042553%) in 2.34178E-4 sec
-    Serialized AbeceDarians: 46 chars -> 1662.5 bytes (0.36141304347826086%) in 2.23911E-4 sec
-    Serialized AbeL: 48 chars -> 1850.0 bytes (0.3854166666666667%) in 2.53244E-4 sec
-    Serialized AbensbergGermany: 44 chars -> 1587.5 bytes (0.36079545454545453%) in 2.06311E-4 sec
-    Serialized AberdeenSouthDakota: 57 chars -> 2037.5 bytes (0.3574561403508772%) in 2.80622E-4 sec
-    Serialized ArthurKoestler: 50 chars -> 1775.0 bytes (0.355%) in 2.48845E-4 sec
-    Serialized AynRand: 43 chars -> 1637.5 bytes (0.3808139534883721%) in 2.15111E-4 sec
-    Serialized AlexanderTheGreat: 53 chars -> 2087.5 bytes (0.3938679245283019%) in 2.75245E-4 sec
-    Serialized AnchorageAlaska: 51 chars -> 1887.5 bytes (0.3700... and 5689 more bytes
+    Serialized AccessibleComputing: 69 chars -> 2937.5 bytes (0.4257246376811594%) in 7.03023E-4 sec
+    Serialized Anarchism: 186232 chars -> 1.0470375E7 bytes (0.5622221207955668%) in 17.338331757 sec
+    Serialized AfghanistanHistory: 57 chars -> 2200.0 bytes (0.38596491228070173%) in 5.016E-4 sec
+    Serialized AfghanistanGeography: 59 chars -> 2237.5 bytes (0.3792372881355932%) in 4.60045E-4 sec
+    Serialized AfghanistanPeople: 62 chars -> 2387.5 bytes (0.3850806451612903%) in 4.41467E-4 sec
+    Serialized AfghanistanCommunications: 64 chars -> 2312.5 bytes (0.361328125%) in 3.86222E-4 sec
+    Serialized AfghanistanTransportations: 79 chars -> 3950.0 bytes (0.5%) in 6.31155E-4 sec
+    Serialized AfghanistanMilitary: 54 chars -> 2137.5 bytes (0.3958333333333333%) in 3.75956E-4 sec
+    Serialized AfghanistanTransnationalIssues: 67 chars -> 2387.5 bytes (0.35634328358208955%) in 4.444E-4 sec
+    Serialized AssistiveTechnology: 55 chars -> 2562.5 bytes (0.4659090909090909%) in 4.004E-4 sec
+    Serialized AmoeboidTaxa: 41 chars -> 1575.0 bytes (0.38414634146341464%) in 2.98711E-4 sec
+    Serialized Autism: 149779 chars -> 8323187.5 bytes (0.5556978948984838%) in 11.509635861 sec
+    Serialized AlbaniaHistory: 53 chars -> 2250.0 bytes (0.42452830188679247%) in 4.86445E-4 sec
+    Serialized AlbaniaPeople: 58 chars -> 2375.0 bytes (0.40948275862068967%) in 4.61511E-4 sec
+    Serialized AsWeMayThink: 50 chars -> 4037.5 bytes (0.8075%) in 6.32623E-4 sec
+    Serialized AlbaniaGovernment: 54 chars -> 2275.0 bytes (0.4212962962962963%) in 4.58578E-4 sec
+    Serialized AlbaniaEconomy: 53 chars -> 2062.5 bytes (0.3891509433962264%) in 4.356E-4 sec
+    Serialized Albedo: 35354 chars -> 2056562.5 bytes (0.5817057475816032%) in 0.935473363 sec
+    Serialized AfroAsiaticLanguages: 56 chars -> 2375.0 bytes (0.42410714285714285%) in 3.88178E-4 sec
+    Serialized ArtificalLanguages: 142 chars -> 8200.0 bytes (0.5774647887323944%) in 0.001210978 sec
+    Serialized AbacuS: 41 chars -> 1550.0 bytes (0.3780487804878049%) in 2.43466E-4 sec
+    Serialized AbalonE: 42 chars -> 1475.0 bytes (0.35119047619047616%) in 2.42978E-4 sec
+    Serialized AbbadideS: 50 chars -> 1675.0 bytes (0.335%) in 2.84534E-4 sec
+    Serialized AbbesS: 41 chars -> 1575.0 bytes (0.38414634146341464%) in 2.44444E-4 sec
+    Serialized AbbevilleFrance: 44 chars -> 1587.5 bytes (0.36079545454545453%) in 2.772E-4 sec
+    Serialized AbbeY: 40 chars -> 1412.5 bytes (0.353125%) in 2.47378E-4 sec
+    Serialized AbboT: 40 chars -> 1412.5 bytes (0.353125%) in 2.27333E-4 sec
+    Serialized Abbreviations: 44 chars -> 1637.5 bytes (0.3721590909090909%) in 2.86E-4 sec
+    Serialized AtlasShrugged: 50 chars -> 1687.5 bytes (0.3375%) in 3.036E-4 sec
+    Serialized ArtificialLanguages: 55 chars -> 2075.0 bytes (0.37727272727272726%) in 3.37334E-4 sec
+    Serialized AtlasShruggedCharacters: 68 chars -> 2375.0 bytes (0.3492647058823529%) in 4.20933E-4 sec
+    Serialized AtlasShruggedCompanies: 49 chars -> 1762.5 bytes (0.3596938775510204%) in 2.89911E-4 sec
+    Serialized AyersMusicPublishingCompany: 67 chars -> 2312.5 bytes (0.3451492537313433%) in 4.61022E-4 sec
+    Serialized AfricanAmericanPeople: 52 chars -> 1900.0 bytes (0.36538461538461536%) in 3.76933E-4 sec
+    Serialized AdolfHitler: 47 chars -> 1737.5 bytes (0.3696808510638298%) in 2.83556E-4 sec
+    Serialized AbeceDarians: 46 chars -> 1612.5 bytes (0.35054347826086957%) in 2.70356E-4 sec
+    Serialized AbeL: 48 chars -> 1762.5 bytes (0.3671875%) in 3.07512E-4 sec
+    Serialized AbensbergGermany: 44 chars -> 1562.5 bytes (0.35511363636363635%) in 2.54222E-4 sec
+    Serialized AberdeenSouthDakota: 57 chars -> 2000.0 bytes (0.3508771929824561%) in 3.52E-4 sec
+    Serialized ArthurKoestler: 50 chars -> 1725.0 bytes (0.345%) in 2.95289E-4 sec
+    Serialized AynRand: 43 chars -> 1600.0 bytes (0.37209302325581395%) in 3.52977E-4 sec
+    Serialized AlexanderTheGreat: 53 chars -> 2037.5 bytes (0.38443396226415094%) in 4.048E-4 sec
+    Serialized AnchorageAlaska: 51 chars -> 1825.0 bytes (0.357843... and 5687 more bytes
 ```
 For reference, we encode some sample articles that are NOT in the dictionary:
+
 Code: 
 ```java
-      TimedResult<Bits> compressed = TimedResult.time(()->codec.encodePPM(article.getText(), 4));
-      System.out.println(String.format("Serialized %s: %s chars -> %s bytes (%s%%) in %s sec",
-              article.getTitle(), article.getText().length(), compressed.obj.bitLength * 100.0 / 8.0,
-              compressed.obj.bitLength / (8.0 * article.getText().length()),
-              compressed.timeNanos / 1000000000.0));
+      PPMCodec codec = tree.getCodec();
+      WikiArticle.load().skip(100).limit(20).forEach(article -> {
+          TimedResult<Bits> compressed = TimedResult.time(()->codec.encodePPM(article.getText(), 4));
+          System.out.println(String.format("Serialized %s: %s chars -> %s bytes (%s%%) in %s sec",
+                  article.getTitle(), article.getText().length(), compressed.obj.bitLength * 100.0 / 8.0,
+                  compressed.obj.bitLength / (8.0 * article.getText().length()),
+                  compressed.timeNanos / 1000000000.0));
+      });
 ```
 Logging: 
 ```
-    Serialized Artificial languages: 78 chars -> 3175.0 bytes (0.40705128205128205%) in 4.93289E-4 sec
-    Serialized Austroasiatic languages: 27408 chars -> 1773637.5 bytes (0.6471240148861647%) in 0.570456651 sec
-    Serialized Afro-asiatic languages: 66 chars -> 2450.0 bytes (0.3712121212121212%) in 3.50044E-4 sec
-    Serialized Afroasiatic languages: 47485 chars -> 3414287.5 bytes (0.719024428766979%) in 1.322545813 sec
-    Serialized Andorra: 61684 chars -> 3400525.0 bytes (0.5512815316775825%) in 2.05837795 sec
-    Serialized Andorra/Transnational issues: 103 chars -> 5662.5 bytes (0.5497572815533981%) in 7.90534E-4 sec
-    Serialized Arithmetic mean: 11367 chars -> 634262.5 bytes (0.557985836192487%) in 0.133811839 sec
-    Serialized American Football Conference: 12135 chars -> 712637.5 bytes (0.5872579316028018%) in 0.152079175 sec
-    Serialized Albert Gore: 42 chars -> 2662.5 bytes (0.6339285714285714%) in 3.47112E-4 sec
-    Serialized AnEnquiryConcerningHumanUnderstanding: 76 chars -> 3162.5 bytes (0.4161184210526316%) in 4.47822E-4 sec
-    Serialized Animal Farm: 69803 chars -> 3860200.0 bytes (0.5530134807959544%) in 2.594378685 sec
-    Serialized Amphibian: 130679 chars -> 7375950.0 bytes (0.5644326938528761%) in 8.229136245 sec
-    Serialized Albert Arnold Gore/Criticisms: 21 chars -> 1512.5 bytes (0.7202380952380952%) in 2.36133E-4 sec
-    Serialized Alaska: 141209 chars -> 7712987.5 bytes (0.5462107585210575%) in 9.346242609 sec
-    Serialized Auteur Theory Film: 20 chars -> 1412.5 bytes (0.70625%) in 1.77956E-4 sec
-    Serialized Agriculture: 108723 chars -> 5674325.0 bytes (0.5219065883023831%) in 5.650997962 sec
-    Serialized Aldous Huxley: 49379 chars -> 2753450.0 bytes (0.5576155855728143%) in 1.368187507 sec
-    Serialized Abstract Algebra: 61 chars -> 2662.5 bytes (0.4364754098360656%) in 3.54933E-4 sec
-    Serialized Ada: 3353 chars -> 203825.0 bytes (0.6078884580972264%) in 0.030513515 sec
-    Serialized Aberdeen (disambiguation): 6684 chars -> 354025.0 bytes (0.5296603830041892%) in 0.066018586 sec
+    Serialized Artificial languages: 78 chars -> 3850.0 bytes (0.4935897435897436%) in 8.15467E-4 sec
+    Serialized Austroasiatic languages: 27408 chars -> 1725275.0 bytes (0.6294786193812025%) in 0.648535149 sec
+    Serialized Afro-asiatic languages: 66 chars -> 2700.0 bytes (0.4090909090909091%) in 5.88133E-4 sec
+    Serialized Afroasiatic languages: 47485 chars -> 3565000.0 bytes (0.7507633989680952%) in 1.555079486 sec
+    Serialized Andorra: 61684 chars -> 3449100.0 bytes (0.5591563452434991%) in 2.307285493 sec
+    Serialized Andorra/Transnational issues: 103 chars -> 5437.5 bytes (0.5279126213592233%) in 0.001041333 sec
+    Serialized Arithmetic mean: 11367 chars -> 597362.5 bytes (0.5255234450602622%) in 0.166167977 sec
+    Serialized American Football Conference: 12135 chars -> 769687.5 bytes (0.6342707045735476%) in 0.207853093 sec
+    Serialized Albert Gore: 42 chars -> 2850.0 bytes (0.6785714285714286%) in 5.07466E-4 sec
+    Serialized AnEnquiryConcerningHumanUnderstanding: 76 chars -> 2862.5 bytes (0.37664473684210525%) in 6.44845E-4 sec
+    Serialized Animal Farm: 69803 chars -> 3991125.0 bytes (0.57176983797258%) in 2.854340496 sec
+    Serialized Amphibian: 130679 chars -> 7412750.0 bytes (0.567248754581838%) in 8.819905742 sec
+    Serialized Albert Arnold Gore/Criticisms: 21 chars -> 1762.5 bytes (0.8392857142857143%) in 3.33911E-4 sec
+    Serialized Alaska: 141209 chars -> 8281950.0 bytes (0.5865029849372208%) in 10.191067649 sec
+    Serialized Auteur Theory Film: 20 chars -> 1412.5 bytes (0.70625%) in 1.91156E-4 sec
+    Serialized Agriculture: 108723 chars -> 5705462.5 bytes (0.5247705177377372%) in 6.191458342 sec
+    Serialized Aldous Huxley: 49379 chars -> 2845612.5 bytes (0.5762798963121974%) in 1.58774998 sec
+    Serialized Abstract Algebra: 61 chars -> 2387.5 bytes (0.39139344262295084%) in 4.01378E-4 sec
+    Serialized Ada: 3353 chars -> 204887.5 bytes (0.6110572621532956%) in 0.041690005 sec
+    Serialized Aberdeen (disambiguation): 6684 chars -> 378862.5 bytes (0.5668200179533214%) in 0.092367256 sec
     
 ```

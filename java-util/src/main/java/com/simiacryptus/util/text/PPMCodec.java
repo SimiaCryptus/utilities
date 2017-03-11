@@ -88,7 +88,7 @@ public class PPMCodec {
 
     public Bits encodePPM(String text, int context) {
       final String original = text;
-      //if(verbose) System.out.println(String.format("Encoding %s with %s chars of context", text, context));
+      //if(verbose) System.p.println(String.format("Encoding %s with %s chars of context", text, context));
       if(!text.endsWith("\u0000")) text += END_OF_STRING;
       ByteArrayOutputStream buffer = new ByteArrayOutputStream();
       BitOutputStream out = new BitOutputStream(buffer);
@@ -138,7 +138,7 @@ public class PPMCodec {
         }
         out.flush();
         Bits bits = new Bits(buffer.toByteArray(), out.getTotalBitsWritten());
-        //if(verbose) System.out.println(String.format("Encoded %s to %s", original, bits));
+        //if(verbose) System.p.println(String.format("Encoded %s to %s", original, bits));
         return bits;
       } catch (IOException e) {
         throw new RuntimeException(e);

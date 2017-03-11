@@ -24,14 +24,14 @@ public class TermMetaTest {
   @Test
   @Category(TestCategories.Report.class)
   public void calcCompressorPPM() throws Exception {
-    MarkdownPrintStream log = new MarkdownPrintStream(new FileOutputStream("reports/calcCompressorPPM" + getClass().getSimpleName() + ".md")).addCopy(System.out);
+    MarkdownPrintStream log = new MarkdownPrintStream(new FileOutputStream("reports/metaPPM" + getClass().getSimpleName() + ".md")).addCopy(System.out);
     CharTrieIndex baseTree = new CharTrieIndex();
-    log.out("Preparing %s documents", modelCount);
+    log.p("Preparing %s documents", modelCount);
     source().limit(modelCount).forEach(txt -> {
-      //System.out.println(String.format("Adding %s", txt.title));
+      //System.p.println(String.format("Adding %s", txt.title));
       baseTree.addDocument(txt.getText());
     });
-    log.out("Indexing %s KB of documents", baseTree.getIndexedSize() / 1024);
+    log.p("Indexing %s KB of documents", baseTree.getIndexedSize() / 1024);
 
     Map<String, Compressor> compressors = new LinkedHashMap<>();
 
@@ -45,8 +45,8 @@ public class TermMetaTest {
     }
 
     TableOutput output = Compressor.evalCompressor(source().skip(modelCount), compressors, true);
-    log.out(output.toTextTable());
-    log.out(output.calcNumberStats().toTextTable());
+    log.p(output.toTextTable());
+    log.p(output.calcNumberStats().toTextTable());
     log.close();
   }
 }

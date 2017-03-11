@@ -14,33 +14,33 @@ public class DictionaryMethodTest {
 
     @Test
     @Category(TestCategories.Report.class)
-    public void calcTweetCompression() throws Exception {
-        try (MarkdownPrintStream log = new MarkdownPrintStream(new FileOutputStream("reports/calcTweetCompression.md")).addCopy(System.out)) {
+    public void dictionariesTweets() throws Exception {
+        try (MarkdownPrintStream log = new MarkdownPrintStream(new FileOutputStream("reports/dictionariesTweets.md")).addCopy(System.out)) {
             int modelCount = 10000;
             int testCount = 100;
-            log.out("This notebook uses a variety of methods to generate compression dictionaries for a database of Tweets\n");
+            log.p("This notebook uses a variety of methods to generate compression dictionaries for a database of Tweets\n");
             test(log, () -> TweetSentiment.load().limit(modelCount + testCount), modelCount);
         }
     }
 
     @Test
     @Category(TestCategories.Report.class)
-    public void calcShakespeareCompression() throws Exception {
-        try (MarkdownPrintStream log = new MarkdownPrintStream(new FileOutputStream("reports/calcShakespeareCompression.md")).addCopy(System.out)) {
+    public void dictionariesShakespeare() throws Exception {
+        try (MarkdownPrintStream log = new MarkdownPrintStream(new FileOutputStream("reports/dictionariesShakespeare.md")).addCopy(System.out)) {
             int modelCount = 100;
             int testCount = 100;
-            log.out("This notebook uses a variety of methods to generate compression dictionaries for a database of Shakespeare text\n");
+            log.p("This notebook uses a variety of methods to generate compression dictionaries for a database of Shakespeare text\n");
             test(log, () -> Shakespeare.load().limit(modelCount + testCount), modelCount);
         }
     }
 
     @Test
     @Category(TestCategories.Report.class)
-    public void calcWikiCompression() throws Exception {
-        try (MarkdownPrintStream log = new MarkdownPrintStream(new FileOutputStream("reports/calcWikiCompression.md")).addCopy(System.out)) {
+    public void dictionariesWiki() throws Exception {
+        try (MarkdownPrintStream log = new MarkdownPrintStream(new FileOutputStream("reports/dictionariesWiki.md")).addCopy(System.out)) {
             int modelCount = 100;
             int testCount = 100;
-            log.out("This notebook uses a variety of methods to generate compression dictionaries for a database of Wikipedia articles\n");
+            log.p("This notebook uses a variety of methods to generate compression dictionaries for a database of Wikipedia articles\n");
             test(log, () -> WikiArticle.load().limit(modelCount + testCount), modelCount);
         }
     }
@@ -56,8 +56,8 @@ public class DictionaryMethodTest {
         addWordCountCompressor(log, compressors, limit.collect(Collectors.toList()));
         Compressor.addGenericCompressors(compressors);
         TableOutput output = Compressor.evalCompressor(source.get().skip(modelCount), compressors, true);
-        //log.out(output.toTextTable());
-        log.out(output.calcNumberStats().toTextTable());
+        //log.p(output.toTextTable());
+        log.p(output.calcNumberStats().toTextTable());
     }
 
     private void addWordCountCompressor(MarkdownPrintStream log, Map<String, Compressor> compressors, List<? extends TestDocument> content) {
@@ -69,7 +69,7 @@ public class DictionaryMethodTest {
                 .map(x -> x.getKey()).reduce((a, b) -> a + " " + b).get().substring(0, 8 * 1024);
         String key = "LZ8k_commonWords";
         int dictSampleSize = 512;
-        log.out("Common Words Dictionary %s: %s...\n", key, dictionary.length()> dictSampleSize ?(dictionary.substring(0, dictSampleSize) + "..."):dictionary);
+        log.p("Common Words Dictionary %s: %s...\n", key, dictionary.length()> dictSampleSize ?(dictionary.substring(0, dictSampleSize) + "..."):dictionary);
         compressors.put(key, new Compressor() {
             @Override
             public byte[] compress(String text) {
@@ -88,7 +88,7 @@ public class DictionaryMethodTest {
         String genDictionary = dictionaryTree.copy().getGenerator().generateDictionary(8 * 1024, dictionary_context, "", dictionary_lookahead, true);
         String keyDictionary = String.format("LZ8k_%s_%s_%s_generateDictionary", dictionary_context, dictionary_lookahead, model_minPathWeight);
         int dictSampleSize = 512;
-        log.out("Adding Compressor %s: %s...\n", keyDictionary, genDictionary.length() > dictSampleSize ? (genDictionary.substring(0, dictSampleSize) + "...") : genDictionary);
+        log.p("Adding Compressor %s: %s...\n", keyDictionary, genDictionary.length() > dictSampleSize ? (genDictionary.substring(0, dictSampleSize) + "...") : genDictionary);
         compressors.put(keyDictionary, new Compressor() {
 
             @Override
@@ -103,7 +103,7 @@ public class DictionaryMethodTest {
         });
         String genMarkov = dictionaryTree.copy().getGenerator().generateMarkov(8 * 1024, dictionary_context, "");
         String keyMarkov = String.format("LZ8k_%s_%s_%s_generateMarkov", dictionary_context, dictionary_lookahead, model_minPathWeight);
-        log.out("Adding Compressor %s: %s...\n", keyMarkov, genMarkov.length() > dictSampleSize ? (genMarkov.substring(0, dictSampleSize) + "...") : genMarkov);
+        log.p("Adding Compressor %s: %s...\n", keyMarkov, genMarkov.length() > dictSampleSize ? (genMarkov.substring(0, dictSampleSize) + "...") : genMarkov);
         compressors.put(keyMarkov, new Compressor() {
 
             @Override

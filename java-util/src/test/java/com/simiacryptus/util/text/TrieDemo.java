@@ -30,9 +30,9 @@ public class TrieDemo {
     public void demoSearch() throws IOException {
         try (MarkdownPrintStream log = new MarkdownPrintStream(new FileOutputStream("reports/demoSearch.md")).addCopy(System.out)) {
 
-            log.out("This will demonstrate how to use the CharTrieIndex class for searching indexed documents\n");
+            log.p("This will demonstrate how to use the CharTrieIndex class for searching indexed documents\n");
 
-            log.out("First, we load some data into an index:");
+            log.p("First, we load some data into an index:");
             CharTrieIndex trie = log.code(() -> {
                 return new CharTrieIndex();
             });
@@ -42,14 +42,14 @@ public class TrieDemo {
                         article -> article.getTitle()
                 ));
             });
-            log.out("And then compute the index trie:");
+            log.p("And then compute the index trie:");
             log.code(() -> {
                 System.out.println("Total Indexed Document (KB): " + trie.getIndexedSize() / 1024);
                 trie.index(Integer.MAX_VALUE,1);
                 System.out.println("Total Node Count: " + trie.getNodeCount());
                 System.out.println("Total Index Memory Size (KB): " + trie.getMemorySize() / 1024);
             });
-            log.out("Now we can search for a string:");
+            log.p("Now we can search for a string:");
             Map<String,Long> codec = log.code(() -> {
                 IndexNode match = trie.traverse("Computer");
                 System.out.println("Found string matches for " + match.getString());
@@ -66,9 +66,9 @@ public class TrieDemo {
     public void demoCharTree() throws IOException {
         try (MarkdownPrintStream log = new MarkdownPrintStream(new FileOutputStream("reports/demoCharTree.md")).addCopy(System.out)) {
 
-            log.out("This will demonstrate how to use the CharTrieIndex class for PPM and shared dictionary compression\n");
+            log.p("This will demonstrate how to use the CharTrieIndex class for PPM and shared dictionary compression\n");
 
-            log.out("First, we load some data into an index:");
+            log.p("First, we load some data into an index:");
             CharTrie trie = log.code(() -> {
                 CharTrieIndex charTrieIndex = new CharTrieIndex();
                 WikiArticle.load().limit(100).forEach(article -> {
@@ -77,12 +77,12 @@ public class TrieDemo {
                 charTrieIndex.index(5, 1);
                 return charTrieIndex;
             });
-            log.out("And then derive a PPM codec:");
+            log.p("And then derive a PPM codec:");
             PPMCodec codec = log.code(() -> {
                 return trie.getCodec();
             });
 
-            log.out("\n\nThen, we use it to encode strings:");
+            log.p("\n\nThen, we use it to encode strings:");
             WikiArticle wikiArticle = log.code(() -> {
                 return WikiArticle.load().skip(100)
                         .filter(article -> article.getText().length() > 1024 && article.getText().length() < 4096)
@@ -95,7 +95,7 @@ public class TrieDemo {
                     return bits.toBase64String();
                 });
 
-                log.out("\n\nAnd decompress to verify:");
+                log.p("\n\nAnd decompress to verify:");
                 String uncompressed = log.code(() -> {
                     byte[] bytes = Base64.getDecoder().decode(compressed);
                     return codec.decodePPM(bytes, 2);
@@ -103,19 +103,19 @@ public class TrieDemo {
             }
 
 
-            log.out("\n\nFor faster compression, we can define a dictionary for use with Deflate:");
+            log.p("\n\nFor faster compression, we can define a dictionary for use with Deflate:");
             String dictionary = log.code(() -> {
                 return trie.getGenerator().generateDictionary(8*1024, 3, "", 1, true);
             });
             {
-                log.out("\n\nThen, we use it to encode strings:");
+                log.p("\n\nThen, we use it to encode strings:");
                 String compressed = log.code(() -> {
                     byte[] bits = CompressionUtil.encodeLZ(wikiArticle.getText(), dictionary);
                     System.out.print("Compressed Bytes: " + bits.length);
                     return Base64.getEncoder().encodeToString(bits);
                 });
 
-                log.out("\n\nAnd decompress to verify:");
+                log.p("\n\nAnd decompress to verify:");
                 String uncompressed = log.code(() -> {
                     byte[] bytes = Base64.getDecoder().decode(compressed);
                     return CompressionUtil.decodeLZ(bytes, dictionary);
@@ -130,9 +130,9 @@ public class TrieDemo {
     public void demoSerialization() throws IOException {
         try (MarkdownPrintStream log = new MarkdownPrintStream(new FileOutputStream("reports/demoSerialization.md")).addCopy(System.out)) {
 
-            log.out("This will demonstrate how to serialize a CharTrie class in compressed format\n");
+            log.p("This will demonstrate how to serialize a CharTrie class in compressed format\n");
 
-            log.out("First, we load some data into an index:");
+            log.p("First, we load some data into an index:");
             CharTrieIndex index = log.code(() -> {
                 CharTrieIndex charTrieIndex = new CharTrieIndex();
                 WikiArticle.load().limit(100).forEach(article -> {
@@ -145,7 +145,7 @@ public class TrieDemo {
             });
             CharTrie tree = index.truncate();
 
-            log.out("\n\nThen, we compress the tree:");
+            log.p("\n\nThen, we compress the tree:");
             String serialized = log.code(() -> {
                 byte[] bytes = new FullTrieSerializer().serialize(tree.copy());
                 System.out.println(String.format("%s in ram, %s bytes in serialized form, %s%% compression",
@@ -153,7 +153,7 @@ public class TrieDemo {
                 return Base64.getEncoder().encodeToString(bytes);
             });
 
-            log.out("\n\nAnd decompress to verify:");
+            log.p("\n\nAnd decompress to verify:");
             int dictionaryLength = log.code(() -> {
                 byte[] bytes = Base64.getDecoder().decode(serialized);
                 CharTrie restored = new FullTrieSerializer().deserialize(bytes);
@@ -162,7 +162,7 @@ public class TrieDemo {
                 return bytes.length;
             });
 
-            log.out("Then, we encode the data used to create the dictionary:");
+            log.p("Then, we encode the data used to create the dictionary:");
             log.code(() -> {
                 PPMCodec codec = tree.getCodec();
                 int totalSize = WikiArticle.load().limit(100).map(article -> {
@@ -178,7 +178,7 @@ public class TrieDemo {
                         dictionaryLength / 1024, totalSize / 1024);
             });
 
-            log.out("For reference, we encode some sample articles that are NOT in the dictionary:");
+            log.p("For reference, we encode some sample articles that are NOT in the dictionary:");
             log.code(() -> {
                 PPMCodec codec = tree.getCodec();
                 WikiArticle.load().skip(100).limit(20).forEach(article -> {
