@@ -1,4 +1,5 @@
 Generating Compressor Models
+
 Completed Model PPM_1
 Completed Model PPM_2
 Completed Model PPM_3
@@ -20,6 +21,7 @@ Completed Model PPM_18
 Completed Model PPM_19
 Completed Model PPM_20
 Calculating Metrics Table
+
 title | PPM_1.value | PPM_8.value | PPM_18.value | PPM_12.value | PPM_19.value | PPM_9.value | PPM_17.value | PPM_11.value | PPM_4.value | PPM_6.value | PPM_14.value | PPM_10.value | PPM_5.value | PPM_13.value | PPM_7.value | PPM_20.value | PPM_2.value | PPM_16.value | PPM_3.value | PPM_15.value
 ----- | ----------- | ----------- | ------------ | ------------ | ------------ | ----------- | ------------ | ------------ | ----------- | ----------- | ------------ | ------------ | ----------- | ------------ | ----------- | ------------ | ----------- | ------------ | ----------- | ------------
 Calculus                                                    | 0.3164 | 0.6114 | 0.6020 | 0.6208 | 0.5609 | 0.6198 | 0.5733 | 0.6374 | 0.6837 | 0.6707 | 0.6166 | 0.5912 | 0.7796 | 0.6003 | 0.6161 | 0.5825 | 0.5599 | 0.6095 | 0.6066 | 0.6088
