@@ -3,7 +3,7 @@ This will demonstrate how to serialize a CharTrie class in compressed format
 
 First, we load some data into an index:
 
-Code from [CompressionTest:14](../test/java/com/simiacryptus/util/text/CompressionTest.java#L14): 
+Code from [CompressionTest:14](../src/test/java/com/simiacryptus/util/text/CompressionTest.java#L14): 
 ```java
       CharTrieIndex charTrieIndex = new CharTrieIndex();
       WikiArticle.load().limit(100).forEach(article -> {
