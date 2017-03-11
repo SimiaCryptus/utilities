@@ -24,7 +24,7 @@ public class TermMetaTest {
   @Test
   @Category(TestCategories.Report.class)
   public void calcCompressorPPM() throws Exception {
-    MarkdownPrintStream log = new MarkdownPrintStream(new FileOutputStream("reports/metaPPM" + getClass().getSimpleName() + ".md")).addCopy(System.out);
+    MarkdownPrintStream log = MarkdownPrintStream.get().addCopy(System.out);
     CharTrieIndex baseTree = new CharTrieIndex();
     log.p("Preparing %s documents", modelCount);
     source().limit(modelCount).forEach(txt -> {

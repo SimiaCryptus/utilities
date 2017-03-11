@@ -16,4 +16,8 @@ public class TimedResult<T> {
     T result = fn.get();
     return new TimedResult(result, System.nanoTime() - start);
   }
+
+  public double seconds() {
+    return timeNanos / 1000000000.0;
+  }
 }

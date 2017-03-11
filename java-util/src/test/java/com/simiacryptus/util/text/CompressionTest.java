@@ -78,7 +78,7 @@ public class CompressionTest {
     int testCount = 100;
     Supplier<Stream<? extends TestDocument>> source = ()->TweetSentiment.load().limit(modelCount + testCount);
 
-    MarkdownPrintStream log = new MarkdownPrintStream(new FileOutputStream("reports/calcTweetCompression.md")).addCopy(System.out);
+    MarkdownPrintStream log = MarkdownPrintStream.get().addCopy(System.out);
     Map<String, Compressor> compressors = buildCompressors(source, ppmModelDepth, model_minPathWeight, dictionary_lookahead, dictionary_context, encodingContext, modelCount);
     TableOutput output = Compressor.evalCompressor(source.get().skip(modelCount), compressors, true);
     //log.p(output.toTextTable());
@@ -97,7 +97,7 @@ public class CompressionTest {
     int modelCount = 15000;
     int testCount = 100;
     Supplier<Stream<? extends TestDocument>> source = ()-> EnglishWords.load().limit(modelCount + testCount);
-    MarkdownPrintStream log = new MarkdownPrintStream(new FileOutputStream("reports/calcTermCompression.md")).addCopy(System.out);
+    MarkdownPrintStream log = MarkdownPrintStream.get().addCopy(System.out);
     Map<String, Compressor> compressors = buildCompressors(source, ppmModelDepth, model_minPathWeight, dictionary_lookahead, dictionary_context, encodingContext, modelCount);
     TableOutput output = Compressor.evalCompressor(source.get().skip(modelCount), compressors, true);
     //log.p(output.toTextTable());
@@ -117,7 +117,7 @@ public class CompressionTest {
     int testCount = 100;
     Supplier<Stream<? extends TestDocument>> source = ()->WikiArticle.load().filter(x -> x.getText().length() > 8 * 1024).limit(modelCount + testCount);
 
-    MarkdownPrintStream log = new MarkdownPrintStream(new FileOutputStream("reports/calcWikiCompression.md")).addCopy(System.out);
+    MarkdownPrintStream log = MarkdownPrintStream.get().addCopy(System.out);
     Map<String, Compressor> compressors = buildCompressors(source, ppmModelDepth, model_minPathWeight, dictionary_lookahead, dictionary_context, encodingContext, modelCount);
     TableOutput output = Compressor.evalCompressor(source.get().skip(modelCount), compressors, true);
     //log.p(output.toTextTable());

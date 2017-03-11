@@ -1,10 +1,11 @@
 package com.simiacryptus.util.text;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintStream;
+import com.simiacryptus.util.lang.TimedResult;
+
+import java.io.*;
+import java.net.URI;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -16,9 +17,26 @@ import java.util.stream.Collectors;
 public class MarkdownPrintStream extends PrintStream {
 
     private final List<PrintStream> teeStreams = new ArrayList<>();
+    private final File file;
 
-    public MarkdownPrintStream(OutputStream inner) {
-        super(inner);
+    public static MarkdownPrintStream get() {
+        try {
+            StackTraceElement callingFrame = Thread.currentThread().getStackTrace()[2];
+            File path = new File(mkString(File.separator, "reports", callingFrame.getClassName(), callingFrame.getMethodName() + ".md"));
+            path.getParentFile().mkdirs();
+            return new MarkdownPrintStream(path);
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static String mkString(String separator, String... strs) {
+        return Arrays.asList(strs).stream().collect(Collectors.joining(separator));
+    }
+
+    public MarkdownPrintStream(File path) throws FileNotFoundException {
+        super(new FileOutputStream(path));
+        this.file = path;
     }
 
     public MarkdownPrintStream addCopy(PrintStream out) {
@@ -59,13 +77,15 @@ public class MarkdownPrintStream extends PrintStream {
     public <T> T code(Supplier<T> fn, int maxLog, int framesNo) {
         try {
             StackTraceElement callingFrame = Thread.currentThread().getStackTrace()[framesNo];
-            SysOutInterceptor.LoggedResult<T> result = SysOutInterceptor.withOutput(() -> fn.get());
+            TimedResult<SysOutInterceptor.LoggedResult<T>> result = TimedResult.time(() -> SysOutInterceptor.withOutput(() -> fn.get()));
             String sourceCode = getInnerText(callingFrame);
-            out("Code: ");
+            out("Code from [%s:%s](%s#L%s) executed in %02f seconds: ",
+                    pathTo(file, findFile(callingFrame)), callingFrame.getLineNumber(),
+                    callingFrame.getFileName(), callingFrame.getLineNumber(), result.seconds());
             out("```java");
             out("  " + sourceCode.replaceAll("\n","\n  "));
             out("```");
-            T eval = result.obj;
+            T eval = result.obj.obj;
             out("Returns: ");
             out("```");
             String valTxt = eval.toString().replaceAll("\n", "\n    ");
@@ -74,20 +94,28 @@ public class MarkdownPrintStream extends PrintStream {
             }
             out("    " + valTxt);
             out("```");
-            if(!result.log.isEmpty()) {
+            if(!result.obj.log.isEmpty()) {
                 out("Logging: ");
                 out("```");
-                String logSrc = result.log.replaceAll("\n", "\n    ");
+                String logSrc = result.obj.log.replaceAll("\n", "\n    ");
                 if(logSrc.length() > maxLog) {
                     logSrc = logSrc.substring(0, maxLog) + String.format("... and %s more bytes", logSrc.length() - maxLog);
                 }
                 out("    " + logSrc);
                 out("```");
             }
+            out("");
             return eval;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private String pathTo(File from, File to) {
+        Path fromUrl = from.toPath();
+        Path toUrl = to.toPath();
+        Path relativize = fromUrl.relativize(toUrl);
+        return relativize.toString();
     }
 
     public void code(Runnable fn) {
@@ -97,31 +125,32 @@ public class MarkdownPrintStream extends PrintStream {
     public void code(Runnable fn, int maxLog, int framesNo) {
         try {
             StackTraceElement callingFrame = Thread.currentThread().getStackTrace()[framesNo];
-            SysOutInterceptor.LoggedResult<Void> result = SysOutInterceptor.withOutput(() -> fn.run());
             String sourceCode = getInnerText(callingFrame);
-            out("Code: ");
+            TimedResult<SysOutInterceptor.LoggedResult<Void>> result = TimedResult.time(() -> SysOutInterceptor.withOutput(() -> fn.run()));
+            out("Code from [%s:%s](%s#L%s) executed in %02f seconds: ",
+                    pathTo(file, findFile(callingFrame)), callingFrame.getLineNumber(),
+                    callingFrame.getFileName(), callingFrame.getLineNumber(), result.seconds());
             out("```java");
             out("  " + sourceCode.replaceAll("\n","\n  "));
             out("```");
-            if(!result.log.isEmpty()) {
+            if(!result.obj.log.isEmpty()) {
                 out("Logging: ");
                 out("```");
-                String logSrc = result.log.replaceAll("\n", "\n    ");
+                String logSrc = result.obj.log.replaceAll("\n", "\n    ");
                 if(logSrc.length() > maxLog) {
                     logSrc = logSrc.substring(0, maxLog) + String.format("... and %s more bytes", logSrc.length() - maxLog);
                 }
                 out("    " + logSrc);
                 out("```");
             }
+            out("");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
     private String getInnerText(StackTraceElement callingFrame) throws IOException {
-        String[] packagePath = callingFrame.getClassName().split("\\.");
-        String path = Arrays.stream(packagePath).limit(packagePath.length - 1).collect(Collectors.joining(File.separator)) + File.separator + callingFrame.getFileName();
-        File file = findFile(path);
+        File file = findFile(callingFrame);
         assert(null != file);
         int start = callingFrame.getLineNumber()-1;
         int end = 3 + start;
@@ -136,7 +165,17 @@ public class MarkdownPrintStream extends PrintStream {
         return lines.stream().collect(Collectors.joining("\n"));
     }
 
-    private String getIndent(String txt) {
+    private static File findFile(StackTraceElement callingFrame) {
+        return findFile(callingFrame.getClassName(), callingFrame.getFileName());
+    }
+
+    private static File findFile(String className, String fileName) {
+        String[] packagePath = className.split("\\.");
+        String path = Arrays.stream(packagePath).limit(packagePath.length - 1).collect(Collectors.joining(File.separator)) + File.separator + fileName;
+        return findFile(path);
+    }
+
+    private static String getIndent(String txt) {
         Matcher matcher = Pattern.compile("^\\s+").matcher(txt);
         return matcher.find() ?matcher.group(0):"";
     }
@@ -144,7 +183,7 @@ public class MarkdownPrintStream extends PrintStream {
     private static List<File> codeRoots = Arrays.asList(
             "src/main/java", "src/test/java"
     ).stream().map(x->new File(x)).collect(Collectors.toList());
-    private File findFile(String path) {
+    private static File findFile(String path) {
         for(File root : codeRoots) {
             File file = new File(root, path);
             if(file.exists()) return file;

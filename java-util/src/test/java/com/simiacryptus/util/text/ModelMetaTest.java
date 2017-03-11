@@ -55,7 +55,7 @@ public abstract class ModelMetaTest {
   @Test
   @Category(TestCategories.ResearchCode.class)
   public void calcSharedDictionariesLZ() throws Exception {
-    MarkdownPrintStream log = new MarkdownPrintStream(new FileOutputStream("reports/metaSharedDictionariesLZ"+getClass().getSimpleName()+".md")).addCopy(System.out);
+    MarkdownPrintStream log = MarkdownPrintStream.get().addCopy(System.out);
     CharTrieIndex baseTree = new CharTrieIndex();
     log.p("Preparing %s documents", getModelCount());
     source().limit(getModelCount()).forEach(txt -> {
@@ -94,7 +94,7 @@ public abstract class ModelMetaTest {
   @Test
   @Category(TestCategories.Report.class)
   public void calcSharedDictionariesBZ() throws Exception {
-    MarkdownPrintStream log = new MarkdownPrintStream(new FileOutputStream("reports/metaSharedDictionariesBZ"+getClass().getSimpleName()+".md")).addCopy(System.out);
+    MarkdownPrintStream log = MarkdownPrintStream.get().addCopy(System.out);
     CharTrieIndex baseTree = new CharTrieIndex();
     log.p("Preparing %s documents", getModelCount());
     source().limit(getModelCount()).forEach(txt -> {
@@ -132,7 +132,7 @@ public abstract class ModelMetaTest {
   @Test
   @Category(TestCategories.Report.class)
   public void calcCompressorPPM() throws Exception {
-    MarkdownPrintStream log = new MarkdownPrintStream(new FileOutputStream("reports/metaPPM"+getClass().getSimpleName()+".md")).addCopy(System.out);
+    MarkdownPrintStream log = MarkdownPrintStream.get().addCopy(System.out);
     CharTrieIndex baseTree = new CharTrieIndex();
     log.p("Preparing %s documents", getModelCount());
     source().limit(getModelCount()).forEach(txt -> {

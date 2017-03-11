@@ -15,7 +15,7 @@ public class DictionaryMethodTest {
     @Test
     @Category(TestCategories.Report.class)
     public void dictionariesTweets() throws Exception {
-        try (MarkdownPrintStream log = new MarkdownPrintStream(new FileOutputStream("reports/dictionariesTweets.md")).addCopy(System.out)) {
+        try (MarkdownPrintStream log = MarkdownPrintStream.get().addCopy(System.out)) {
             int modelCount = 10000;
             int testCount = 100;
             log.p("This notebook uses a variety of methods to generate compression dictionaries for a database of Tweets\n");
@@ -26,7 +26,7 @@ public class DictionaryMethodTest {
     @Test
     @Category(TestCategories.Report.class)
     public void dictionariesShakespeare() throws Exception {
-        try (MarkdownPrintStream log = new MarkdownPrintStream(new FileOutputStream("reports/dictionariesShakespeare.md")).addCopy(System.out)) {
+        try (MarkdownPrintStream log = MarkdownPrintStream.get().addCopy(System.out)) {
             int modelCount = 100;
             int testCount = 100;
             log.p("This notebook uses a variety of methods to generate compression dictionaries for a database of Shakespeare text\n");
@@ -37,7 +37,7 @@ public class DictionaryMethodTest {
     @Test
     @Category(TestCategories.Report.class)
     public void dictionariesWiki() throws Exception {
-        try (MarkdownPrintStream log = new MarkdownPrintStream(new FileOutputStream("reports/dictionariesWiki.md")).addCopy(System.out)) {
+        try (MarkdownPrintStream log = MarkdownPrintStream.get().addCopy(System.out)) {
             int modelCount = 100;
             int testCount = 100;
             log.p("This notebook uses a variety of methods to generate compression dictionaries for a database of Wikipedia articles\n");

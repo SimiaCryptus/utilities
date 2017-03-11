@@ -44,7 +44,7 @@ public abstract class ModelClusterTest {
   @Test
   @Category(TestCategories.ResearchCode.class)
   public void clusterSharedDictionariesLZ() throws Exception {
-    try(MarkdownPrintStream log = new MarkdownPrintStream(new FileOutputStream("reports/clusterSharedDictionariesLZ"+getClass().getSimpleName()+".md")).addCopy(System.out)) {
+    try(MarkdownPrintStream log = MarkdownPrintStream.get().addCopy(System.out)) {
 
       int dictionary_context = 7;
       int model_minPathWeight = 3;
@@ -94,7 +94,7 @@ public abstract class ModelClusterTest {
   @Test
   @Category(TestCategories.ResearchCode.class)
   public void calcCompressorPPM() throws Exception {
-    try(MarkdownPrintStream log = new MarkdownPrintStream(new FileOutputStream("reports/clusterCompressorPPM"+getClass().getSimpleName()+".md")).addCopy(System.out)){
+    try(MarkdownPrintStream log = MarkdownPrintStream.get().addCopy(System.out)){
       int ppmModelDepth = 6;
       int model_minPathWeight = 3;
       AtomicInteger index = new AtomicInteger(0);
@@ -126,7 +126,7 @@ public abstract class ModelClusterTest {
   @Ignore
   @Category(TestCategories.ResearchCode.class)
   public void calcEntropyPPM() throws Exception {
-    try(MarkdownPrintStream log = new MarkdownPrintStream(new FileOutputStream("reports/clusterEntropyPPM"+getClass().getSimpleName()+".md")).addCopy(System.out)){
+    try(MarkdownPrintStream log = MarkdownPrintStream.get().addCopy(System.out)){
       int ppmModelDepth = 6;
       int model_minPathWeight = 3;
       AtomicInteger index = new AtomicInteger(0);

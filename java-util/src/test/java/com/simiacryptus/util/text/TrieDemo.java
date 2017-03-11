@@ -28,7 +28,7 @@ public class TrieDemo {
     @Test
     @Category(TestCategories.Report.class)
     public void demoSearch() throws IOException {
-        try (MarkdownPrintStream log = new MarkdownPrintStream(new FileOutputStream("reports/demoSearch.md")).addCopy(System.out)) {
+        try (MarkdownPrintStream log = MarkdownPrintStream.get().addCopy(System.out)) {
 
             log.p("This will demonstrate how to use the CharTrieIndex class for searching indexed documents\n");
 
@@ -64,7 +64,7 @@ public class TrieDemo {
     @Test
     @Category(TestCategories.Report.class)
     public void demoCharTree() throws IOException {
-        try (MarkdownPrintStream log = new MarkdownPrintStream(new FileOutputStream("reports/demoCharTree.md")).addCopy(System.out)) {
+        try (MarkdownPrintStream log = MarkdownPrintStream.get().addCopy(System.out)) {
 
             log.p("This will demonstrate how to use the CharTrieIndex class for PPM and shared dictionary compression\n");
 
@@ -128,7 +128,7 @@ public class TrieDemo {
     @Test
     @Category(TestCategories.Report.class)
     public void demoSerialization() throws IOException {
-        try (MarkdownPrintStream log = new MarkdownPrintStream(new FileOutputStream("reports/demoSerialization.md")).addCopy(System.out)) {
+        try (MarkdownPrintStream log = MarkdownPrintStream.get().addCopy(System.out)) {
 
             log.p("This will demonstrate how to serialize a CharTrie class in compressed format\n");
 
@@ -149,7 +149,7 @@ public class TrieDemo {
             String serialized = log.code(() -> {
                 byte[] bytes = new FullTrieSerializer().serialize(tree.copy());
                 System.out.println(String.format("%s in ram, %s bytes in serialized form, %s%% compression",
-                        tree.getMemorySize(), bytes.length, 100 - (bytes.length * 100.0 / tree.getMemorySize())));
+                        tree.getMemorySize(), bytes.length, 100 - (bytes.length / tree.getMemorySize())));
                 return Base64.getEncoder().encodeToString(bytes);
             });
 
