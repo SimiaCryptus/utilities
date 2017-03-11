@@ -1,14 +1,10 @@
 package com.simiacryptus.util.text;
 
-import com.simiacryptus.util.test.TestCategories;
-import com.simiacryptus.util.test.TestDocument;
-import com.simiacryptus.util.test.TweetSentiment;
-import com.simiacryptus.util.test.WikiArticle;
+import com.simiacryptus.util.test.*;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
@@ -55,107 +51,107 @@ public abstract class ModelMetaTest {
   @Test
   @Category(TestCategories.ResearchCode.class)
   public void calcSharedDictionariesLZ() throws Exception {
-    MarkdownPrintStream log = MarkdownPrintStream.get().addCopy(System.out);
-    CharTrieIndex baseTree = new CharTrieIndex();
-    log.p("Preparing %s documents", getModelCount());
-    source().limit(getModelCount()).forEach(txt -> {
-      //System.p.println(String.format("Adding %s", txt.title));
-      baseTree.addDocument(txt.getText());
-    });
-    log.p("Indexing %s KB of documents", baseTree.getIndexedSize() / 1024);
-    Map<String, Compressor> compressors = new LinkedHashMap<>();
-
-    for(int dictionary_context : Arrays.asList(4,5,6)) {
-      int model_minPathWeight = 3;
-      int dictionary_lookahead = 2;
-      log.p("Generating dictionaries");
-      CharTrie dictionaryTree = baseTree.copy().index(dictionary_context + dictionary_lookahead, model_minPathWeight);
-
-      compressors.put(String.format("LZ8k_%s", dictionary_context), new Compressor() {
-        String dictionary = dictionaryTree.copy().getGenerator().generateDictionary(8*1024, dictionary_context, "", dictionary_lookahead, true);
-        @Override
-        public byte[] compress(String text) {
-          return CompressionUtil.encodeLZ(text, dictionary);
-        }
-
-        @Override
-        public String uncompress(byte[] data) {
-          return CompressionUtil.decodeLZ(data, dictionary);
-        }
+    try(MarkdownPrintStream log = MarkdownPrintStream.get(this).addCopy(System.out)){
+      CharTrieIndex baseTree = new CharTrieIndex();
+      log.p("Preparing %s documents", getModelCount());
+      source().limit(getModelCount()).forEach(txt -> {
+        //System.p.println(String.format("Adding %s", txt.title));
+        baseTree.addDocument(txt.getText());
       });
-    }
+      log.p("Indexing %s KB of documents", baseTree.getIndexedSize() / 1024);
+      Map<String, Compressor> compressors = new LinkedHashMap<>();
 
-    TableOutput output = Compressor.evalCompressor(source().skip(getModelCount()), compressors, true);
-    //log.p(output.toTextTable());
-    log.p(output.calcNumberStats().toTextTable());
-    log.close();
+      for(int dictionary_context : Arrays.asList(4,5,6)) {
+        int model_minPathWeight = 3;
+        int dictionary_lookahead = 2;
+        log.p("Generating dictionaries");
+        CharTrie dictionaryTree = baseTree.copy().index(dictionary_context + dictionary_lookahead, model_minPathWeight);
+
+        compressors.put(String.format("LZ8k_%s", dictionary_context), new Compressor() {
+          String dictionary = dictionaryTree.copy().getGenerator().generateDictionary(8*1024, dictionary_context, "", dictionary_lookahead, true);
+          @Override
+          public byte[] compress(String text) {
+            return CompressionUtil.encodeLZ(text, dictionary);
+          }
+
+          @Override
+          public String uncompress(byte[] data) {
+            return CompressionUtil.decodeLZ(data, dictionary);
+          }
+        });
+      }
+
+      TableOutput output = Compressor.evalCompressor(source().skip(getModelCount()), compressors, true);
+      //log.p(output.toTextTable());
+      log.p(output.calcNumberStats().toTextTable());
+    }
   }
 
   @Test
   @Category(TestCategories.Report.class)
   public void calcSharedDictionariesBZ() throws Exception {
-    MarkdownPrintStream log = MarkdownPrintStream.get().addCopy(System.out);
-    CharTrieIndex baseTree = new CharTrieIndex();
-    log.p("Preparing %s documents", getModelCount());
-    source().limit(getModelCount()).forEach(txt -> {
-      //System.p.println(String.format("Adding %s", txt.title));
-      baseTree.addDocument(txt.getText());
-    });
-    log.p("Indexing %s KB of documents", baseTree.getIndexedSize() / 1024);
-    Map<String, Compressor> compressors = new LinkedHashMap<>();
-
-    for(int dictionary_context : Arrays.asList(4,6,8)) {
-      int model_minPathWeight = 3;
-      int dictionary_lookahead = 2;
-      log.p("Generating dictionaries");
-      CharTrie dictionaryTree = baseTree.copy().index(dictionary_context + dictionary_lookahead, model_minPathWeight);
-
-      compressors.put(String.format("BZ64k_%s", dictionary_context), new Compressor() {
-        String dictionary = dictionaryTree.copy().getGenerator().generateDictionary(64*1024, dictionary_context, "", dictionary_lookahead, true);
-        @Override
-        public byte[] compress(String text) {
-          return CompressionUtil.encodeBZ(text, dictionary);
-        }
-
-        @Override
-        public String uncompress(byte[] data) {
-          return CompressionUtil.decodeBZ(data, dictionary);
-        }
+    try(MarkdownPrintStream log = MarkdownPrintStream.get(this).addCopy(System.out)){
+      CharTrieIndex baseTree = new CharTrieIndex();
+      log.p("Preparing %s documents", getModelCount());
+      source().limit(getModelCount()).forEach(txt -> {
+        //System.p.println(String.format("Adding %s", txt.title));
+        baseTree.addDocument(txt.getText());
       });
+      log.p("Indexing %s KB of documents", baseTree.getIndexedSize() / 1024);
+      Map<String, Compressor> compressors = new LinkedHashMap<>();
+
+      for(int dictionary_context : Arrays.asList(4,6,8)) {
+        int model_minPathWeight = 3;
+        int dictionary_lookahead = 2;
+        log.p("Generating dictionaries");
+        CharTrie dictionaryTree = baseTree.copy().index(dictionary_context + dictionary_lookahead, model_minPathWeight);
+
+        compressors.put(String.format("BZ64k_%s", dictionary_context), new Compressor() {
+          String dictionary = dictionaryTree.copy().getGenerator().generateDictionary(64*1024, dictionary_context, "", dictionary_lookahead, true);
+          @Override
+          public byte[] compress(String text) {
+            return CompressionUtil.encodeBZ(text, dictionary);
+          }
+
+          @Override
+          public String uncompress(byte[] data) {
+            return CompressionUtil.decodeBZ(data, dictionary);
+          }
+        });
+      }
+      TableOutput output = Compressor.evalCompressor(source().skip(getModelCount()), compressors, true);
+      //log.p(output.toTextTable());
+      log.p(output.calcNumberStats().toTextTable());
     }
-    TableOutput output = Compressor.evalCompressor(source().skip(getModelCount()), compressors, true);
-    //log.p(output.toTextTable());
-    log.p(output.calcNumberStats().toTextTable());
-    log.close();
   }
 
   @Test
   @Category(TestCategories.Report.class)
   public void calcCompressorPPM() throws Exception {
-    MarkdownPrintStream log = MarkdownPrintStream.get().addCopy(System.out);
-    CharTrieIndex baseTree = new CharTrieIndex();
-    log.p("Preparing %s documents", getModelCount());
-    source().limit(getModelCount()).forEach(txt -> {
-      //System.p.println(String.format("Adding %s", txt.title));
-      baseTree.addDocument(txt.getText());
-    });
-    log.p("Indexing %s KB of documents", baseTree.getIndexedSize() / 1024);
+    try(MarkdownPrintStream log = MarkdownPrintStream.get(this).addCopy(System.out);){
+      CharTrieIndex baseTree = new CharTrieIndex();
+      log.p("Preparing %s documents", getModelCount());
+      source().limit(getModelCount()).forEach(txt -> {
+        //System.p.println(String.format("Adding %s", txt.title));
+        baseTree.addDocument(txt.getText());
+      });
+      log.p("Indexing %s KB of documents", baseTree.getIndexedSize() / 1024);
 
-    Map<String, Compressor> compressors = new LinkedHashMap<>();
+      Map<String, Compressor> compressors = new LinkedHashMap<>();
 
-    int model_minPathWeight = 1;
-    for(int ppmModelDepth : Arrays.asList(4,6,8)) {
-      for(int encodingContext : Arrays.asList(1,2,3)) {
-        CharTrie ppmTree = baseTree.copy().index(ppmModelDepth, model_minPathWeight);
-        String name = String.format("PPM%s_%s", encodingContext, ppmModelDepth);
-        compressors.put(name, Compressor.buildPPMCompressor(ppmTree, encodingContext));
+      int model_minPathWeight = 1;
+      for(int ppmModelDepth : Arrays.asList(4,6,8)) {
+        for(int encodingContext : Arrays.asList(1,2,3)) {
+          CharTrie ppmTree = baseTree.copy().index(ppmModelDepth, model_minPathWeight);
+          String name = String.format("PPM%s_%s", encodingContext, ppmModelDepth);
+          compressors.put(name, Compressor.buildPPMCompressor(ppmTree, encodingContext));
+        }
       }
-    }
 
-    TableOutput output = Compressor.evalCompressor(source().skip(getModelCount()), compressors, true);
-    //log.p(output.toTextTable());
-    log.p(output.calcNumberStats().toTextTable());
-    log.close();
+      TableOutput output = Compressor.evalCompressor(source().skip(getModelCount()), compressors, true);
+      //log.p(output.toTextTable());
+      log.p(output.calcNumberStats().toTextTable());
+    }
   }
 
 

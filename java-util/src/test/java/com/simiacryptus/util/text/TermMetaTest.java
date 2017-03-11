@@ -1,12 +1,12 @@
 package com.simiacryptus.util.text;
 
 import com.simiacryptus.util.test.EnglishWords;
+import com.simiacryptus.util.test.MarkdownPrintStream;
 import com.simiacryptus.util.test.TestCategories;
 import com.simiacryptus.util.test.TestDocument;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import java.io.FileOutputStream;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -24,7 +24,7 @@ public class TermMetaTest {
   @Test
   @Category(TestCategories.Report.class)
   public void calcCompressorPPM() throws Exception {
-    MarkdownPrintStream log = MarkdownPrintStream.get().addCopy(System.out);
+    MarkdownPrintStream log = MarkdownPrintStream.get(this).addCopy(System.out);
     CharTrieIndex baseTree = new CharTrieIndex();
     log.p("Preparing %s documents", modelCount);
     source().limit(modelCount).forEach(txt -> {
@@ -45,7 +45,7 @@ public class TermMetaTest {
     }
 
     TableOutput output = Compressor.evalCompressor(source().skip(modelCount), compressors, true);
-    log.p(output.toTextTable());
+    //log.p(output.toTextTable());
     log.p(output.calcNumberStats().toTextTable());
     log.close();
   }

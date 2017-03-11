@@ -1,4 +1,4 @@
-package com.simiacryptus.util.text;
+package com.simiacryptus.util.test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -7,8 +7,8 @@ import java.util.function.Supplier;
 public class SysOutInterceptor extends PrintStream {
 
     public static class LoggedResult<T> {
-        final T obj;
-        final String log;
+        public final T obj;
+        public final String log;
 
         public LoggedResult(T obj, String log) {
             this.obj = obj;

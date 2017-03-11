@@ -1,5 +1,6 @@
 package com.simiacryptus.util.text;
 
+import com.simiacryptus.util.test.MarkdownPrintStream;
 import com.simiacryptus.util.test.TestCategories;
 import com.simiacryptus.util.test.TestDocument;
 import com.simiacryptus.util.test.WikiArticle;
@@ -8,7 +9,6 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.net.URL;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -44,7 +44,7 @@ public abstract class ModelClusterTest {
   @Test
   @Category(TestCategories.ResearchCode.class)
   public void clusterSharedDictionariesLZ() throws Exception {
-    try(MarkdownPrintStream log = MarkdownPrintStream.get().addCopy(System.out)) {
+    try(MarkdownPrintStream log = MarkdownPrintStream.get(this).addCopy(System.out)) {
 
       int dictionary_context = 7;
       int model_minPathWeight = 3;
@@ -94,7 +94,7 @@ public abstract class ModelClusterTest {
   @Test
   @Category(TestCategories.ResearchCode.class)
   public void calcCompressorPPM() throws Exception {
-    try(MarkdownPrintStream log = MarkdownPrintStream.get().addCopy(System.out)){
+    try(MarkdownPrintStream log = MarkdownPrintStream.get(this).addCopy(System.out)){
       int ppmModelDepth = 6;
       int model_minPathWeight = 3;
       AtomicInteger index = new AtomicInteger(0);
@@ -126,7 +126,7 @@ public abstract class ModelClusterTest {
   @Ignore
   @Category(TestCategories.ResearchCode.class)
   public void calcEntropyPPM() throws Exception {
-    try(MarkdownPrintStream log = MarkdownPrintStream.get().addCopy(System.out)){
+    try(MarkdownPrintStream log = MarkdownPrintStream.get(this).addCopy(System.out)){
       int ppmModelDepth = 6;
       int model_minPathWeight = 3;
       AtomicInteger index = new AtomicInteger(0);

@@ -3,7 +3,7 @@ This will demonstrate how to use the CharTrieIndex class for PPM and shared dict
 
 First, we load some data into an index:
 
-Code from [TrieDemo.java:72](../../src/test/java/com/simiacryptus/util/text/TrieDemo.java#L72) executed in 11.59 seconds: 
+Code from [TrieDemo.java:71](../../src/test/java/com/simiacryptus/util/text/TrieDemo.java#L71) executed in 11.62 seconds: 
 ```java
       CharTrieIndex charTrieIndex = new CharTrieIndex();
       WikiArticle.load().limit(100).forEach(article -> {
@@ -14,25 +14,25 @@ Code from [TrieDemo.java:72](../../src/test/java/com/simiacryptus/util/text/Trie
 ```
 Returns: 
 ```
-    com.simiacryptus.util.text.CharTrieIndex@fcef1728
+    com.simiacryptus.util.text.CharTrieIndex@8e8e68b3
 ```
 
 And then derive a PPM codec:
 
-Code from [TrieDemo.java:81](../../src/test/java/com/simiacryptus/util/text/TrieDemo.java#L81) executed in 2.65 seconds: 
+Code from [TrieDemo.java:80](../../src/test/java/com/simiacryptus/util/text/TrieDemo.java#L80) executed in 2.68 seconds: 
 ```java
       return trie.getCodec();
 ```
 Returns: 
 ```
-    com.simiacryptus.util.text.PPMCodec@224aed64
+    com.simiacryptus.util.text.PPMCodec@1ef7fe8e
 ```
 
 
 
 Then, we use it to encode strings:
 
-Code from [TrieDemo.java:86](../../src/test/java/com/simiacryptus/util/text/TrieDemo.java#L86) executed in 0.02 seconds: 
+Code from [TrieDemo.java:85](../../src/test/java/com/simiacryptus/util/text/TrieDemo.java#L85) executed in 0.02 seconds: 
 ```java
       return WikiArticle.load().skip(100)
               .filter(article -> article.getText().length() > 1024 && article.getText().length() < 4096)
@@ -43,7 +43,7 @@ Returns:
     WikiArticle{title='Ada'}
 ```
 
-Code from [TrieDemo.java:92](../../src/test/java/com/simiacryptus/util/text/TrieDemo.java#L92) executed in 0.02 seconds: 
+Code from [TrieDemo.java:91](../../src/test/java/com/simiacryptus/util/text/TrieDemo.java#L91) executed in 0.03 seconds: 
 ```java
       Bits bits = codec.encodePPM(wikiArticle.getText(), 2);
       System.out.print("Bit Length: " + bits.bitLength);
@@ -62,7 +62,7 @@ Logging:
 
 And decompress to verify:
 
-Code from [TrieDemo.java:99](../../src/test/java/com/simiacryptus/util/text/TrieDemo.java#L99) executed in 0.03 seconds: 
+Code from [TrieDemo.java:98](../../src/test/java/com/simiacryptus/util/text/TrieDemo.java#L98) executed in 0.03 seconds: 
 ```java
       byte[] bytes = Base64.getDecoder().decode(compressed);
       return codec.decodePPM(bytes, 2);
@@ -165,7 +165,7 @@ Returns:
 
 For faster compression, we can define a dictionary for use with Deflate:
 
-Code from [TrieDemo.java:107](../../src/test/java/com/simiacryptus/util/text/TrieDemo.java#L107) executed in 0.15 seconds: 
+Code from [TrieDemo.java:106](../../src/test/java/com/simiacryptus/util/text/TrieDemo.java#L106) executed in 0.14 seconds: 
 ```java
       return trie.getGenerator().generateDictionary(8*1024, 3, "", 1, true);
 ```
@@ -193,7 +193,7 @@ Returns:
 
 Then, we use it to encode strings:
 
-Code from [TrieDemo.java:112](../../src/test/java/com/simiacryptus/util/text/TrieDemo.java#L112) executed in 0.00 seconds: 
+Code from [TrieDemo.java:111](../../src/test/java/com/simiacryptus/util/text/TrieDemo.java#L111) executed in 0.00 seconds: 
 ```java
       byte[] bits = CompressionUtil.encodeLZ(wikiArticle.getText(), dictionary);
       System.out.print("Compressed Bytes: " + bits.length);
@@ -212,7 +212,7 @@ Logging:
 
 And decompress to verify:
 
-Code from [TrieDemo.java:119](../../src/test/java/com/simiacryptus/util/text/TrieDemo.java#L119) executed in 0.00 seconds: 
+Code from [TrieDemo.java:118](../../src/test/java/com/simiacryptus/util/text/TrieDemo.java#L118) executed in 0.00 seconds: 
 ```java
       byte[] bytes = Base64.getDecoder().decode(compressed);
       return CompressionUtil.decodeLZ(bytes, dictionary);

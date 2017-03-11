@@ -5,7 +5,6 @@ import com.simiacryptus.util.test.*;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import java.io.FileOutputStream;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -78,7 +77,7 @@ public class CompressionTest {
     int testCount = 100;
     Supplier<Stream<? extends TestDocument>> source = ()->TweetSentiment.load().limit(modelCount + testCount);
 
-    MarkdownPrintStream log = MarkdownPrintStream.get().addCopy(System.out);
+    MarkdownPrintStream log = MarkdownPrintStream.get(this).addCopy(System.out);
     Map<String, Compressor> compressors = buildCompressors(source, ppmModelDepth, model_minPathWeight, dictionary_lookahead, dictionary_context, encodingContext, modelCount);
     TableOutput output = Compressor.evalCompressor(source.get().skip(modelCount), compressors, true);
     //log.p(output.toTextTable());
@@ -97,7 +96,7 @@ public class CompressionTest {
     int modelCount = 15000;
     int testCount = 100;
     Supplier<Stream<? extends TestDocument>> source = ()-> EnglishWords.load().limit(modelCount + testCount);
-    MarkdownPrintStream log = MarkdownPrintStream.get().addCopy(System.out);
+    MarkdownPrintStream log = MarkdownPrintStream.get(this).addCopy(System.out);
     Map<String, Compressor> compressors = buildCompressors(source, ppmModelDepth, model_minPathWeight, dictionary_lookahead, dictionary_context, encodingContext, modelCount);
     TableOutput output = Compressor.evalCompressor(source.get().skip(modelCount), compressors, true);
     //log.p(output.toTextTable());
@@ -117,7 +116,7 @@ public class CompressionTest {
     int testCount = 100;
     Supplier<Stream<? extends TestDocument>> source = ()->WikiArticle.load().filter(x -> x.getText().length() > 8 * 1024).limit(modelCount + testCount);
 
-    MarkdownPrintStream log = MarkdownPrintStream.get().addCopy(System.out);
+    MarkdownPrintStream log = MarkdownPrintStream.get(this).addCopy(System.out);
     Map<String, Compressor> compressors = buildCompressors(source, ppmModelDepth, model_minPathWeight, dictionary_lookahead, dictionary_context, encodingContext, modelCount);
     TableOutput output = Compressor.evalCompressor(source.get().skip(modelCount), compressors, true);
     //log.p(output.toTextTable());

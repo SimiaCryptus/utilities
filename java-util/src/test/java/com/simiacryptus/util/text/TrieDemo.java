@@ -2,12 +2,12 @@ package com.simiacryptus.util.text;
 
 import com.simiacryptus.util.binary.Bits;
 import com.simiacryptus.util.lang.TimedResult;
+import com.simiacryptus.util.test.MarkdownPrintStream;
 import com.simiacryptus.util.test.TestCategories;
 import com.simiacryptus.util.test.WikiArticle;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -28,7 +28,7 @@ public class TrieDemo {
     @Test
     @Category(TestCategories.Report.class)
     public void demoSearch() throws IOException {
-        try (MarkdownPrintStream log = MarkdownPrintStream.get().addCopy(System.out)) {
+        try (MarkdownPrintStream log = MarkdownPrintStream.get(this).addCopy(System.out)) {
 
             log.p("This will demonstrate how to use the CharTrieIndex class for searching indexed documents\n");
 
@@ -44,8 +44,8 @@ public class TrieDemo {
             });
             log.p("And then compute the index trie:");
             log.code(() -> {
-                System.out.println("Total Indexed Document (KB): " + trie.getIndexedSize() / 1024);
                 trie.index(Integer.MAX_VALUE,1);
+                System.out.println("Total Indexed Document (KB): " + trie.getIndexedSize() / 1024);
                 System.out.println("Total Node Count: " + trie.getNodeCount());
                 System.out.println("Total Index Memory Size (KB): " + trie.getMemorySize() / 1024);
             });
@@ -64,7 +64,7 @@ public class TrieDemo {
     @Test
     @Category(TestCategories.Report.class)
     public void demoCharTree() throws IOException {
-        try (MarkdownPrintStream log = MarkdownPrintStream.get().addCopy(System.out)) {
+        try (MarkdownPrintStream log = MarkdownPrintStream.get(this).addCopy(System.out)) {
 
             log.p("This will demonstrate how to use the CharTrieIndex class for PPM and shared dictionary compression\n");
 
@@ -128,7 +128,7 @@ public class TrieDemo {
     @Test
     @Category(TestCategories.Report.class)
     public void demoSerialization() throws IOException {
-        try (MarkdownPrintStream log = MarkdownPrintStream.get().addCopy(System.out)) {
+        try (MarkdownPrintStream log = MarkdownPrintStream.get(this).addCopy(System.out)) {
 
             log.p("This will demonstrate how to serialize a CharTrie class in compressed format\n");
 
@@ -168,8 +168,8 @@ public class TrieDemo {
                 int totalSize = WikiArticle.load().limit(100).map(article -> {
                     TimedResult<Bits> compressed = TimedResult.time(()->codec.encodePPM(article.getText(), 4));
                     System.out.println(String.format("Serialized %s: %s chars -> %s bytes (%s%%) in %s sec",
-                            article.getTitle(), article.getText().length(), compressed.obj.bitLength * 100.0 / 8.0,
-                            compressed.obj.bitLength / (8.0 * article.getText().length()),
+                            article.getTitle(), article.getText().length(), compressed.obj.bitLength / 8.0,
+                            compressed.obj.bitLength * 100.0 / (8.0 * article.getText().length()),
                             compressed.timeNanos / 1000000000.0));
                     return compressed.obj.getBytes();
                 }).mapToInt(bytes->bytes.length).sum();
@@ -184,8 +184,8 @@ public class TrieDemo {
                 WikiArticle.load().skip(100).limit(20).forEach(article -> {
                     TimedResult<Bits> compressed = TimedResult.time(()->codec.encodePPM(article.getText(), 4));
                     System.out.println(String.format("Serialized %s: %s chars -> %s bytes (%s%%) in %s sec",
-                            article.getTitle(), article.getText().length(), compressed.obj.bitLength * 100.0 / 8.0,
-                            compressed.obj.bitLength / (8.0 * article.getText().length()),
+                            article.getTitle(), article.getText().length(), compressed.obj.bitLength / 8.0,
+                            compressed.obj.bitLength * 100.0 / (8.0 * article.getText().length()),
                             compressed.timeNanos / 1000000000.0));
                 });
             });

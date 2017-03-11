@@ -3,16 +3,16 @@ This will demonstrate how to use the CharTrieIndex class for searching indexed d
 
 First, we load some data into an index:
 
-Code from [TrieDemo.java:36](../../src/test/java/com/simiacryptus/util/text/TrieDemo.java#L36) executed in 0.00 seconds: 
+Code from [TrieDemo.java:35](../../src/test/java/com/simiacryptus/util/text/TrieDemo.java#L35) executed in 0.00 seconds: 
 ```java
       return new CharTrieIndex();
 ```
 Returns: 
 ```
-    com.simiacryptus.util.text.CharTrieIndex@dce4a0f8
+    com.simiacryptus.util.text.CharTrieIndex@6e83f283
 ```
 
-Code from [TrieDemo.java:39](../../src/test/java/com/simiacryptus/util/text/TrieDemo.java#L39) executed in 0.21 seconds: 
+Code from [TrieDemo.java:38](../../src/test/java/com/simiacryptus/util/text/TrieDemo.java#L38) executed in 0.24 seconds: 
 ```java
       return WikiArticle.load().limit(100).collect(Collectors.toMap(
               article -> trie.addDocument(article.getText()),
@@ -26,10 +26,10 @@ Returns:
 
 And then compute the index trie:
 
-Code from [TrieDemo.java:46](../../src/test/java/com/simiacryptus/util/text/TrieDemo.java#L46) executed in 137.01 seconds: 
+Code from [TrieDemo.java:45](../../src/test/java/com/simiacryptus/util/text/TrieDemo.java#L45) executed in 120.76 seconds: 
 ```java
-      System.out.println("Total Indexed Document (KB): " + trie.getIndexedSize() / 1024);
       trie.index(Integer.MAX_VALUE,1);
+      System.out.println("Total Indexed Document (KB): " + trie.getIndexedSize() / 1024);
       System.out.println("Total Node Count: " + trie.getNodeCount());
       System.out.println("Total Index Memory Size (KB): " + trie.getMemorySize() / 1024);
 ```
@@ -43,7 +43,7 @@ Logging:
 
 Now we can search for a string:
 
-Code from [TrieDemo.java:53](../../src/test/java/com/simiacryptus/util/text/TrieDemo.java#L53) executed in 0.00 seconds: 
+Code from [TrieDemo.java:52](../../src/test/java/com/simiacryptus/util/text/TrieDemo.java#L52) executed in 0.00 seconds: 
 ```java
       IndexNode match = trie.traverse("Computer");
       System.out.println("Found string matches for " + match.getString());

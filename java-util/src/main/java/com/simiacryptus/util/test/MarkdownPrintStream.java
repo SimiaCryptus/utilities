@@ -1,9 +1,8 @@
-package com.simiacryptus.util.text;
+package com.simiacryptus.util.test;
 
 import com.simiacryptus.util.lang.TimedResult;
 
 import java.io.*;
-import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -19,10 +18,11 @@ public class MarkdownPrintStream extends PrintStream {
     private final List<PrintStream> teeStreams = new ArrayList<>();
     private final File file;
 
-    public static MarkdownPrintStream get() {
+    public static MarkdownPrintStream get(Object source) {
         try {
             StackTraceElement callingFrame = Thread.currentThread().getStackTrace()[2];
-            File path = new File(mkString(File.separator, "reports", callingFrame.getClassName(), callingFrame.getMethodName() + ".md"));
+            String className = null==source?callingFrame.getClassName():source.getClass().getCanonicalName();
+            File path = new File(mkString(File.separator, "reports", className, callingFrame.getMethodName() + ".md"));
             path.getParentFile().mkdirs();
             return new MarkdownPrintStream(path);
         } catch (FileNotFoundException e) {

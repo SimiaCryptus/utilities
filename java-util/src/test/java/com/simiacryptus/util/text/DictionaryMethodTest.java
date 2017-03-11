@@ -4,7 +4,6 @@ import com.simiacryptus.util.test.*;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import java.io.FileOutputStream;
 import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -15,7 +14,7 @@ public class DictionaryMethodTest {
     @Test
     @Category(TestCategories.Report.class)
     public void dictionariesTweets() throws Exception {
-        try (MarkdownPrintStream log = MarkdownPrintStream.get().addCopy(System.out)) {
+        try (MarkdownPrintStream log = MarkdownPrintStream.get(this).addCopy(System.out)) {
             int modelCount = 10000;
             int testCount = 100;
             log.p("This notebook uses a variety of methods to generate compression dictionaries for a database of Tweets\n");
@@ -26,7 +25,7 @@ public class DictionaryMethodTest {
     @Test
     @Category(TestCategories.Report.class)
     public void dictionariesShakespeare() throws Exception {
-        try (MarkdownPrintStream log = MarkdownPrintStream.get().addCopy(System.out)) {
+        try (MarkdownPrintStream log = MarkdownPrintStream.get(this).addCopy(System.out)) {
             int modelCount = 100;
             int testCount = 100;
             log.p("This notebook uses a variety of methods to generate compression dictionaries for a database of Shakespeare text\n");
@@ -37,7 +36,7 @@ public class DictionaryMethodTest {
     @Test
     @Category(TestCategories.Report.class)
     public void dictionariesWiki() throws Exception {
-        try (MarkdownPrintStream log = MarkdownPrintStream.get().addCopy(System.out)) {
+        try (MarkdownPrintStream log = MarkdownPrintStream.get(this).addCopy(System.out)) {
             int modelCount = 100;
             int testCount = 100;
             log.p("This notebook uses a variety of methods to generate compression dictionaries for a database of Wikipedia articles\n");
