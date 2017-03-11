@@ -79,9 +79,9 @@ public class MarkdownPrintStream extends PrintStream {
             StackTraceElement callingFrame = Thread.currentThread().getStackTrace()[framesNo];
             TimedResult<SysOutInterceptor.LoggedResult<T>> result = TimedResult.time(() -> SysOutInterceptor.withOutput(() -> fn.get()));
             String sourceCode = getInnerText(callingFrame);
-            out("Code from [%s:%s](%s#L%s) executed in %02f seconds: ",
+            out("Code from [%s:%s](%s#L%s) executed in %.2f seconds: ",
                     callingFrame.getFileName(), callingFrame.getLineNumber(),
-                    pathTo(file, findFile(callingFrame)), callingFrame.getLineNumber(), result.seconds());
+                    pathTo(file.getParentFile(), findFile(callingFrame)), callingFrame.getLineNumber(), result.seconds());
             out("```java");
             out("  " + sourceCode.replaceAll("\n","\n  "));
             out("```");
@@ -127,9 +127,9 @@ public class MarkdownPrintStream extends PrintStream {
             StackTraceElement callingFrame = Thread.currentThread().getStackTrace()[framesNo];
             String sourceCode = getInnerText(callingFrame);
             TimedResult<SysOutInterceptor.LoggedResult<Void>> result = TimedResult.time(() -> SysOutInterceptor.withOutput(() -> fn.run()));
-            out("Code from [%s:%s](%s#L%s) executed in %02f seconds: ",
+            out("Code from [%s:%s](%s#L%s) executed in %.2f seconds: ",
                     callingFrame.getFileName(), callingFrame.getLineNumber(),
-                    pathTo(file, findFile(callingFrame)), callingFrame.getLineNumber(), result.seconds());
+                    pathTo(file.getParentFile(), findFile(callingFrame)), callingFrame.getLineNumber(), result.seconds());
             out("```java");
             out("  " + sourceCode.replaceAll("\n","\n  "));
             out("```");
