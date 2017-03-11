@@ -60,7 +60,7 @@ public abstract class ModelMetaTest {
     log.out("Preparing %s documents", getModelCount());
     source().limit(getModelCount()).forEach(txt -> {
       //System.out.println(String.format("Adding %s", txt.title));
-      baseTree.addDocument(txt.text);
+      baseTree.addDocument(txt.getText());
     });
     log.out("Indexing %s KB of documents", baseTree.getIndexedSize() / 1024);
     Map<String, Compressor> compressors = new LinkedHashMap<>();
@@ -99,7 +99,7 @@ public abstract class ModelMetaTest {
     log.out("Preparing %s documents", getModelCount());
     source().limit(getModelCount()).forEach(txt -> {
       //System.out.println(String.format("Adding %s", txt.title));
-      baseTree.addDocument(txt.text);
+      baseTree.addDocument(txt.getText());
     });
     log.out("Indexing %s KB of documents", baseTree.getIndexedSize() / 1024);
     Map<String, Compressor> compressors = new LinkedHashMap<>();
@@ -137,7 +137,7 @@ public abstract class ModelMetaTest {
     log.out("Preparing %s documents", getModelCount());
     source().limit(getModelCount()).forEach(txt -> {
       //System.out.println(String.format("Adding %s", txt.title));
-      baseTree.addDocument(txt.text);
+      baseTree.addDocument(txt.getText());
     });
     log.out("Indexing %s KB of documents", baseTree.getIndexedSize() / 1024);
 

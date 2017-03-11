@@ -20,7 +20,7 @@ public interface Compressor {
     data.parallel().forEach(item->{
       HashMap<String, Object> rowWide = new LinkedHashMap<>();
       String title;
-      title = item.title.replaceAll("\0","").replaceAll("\n","\\n");
+      title = item.getTitle().replaceAll("\0","").replaceAll("\n","\\n");
       rowWide.put("title", title);
       compressors.entrySet().parallelStream().forEach((e)->{
         try {
@@ -30,9 +30,9 @@ public interface Compressor {
           rowTall.put("title", title);
           rowTall.put("compressor", name);
 
-          rowWide.put(name + ".uncompressed", item.text.length());
-          rowTall.put("uncompressed", item.text.length());
-          TimedResult<byte[]> compress = TimedResult.time(()->compressor.compress(item.text));
+          rowWide.put(name + ".uncompressed", item.getText().length());
+          rowTall.put("uncompressed", item.getText().length());
+          TimedResult<byte[]> compress = TimedResult.time(()->compressor.compress(item.getText()));
           rowWide.put(name + ".compressed", compress.obj.length);
           rowTall.put("compressed", compress.obj.length);
           double ONE_MILLION = 1000000.0;
@@ -41,8 +41,8 @@ public interface Compressor {
           TimedResult<String> uncompress = TimedResult.time(()->compressor.uncompress(compress.obj));
           rowWide.put(name + ".uncompressMs", uncompress.timeNanos / ONE_MILLION);
           rowTall.put("uncompressMs", uncompress.timeNanos / ONE_MILLION);
-          rowWide.put(name + ".verified", uncompress.obj.equals(item.text));
-          rowTall.put("verified", uncompress.obj.equals(item.text));
+          rowWide.put(name + ".verified", uncompress.obj.equals(item.getText()));
+          rowTall.put("verified", uncompress.obj.equals(item.getText()));
           tallTable.putRow(rowTall);
           //System.out.println(String.format("Evaluated #%s: %s with %s - %s chars -> %s bytes in %s sec", index.incrementAndGet(), name, title, item.text.length(), compress.obj.length, compress.timeNanos / 1000000000.0));
         } catch (Exception ex) {
@@ -58,7 +58,7 @@ public interface Compressor {
     Collector<Map.Entry<String, Compressor>, ?, Map<String, Function<TestDocument, Double>>> collector =
             Collectors.toMap(e -> e.getKey(), e -> {
               Compressor value = e.getValue();
-              return x->(value.compress(x.text).length*1.0/x.text.length());
+              return x->(value.compress(x.getText()).length*1.0/ x.getText().length());
             });
     return evalCluster(data, stream.collect(collector), wide);
   }
@@ -69,7 +69,7 @@ public interface Compressor {
     data.parallel().forEach(item->{
       HashMap<String, Object> rowWide = new LinkedHashMap<>();
       String title;
-      title = item.title.replaceAll("\0","").replaceAll("\n","\\n");
+      title = item.getTitle().replaceAll("\0","").replaceAll("\n","\\n");
       rowWide.put("title", title);
       compressors.entrySet().parallelStream().forEach((e)->{
         try {
@@ -86,7 +86,7 @@ public interface Compressor {
 //          rowWide.put(name + ".compressMs", compress.timeNanos / ONE_MILLION);
 //          rowTall.put("compressMs", compress.timeNanos / ONE_MILLION);
           tallTable.putRow(rowTall);
-          System.out.println(String.format("Evaluated #%s: %s with %s - %s chars -> %s in %s sec", index.incrementAndGet(), name, title, item.text.length(), compress.obj, compress.timeNanos / 1000000000.0));
+          System.out.println(String.format("Evaluated #%s: %s with %s - %s chars -> %s in %s sec", index.incrementAndGet(), name, title, item.getText().length(), compress.obj, compress.timeNanos / 1000000000.0));
         } catch (Exception ex) {
           ex.printStackTrace();
         }

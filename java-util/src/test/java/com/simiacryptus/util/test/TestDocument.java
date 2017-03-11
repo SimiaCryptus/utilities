@@ -1,20 +1,30 @@
 package com.simiacryptus.util.test;
 
+import com.simiacryptus.util.text.CompressionUtil;
+
 public class TestDocument {
 
-    public final String title;
-    public final String text;
+    private final String title;
+    private final byte[] text;
 
     public TestDocument(String title, String text) {
         this.title = title;
-        this.text = text;
+        this.text = CompressionUtil.encodeLZ(text);
     }
 
     @Override
     public String toString() {
         final StringBuffer sb = new StringBuffer(getClass().getSimpleName() + "{");
-        sb.append("title='").append(title).append('\'' );
+        sb.append("title='").append(getTitle()).append('\'' );
         sb.append('}' );
         return sb.toString();
+    }
+
+    public String getText() {
+        return CompressionUtil.decodeLZ(text);
+    }
+
+    public String getTitle() {
+        return title;
     }
 }

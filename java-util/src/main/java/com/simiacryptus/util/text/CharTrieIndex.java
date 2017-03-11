@@ -91,7 +91,7 @@ public class CharTrieIndex extends CharTrie {
    * @param document
    * @return this
    */
-  public CharTrieIndex addDocument(String document) {
+  public int addDocument(String document) {
     if (root().getNumberOfChildren() >= 0)
       throw new IllegalStateException("Tree sorting has begun");
     final int index;
@@ -102,7 +102,7 @@ public class CharTrieIndex extends CharTrie {
     cursors.addAll(
         IntStream.range(0, document.length()).mapToObj(i -> new CursorData(index, i)).collect(Collectors.toList()));
     nodes.update(0, node -> node.setCursorCount(cursors.length()));
-    return this;
+    return index;
   }
 
   public CharTrie addAlphabet(String document) {
@@ -117,6 +117,11 @@ public class CharTrieIndex extends CharTrie {
   @Override
   public IndexNode root() {
     return new IndexNode(this, (short) 0, 0, null);
+  }
+
+  @Override
+  public IndexNode traverse(String search) {
+    return root().traverse(search);
   }
 
 }

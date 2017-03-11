@@ -81,7 +81,11 @@ public class CharTrie {
      * @return
      */
     public TrieNode traverse(String search) {
-      return root().traverse(search);
+        return root().traverse(search);
+    }
+
+    public int getNodeCount() {
+        return nodes.length();
     }
 
     public TrieNode matchEnd(String search) {

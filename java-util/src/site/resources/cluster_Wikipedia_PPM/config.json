@@ -3,10 +3,11 @@
     {
       "tensorName": "cluster_Wikipedia_PPM",
       "tensorShape": [
-        0,
-        0
+        1000,
+        20
       ],
-      "tensorPath": "https://simiacryptus.github.io/utilities/java-util/cluster_Wikipedia_PPM/tensors.tsv"
+      "tensorPath": "https://simiacryptus.github.io/utilities/java-util/cluster_Wikipedia_PPM/tensors.tsv",
+      "metadataPath": "https://simiacryptus.github.io/utilities/java-util/cluster_Wikipedia_PPM/metadata.tsv"
     }
   ]
 }

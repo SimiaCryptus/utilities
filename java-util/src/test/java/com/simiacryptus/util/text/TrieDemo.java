@@ -7,16 +7,15 @@ import com.simiacryptus.util.test.WikiArticle;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Base64;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class TrieDemo {
-    public static final File outPath = new File("src/site/resources/");
-    public static final URL outBaseUrl = getUrl("https://simiacryptus.github.io/utilities/java-util/");
 
     public static URL getUrl(String url) {
         try {
@@ -26,45 +25,102 @@ public class TrieDemo {
         }
     }
 
-    // Demo usage for search
+    @Test
+    @Category(TestCategories.Report.class)
+    public void demoSearch() throws IOException {
+        try (MarkdownPrintStream log = new MarkdownPrintStream(new FileOutputStream("reports/demoSearch.md")).addCopy(System.out)) {
 
-    // Demo dict generation
+            log.out("This will demonstrate how to use the CharTrieIndex class for searching indexed documents\n");
+
+            log.out("First, we load some data into an index:");
+            CharTrieIndex trie = log.code(() -> {
+                return new CharTrieIndex();
+            });
+            Map<Integer, String> documents = log.code(() -> {
+                return WikiArticle.load().limit(100).collect(Collectors.toMap(
+                        article -> trie.addDocument(article.getText()),
+                        article -> article.getTitle()
+                ));
+            });
+            log.out("And then compute the index trie:");
+            log.code(() -> {
+                System.out.println("Total Indexed Document (KB): " + trie.getIndexedSize() / 1024);
+                trie.index(Integer.MAX_VALUE,1);
+                System.out.println("Total Node Count: " + trie.getNodeCount());
+                System.out.println("Total Index Memory Size (KB): " + trie.getMemorySize() / 1024);
+            });
+            log.out("Now we can search for a string:");
+            Map<String,Long> codec = log.code(() -> {
+                IndexNode match = trie.traverse("Computer");
+                System.out.println("Found string matches for " + match.getString());
+                return match.getCursors().map(cursor -> {
+                    return documents.get(cursor.getDocumentId());
+                }).collect(Collectors.groupingBy(x -> x, Collectors.counting()));
+            });
+
+        }
+    }
 
     @Test
     @Category(TestCategories.Report.class)
     public void demoCharTree() throws IOException {
         try (MarkdownPrintStream log = new MarkdownPrintStream(new FileOutputStream("reports/demoCharTree.md")).addCopy(System.out)) {
 
-            log.out("This will demonstrate how to use the CharTrieIndex class for PPM compression\n");
+            log.out("This will demonstrate how to use the CharTrieIndex class for PPM and shared dictionary compression\n");
 
             log.out("First, we load some data into an index:");
-            PPMCodec codec = log.code(() -> {
+            CharTrie trie = log.code(() -> {
                 CharTrieIndex charTrieIndex = new CharTrieIndex();
                 WikiArticle.load().limit(100).forEach(article -> {
-                    charTrieIndex.addDocument(article.text);
+                    charTrieIndex.addDocument(article.getText());
                 });
-                charTrieIndex.index(3, 1);
-                return charTrieIndex.getCodec();
+                charTrieIndex.index(5, 1);
+                return charTrieIndex;
+            });
+            log.out("And then derive a PPM codec:");
+            PPMCodec codec = log.code(() -> {
+                return trie.getCodec();
             });
 
-            log.out("\n\nThen, we compress data:");
+            log.out("\n\nThen, we use it to encode strings:");
             WikiArticle wikiArticle = log.code(() -> {
                 return WikiArticle.load().skip(100)
-                        .filter(article -> article.text.length() > 1024 && article.text.length() < 4096)
+                        .filter(article -> article.getText().length() > 1024 && article.getText().length() < 4096)
                         .findFirst().get();
             });
+            {
+                String compressed = log.code(() -> {
+                    Bits bits = codec.encodePPM(wikiArticle.getText(), 2);
+                    System.out.print("Bit Length: " + bits.bitLength);
+                    return bits.toBase64String();
+                });
 
-            String compressed = log.code(() -> {
-                Bits bits = codec.encodePPM(wikiArticle.text, 2);
-                System.out.print("Bit Length: " + bits.bitLength);
-                return bits.toBase64String();
-            });
+                log.out("\n\nAnd decompress to verify:");
+                String uncompressed = log.code(() -> {
+                    byte[] bytes = Base64.getDecoder().decode(compressed);
+                    return codec.decodePPM(bytes, 2);
+                });
+            }
 
-            log.out("\n\nAnd decompress to verify:");
-            String uncompressed = log.code(() -> {
-                byte[] bytes = Base64.getDecoder().decode(compressed);
-                return codec.decodePPM(bytes, 2);
+
+            log.out("\n\nFor faster compression, we can define a dictionary for use with Deflate:");
+            String dictionary = log.code(() -> {
+                return trie.getGenerator().generateDictionary(8*1024, 3, "", 1, true);
             });
+            {
+                log.out("\n\nThen, we use it to encode strings:");
+                String compressed = log.code(() -> {
+                    byte[] bits = CompressionUtil.encodeLZ(wikiArticle.getText(), dictionary);
+                    System.out.print("Compressed Bytes: " + bits.length);
+                    return Base64.getEncoder().encodeToString(bits);
+                });
+
+                log.out("\n\nAnd decompress to verify:");
+                String uncompressed = log.code(() -> {
+                    byte[] bytes = Base64.getDecoder().decode(compressed);
+                    return CompressionUtil.decodeLZ(bytes, dictionary);
+                });
+            }
 
         }
     }
@@ -80,7 +136,7 @@ public class TrieDemo {
             CharTrieIndex index = log.code(() -> {
                 CharTrieIndex charTrieIndex = new CharTrieIndex();
                 WikiArticle.load().limit(100).forEach(article -> {
-                    charTrieIndex.addDocument(article.text);
+                    charTrieIndex.addDocument(article.getText());
                 });
                 System.out.println(String.format("Indexing %s KB of documents",
                         charTrieIndex.getIndexedSize() / 1024));
@@ -110,10 +166,10 @@ public class TrieDemo {
             log.code(() -> {
                 PPMCodec codec = tree.getCodec();
                 int totalSize = WikiArticle.load().limit(100).map(article -> {
-                    TimedResult<Bits> compressed = TimedResult.time(()->codec.encodePPM(article.text, 4));
+                    TimedResult<Bits> compressed = TimedResult.time(()->codec.encodePPM(article.getText(), 4));
                     System.out.println(String.format("Serialized %s: %s chars -> %s bytes (%s%%) in %s sec",
-                            article.title, article.text.length(), compressed.obj.bitLength / 8.0,
-                            compressed.obj.bitLength / (8.0 * article.text.length()),
+                            article.getTitle(), article.getText().length(), compressed.obj.bitLength * 100.0 / 8.0,
+                            compressed.obj.bitLength / (8.0 * article.getText().length()),
                             compressed.timeNanos / 1000000000.0));
                     return compressed.obj.getBytes();
                 }).mapToInt(bytes->bytes.length).sum();
@@ -126,10 +182,10 @@ public class TrieDemo {
             log.code(() -> {
                 PPMCodec codec = tree.getCodec();
                 WikiArticle.load().skip(100).limit(20).forEach(article -> {
-                    TimedResult<Bits> compressed = TimedResult.time(()->codec.encodePPM(article.text, 4));
+                    TimedResult<Bits> compressed = TimedResult.time(()->codec.encodePPM(article.getText(), 4));
                     System.out.println(String.format("Serialized %s: %s chars -> %s bytes (%s%%) in %s sec",
-                            article.title, article.text.length(), compressed.obj.bitLength / 8.0,
-                            compressed.obj.bitLength / (8.0 * article.text.length()),
+                            article.getTitle(), article.getText().length(), compressed.obj.bitLength * 100.0 / 8.0,
+                            compressed.obj.bitLength / (8.0 * article.getText().length()),
                             compressed.timeNanos / 1000000000.0));
                 });
             });

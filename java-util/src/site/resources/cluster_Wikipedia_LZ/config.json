@@ -3,7 +3,7 @@
     {
       "tensorName": "cluster_Wikipedia_LZ",
       "tensorShape": [
-        100,
+        1000,
         40
       ],
       "tensorPath": "https://simiacryptus.github.io/utilities/java-util/cluster_Wikipedia_LZ/tensors.tsv",

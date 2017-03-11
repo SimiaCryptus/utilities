@@ -1,20 +1,20 @@
 Preparing 100000 documents
-Indexing 6191 KB of documents
+Indexing 6180 KB of documents
 Generating dictionaries
 Generating dictionaries
 Generating dictionaries
 field | sum | avg | stddev | nulls
 ----- | --- | --- | ------ | -----
-BZ64k_4.uncompressed | 6372.0000 | 63.7200 | 32.8201 | 0
-BZ64k_4.compressed   | 11964.0000 | 119.6400 | 24.6063 | 0
-BZ64k_4.compressMs   | 761.9950 | 7.6200 | 25.2399 | 0
-BZ64k_4.uncompressMs | 205.7636 | 2.0576 | 8.1733 | 0
-BZ64k_6.uncompressed | 6372.0000 | 63.7200 | 32.8201 | 0
-BZ64k_6.compressed   | 11944.0000 | 119.4400 | 24.4313 | 0
-BZ64k_6.compressMs   | 295.0274 | 2.9503 | 1.8034 | 0
-BZ64k_6.uncompressMs | 129.9247 | 1.2992 | 3.0882 | 0
-BZ64k_8.uncompressed | 6372.0000 | 63.7200 | 32.8201 | 0
-BZ64k_8.compressed   | 12027.0000 | 120.2700 | 24.4184 | 0
-BZ64k_8.compressMs   | 314.2754 | 3.1428 | 2.8932 | 0
-BZ64k_8.uncompressMs | 96.7365 | 0.9674 | 1.6859 | 0
+BZ64k_4.compressMs   | 400.8449 | 4.0489 | 7.8131 | 1
+BZ64k_4.compressed   | 11879.0000 | 119.9899 | 24.4489 | 1
+BZ64k_4.uncompressMs | 57.5369 | 0.5871 | 0.0801 | 2
+BZ64k_4.uncompressed | 6249.0000 | 63.1212 | 32.8948 | 1
+BZ64k_6.compressMs   | 405.3432 | 4.1362 | 7.9505 | 2
+BZ64k_6.compressed   | 11165.0000 | 120.0538 | 24.7066 | 7
+BZ64k_6.uncompressMs | 50.8547 | 0.5189 | 0.0814 | 2
+BZ64k_6.uncompressed | 6343.0000 | 63.4300 | 32.8738 | 0
+BZ64k_8.compressMs   | 397.5855 | 4.1415 | 8.0404 | 4
+BZ64k_8.compressed   | 11869.0000 | 119.8889 | 24.5014 | 1
+BZ64k_8.uncompressMs | 51.5338 | 0.5313 | 0.0865 | 3
+BZ64k_8.uncompressed | 6254.0000 | 63.8163 | 32.9385 | 2
 

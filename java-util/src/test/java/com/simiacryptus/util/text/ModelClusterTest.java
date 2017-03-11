@@ -25,12 +25,12 @@ public abstract class ModelClusterTest {
   public abstract int getModelCount();
 
   public static class Wikipedia extends ModelClusterTest {
-    int testCount = 100;
+    int testCount = 1000;
 
     @Override
     protected Stream<? extends TestDocument> source() {
       return WikiArticle.load().filter(wikiArticle -> {
-        int kb = wikiArticle.text.length() / 1024;
+        int kb = wikiArticle.getText().length() / 1024;
         return kb > 50 && kb < 150;
       }).limit(getModelCount() + testCount);
     }
@@ -42,7 +42,6 @@ public abstract class ModelClusterTest {
   }
 
   @Test
-  @Ignore
   @Category(TestCategories.ResearchCode.class)
   public void clusterSharedDictionariesLZ() throws Exception {
     try(MarkdownPrintStream log = new MarkdownPrintStream(new FileOutputStream("reports/clusterSharedDictionariesLZ"+getClass().getSimpleName()+".md")).addCopy(System.out)) {
@@ -54,7 +53,7 @@ public abstract class ModelClusterTest {
       Map<String, Compressor> compressors = new LinkedHashMap<>();
       source().parallel().limit(getModelCount()).forEach(text->{
         CharTrieIndex baseTree = new CharTrieIndex();
-        baseTree.addDocument(text.text);
+        baseTree.addDocument(text.getText());
         CharTrie dictionaryTree = baseTree.copy().index(dictionary_context + dictionary_lookahead, model_minPathWeight);
         int i = index.incrementAndGet();
         compressors.put(String.format("LZ_%s", i), new Compressor() {
@@ -70,7 +69,7 @@ public abstract class ModelClusterTest {
         });
 
         compressors.put(String.format("LZ_raw_%s", i), new Compressor() {
-          String dictionary = text.text;
+          String dictionary = text.getText();
           @Override
           public byte[] compress(String text) {
             return CompressionUtil.encodeLZ(text, dictionary);
@@ -105,7 +104,7 @@ public abstract class ModelClusterTest {
       Map<String, Compressor> compressors = new LinkedHashMap<>();
       source().parallel().limit(getModelCount()).forEach(text->{
         CharTrieIndex tree = new CharTrieIndex();
-        tree.addDocument(text.text);
+        tree.addDocument(text.getText());
         tree = tree.index(ppmModelDepth, model_minPathWeight);
         String name = String.format("PPM_%s", index.incrementAndGet());
         Compressor ppmCompressor = Compressor.buildPPMCompressor(tree, encodingContext);
@@ -137,11 +136,11 @@ public abstract class ModelClusterTest {
       Map<String, Function<TestDocument,Double>> compressors = new LinkedHashMap<>();
       source().parallel().limit(getModelCount()).forEach(text->{
         CharTrieIndex tree = new CharTrieIndex();
-        tree.addDocument(text.text);
+        tree.addDocument(text.getText());
         tree = tree.index(ppmModelDepth, model_minPathWeight);
         String name = String.format("ENT_%s", index.incrementAndGet());
         TextGenerator generator = tree.getGenerator();
-        Function<TestDocument,Double> ppmCompressor = t -> generator.measureEntropy(t.text, 1.0);
+        Function<TestDocument,Double> ppmCompressor = t -> generator.measureEntropy(t.getText(), 1.0);
         synchronized (compressors) {
           compressors.put(name, ppmCompressor);
         }

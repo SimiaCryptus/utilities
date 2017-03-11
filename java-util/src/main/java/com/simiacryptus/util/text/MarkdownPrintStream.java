@@ -133,10 +133,8 @@ public class MarkdownPrintStream extends PrintStream {
     }
 
     private String getIndent(String txt) {
-
         Matcher matcher = Pattern.compile("^\\s+").matcher(txt);
-        boolean start = matcher.find();
-        return matcher.group(0);
+        return matcher.find() ?matcher.group(0):"";
     }
 
     private static List<File> codeRoots = Arrays.asList(

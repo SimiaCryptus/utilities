@@ -8,7 +8,6 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -21,6 +20,11 @@ public class WikiArticle extends TestDocument {
     private final static String file = "enwiki-latest-pages-articles-multistream.xml.bz2";
     private final static ArrayList<WikiArticle> queue = new ArrayList<>();
 
+    public static void stop() {
+        if (thread != null) {
+            thread.interrupt();
+        }
+    }
     public static Stream<WikiArticle> load() {
         if (thread == null) {
             synchronized (WikiArticle.class) {
@@ -72,7 +76,9 @@ public class WikiArticle extends TestDocument {
                                             } else if ("title".equals(qName)) {
                                                 this.title = text;
                                             } else if ("text".equals(qName)) {
+                                                //System.out.println(String.format("Read #%s - %s", queue.size(), this.title));
                                                 queue.add(new WikiArticle(this.title, text));
+                                                if(queue.size() > 10000) throw new RuntimeException();
                                             }
                                             super.endElement(uri, localName, qName);
                                         }
@@ -111,12 +117,10 @@ public class WikiArticle extends TestDocument {
 
                                     }, null);
                                 }
-                            } catch (final IOException e) {
-                                // Ignore... end of stream
-                            } catch (final RuntimeException e) {
-                                if (!(e.getCause() instanceof InterruptedException)) throw e;
                             } catch (final Exception e) {
-                                throw new RuntimeException(e);
+                                e.printStackTrace();
+                            } finally {
+                                System.err.println("Read thread exit");
                             }
                         }
                     });
@@ -137,8 +141,8 @@ public class WikiArticle extends TestDocument {
             public WikiArticle next() {
                 try {
                     while (hasNext()) {
-                        if (index + 1 < queue.size()) {
-                            return queue.get(++index);
+                        if (++index < queue.size()) {
+                            return queue.get(index);
                         } else {
                             Thread.sleep(100);
                         }
@@ -151,7 +155,7 @@ public class WikiArticle extends TestDocument {
 
             @Override
             protected void finalize() throws Throwable {
-                thread.interrupt();
+//                thread.interrupt();
                 super.finalize();
             }
         }, Spliterator.DISTINCT), false).filter(x -> x != null);

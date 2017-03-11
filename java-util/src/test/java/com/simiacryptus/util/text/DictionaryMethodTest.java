@@ -47,7 +47,7 @@ public class DictionaryMethodTest {
 
     private void test(MarkdownPrintStream log, Supplier<Stream<? extends TestDocument>> source, int modelCount) {
         CharTrieIndex baseTree = new CharTrieIndex();
-        source.get().limit(modelCount).forEach(txt -> baseTree.addDocument(txt.text));
+        source.get().limit(modelCount).forEach(txt -> baseTree.addDocument(txt.getText()));
         Map<String, Compressor> compressors = new LinkedHashMap<>();
         addCompressors(log, compressors, baseTree, 4, 2, 3);
         addCompressors(log, compressors, baseTree, 5, 2, 3);
@@ -61,7 +61,7 @@ public class DictionaryMethodTest {
     }
 
     private void addWordCountCompressor(MarkdownPrintStream log, Map<String, Compressor> compressors, List<? extends TestDocument> content) {
-        Map<String, Long> wordCounts = content.stream().flatMap(c -> Arrays.stream(c.text.replaceAll("[^\\w\\s]", "").split(" +")))
+        Map<String, Long> wordCounts = content.stream().flatMap(c -> Arrays.stream(c.getText().replaceAll("[^\\w\\s]", "").split(" +")))
                 .map(s -> s.trim()).filter(s -> !s.isEmpty()).collect(Collectors.groupingBy(x -> x, Collectors.counting()));
         String dictionary = wordCounts.entrySet().stream()
                 .sorted(Comparator.<Map.Entry<String, Long>>comparingLong(e -> -e.getValue())

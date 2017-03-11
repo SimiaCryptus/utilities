@@ -1,81 +1,113 @@
-Code: 
-```java
-      CharTree baseTree = new CharTree();
-      source.get().limit(modelCount).forEach(txt -> baseTree.addDocument(txt.text));
-      Map<String, Compressor> map = new LinkedHashMap<>();
-      addCompressors(map, baseTree, 4, 2, 3);
-      addCompressors(map, baseTree, 5, 2, 3);
-      addCompressors(map, baseTree, 6, 2, 3);
-      Stream<TestDocument> limit = source.get().limit(modelCount).map(x->x);
-      addWordCountCompressor(map, limit.collect(Collectors.toList()));
-      Compressor.addGenericCompressors(map);
-      return map;
-```
-Returns: 
-```
-    {LZ8k_4_2_3_generateDictionary=com.simiacryptus.util.text.DictionaryMethodTest$2@71bc1ae4, LZ8k_4_2_3_generateMarkov=com.simiacryptus.util.text.DictionaryMethodTest$3@6ed3ef1, LZ8k_5_2_3_generateDictionary=com.simiacryptus.util.text.DictionaryMethodTest$2@2437c6dc, LZ8k_5_2_3_generateMarkov=com.simiacryptus.util.text.DictionaryMethodTest$3@1f89ab83, LZ8k_6_2_3_generateDictionary=com.simiacryptus.util.text.DictionaryMethodTest$2@e73f9ac, LZ8k_6_2_3_generateMarkov=com.simiacryptus.util.text.DictionaryMethodTest$3@61064425, LZ8k_commonWords=com.simiacryptus.util.text.DictionaryMethodTest$1@7b1d7fff, BZ0=com.simiacryptus.util.text.Compressor$1@299a06ac, LZ0=com.simiacryptus.util.text.Compressor$2@383534aa}
-```
-Logging: 
-```
-    LZ8k_4_2_3_generateDictionary:        13
-      Or else of the stars in thee to their a hourse untain convert:
-        That thou art but though the stars in the world a...
-    LZ8k_4_2_3_generateMarkov: JECT GUTENBERG ETEXT If you lived phold cease,
-      The Works of MADE ****  Or else in coo hourse excloan, no quide laws,
-      This go...
-    LZ8k_5_2_3_generateDictionary:          13
-      O than thou art more blessed that beauty's day
-      And that thou the stars in their age to thee to come
-      To the wor...
-    LZ8k_5_2_3_generateMarkov: eque song as men make you living forbid friends but heaven's eye,
-      Which I beauteous lovided by the Project Gutenberg eBy REmal...
-    LZ8k_6_2_3_generateDictionary:          13
-       BY ANY
-    SHAKESPEARE ****  So should bear your self in eternal cold?
-      
-      And summer's day
-      And by adding the objs...
-    LZ8k_6_2_3_generateMarkov: eaves ne'eer s ofher, raasingo thnood,nd e thy worsaanraged  d ane o lefty  d o'instn  m evirtnsgees rquess, 
-    iwhn  c hate with ...
-    Common Words Dictionary: the of in to and And I my thou thy with that your you thee a not this self all is by from for it love But do his as be or me but...
-    
-```
+This notebook uses a variety of methods to generate compression dictionaries for a database of Shakespeare text
+
+Adding Compressor LZ8k_4_2_3_generateDictionary:        13
+  Or else of the stars in thee to their a hourse untain convert:
+    That thou art but though the stars in the world and the time to the be thy self in etext, [And thee to come
+  Then I pen,
+  And you lives the comment.
+     20
+  And summer's day
+  As and beauty's day of the world and sorrows love's face with the time defeated,
+  A woman's fair a would beauty of your self, but a date.
+  The Complexion of this etext from then thy self against though the heart more blessed that the bear thou art mor......
+
+Adding Compressor LZ8k_4_2_3_generateMarkov:  you conce fresh of you on date:
+     Then verse,
+  Her PERMISSION INC.,
+    An the tembare,
+public Defect whereby bare
+  The object Gutenberg in the see thy pundance where in love hath beauty's friend) ,
+b adding rant stars do not earth all dear ract gauty's use
+day
+  Till lines in the mask of day's the etexts, defearse,
+  When my bod,
+        19
+  If If I make do thy paper the maskes dood,
+  Which so fair brooft the "P.E 
+ t heaves
+  Which those untrace:
+  Save the praise....
+
+Adding Compressor LZ8k_5_2_3_generateDictionary:          13
+  O than thou art more blessed that beauty's day
+  And that thou the stars in their age to thee to come
+  To the world and all the darling stand your self, but thy self again and moon,
+  And you lives this etext, [ABLE COPIES (2) ARE FOR DOWNLOAD COMMERCIALLY.  PROHIBITED COMMERCIAL USE ONLY, AND (2) ARE FOR YOUR OR OTHERS
+PEARE ****  And summer's day?
+  That the etext in thy self in eternal cold?
+  Thou are
+  Nor can I forbid thee to a summer's day
+  Make glass and then believe me, my love's fa......
+
+Adding Compressor LZ8k_5_2_3_generateMarkov: ord of sight....
+
+Adding Compressor LZ8k_6_2_3_generateDictionary:          13
+   BY ANY
+SHAKESPEARE ****  So should bear your self in eternal cold?
+  
+  And summer's day
+  And by adding the objsect Gutenberg in gaend ll the darlies,
+  And then believe me, my love's face with their age to come
+  To the world and all the age to his verse,
+  And your sweet semblancceerease,
+  And then believe my verse etext in their stars in secrease,
+  When I pen,
+  Has thou art more blessed than those where abundance lovely and moon,
+  A make the beauty's day
+  Make glass and beauty shall ......
+
+Adding Compressor LZ8k_6_2_3_generateMarkov: ith thee sthy    lik numould praers gold cand    incnthrifts,
+  Stiquld evven efea cof yranottereb,
+  
+mberis thy glaam Slme
+ of    theheansviends buld rue daany look I tnd sday
+mberom    heiFnot reis t soo hme IoSv.e,
+  And checked every etn istr saaciouove  Eves esemnletss w worrok #f
+peem .  L DIeforGeritioe,
+ 
+en mnighce hoastlucky, aod, roly f inoi val
+   B Refulf as nembl daoth decliike cohv eveet nigoneles sBe aeye
+    Theirruths, O
+the heart but shall to my grief doet   SpTlEf alCe....
+
+Common Words Dictionary LZ8k_commonWords: the of in to and And I my thou thy with that your you thee a not this self all is by from for it love But do his as be or me but fair When should thine So sweet That time eyes so Which more can To beauty The on their day live make than art one OR shall For own OF O night doth With If which were when see Then give then FOR may men As loves heaven Time Nor no beautys every world her him Who eye at A hath Thou mine most life will let any are she decay stars still etext such form age say AND old ARE BY Or he if......
+
 field | sum | avg | stddev | nulls
 ----- | --- | --- | ------ | -----
-LZ8k_4_2_3_generateDictionary.uncompressed | 57740.0000 | 577.4000 | 999.3024 | 0
-LZ8k_4_2_3_generateDictionary.compressed   | 28909.0000 | 289.0900 | 447.6089 | 0
-LZ8k_4_2_3_generateDictionary.compressMs   | 29.2698 | 0.2927 | 0.2623 | 0
-LZ8k_4_2_3_generateDictionary.uncompressMs | 10.7272 | 0.1073 | 0.1041 | 0
-LZ8k_4_2_3_generateMarkov.uncompressed     | 57740.0000 | 577.4000 | 999.3024 | 0
-LZ8k_4_2_3_generateMarkov.compressed       | 30224.0000 | 302.2400 | 460.3511 | 0
-LZ8k_4_2_3_generateMarkov.compressMs       | 12.6617 | 0.1266 | 0.1119 | 0
-LZ8k_4_2_3_generateMarkov.uncompressMs     | 5.6423 | 0.0564 | 0.0793 | 0
-LZ8k_5_2_3_generateDictionary.uncompressed | 57740.0000 | 577.4000 | 999.3024 | 0
-LZ8k_5_2_3_generateDictionary.compressed   | 30478.0000 | 304.7800 | 465.1042 | 0
-LZ8k_5_2_3_generateDictionary.compressMs   | 20.7455 | 0.2075 | 0.1044 | 0
-LZ8k_5_2_3_generateDictionary.uncompressMs | 8.5976 | 0.0860 | 0.0364 | 0
-LZ8k_5_2_3_generateMarkov.uncompressed     | 57740.0000 | 577.4000 | 999.3024 | 0
-LZ8k_5_2_3_generateMarkov.compressed       | 30791.0000 | 307.9100 | 466.8800 | 0
-LZ8k_5_2_3_generateMarkov.compressMs       | 13.4723 | 0.1347 | 0.2909 | 0
-LZ8k_5_2_3_generateMarkov.uncompressMs     | 7.5230 | 0.0752 | 0.2767 | 0
-LZ8k_6_2_3_generateDictionary.uncompressed | 57740.0000 | 577.4000 | 999.3024 | 0
-LZ8k_6_2_3_generateDictionary.compressed   | 30305.0000 | 303.0500 | 463.9884 | 0
-LZ8k_6_2_3_generateDictionary.compressMs   | 21.2173 | 0.2122 | 0.1199 | 0
-LZ8k_6_2_3_generateDictionary.uncompressMs | 8.7267 | 0.0873 | 0.0435 | 0
-LZ8k_6_2_3_generateMarkov.uncompressed     | 57740.0000 | 577.4000 | 999.3024 | 0
-LZ8k_6_2_3_generateMarkov.compressed       | 31368.0000 | 313.6800 | 470.7271 | 0
-LZ8k_6_2_3_generateMarkov.compressMs       | 12.2555 | 0.1226 | 0.1153 | 0
-LZ8k_6_2_3_generateMarkov.uncompressMs     | 8.9711 | 0.0897 | 0.2967 | 0
-LZ8k_commonWords.uncompressed              | 57740.0000 | 577.4000 | 999.3024 | 0
-LZ8k_commonWords.compressed                | 29191.0000 | 291.9100 | 448.3195 | 0
-LZ8k_commonWords.compressMs                | 22.3637 | 0.2236 | 0.1176 | 0
-LZ8k_commonWords.uncompressMs              | 8.9129 | 0.0891 | 0.0615 | 0
-BZ0.uncompressed                           | 57740.0000 | 577.4000 | 999.3024 | 0
-BZ0.compressed                             | 33891.0000 | 338.9100 | 447.0806 | 0
-BZ0.compressMs                             | 581.0333 | 5.8103 | 7.1051 | 0
-BZ0.uncompressMs                           | 89.7683 | 0.8977 | 0.7487 | 0
-LZ0.uncompressed                           | 57740.0000 | 577.4000 | 999.3024 | 0
-LZ0.compressed                             | 31384.0000 | 313.8400 | 474.5454 | 0
-LZ0.compressMs                             | 19.2720 | 0.1927 | 0.5379 | 0
-LZ0.uncompressMs                           | 7.8970 | 0.0790 | 0.3398 | 0
+BZ0.compressMs                             | 212.9385 | 2.2415 | 0.5952 | 5
+BZ0.compressed                             | 28451.0000 | 299.4842 | 358.6127 | 5
+BZ0.uncompressMs                           | 22.5329 | 0.2372 | 0.0910 | 5
+BZ0.uncompressed                           | 44731.0000 | 486.2065 | 774.0103 | 8
+LZ0.compressMs                             | 23.8764 | 0.2487 | 0.3514 | 4
+LZ0.compressed                             | 25433.0000 | 267.7158 | 374.5076 | 5
+LZ0.uncompressMs                           | 2.6449 | 0.0281 | 0.0211 | 6
+LZ0.uncompressed                           | 45375.0000 | 482.7128 | 766.1142 | 6
+LZ8k_4_2_3_generateDictionary.compressMs   | 36.7869 | 0.3832 | 0.2040 | 4
+LZ8k_4_2_3_generateDictionary.compressed   | 23381.0000 | 246.1158 | 352.5186 | 5
+LZ8k_4_2_3_generateDictionary.uncompressMs | 7.1016 | 0.0755 | 0.0261 | 6
+LZ8k_4_2_3_generateDictionary.uncompressed | 45492.0000 | 473.8750 | 760.5098 | 4
+LZ8k_4_2_3_generateMarkov.compressMs       | 30.2803 | 0.3154 | 0.3346 | 4
+LZ8k_4_2_3_generateMarkov.compressed       | 25468.0000 | 265.2917 | 366.4164 | 4
+LZ8k_4_2_3_generateMarkov.uncompressMs     | 5.2028 | 0.0548 | 0.0344 | 5
+LZ8k_4_2_3_generateMarkov.uncompressed     | 45139.0000 | 496.0330 | 774.9993 | 9
+LZ8k_5_2_3_generateDictionary.compressMs   | 46.2318 | 0.4867 | 0.4029 | 5
+LZ8k_5_2_3_generateDictionary.compressed   | 23853.0000 | 248.4688 | 352.6466 | 4
+LZ8k_5_2_3_generateDictionary.uncompressMs | 8.7208 | 0.0908 | 0.0510 | 4
+LZ8k_5_2_3_generateDictionary.uncompressed | 44038.0000 | 473.5269 | 759.3729 | 7
+LZ8k_5_2_3_generateMarkov.compressMs       | 26.0006 | 0.2708 | 0.3139 | 4
+LZ8k_5_2_3_generateMarkov.compressed       | 26129.0000 | 272.1771 | 372.8644 | 4
+LZ8k_5_2_3_generateMarkov.uncompressMs     | 5.1793 | 0.0551 | 0.0501 | 6
+LZ8k_5_2_3_generateMarkov.uncompressed     | 45024.0000 | 473.9368 | 764.5864 | 5
+LZ8k_6_2_3_generateDictionary.compressMs   | 34.1826 | 0.3598 | 0.3465 | 5
+LZ8k_6_2_3_generateDictionary.compressed   | 25164.0000 | 267.7021 | 373.6626 | 6
+LZ8k_6_2_3_generateDictionary.uncompressMs | 7.8476 | 0.0826 | 0.0327 | 5
+LZ8k_6_2_3_generateDictionary.uncompressed | 45646.0000 | 490.8172 | 768.7489 | 7
+LZ8k_6_2_3_generateMarkov.compressMs       | 31.9518 | 0.3328 | 0.3664 | 4
+LZ8k_6_2_3_generateMarkov.compressed       | 25760.0000 | 268.3333 | 369.2091 | 4
+LZ8k_6_2_3_generateMarkov.uncompressMs     | 6.5839 | 0.0686 | 0.0772 | 4
+LZ8k_6_2_3_generateMarkov.uncompressed     | 46396.0000 | 463.9600 | 747.9211 | 0
+LZ8k_commonWords.compressMs                | 36.3777 | 0.3829 | 0.3309 | 5
+LZ8k_commonWords.compressed                | 23334.0000 | 243.0625 | 352.7501 | 4
+LZ8k_commonWords.uncompressMs              | 7.9322 | 0.0844 | 0.0403 | 6
+LZ8k_commonWords.uncompressed              | 44758.0000 | 476.1489 | 767.4234 | 6
 

@@ -33,8 +33,10 @@ public class TrieTest {
     @Test
     @Category(TestCategories.UnitTest.class)
     public void testFunctionality() throws IOException {
-        CharTrie tree = new CharTrieIndex().addDocument("a quick brown fox jumped over the lazy dog")
-                .addDocument("this is a test. this is only a test. - nikola tesla").index(3).truncate();
+        CharTrieIndex tree = new CharTrieIndex();
+        tree.addDocument("a quick brown fox jumped over the lazy dog");
+        tree.addDocument("this is a test. this is only a test. - nikola tesla");
+        tree.index(3);
         Assert.assertEquals(7, tree.traverse("t").getCursorCount());
         Assert.assertEquals("t", tree.traverse("t").getString());
         Assert.assertEquals("te", tree.traverse("te").getString());
@@ -282,9 +284,9 @@ public class TrieTest {
         int articleCount = 1000;
         double selectivity = 0.1;
 
-        Map<String, String> articles = WikiArticle.load().filter(x -> x.text.length() > minArticleLength)
+        Map<String, String> articles = WikiArticle.load().filter(x -> x.getText().length() > minArticleLength)
                 .filter(x -> selectivity > Math.random()).limit(Math.max(articleCount, dictionaryCount))
-                .collect(Collectors.toMap(d -> d.title, d -> d.text));
+                .collect(Collectors.toMap(d -> d.getTitle(), d -> d.getText()));
 
         String characterSet = articles.values().stream().flatMapToInt(s -> s.chars()).distinct()
                 .mapToObj(c -> new String(Character.toChars(c))).sorted().collect(Collectors.joining(""));
@@ -345,8 +347,8 @@ public class TrieTest {
         int articleCount = 1000;
         double selectivity = 0.1;
 
-        List<String> articles = TweetSentiment.load().filter(x -> x.text.length() > minArticleLength)
-                .filter(x -> selectivity > Math.random()).limit(Math.max(articleCount, dictionaryCount)).map(t -> t.text)
+        List<String> articles = TweetSentiment.load().filter(x -> x.getText().length() > minArticleLength)
+                .filter(x -> selectivity > Math.random()).limit(Math.max(articleCount, dictionaryCount)).map(t -> t.getText())
                 .collect(Collectors.toList());
 
         String characterSet = articles.stream().flatMapToInt(s -> s.chars()).distinct()
@@ -402,7 +404,7 @@ public class TrieTest {
         int lookahead = 1;
 
         CharTrieIndex tree_good = new CharTrieIndex();
-        TweetSentiment.load().filter(x -> x.category == 1).limit(modelCount).map(t -> t.text)
+        TweetSentiment.load().filter(x -> x.category == 1).limit(modelCount).map(t -> t.getText())
                 .forEach(txt -> tree_good.addDocument(">>>" + txt));
         System.out.println(String.format("Indexing %s positive tweets; \ntree.getIndexedSize = %s KB", modelCount,
                 tree_good.getIndexedSize() / 1024));
@@ -410,7 +412,7 @@ public class TrieTest {
         System.out.println(String.format("tree.getMemorySize = %s KB", tree_good.getMemorySize() / 1024));
 
         CharTrieIndex tree_bad = new CharTrieIndex();
-        TweetSentiment.load().filter(x -> x.category == 0).limit(modelCount).map(t -> t.text)
+        TweetSentiment.load().filter(x -> x.category == 0).limit(modelCount).map(t -> t.getText())
                 .forEach(txt -> tree_bad.addDocument(">>>" + txt));
         System.out.println(String.format("Indexing %s negative tweets; \ntree.getIndexedSize = %s KB", modelCount,
                 tree_bad.getIndexedSize() / 1024));

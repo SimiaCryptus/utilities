@@ -36,11 +36,11 @@ public class CompressionTest {
     int modelDepth = 9;
 
     final CharTrieIndex tree = new CharTrieIndex();
-    TweetSentiment.load().skip(articleCount).limit(modelCount).map(t -> t.text)
+    TweetSentiment.load().skip(articleCount).limit(modelCount).map(t -> t.getText())
             .forEach(txt -> tree.addDocument(txt));
     CharTrie modelTree = tree.index(modelDepth, 0);
     PPMCodec codec = modelTree.getCodec();
-    TweetSentiment.load().limit(articleCount).parallel().map(t -> t.text).forEach(txt->{
+    TweetSentiment.load().limit(articleCount).parallel().map(t -> t.getText()).forEach(txt->{
       try {
         Bits encoded = codec.encodePPM(txt, encodingContext);
         String decoded = codec.decodePPM(encoded.getBytes(), encodingContext);
@@ -115,7 +115,7 @@ public class CompressionTest {
     int encodingContext = 2;
     int modelCount = 100;
     int testCount = 100;
-    Supplier<Stream<? extends TestDocument>> source = ()->WikiArticle.load().filter(x -> x.text.length() > 8 * 1024).limit(modelCount + testCount);
+    Supplier<Stream<? extends TestDocument>> source = ()->WikiArticle.load().filter(x -> x.getText().length() > 8 * 1024).limit(modelCount + testCount);
 
     MarkdownPrintStream log = new MarkdownPrintStream(new FileOutputStream("reports/calcWikiCompression.md")).addCopy(System.out);
     Map<String, Compressor> compressors = buildCompressors(source, ppmModelDepth, model_minPathWeight, dictionary_lookahead, dictionary_context, encodingContext, modelCount);
@@ -132,7 +132,7 @@ public class CompressionTest {
     CharTrieIndex baseTree = new CharTrieIndex();
     source.get().limit(modelCount).forEach(txt -> {
       //System.out.println(String.format("Adding %s", txt.title));
-      baseTree.addDocument(txt.text);
+      baseTree.addDocument(txt.getText());
     });
     System.out.println(String.format("Indexing %s KB of documents", baseTree.getIndexedSize() / 1024));
     baseTree.index(ppmModelDepth, model_minPathWeight);
