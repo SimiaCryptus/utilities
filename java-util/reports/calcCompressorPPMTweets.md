@@ -1,5 +1,7 @@
 Preparing 100000 documents
+
 Indexing 6180 KB of documents
+
 field | sum | avg | stddev | nulls
 ----- | --- | --- | ------ | -----
 PPM1_4.compressMs   | 38.0947 | 0.3927 | 0.1983 | 3
