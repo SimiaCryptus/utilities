@@ -85,7 +85,7 @@ public class GaussianTest
         @SuppressWarnings("unused")
         final double result = this.test(
             Gaussian.fromBinomial(probability, max), max);
-        // System.out.println(String.format("P=%s,N=%s: %s", probability, max, result));
+        // System.p.println(String.format("P=%s,N=%s: %s", probability, max, result));
       }
     }
   }

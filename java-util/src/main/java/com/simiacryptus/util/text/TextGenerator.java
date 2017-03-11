@@ -8,12 +8,6 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-/**
- * A character sequence index using a prefix tree, commonly known as a full-text
- * index or as the data structure behind markov chains. This implementation uses
- * serialized fixed-length ephemeral objects and a raw byte data store,
- * preventing object/reference count overhead.
- */
 public class TextGenerator {
 
   private final CharTrie inner;

@@ -76,7 +76,7 @@ public class WikiArticle extends TestDocument {
                                             } else if ("title".equals(qName)) {
                                                 this.title = text;
                                             } else if ("text".equals(qName)) {
-                                                //System.out.println(String.format("Read #%s - %s", queue.size(), this.title));
+                                                //System.p.println(String.format("Read #%s - %s", queue.size(), this.title));
                                                 queue.add(new WikiArticle(this.title, text));
                                                 if(queue.size() > 10000) throw new RuntimeException();
                                             }

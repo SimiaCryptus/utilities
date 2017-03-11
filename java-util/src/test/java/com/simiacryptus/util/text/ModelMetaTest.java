@@ -55,20 +55,20 @@ public abstract class ModelMetaTest {
   @Test
   @Category(TestCategories.ResearchCode.class)
   public void calcSharedDictionariesLZ() throws Exception {
-    MarkdownPrintStream log = new MarkdownPrintStream(new FileOutputStream("reports/calcSharedDictionariesLZ"+getClass().getSimpleName()+".md")).addCopy(System.out);
+    MarkdownPrintStream log = new MarkdownPrintStream(new FileOutputStream("reports/metaSharedDictionariesLZ"+getClass().getSimpleName()+".md")).addCopy(System.out);
     CharTrieIndex baseTree = new CharTrieIndex();
-    log.out("Preparing %s documents", getModelCount());
+    log.p("Preparing %s documents", getModelCount());
     source().limit(getModelCount()).forEach(txt -> {
-      //System.out.println(String.format("Adding %s", txt.title));
+      //System.p.println(String.format("Adding %s", txt.title));
       baseTree.addDocument(txt.getText());
     });
-    log.out("Indexing %s KB of documents", baseTree.getIndexedSize() / 1024);
+    log.p("Indexing %s KB of documents", baseTree.getIndexedSize() / 1024);
     Map<String, Compressor> compressors = new LinkedHashMap<>();
 
     for(int dictionary_context : Arrays.asList(4,5,6)) {
       int model_minPathWeight = 3;
       int dictionary_lookahead = 2;
-      log.out("Generating dictionaries");
+      log.p("Generating dictionaries");
       CharTrie dictionaryTree = baseTree.copy().index(dictionary_context + dictionary_lookahead, model_minPathWeight);
 
       compressors.put(String.format("LZ8k_%s", dictionary_context), new Compressor() {
@@ -86,28 +86,28 @@ public abstract class ModelMetaTest {
     }
 
     TableOutput output = Compressor.evalCompressor(source().skip(getModelCount()), compressors, true);
-    //log.out(output.toTextTable());
-    log.out(output.calcNumberStats().toTextTable());
+    //log.p(output.toTextTable());
+    log.p(output.calcNumberStats().toTextTable());
     log.close();
   }
 
   @Test
   @Category(TestCategories.Report.class)
   public void calcSharedDictionariesBZ() throws Exception {
-    MarkdownPrintStream log = new MarkdownPrintStream(new FileOutputStream("reports/calcSharedDictionariesBZ"+getClass().getSimpleName()+".md")).addCopy(System.out);
+    MarkdownPrintStream log = new MarkdownPrintStream(new FileOutputStream("reports/metaSharedDictionariesBZ"+getClass().getSimpleName()+".md")).addCopy(System.out);
     CharTrieIndex baseTree = new CharTrieIndex();
-    log.out("Preparing %s documents", getModelCount());
+    log.p("Preparing %s documents", getModelCount());
     source().limit(getModelCount()).forEach(txt -> {
-      //System.out.println(String.format("Adding %s", txt.title));
+      //System.p.println(String.format("Adding %s", txt.title));
       baseTree.addDocument(txt.getText());
     });
-    log.out("Indexing %s KB of documents", baseTree.getIndexedSize() / 1024);
+    log.p("Indexing %s KB of documents", baseTree.getIndexedSize() / 1024);
     Map<String, Compressor> compressors = new LinkedHashMap<>();
 
     for(int dictionary_context : Arrays.asList(4,6,8)) {
       int model_minPathWeight = 3;
       int dictionary_lookahead = 2;
-      log.out("Generating dictionaries");
+      log.p("Generating dictionaries");
       CharTrie dictionaryTree = baseTree.copy().index(dictionary_context + dictionary_lookahead, model_minPathWeight);
 
       compressors.put(String.format("BZ64k_%s", dictionary_context), new Compressor() {
@@ -124,22 +124,22 @@ public abstract class ModelMetaTest {
       });
     }
     TableOutput output = Compressor.evalCompressor(source().skip(getModelCount()), compressors, true);
-    //log.out(output.toTextTable());
-    log.out(output.calcNumberStats().toTextTable());
+    //log.p(output.toTextTable());
+    log.p(output.calcNumberStats().toTextTable());
     log.close();
   }
 
   @Test
   @Category(TestCategories.Report.class)
   public void calcCompressorPPM() throws Exception {
-    MarkdownPrintStream log = new MarkdownPrintStream(new FileOutputStream("reports/calcCompressorPPM"+getClass().getSimpleName()+".md")).addCopy(System.out);
+    MarkdownPrintStream log = new MarkdownPrintStream(new FileOutputStream("reports/metaPPM"+getClass().getSimpleName()+".md")).addCopy(System.out);
     CharTrieIndex baseTree = new CharTrieIndex();
-    log.out("Preparing %s documents", getModelCount());
+    log.p("Preparing %s documents", getModelCount());
     source().limit(getModelCount()).forEach(txt -> {
-      //System.out.println(String.format("Adding %s", txt.title));
+      //System.p.println(String.format("Adding %s", txt.title));
       baseTree.addDocument(txt.getText());
     });
-    log.out("Indexing %s KB of documents", baseTree.getIndexedSize() / 1024);
+    log.p("Indexing %s KB of documents", baseTree.getIndexedSize() / 1024);
 
     Map<String, Compressor> compressors = new LinkedHashMap<>();
 
@@ -153,8 +153,8 @@ public abstract class ModelMetaTest {
     }
 
     TableOutput output = Compressor.evalCompressor(source().skip(getModelCount()), compressors, true);
-    //log.out(output.toTextTable());
-    log.out(output.calcNumberStats().toTextTable());
+    //log.p(output.toTextTable());
+    log.p(output.calcNumberStats().toTextTable());
     log.close();
   }
 

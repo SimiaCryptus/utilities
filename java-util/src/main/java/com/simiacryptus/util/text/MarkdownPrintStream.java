@@ -36,6 +36,10 @@ public class MarkdownPrintStream extends PrintStream {
         this.println(0==args.length?fmt:String.format(fmt, args));
     }
 
+    public void p(String fmt, Object... args) {
+        this.out(fmt + "\n", args);
+    }
+
     public void h1(String fmt, Object... args) {
         this.out("# " + fmt, args);
     }

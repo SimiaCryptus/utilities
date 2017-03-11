@@ -1,6 +1,8 @@
 This will demonstrate how to use the CharTrieIndex class for PPM and shared dictionary compression
 
+
 First, we load some data into an index:
+
 Code: 
 ```java
       CharTrieIndex charTrieIndex = new CharTrieIndex();
@@ -12,20 +14,22 @@ Code:
 ```
 Returns: 
 ```
-    com.simiacryptus.util.text.CharTrieIndex@dd1a4f25
+    com.simiacryptus.util.text.CharTrieIndex@6e8e4a0d
 ```
 And then derive a PPM codec:
+
 Code: 
 ```java
       return trie.getCodec();
 ```
 Returns: 
 ```
-    com.simiacryptus.util.text.PPMCodec@5204062d
+    com.simiacryptus.util.text.PPMCodec@2b4a2ec7
 ```
 
 
 Then, we use it to encode strings:
+
 Code: 
 ```java
       return WikiArticle.load().skip(100)
@@ -44,15 +48,16 @@ Code:
 ```
 Returns: 
 ```
-    +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
+    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
 ```
 Logging: 
 ```
-    Bit Length: 11765
+    Bit Length: 13884
 ```
 
 
 And decompress to verify:
+
 Code: 
 ```java
       byte[] bytes = Base64.getDecoder().decode(compressed);
@@ -154,34 +159,34 @@ Returns:
 
 
 For faster compression, we can define a dictionary for use with Deflate:
+
 Code: 
 ```java
       return trie.getGenerator().generateDictionary(8*1024, 3, "", 1, true);
 ```
 Returns: 
 ```
-    e [[Alabama have book|lasteroids]], [[Angolan also constitle = 2007 |publishere the [[Mars and the [[Aberdeen that the stated their For thistory of thanger 2013}}</ref>{{cite web|url=http://www.webcite wered in ther they and [[Apollo 11, 2012}}</mather = 2013}}</ref name="Greek and as thern University on of the contrology of Angola has a [[Listory of an [[Aber 2011 |date=June 2012 estitution of [[Montronal and these of [[Angely in Angion three all themissional |title="text-alight" | first of stand stations of magnifical of Confederal relativersity of comporth thropology]], an and in thought to the and production anthrough then to those theory:Astronomic an enerates of Stater of his such as are are the provincoln an in [[Cons of Alable to been that thing thus the for the electionstics]] and conomically, analysis on in artical and of a completeorgesternal in 1996), pp. 11 Marchive.org/web.arch 2012}}<!-- {{citating the most = [[Inter;"
-    ! Present of planesenter;"
-    ! /a/, /u/
-    | [[Batters of its stable = 2011 |deadurl=http://www.academisticlear=2008 | lastrong to [[United to reach 2007 |publisher=[[The conting to be third Union to and many of Portugustributican including internationauthoughts of experiously be recondon |first=May 2008 |publication=New Yorks of which is thalf of Mexico]] any othe Americatistry one of Angolition, an [[Alabama]], theast1=Willess thorlinks to stance of francessdate book |languages==
-    {{Main as an on = https://web/2007}}</mapsed than animall as to a represident in [[ast = J. C.
-     | title of litics ofter = {{IPA|-/n/
-    | /a/
-    |- states, anothe larger antic langolanguagest thrugges ==
-    [[File:Apologically thich thundroid not because into thalled thropollo 11 |access-dategory.nasa.gov/apologicalled to de thumb|right of of ance on for [[Cate=2009 |work=[[Natic of Europosition]] in star = 1969, 2010 |isbn=978-0-8173-10-06-246X.2006 |deadurl= http%3A%2F%2Fwww.cented by their convertain a style=The field between in 2005 | puble to company other to cons, the
-    F-testimes that, and his in are of Texas]]
-    [[Category:People, thrists increaction.<ref> The stary 2016
-     | year=1994 | url = This considents andrew and relation, as [[South cent of alkalign:century, Algeriodical Socience theften an used Station|firected Statin Altaic Languistic October instructure in contially conces in prographilosophyte]] of relign:centural as before thanking of 1862, an being a many ared asteroids of Norther=NASA |archive.org/web |url= https://web.arch is an thief name="text-ali metals official antic and Amendence trans as web|url Hanks an Alan command [[Charaction]], whical propenhauer's should (1999 | [[Johnstellativil War of discovernmentallion is a significated by thigh its thalles ancium and distronautsidern Africans]] in 1968, 2015}}</mained this of Indian large of Lincoln's some = 978-0-19-5090520,00000|| 1850s, who had be alkali metalso thall of Berber [[First1 = Alasked tral cound inder to processdate=June of Georganization)}}
-    {{sfnRef|SIMBAD
-      | titution/ |timential [[cognized tern Europeditor-last2=Francienced on thium]], a sevelopment to represear = 10.1016}}</magaining anion]], [[Ada, annually as in his proposal'' is threek alphabetween alphabet|Arabic]], ''[[Thomass of varian astructures thalogy]] | accession is not and exployed and, are news.com/books.google.comple in man]] are same of Repubs/botassium annot inding and with anglish an "[[Theoreans influences or a press an Eurasian article|Ango]], in orderation
-      | ref = 10.1002/astrate journal=[[NASA |acceptember resulturesult of natury anning of conception ast1 = harvnb|Mary in was at isbn = 978-1-5 || [[Georgining in 2009 |publimited and forman expering systernald handings oned a discovery to have beliginaticate=1995 | issue=2 | parth a late = 1997|pp=337–338}}</may/hist on was remainston, thalidesignituded formation's ''The productiveurl=no |df=mdy }}<ref>
+    e [[Alabama have book | title="background:lightblue;"| 1986|pp=1}}</ref>{{cite web.archiversity of the [[Academy Awards of Alabama]], [[Mary 2011 |date=2010 ||style="backgroundern University of the [[Anarchive.org/web.archistory on of authough that the stated their own as and ther thist of [[Alain and [[Americal and they and and social = 2011 ||stylobable = 10.1016/j.1469-7610.1016-06-13}}</mathere thanges of socience of communive.org/web/2014}}</ref> The style="text-alightblue;"| [[Johnson thers = http://www.academistory of hism anary 2013}}
+    |{{chset-cology]], animation in the controle of productions of [[Robertarian international | [[Hanslavery]]''
+    |-
+    | [[Georgesternal of many of Constitle=April 2013}}<ref>
+    
+    ======
+    {{Main themission of Alable the prographysics]], which as the for the and in [[Listotle = 10.1111 | pages = 1 |deaduring theory:Amendent of its on anthropologican an artical and considenters of Motion]] <br /> [[John Galtruistitutism]], these of Science of a [[Montrol of Philosopher to throughts of life ofter of relation=New Yorks of whicharacted in as thought to the ear=2009|p=12 stylined to and processdate=2010 || sty in 1999 | pmid = [[Henry an in a conting to be compan=3|<span classi an ear = 2009 | year=1996), pp. 11, 2009|pp=10.1007/s10803-01-28 | publishern Algeries or three also an clast=May been anarch 2014}}</magainstructure of evelopment in 1999 Frences in Ames]] any othe most = 1996), p. 2012}}</mained to because thing of of antional | volume = 1861, 1862, 2010}}</mar/inder 2007 | pmc = 2013 |deadurl=http://www.thealter that those including in [[Alexample on to stand his such then to relations of Greeks to conce to [[Category]]
+    | ''[[The Agass="nound [[Cons ared by the than [[Aristotle individually as a recondon |first=Rober an on for [[Willess of Liber 2012 | is an between third formated that, and of all thus]]'' (1996, 2008 | issue = 2 | presents into thanimates anotheir of his theanalysicativeurl=https://web/2009 |accession = This conomicalled Station.<ref name="Algerial represental constic an [[March 2015}}<!-- NOT CITED IN ARTICLE *{{citating the lated State=June of disorderson]]
+    | [[Jack to have being anal = https://web |url=no |df=mdy }}<br /> [[The communist an Alan alchemy Awards|(]]</span=3|<span conception]], ''[[Thomas Little to distronominatural anthropology of The [[Category:American be researcho-syndically constead of formatic Gibbons]] instance, ancient to rectobe]], a seventury in statures thical scientiallywood as [[1999|p=1177/1362361320–33.</reporth thundre in hists]]
+    [[Careek mythological the was as beligion, annot before times.company or a presidentinued this a many stance thrists annualisher=[[Theoriginal in conted with the news |url = J Autism influencessdate wered on thanking a states, angles at [[Jackets|Laybout thefree | pmid = 1996 Summerge Davidualign:center;"| [[Hermed anced as [[Apollo and, as an used a direction, alth cent of aution autisting and man]]'', ''The first in providench is to a polition is counded founty, anytime of Repubs/book |lastern increate=14 | part on issue = | volume = Authors = 3 | particle|Anard United at her in for and Slam Lincoln an "improvidence also thieveral production thing of Apollowing in are not in man, the, a sing [[Paul Socientalist thors in 2008 | doi = 17, 2015}}</mapsed through to collowing hight of Englished inter as in with an Open in ''[[Anarchools anated is novemention|USD|1.503110514031928 | journatin Alch.
     
     ====
-    {{Main 1862, 2014}}</makes to make thalliamong [[Arable als a stars oftention ter thages archael Countral scient anytime thalf-likely to dever, a... and 4220 more bytes
+    {{Mains in or example thy of ''Apost or Bests thyrams of 1861, Lincoln's Singlish an Inter own a structivedater to provernmential differench Open]] | vautoms thysical proposed [[Unity Press than ter;"| 10, 2016}}</mago Press-dation/23/elector)|Geory to make thanish in Stand even william A. |languages = {{citalisticlearly are areerinciple follectiving systed hist only in Paristian]] and within anger [[Academy of both authorliness, thance in 1864. p. 1998|pp=303–304}}
+    * {{cite books.google.come introdevelopedian than alchemy other=Alasked trans]]
+    |-
+    |100 || s... and 4232 more bytes
 ```
 
 
 Then, we use it to encode strings:
+
 Code: 
 ```java
       byte[] bits = CompressionUtil.encodeLZ(wikiArticle.getText(), dictionary);
@@ -190,15 +195,16 @@ Code:
 ```
 Returns: 
 ```
-    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
+    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
 ```
 Logging: 
 ```
-    Compressed Bytes: 1460
+    Compressed Bytes: 1457
 ```
 
 
 And decompress to verify:
+
 Code: 
 ```java
       byte[] bytes = Base64.getDecoder().decode(compressed);
