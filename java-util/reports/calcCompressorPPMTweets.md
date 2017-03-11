@@ -1,4 +1,5 @@
 Preparing 100000 documents
+
 Indexing 6180 KB of documents
 
 field | sum | avg | stddev | nulls
