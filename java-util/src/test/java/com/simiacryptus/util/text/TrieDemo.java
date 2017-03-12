@@ -4,6 +4,7 @@ import com.simiacryptus.util.binary.Bits;
 import com.simiacryptus.util.lang.TimedResult;
 import com.simiacryptus.util.test.MarkdownPrintStream;
 import com.simiacryptus.util.test.TestCategories;
+import com.simiacryptus.util.test.TweetSentiment;
 import com.simiacryptus.util.test.WikiArticle;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -45,9 +46,7 @@ public class TrieDemo {
             log.p("And then compute the index trie:");
             log.code(() -> {
                 trie.index(Integer.MAX_VALUE,1);
-                System.out.println("Total Indexed Document (KB): " + trie.getIndexedSize() / 1024);
-                System.out.println("Total Node Count: " + trie.getNodeCount());
-                System.out.println("Total Index Memory Size (KB): " + trie.getMemorySize() / 1024);
+                print(trie);
             });
             log.p("Now we can search for a string:");
             Map<String,Long> codec = log.code(() -> {
@@ -123,6 +122,69 @@ public class TrieDemo {
             }
 
         }
+    }
+
+    @Test
+    @Category(TestCategories.ResearchCode.class)
+    public void demoTweet() throws IOException {
+        try (MarkdownPrintStream log = MarkdownPrintStream.get(this).addCopy(System.out)) {
+            int trainingSize = 1000000;
+            int minWeight = 0;
+            int maxLevels = 5;
+            int lookahead = 2;
+            int dictionarySampleSize = 4 * 1024;
+            int context = 3;
+
+            CharTrieIndex triePositive = log.code(() -> {
+                CharTrieIndex charTrieIndex = new CharTrieIndex();
+                TweetSentiment.load().filter(x->x.category == 1).limit(trainingSize).forEach(article -> {
+                    charTrieIndex.addDocument(article.getText());
+                });
+                return charTrieIndex;
+            });
+            CharTrieIndex trieNegative = log.code(() -> {
+                CharTrieIndex charTrieIndex = new CharTrieIndex();
+                TweetSentiment.load().filter(x->x.category == 0).limit(trainingSize).forEach(article -> {
+                    charTrieIndex.addDocument(article.getText());
+                });
+                return charTrieIndex;
+            });
+            log.code(() -> {
+                triePositive.index(maxLevels, minWeight);
+                print(triePositive);
+            });
+            log.code(() -> {
+                trieNegative.index(maxLevels, minWeight);
+                print(trieNegative);
+            });
+            log.code(() -> {
+                return trieNegative.getGenerator().generateDictionary(dictionarySampleSize, context, "", lookahead, true);
+            });
+            log.code(() -> {
+                return triePositive.getGenerator().generateDictionary(dictionarySampleSize, context, "", lookahead, true);
+            });
+            log.code(() -> {
+                return triePositive.product(trieNegative).getGenerator().generateDictionary(dictionarySampleSize, context, "", lookahead, true);
+            });
+            CharTrie trieSum = log.code(() -> {
+                return triePositive.add(trieNegative);
+            });
+            log.code(() -> {
+                return trieSum.getGenerator().generateDictionary(dictionarySampleSize, context, "", lookahead, true);
+            });
+            log.code(() -> {
+                return trieNegative.divide(trieSum, 10).getGenerator().generateDictionary(dictionarySampleSize, context, "", lookahead, true);
+            });
+            log.code(() -> {
+                return triePositive.divide(trieSum, 10).getGenerator().generateDictionary(dictionarySampleSize, context, "", lookahead, true);
+            });
+        }
+    }
+
+    private void print(CharTrieIndex trie) {
+        System.out.println("Total Indexed Document (KB): " + trie.getIndexedSize() / 1024);
+        System.out.println("Total Node Count: " + trie.getNodeCount());
+        System.out.println("Total Index Memory Size (KB): " + trie.getMemorySize() / 1024);
     }
 
     @Test

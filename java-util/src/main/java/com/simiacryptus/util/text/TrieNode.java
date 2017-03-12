@@ -222,14 +222,18 @@ public class TrieNode {
     }
 
     void writeChildren(TreeMap<Character, Integer> counts) {
-        update(n -> n.setFirstChildIndex(trie.nodes.length()).setNumberOfChildren((short) counts.size()));
-        counts.forEach((k, v) -> trie.nodes.add(new NodeData(k, (short) -1, -1, v, -1)));
+        int firstIndex = trie.nodes.length();
+        counts.forEach((k, v) -> {
+            if(v > 0) trie.nodes.add(new NodeData(k, (short) -1, -1, v, -1));
+        });
+        short length = (short) (trie.nodes.length() - firstIndex);
+        update(n -> n.setFirstChildIndex(firstIndex).setNumberOfChildren(length));
         data = null;
     }
 
     public TreeMap<Character, ? extends TrieNode> getChildrenMap() {
         TreeMap<Character, TrieNode> map = new TreeMap<>();
-        getChildren().allMatch(x->null == map.put(x.getChar(),x));
+        getChildren().forEach(x->map.put(x.getChar(),x));
         return map;
     }
 
