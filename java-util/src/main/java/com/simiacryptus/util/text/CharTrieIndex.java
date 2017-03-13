@@ -31,9 +31,10 @@ public class CharTrieIndex extends CharTrie {
   public int getMemorySize() {
     return cursors.getMemorySize() + nodes.getMemorySize();
   }
-  
-  public int getIndexedSize() {
-    return documents.stream().mapToInt(doc -> doc.length()).sum();
+
+  @Override
+  public long getIndexedSize() {
+    return documents.isEmpty()?super.getIndexedSize():documents.stream().mapToInt(doc -> doc.length()).sum();
   }
 
   /**

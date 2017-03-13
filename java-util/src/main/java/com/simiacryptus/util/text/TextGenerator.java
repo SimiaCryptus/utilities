@@ -21,8 +21,8 @@ public class TextGenerator {
     while (str.length() < length) {
       String prefix = str.substring(Math.max(str.length() - context, 0), str.length());
       TrieNode node = inner.matchPredictor(prefix);
-      int cursorCount = node.getCursorCount();
-      int fate = CompressionUtil.random.nextInt(cursorCount);
+      long cursorCount = node.getCursorCount();
+      long fate = CompressionUtil.random.nextLong() % cursorCount;
       String next = null;
       Stream<TrieNode> stream = node.getChildren().map(x -> x);
       List<TrieNode> children = stream.collect(Collectors.toList());
@@ -114,7 +114,7 @@ public class TextGenerator {
     for (int level = 0; level < lookahead; level++) {
       childStream = childStream.flatMap(child -> child.getChildren());
     }
-    TrieNode result = childStream.max(Comparator.comparingInt(x -> x.getCursorCount())).orElse(null);
+    TrieNode result = childStream.max(Comparator.comparingLong(x -> x.getCursorCount())).orElse(null);
     if (null == result) {
       if (lookahead > 0)
         return maxNextNode(node, lookahead - 1);

@@ -88,11 +88,11 @@ public class CharTrieSerializer {
         if (0 == level) {
             try {
                 long numberOfChildren = in.readVarLong();
-                TreeMap<Character, Integer> children = new TreeMap<>();
+                TreeMap<Character, Long> children = new TreeMap<>();
                 for(int i=0;i<numberOfChildren;i++) {
                     char c = (char) in.read(16).toLong();
                     long cnt = in.readVarLong();
-                    children.put(c, (int) cnt);
+                    children.put(c, cnt);
                     nodesRead.incrementAndGet();
                 }
                 root.writeChildren(children);
@@ -104,12 +104,12 @@ public class CharTrieSerializer {
                 TrieNode godparent = node.godparent();
                 List<NodeData> list = godparent.getChildren().map(x->((TrieNode)x).getData()).collect(Collectors.toList());
                 TreeMap<Character, ? extends TrieNode> godchildren = godparent.getChildrenMap();
-                TreeMap<Character, Integer> children = new TreeMap<>();
+                TreeMap<Character, Long> children = new TreeMap<>();
                 godchildren.forEach((token, godchild) -> {
                     try {
                         long childCount = in.readVarLong();
                         if(childCount > 0) {
-                            children.put(token, (int) childCount);
+                            children.put(token, childCount);
                             nodesRead.incrementAndGet();
                         }
                     } catch (IOException e) {

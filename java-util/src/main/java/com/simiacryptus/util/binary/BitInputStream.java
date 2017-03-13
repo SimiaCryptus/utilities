@@ -97,6 +97,16 @@ public class BitInputStream {
     return this.read(BitOutputStream.varLongDepths[type]).toLong();
   }
 
+  public long peekLongCoord(long max) throws IOException {
+    if(1 >= max) return 0;
+    int bits = 1 + (int) Math.ceil(Math.log(max) / Math.log(2));
+    Bits peek = this.peek(bits);
+    double divisor = 1 << peek.bitLength;
+    long value = (int) (peek.toLong() * ((double) max) / divisor);
+    assert(0 <= value);
+    assert(max >= value);
+    return value;
+  }
   public int peekIntCoord(int max) throws IOException {
     if(1 >= max) return 0;
     int bits = 1 + (int) Math.ceil(Math.log(max) / Math.log(2));

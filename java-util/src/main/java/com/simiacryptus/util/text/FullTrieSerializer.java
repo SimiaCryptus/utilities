@@ -9,6 +9,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class FullTrieSerializer {
 
@@ -47,19 +48,19 @@ public class FullTrieSerializer {
             });
         } else {
             root.streamDecendents(level).forEach(node -> {
-                AtomicInteger nodeCounter = new AtomicInteger();
+                AtomicLong nodeCounter = new AtomicLong();
                 TreeMap<Character, ? extends TrieNode> godchildren = node.godparent().getChildrenMap();
                 TreeMap<Character, ? extends TrieNode> children = node.getChildrenMap();
                 godchildren.forEach((token, godchild) -> {
                     TrieNode child = children.get(token);
                     try {
-                        int upperBound = Math.min(node.getCursorCount() - nodeCounter.get(), godchild.getCursorCount());
+                        long upperBound = Math.min(node.getCursorCount() - nodeCounter.get(), godchild.getCursorCount());
                         if(upperBound > 0) {
                             if(null == child) {
                                 out.write(Bits.ZERO);
                             } else {
                                 out.write(Bits.ONE);
-                                int childCount = child.getCursorCount();
+                                long childCount = child.getCursorCount();
                                 assert(childCount <= node.getCursorCount() - nodeCounter.get());
                                 assert(childCount <= godchild.getCursorCount());
                                 out.writeBoundedLong(childCount, upperBound);
@@ -88,16 +89,16 @@ public class FullTrieSerializer {
         return trie;
     }
 
-    private int deserialize(TrieNode root, BitInputStream in, int level) {
-        AtomicInteger nodesRead = new AtomicInteger(0);
+    private long deserialize(TrieNode root, BitInputStream in, int level) {
+        AtomicLong nodesRead = new AtomicLong(0);
         if (0 == level) {
             try {
                 long numberOfChildren = in.readVarLong();
-                TreeMap<Character, Integer> children = new TreeMap<>();
+                TreeMap<Character, Long> children = new TreeMap<>();
                 for(int i=0;i<numberOfChildren;i++) {
                     char c = (char) in.read(16).toLong();
                     long cnt = in.readVarLong();
-                    children.put(c, (int) cnt);
+                    children.put(c, cnt);
                     nodesRead.incrementAndGet();
                 }
                 root.writeChildren(children);
@@ -109,15 +110,15 @@ public class FullTrieSerializer {
                 AtomicInteger nodeCounter = new AtomicInteger();
                 TrieNode godparent = node.godparent();
                 TreeMap<Character, ? extends TrieNode> godchildren = godparent.getChildrenMap();
-                TreeMap<Character, Integer> children = new TreeMap<>();
+                TreeMap<Character, Long> children = new TreeMap<>();
                 godchildren.forEach((token, godchild) -> {
                     try {
-                        int upperBound = Math.min(node.getCursorCount() - nodeCounter.get(), godchild.getCursorCount());
+                        long upperBound = Math.min(node.getCursorCount() - nodeCounter.get(), godchild.getCursorCount());
                         if(upperBound > 0) {
                             if(in.readBool()) {
                                 long childCount = in.readBoundedLong(upperBound);
                                 assert(childCount>0);
-                                children.put(token, (int) childCount);
+                                children.put(token, childCount);
                                 nodesRead.incrementAndGet();
                                 nodeCounter.addAndGet((int) childCount);
                                 //godchild.decrementCursorCount((int) childCount);

@@ -37,7 +37,7 @@ public class PPMCodec {
         while(true) {
           TrieNode fromNode = inner.matchPredictor(getRight(contextStr, context));
           if(0 == fromNode.getNumberOfChildren()) return "";
-          int seek = in.peekIntCoord(fromNode.getCursorCount());
+          long seek = in.peekLongCoord(fromNode.getCursorCount());
           TrieNode toNode = fromNode.traverse(seek + fromNode.getCursorIndex());
           String newSegment = toNode.getString(fromNode);
           Interval interval = fromNode.intervalTo(toNode);

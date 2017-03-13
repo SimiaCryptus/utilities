@@ -1,9 +1,9 @@
 package com.simiacryptus.util.text;
 
+import com.simiacryptus.util.data.SerialType;
+
 import java.io.IOException;
 import java.nio.ByteBuffer;
-
-import com.simiacryptus.util.data.SerialType;
 
 class NodeType implements SerialType<NodeData> {
 
@@ -11,12 +11,12 @@ class NodeType implements SerialType<NodeData> {
 
   @Override
   public int getSize() {
-    return 16;
+    return 24;
   }
 
   @Override
   public NodeData read(ByteBuffer input) throws IOException {
-    return new NodeData(input.getChar(), input.getShort(), input.getInt(), input.getInt(), input.getInt());
+    return new NodeData(input.getChar(), input.getShort(), input.getInt(), input.getLong(), input.getLong());
   }
 
   @Override
@@ -24,7 +24,7 @@ class NodeType implements SerialType<NodeData> {
     output.putChar(value.token);
     output.putShort(value.numberOfChildren);
     output.putInt(value.firstChildIndex);
-    output.putInt(value.cursorCount);
-    output.putInt(value.firstCursorIndex);
+    output.putLong(value.cursorCount);
+    output.putLong(value.firstCursorIndex);
   }
 }

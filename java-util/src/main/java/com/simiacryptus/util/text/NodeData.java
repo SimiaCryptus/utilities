@@ -6,10 +6,10 @@ class NodeData {
   short numberOfChildren;
   int firstChildIndex;
   // Associated data to be stored for each node
-  int cursorCount;
-  int firstCursorIndex;
+  long cursorCount;
+  long firstCursorIndex;
 
-  public NodeData(char token, short numberOfChildren, int firstChildIndex, int cursorCount, int firstCursorIndex) {
+  public NodeData(char token, short numberOfChildren, int firstChildIndex, long cursorCount, long firstCursorIndex) {
     this.token = token;
     this.numberOfChildren = numberOfChildren;
     this.firstChildIndex = firstChildIndex;
@@ -32,12 +32,12 @@ class NodeData {
     return this;
   }
 
-  public NodeData setCursorCount(int cursorCount) {
+  public NodeData setCursorCount(long cursorCount) {
     this.cursorCount = cursorCount;
     return this;
   }
 
-  public NodeData setFirstCursorIndex(int firstCursorIndex) {
+  public NodeData setFirstCursorIndex(long firstCursorIndex) {
     this.firstCursorIndex = firstCursorIndex;
     return this;
   }
@@ -67,8 +67,8 @@ class NodeData {
     int result = (int) token;
     result = 31 * result + (int) numberOfChildren;
     result = 31 * result + firstChildIndex;
-    result = 31 * result + cursorCount;
-    result = 31 * result + firstCursorIndex;
+    result = 31 * result + Long.hashCode(cursorCount);
+    result = 31 * result + Long.hashCode(firstCursorIndex);
     return result;
   }
 

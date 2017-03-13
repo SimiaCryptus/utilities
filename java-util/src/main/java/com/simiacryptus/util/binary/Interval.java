@@ -1,11 +1,11 @@
 package com.simiacryptus.util.binary;
 
 public class Interval {
-  public final int start;
-  public final int max;
-  public final int length;
+  public final long start;
+  public final long max;
+  public final long length;
   
-  public Interval(int start, int length, int max) {
+  public Interval(long start, long length, long max) {
     super();
     if(0 >= max) throw new IllegalArgumentException();
     if(0 > start || max <= start) throw new IllegalArgumentException();
@@ -16,7 +16,7 @@ public class Interval {
     this.length = length;
   }
 
-  public int end() {
+  public long end() {
     return start + length;
   }
 

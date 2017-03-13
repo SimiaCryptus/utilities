@@ -14,6 +14,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Base64;
 import java.util.Map;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 public class TrieDemo {
@@ -130,58 +131,68 @@ public class TrieDemo {
         try (MarkdownPrintStream log = MarkdownPrintStream.get(this).addCopy(System.out)) {
             int trainingSize = 1000000;
             int minWeight = 0;
-            int maxLevels = 5;
-            int lookahead = 2;
+            int groups = trainingSize / 10000;
+            int maxLevels = 7;
+            int lookahead = 1;
             int dictionarySampleSize = 4 * 1024;
-            int context = 3;
+            int context = 5;
 
-            CharTrieIndex triePositive = log.code(() -> {
-                CharTrieIndex charTrieIndex = new CharTrieIndex();
-                TweetSentiment.load().filter(x->x.category == 1).limit(trainingSize).forEach(article -> {
-                    charTrieIndex.addDocument(article.getText());
-                });
-                return charTrieIndex;
+            log.p("First, we load positive and negative sentiment tweets into two seperate models");
+            CharTrie triePositive = log.code(() -> {
+                CharTrie charTrie = TweetSentiment.load().filter(x -> x.category == 1).limit(trainingSize)
+                        .collect(Collectors.groupingByConcurrent(x -> new Random().nextInt(groups), Collectors.toList())).entrySet().stream()
+                        .parallel().map(e -> {
+                            CharTrieIndex charTrieIndex = new CharTrieIndex();
+                            e.getValue().forEach(article -> charTrieIndex.addDocument(article.getText()));
+                            charTrieIndex.index(maxLevels, minWeight);
+                            return charTrieIndex.truncate();
+                        }).reduce(CharTrie::add).get();
+                print(charTrie);
+                return charTrie;
             });
-            CharTrieIndex trieNegative = log.code(() -> {
-                CharTrieIndex charTrieIndex = new CharTrieIndex();
-                TweetSentiment.load().filter(x->x.category == 0).limit(trainingSize).forEach(article -> {
-                    charTrieIndex.addDocument(article.getText());
-                });
-                return charTrieIndex;
+            CharTrie trieNegative = log.code(() -> {
+                CharTrie charTrie = TweetSentiment.load().filter(x -> x.category == 0).limit(trainingSize)
+                        .collect(Collectors.groupingByConcurrent(x -> new Random().nextInt(groups), Collectors.toList())).entrySet().stream()
+                        .parallel().map(e -> {
+                            CharTrieIndex charTrieIndex = new CharTrieIndex();
+                            e.getValue().forEach(article -> charTrieIndex.addDocument(article.getText()));
+                            charTrieIndex.index(maxLevels, minWeight);
+                            return charTrieIndex.truncate();
+                        }).reduce(CharTrie::add).get();
+                print(charTrie);
+                return charTrie;
             });
-            log.code(() -> {
-                triePositive.index(maxLevels, minWeight);
-                print(triePositive);
-            });
-            log.code(() -> {
-                trieNegative.index(maxLevels, minWeight);
-                print(trieNegative);
-            });
+            log.p("These source models produce similar representative texts:");
             log.code(() -> {
                 return trieNegative.getGenerator().generateDictionary(dictionarySampleSize, context, "", lookahead, true);
             });
             log.code(() -> {
                 return triePositive.getGenerator().generateDictionary(dictionarySampleSize, context, "", lookahead, true);
             });
+            log.p("However the product looks much less typical:");
             log.code(() -> {
                 return triePositive.product(trieNegative).getGenerator().generateDictionary(dictionarySampleSize, context, "", lookahead, true);
             });
+            log.p("The sum model gives an averaged representative text:");
             CharTrie trieSum = log.code(() -> {
-                return triePositive.add(trieNegative);
+                CharTrie trie = triePositive.add(trieNegative);
+                print(trie);
+                return trie;
             });
             log.code(() -> {
                 return trieSum.getGenerator().generateDictionary(dictionarySampleSize, context, "", lookahead, true);
             });
+            log.p("And can be used as a divisor to obtain contrasting texts:");
             log.code(() -> {
-                return trieNegative.divide(trieSum, 10).getGenerator().generateDictionary(dictionarySampleSize, context, "", lookahead, true);
+                return trieNegative.divide(trieSum, 100).getGenerator().generateDictionary(dictionarySampleSize, context, "", lookahead, true);
             });
             log.code(() -> {
-                return triePositive.divide(trieSum, 10).getGenerator().generateDictionary(dictionarySampleSize, context, "", lookahead, true);
+                return triePositive.divide(trieSum, 100).getGenerator().generateDictionary(dictionarySampleSize, context, "", lookahead, true);
             });
         }
     }
 
-    private void print(CharTrieIndex trie) {
+    private void print(CharTrie trie) {
         System.out.println("Total Indexed Document (KB): " + trie.getIndexedSize() / 1024);
         System.out.println("Total Node Count: " + trie.getNodeCount());
         System.out.println("Total Index Memory Size (KB): " + trie.getMemorySize() / 1024);

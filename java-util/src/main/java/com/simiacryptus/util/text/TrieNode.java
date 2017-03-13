@@ -100,11 +100,11 @@ public class TrieNode {
       return depth;
     }
 
-    public int getCursorIndex() {
+    public long getCursorIndex() {
       return getData().firstCursorIndex;
     }
 
-    public int getCursorCount() {
+    public long getCursorCount() {
       return getData().cursorCount;
     }
 
@@ -153,7 +153,7 @@ public class TrieNode {
         return Optional.empty();
     }
 
-    protected void decrementCursorCount(int count) {
+    protected void decrementCursorCount(long count) {
       this.trie.nodes.update(index, data -> data.setCursorCount(Math.max(data.cursorCount - count, 0)));
       if (null != parent)
         parent.decrementCursorCount(count);
@@ -221,7 +221,7 @@ public class TrieNode {
         }
     }
 
-    void writeChildren(TreeMap<Character, Integer> counts) {
+    void writeChildren(TreeMap<Character, Long> counts) {
         int firstIndex = trie.nodes.length();
         counts.forEach((k, v) -> {
             if(v > 0) trie.nodes.add(new NodeData(k, (short) -1, -1, v, -1));
@@ -249,6 +249,6 @@ public class TrieNode {
 
     @Override
     public int hashCode() {
-        return getChildrenMap().hashCode() ^ Integer.hashCode(getCursorCount());
+        return getChildrenMap().hashCode() ^ Long.hashCode(getCursorCount());
     }
 }

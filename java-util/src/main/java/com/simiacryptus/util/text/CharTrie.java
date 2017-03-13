@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.function.BiFunction;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -36,68 +35,43 @@ public class CharTrie {
       return new TrieNode(this, (short) 0, 0, null);
     }
 
-    public CharTrie rewrite(BiFunction<TrieNode, Map<Character, TrieNode>, TreeMap<Character, Integer>> fn) {
+    public CharTrie rewrite(BiFunction<TrieNode, Map<Character, TrieNode>, TreeMap<Character, Long>> fn) {
         CharTrie result = new CharTrieIndex();
         rewriteSubtree(root(), result.root(), fn);
         return result.recomputeCursorDetails();
     }
 
-    public static BiFunction<CharTrie,CharTrie,CharTrie> reducer(BiFunction<TrieNode, TrieNode, TreeMap<Character, Integer>> fn) {
+    public static BiFunction<CharTrie,CharTrie,CharTrie> reducer(BiFunction<TrieNode, TrieNode, TreeMap<Character, Long>> fn) {
         return (left, right) -> left.reduce(right, fn);
     }
 
-    public CharTrie add(CharTrie r) {
-        return reduce(r, (left, right) -> {
-            TreeMap<Character, Integer> map = new TreeMap<>();
-            Consumer<TrieNode> update = child -> {
-                char c = child.getChar();
-                int prevValue = map.getOrDefault(c, 0);
-                int newValue = prevValue + child.getCursorCount();
-                map.put(c, newValue);
-            };
-            if(null != left) left.getChildren().forEach(update);
-            if(null != right) right.getChildren().forEach(update);
-            return map;
-        });
-    }
-
-    public CharTrie divide(CharTrie z, int granularity) {
-        return reduce(z, (left, right) -> {
-            TreeMap<Character, ? extends TrieNode> leftChildren = null==left?new TreeMap<>():left.getChildrenMap();
-            TreeMap<Character, ? extends TrieNode> rightChildren = null==right?new TreeMap<>():right.getChildrenMap();
-            Map<Character, Integer> map = Stream.of(rightChildren.keySet(), leftChildren.keySet()).flatMap(x -> x.stream()).distinct().collect(Collectors.toMap(c -> c, (Character c) -> {
-                assert(null != leftChildren);
-                assert(null != rightChildren);
-                assert(null != c);
-                TrieNode leftChild = leftChildren.get(c);
-                int l = null == leftChild ? 0 : leftChild.getCursorCount();
-                TrieNode rightChild = rightChildren.get(c);
-                int r = null == rightChild ? 1 : rightChild.getCursorCount();
-                return l * granularity / r;
-            }));
-            return new TreeMap<>(map);
-        });
+    public CharTrie add(CharTrie z) {
+        return reduceSimple(z, (left, right) -> (null==left?0:left)+(null==right?0:right));
     }
 
     public CharTrie product(CharTrie z) {
+        return reduceSimple(z, (left, right) -> (null==left?0:left)*(null==right?0:right));
+    }
+
+    public CharTrie reduceSimple(CharTrie z, BiFunction<Long, Long, Long> fn) {
         return reduce(z, (left, right) -> {
             TreeMap<Character, ? extends TrieNode> leftChildren = null==left?new TreeMap<>():left.getChildrenMap();
             TreeMap<Character, ? extends TrieNode> rightChildren = null==right?new TreeMap<>():right.getChildrenMap();
-            Map<Character, Integer> map = Stream.of(rightChildren.keySet(), leftChildren.keySet()).flatMap(x -> x.stream()).distinct().collect(Collectors.toMap(c -> c, (Character c) -> {
+            Map<Character, Long> map = Stream.of(rightChildren.keySet(), leftChildren.keySet()).flatMap(x -> x.stream()).distinct().collect(Collectors.toMap(c -> c, (Character c) -> {
                 assert(null != leftChildren);
                 assert(null != rightChildren);
                 assert(null != c);
                 TrieNode leftChild = leftChildren.get(c);
-                int l = null == leftChild ? 0 : leftChild.getCursorCount();
+                Long l = null == leftChild ? null : leftChild.getCursorCount();
                 TrieNode rightChild = rightChildren.get(c);
-                int r = null == rightChild ? 0 : rightChild.getCursorCount();
-                return l * r;
+                Long r = null == rightChild ? null : rightChild.getCursorCount();
+                return fn.apply(l,r);
             }));
             return new TreeMap<>(map);
         });
     }
 
-    public CharTrie reduce(CharTrie right, BiFunction<TrieNode, TrieNode, TreeMap<Character, Integer>> fn) {
+    public CharTrie reduce(CharTrie right, BiFunction<TrieNode, TrieNode, TreeMap<Character, Long>> fn) {
         CharTrie result = new CharTrieIndex();
         reduceSubtree(root(), right.root(), result.root(), fn);
         return result.recomputeCursorDetails();
@@ -112,8 +86,8 @@ public class CharTrie {
     private NodeData recomputeCursorTotals(TrieNode node) {
       List<NodeData> newChildren = node.getChildren().map(child->recomputeCursorTotals(child)).collect(Collectors.toList());
       if(newChildren.isEmpty()) return node.getData();
-      int cursorCount = newChildren.stream().mapToInt(n->n.cursorCount).sum();
-      assert(0 < cursorCount);
+      long cursorCount = newChildren.stream().mapToLong(n->n.cursorCount).sum();
+      //assert(0 < cursorCount);
       return node.update(d -> d.setCursorCount(cursorCount));
     }
 
@@ -127,10 +101,10 @@ public class CharTrie {
       }
     }
 
-    private void rewriteSubtree(TrieNode sourceNode, TrieNode destNode, BiFunction<TrieNode, Map<Character, TrieNode>, TreeMap<Character, Integer>> fn) {
+    private void rewriteSubtree(TrieNode sourceNode, TrieNode destNode, BiFunction<TrieNode, Map<Character, TrieNode>, TreeMap<Character, Long>> fn) {
         CharTrie result = destNode.getTrie();
         TreeMap<Character, ? extends TrieNode> sourceChildren = sourceNode.getChildrenMap();
-        TreeMap<Character, Integer> newCounts = fn.apply(sourceNode, (Map<Character, TrieNode>) sourceChildren);
+        TreeMap<Character, Long> newCounts = fn.apply(sourceNode, (Map<Character, TrieNode>) sourceChildren);
         destNode.writeChildren(newCounts);
         TreeMap<Character, ? extends TrieNode> newChildren = destNode.getChildrenMap();
         newCounts.keySet().forEach(key -> {
@@ -140,7 +114,7 @@ public class CharTrie {
         });
     }
 
-    private void reduceSubtree(TrieNode sourceNodeA, TrieNode sourceNodeB, TrieNode destNode, BiFunction<TrieNode, TrieNode, TreeMap<Character, Integer>> fn) {
+    private void reduceSubtree(TrieNode sourceNodeA, TrieNode sourceNodeB, TrieNode destNode, BiFunction<TrieNode, TrieNode, TreeMap<Character, Long>> fn) {
         destNode.writeChildren(fn.apply(sourceNodeA, sourceNodeB));
         TreeMap<Character, ? extends TrieNode> sourceChildrenA = null==sourceNodeA?null:sourceNodeA.getChildrenMap();
         TreeMap<Character, ? extends TrieNode> sourceChildrenB = null==sourceNodeB?null:sourceNodeB.getChildrenMap();
@@ -207,12 +181,16 @@ public class CharTrie {
         return this.nodes.getMemorySize();
     }
 
+    public long getIndexedSize() {
+        return this.nodes.get(0).cursorCount;
+    }
+
     public PPMCodec getCodec() {
         return new PPMCodec(this.truncate().rewrite((sourceNode, sourceChildren) -> {
-            TreeMap<Character, Integer> newCounts = new TreeMap<Character, Integer>();
+            TreeMap<Character, Long> newCounts = new TreeMap<Character, Long>();
             sourceChildren.forEach((key, value) -> newCounts.put(key, value.getCursorCount()));
-            if (0 == sourceNode.depth) newCounts.put(PPMCodec.ESCAPE, 1);
-            newCounts.put(PPMCodec.FALLBACK, 1);
+            if (0 == sourceNode.depth) newCounts.put(PPMCodec.ESCAPE, 1l);
+            newCounts.put(PPMCodec.FALLBACK, 1l);
             return newCounts;
         }));
     }

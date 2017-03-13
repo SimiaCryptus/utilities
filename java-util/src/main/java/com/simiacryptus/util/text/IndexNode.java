@@ -6,6 +6,7 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
 public class IndexNode extends TrieNode {
@@ -19,8 +20,8 @@ public class IndexNode extends TrieNode {
   }
 
   public Stream<Cursor> getCursors() {
-    return IntStream.range(0, getData().cursorCount).mapToObj(i -> {
-      return new Cursor((CharTrieIndex)this.trie, ((CharTrieIndex)this.trie).cursors.get(i + getData().firstCursorIndex), depth);
+    return LongStream.range(0, getData().cursorCount).mapToObj(i -> {
+      return new Cursor((CharTrieIndex)this.trie, ((CharTrieIndex)this.trie).cursors.get((int) (i + getData().firstCursorIndex)), depth);
     });
   }
 
@@ -31,11 +32,11 @@ public class IndexNode extends TrieNode {
                       Collectors.reducing(new SerialArrayList<>(CursorType.INSTANCE, 0),
                               cursor -> new SerialArrayList<>(CursorType.INSTANCE, cursor.data),
                               (left, right) -> left.add(right)))));
-      int cursorWriteIndex = getData().firstCursorIndex;
+      long cursorWriteIndex = getData().firstCursorIndex;
       ArrayList<NodeData> childNodes = new ArrayList<>(sortedChildren.size());
       for (Map.Entry<Character, SerialArrayList<CursorData>> e : sortedChildren.entrySet()) {
         int length = e.getValue().length();
-        ((CharTrieIndex)this.trie).cursors.putAll(e.getValue(), cursorWriteIndex);
+        ((CharTrieIndex)this.trie).cursors.putAll(e.getValue(), (int) cursorWriteIndex);
         childNodes.add(new NodeData(e.getKey(), (short) -1, -1, length, cursorWriteIndex));
         cursorWriteIndex += length;
       }
