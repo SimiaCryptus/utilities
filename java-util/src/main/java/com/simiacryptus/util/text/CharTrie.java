@@ -53,6 +53,10 @@ public class CharTrie {
         return reduceSimple(z, (left, right) -> (null==left?0:left)*(null==right?0:right));
     }
 
+    public CharTrie divide(CharTrie z, int factor) {
+        return reduceSimple(z, (left, right) -> (null==left?0:left)*factor/(null==right?1:right));
+    }
+
     public CharTrie reduceSimple(CharTrie z, BiFunction<Long, Long, Long> fn) {
         return reduce(z, (left, right) -> {
             TreeMap<Character, ? extends TrieNode> leftChildren = null==left?new TreeMap<>():left.getChildrenMap();
@@ -87,7 +91,7 @@ public class CharTrie {
       List<NodeData> newChildren = node.getChildren().map(child->recomputeCursorTotals(child)).collect(Collectors.toList());
       if(newChildren.isEmpty()) return node.getData();
       long cursorCount = newChildren.stream().mapToLong(n->n.cursorCount).sum();
-      //assert(0 < cursorCount);
+      assert(0 < cursorCount);
       return node.update(d -> d.setCursorCount(cursorCount));
     }
 
