@@ -96,9 +96,9 @@ public class PPMCodec {
       try {
         while(!text.isEmpty()) {
           String right = getRight(contextStr, context);
-          TrieNode fromNode = inner.matchPredictor(right);
+          TrieNode fromNode = inner.matchPredictor(right); // inner.matchEnd(right).getString()
           String prefix = fromNode.getString();
-
+          // fromNode.getChildrenMap()
           TrieNode toNode = fromNode.traverse(text);
           int segmentChars = toNode.depth - fromNode.depth;
           if(toNode.hasChildren()) {

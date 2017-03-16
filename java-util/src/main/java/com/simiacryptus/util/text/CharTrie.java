@@ -54,7 +54,7 @@ public class CharTrie {
     }
 
     public CharTrie divide(CharTrie z, int factor) {
-        return reduceSimple(z, (left, right) -> (null==left?0:left)*factor/(null==right?1:right));
+        return reduceSimple(z, (left, right) -> (null==right?0:((null==left?0:left)*factor/right)));
     }
 
     public CharTrie reduceSimple(CharTrie z, BiFunction<Long, Long, Long> fn) {
@@ -150,10 +150,11 @@ public class CharTrie {
     }
 
     public TrieNode matchEnd(String search) {
+      if(search.isEmpty()) return root();
       int min = 0;
       int max = search.length();
-      int winner = -1;
       int i = Math.min(max, 12);
+      int winner = -1;
       while (max > min) {
         String attempt = search.substring(search.length() - i);
         TrieNode cursor = traverse(attempt);
@@ -165,7 +166,8 @@ public class CharTrie {
         }
         i = (3 * max + min) / 4;
       }
-      return traverse(search.substring(search.length() - i));
+      String matched = search.substring(search.length() - winner);
+      return traverse(matched);
     }
 
     public TrieNode matchPredictor(String search) {

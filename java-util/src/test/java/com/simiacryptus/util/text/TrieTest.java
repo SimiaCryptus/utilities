@@ -37,7 +37,7 @@ public class TrieTest {
         tree.addDocument("a quick brown fox jumped over the lazy dog");
         tree.addDocument("this is a test. this is only a test. - nikola tesla");
         tree.index(3);
-        Assert.assertEquals(7, tree.traverse("t").getCursorCount());
+        Assert.assertEquals(8, tree.traverse("t").getCursorCount());
         Assert.assertEquals("t", tree.traverse("t").getString());
         Assert.assertEquals("te", tree.traverse("te").getString());
         Assert.assertEquals(3, tree.traverse("te").getCursorCount());

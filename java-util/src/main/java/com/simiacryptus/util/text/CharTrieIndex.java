@@ -101,7 +101,7 @@ public class CharTrieIndex extends CharTrie {
       documents.add(document);
     }
     cursors.addAll(
-        IntStream.range(0, document.length()).mapToObj(i -> new CursorData(index, i)).collect(Collectors.toList()));
+        IntStream.range(0, document.length() + 1).mapToObj(i -> new CursorData(index, i)).collect(Collectors.toList()));
     nodes.update(0, node -> node.setCursorCount(cursors.length()));
     return index;
   }
@@ -109,6 +109,11 @@ public class CharTrieIndex extends CharTrie {
   public CharTrie addAlphabet(String document) {
     document.chars().mapToObj(i->new String(Character.toChars(i))).forEach(s->addDocument(s));
     return this;
+  }
+
+  @Override
+  CharTrieIndex recomputeCursorDetails() {
+    return (CharTrieIndex) super.recomputeCursorDetails();
   }
 
   public CharTrieIndex copy() {

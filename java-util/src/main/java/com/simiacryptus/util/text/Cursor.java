@@ -19,11 +19,11 @@ public class Cursor {
     }
 
     public boolean hasNext() {
-        return (depth + data.position + 1) < getDocument().length();
+        return (getPosition() + 1) < getDocument().length();
     }
 
     public char getToken() {
-        int index = depth + data.position;
+        int index = getPosition();
         String document = getDocument();
         return index >= document.length() ? PPMCodec.END_OF_STRING : document.charAt(index);
     }
@@ -33,7 +33,7 @@ public class Cursor {
     }
 
     public int getPosition() {
-        return data.position + depth;
+        return data.position + depth - 1;
     }
 
     public int getDocumentId() {

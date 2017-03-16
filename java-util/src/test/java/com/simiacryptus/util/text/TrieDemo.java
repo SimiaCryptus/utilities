@@ -12,10 +12,9 @@ import org.junit.experimental.categories.Category;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Base64;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class TrieDemo {
 
@@ -127,19 +126,31 @@ public class TrieDemo {
 
     @Test
     @Category(TestCategories.ResearchCode.class)
-    public void demoTweet() throws IOException {
+    public void demoTweetGeneration() throws IOException {
         try (MarkdownPrintStream log = MarkdownPrintStream.get(this).addCopy(System.out)) {
-            int trainingSize = 1000000;
+            int testingSize = 1000;
+            int trainingSize = 500000;
             int minWeight = 0;
-            int groups = trainingSize / 10000;
+            int groups = trainingSize / 50000;
             int maxLevels = 7;
             int lookahead = 1;
             int dictionarySampleSize = 4 * 1024;
             int context = 5;
-
             log.p("First, we load positive and negative sentiment tweets into two seperate models");
+            List<TweetSentiment> tweetsPositive = log.code(() -> {
+                ArrayList<TweetSentiment> list = new ArrayList<>(TweetSentiment.load()
+                        .filter(x -> x.category == 1).limit(testingSize + trainingSize).collect(Collectors.toList()));
+                Collections.shuffle(list);
+                return list;
+            });
+            List<TweetSentiment> tweetsNegative= log.code(() -> {
+                ArrayList<TweetSentiment> list = new ArrayList<>(TweetSentiment.load()
+                        .filter(x -> x.category == 0).limit(testingSize + trainingSize).collect(Collectors.toList()));
+                Collections.shuffle(list);
+                return list;
+            });
             CharTrie triePositive = log.code(() -> {
-                CharTrie charTrie = TweetSentiment.load().filter(x -> x.category == 1).limit(trainingSize)
+                CharTrie charTrie = tweetsPositive.stream().skip(testingSize).limit(trainingSize)
                         .collect(Collectors.groupingByConcurrent(x -> new Random().nextInt(groups), Collectors.toList())).entrySet().stream()
                         .parallel().map(e -> {
                             CharTrieIndex charTrieIndex = new CharTrieIndex();
@@ -151,7 +162,7 @@ public class TrieDemo {
                 return charTrie;
             });
             CharTrie trieNegative = log.code(() -> {
-                CharTrie charTrie = TweetSentiment.load().filter(x -> x.category == 0).limit(trainingSize)
+                CharTrie charTrie = tweetsNegative.stream().skip(testingSize).limit(trainingSize)
                         .collect(Collectors.groupingByConcurrent(x -> new Random().nextInt(groups), Collectors.toList())).entrySet().stream()
                         .parallel().map(e -> {
                             CharTrieIndex charTrieIndex = new CharTrieIndex();
@@ -169,25 +180,139 @@ public class TrieDemo {
             log.code(() -> {
                 return triePositive.getGenerator().generateDictionary(dictionarySampleSize, context, "", lookahead, true);
             });
-            log.p("However the product looks much less typical:");
-            log.code(() -> {
-                return triePositive.product(trieNegative).getGenerator().generateDictionary(dictionarySampleSize, context, "", lookahead, true);
+            log.p("And can be combined with a variety of operations:");
+            CharTrie trieProduct = log.code(() -> {
+                return triePositive.product(trieNegative);
             });
-            log.p("The sum model gives an averaged representative text:");
             CharTrie trieSum = log.code(() -> {
                 CharTrie trie = triePositive.add(trieNegative);
                 print(trie);
                 return trie;
             });
-            log.code(() -> {
-                return trieSum.getGenerator().generateDictionary(dictionarySampleSize, context, "", lookahead, true);
+            CharTrie negativeVector = log.code(() -> {
+                return trieNegative.divide(trieSum, 100);
             });
-            log.p("And can be used as a divisor to obtain contrasting texts:");
-            log.code(() -> {
-                return trieNegative.divide(trieSum, 100).getGenerator().generateDictionary(dictionarySampleSize, context, "", lookahead, true);
+            CharTrie positiveVector = log.code(() -> {
+                return triePositive.divide(trieSum, 100);
             });
+            log.p("These each produce consistent text extracts:");
+            IntStream.range(0,3).forEach(l->{
+                IntStream.range(1,context).forEach(ctx->{
+                    log.code(() -> {
+                        System.out.println(String.format("Sum characteristic string with %s context and %s lookahead", ctx, l));
+                        return trieSum.getGenerator().generateDictionary(dictionarySampleSize, ctx, "", l, true);
+                    });
+                    log.code(() -> {
+                        System.out.println(String.format("Product characteristic string with %s context and %s lookahead", ctx, l));
+                        return trieProduct.getGenerator().generateDictionary(dictionarySampleSize, ctx, "", l, true);
+                    });
+                    log.code(() -> {
+                        System.out.println(String.format("Negative characteristic string with %s context and %s lookahead", ctx, l));
+                        return negativeVector.getGenerator().generateDictionary(dictionarySampleSize, ctx, "", l, true);
+                    });
+                    log.code(() -> {
+                        System.out.println(String.format("Positive characteristic string with %s context and %s lookahead", ctx, l));
+                        return positiveVector.getGenerator().generateDictionary(dictionarySampleSize, ctx, "", l, true);
+                    });
+                });
+            });
+        }
+    }
+
+    @Test
+    @Category(TestCategories.ResearchCode.class)
+    public void demoTweetClassification() throws IOException {
+        try (MarkdownPrintStream log = MarkdownPrintStream.get(this).addCopy(System.out)) {
+            int testingSize = 1000;
+            int trainingSize = 500000;
+            int minWeight = 0;
+            int groups = trainingSize / 50000;
+            int maxLevels = 7;
+            int lookahead = 1;
+            int dictionarySampleSize = 4 * 1024;
+            int context = 5;
+            log.p("First, we load positive and negative sentiment tweets into two seperate models");
+            List<TweetSentiment> tweetsPositive = log.code(() -> {
+                ArrayList<TweetSentiment> list = new ArrayList<>(TweetSentiment.load()
+                        .filter(x -> x.category == 1).limit(testingSize + trainingSize).collect(Collectors.toList()));
+                Collections.shuffle(list);
+                return list;
+            });
+            List<TweetSentiment> tweetsNegative= log.code(() -> {
+                ArrayList<TweetSentiment> list = new ArrayList<>(TweetSentiment.load()
+                        .filter(x -> x.category == 0).limit(testingSize + trainingSize).collect(Collectors.toList()));
+                Collections.shuffle(list);
+                return list;
+            });
+            CharTrie triePositive = log.code(() -> {
+                CharTrie charTrie = tweetsPositive.stream().skip(testingSize).limit(trainingSize)
+                        .collect(Collectors.groupingByConcurrent(x -> new Random().nextInt(groups), Collectors.toList())).entrySet().stream()
+                        .parallel().map(e -> {
+                            CharTrieIndex charTrieIndex = new CharTrieIndex();
+                            e.getValue().forEach(article -> charTrieIndex.addDocument(article.getText()));
+                            charTrieIndex.index(maxLevels, minWeight);
+                            return charTrieIndex.truncate();
+                        }).reduce(CharTrie::add).get();
+                print(charTrie);
+                return charTrie;
+            });
+            CharTrie trieNegative = log.code(() -> {
+                CharTrie charTrie = tweetsNegative.stream().skip(testingSize).limit(trainingSize)
+                        .collect(Collectors.groupingByConcurrent(x -> new Random().nextInt(groups), Collectors.toList())).entrySet().stream()
+                        .parallel().map(e -> {
+                            CharTrieIndex charTrieIndex = new CharTrieIndex();
+                            e.getValue().forEach(article -> charTrieIndex.addDocument(article.getText()));
+                            charTrieIndex.index(maxLevels, minWeight);
+                            return charTrieIndex.truncate();
+                        }).reduce(CharTrie::add).get();
+                print(charTrie);
+                return charTrie;
+            });
+            log.p("Each model can be used out-of-the-box to perform classification:");
             log.code(() -> {
-                return triePositive.divide(trieSum, 100).getGenerator().generateDictionary(dictionarySampleSize, context, "", lookahead, true);
+                PPMCodec codecPositive = triePositive.getCodec();
+                PPMCodec codecNegative = trieNegative.getCodec();
+                double positiveAccuracy = 100.0 * tweetsPositive.stream().limit(testingSize).mapToDouble(tweet -> {
+                    Bits encodeNeg = codecNegative.encodePPM(tweet.getText(), 2);
+                    Bits encodePos = codecPositive.encodePPM(tweet.getText(), 2);
+                    int prediction = (encodeNeg.bitLength > encodePos.bitLength) ? 1 : 0;
+                    return prediction == tweet.category ? 1 : 0;
+                }).average().getAsDouble();
+                double negativeAccuracy = 100.0 * tweetsNegative.stream().limit(testingSize).mapToDouble(tweet -> {
+                    Bits encodeNeg = codecNegative.encodePPM(tweet.getText(), 2);
+                    Bits encodePos = codecPositive.encodePPM(tweet.getText(), 2);
+                    int prediction = (encodeNeg.bitLength > encodePos.bitLength) ? 1 : 0;
+                    return prediction == tweet.category ? 1 : 0;
+                }).average().getAsDouble();
+                return String.format("Accuracy = %.3f%%, %.3f%%", positiveAccuracy, negativeAccuracy);
+            });
+            log.p("Or can be combined with a variety of operations:");
+            CharTrie trieSum = log.code(() -> {
+                return triePositive.add(trieNegative);
+            });
+            CharTrie negativeVector = log.code(() -> {
+                return trieNegative.divide(trieSum, 100);
+            });
+            CharTrie positiveVector = log.code(() -> {
+                return triePositive.divide(trieSum, 100);
+            });
+            log.p("These composite tries can also be used to perform classification:");
+            log.code(() -> {
+                PPMCodec codecPositive = positiveVector.getCodec();
+                PPMCodec codecNegative = negativeVector.getCodec();
+                double positiveAccuracy = 100.0 * tweetsPositive.stream().limit(testingSize).mapToDouble(tweet -> {
+                    Bits encodeNeg = codecNegative.encodePPM(tweet.getText(), 2);
+                    Bits encodePos = codecPositive.encodePPM(tweet.getText(), 2);
+                    int prediction = (encodeNeg.bitLength > encodePos.bitLength) ? 1 : 0;
+                    return prediction == tweet.category ? 1 : 0;
+                }).average().getAsDouble();
+                double negativeAccuracy = 100.0 * tweetsNegative.stream().limit(testingSize).mapToDouble(tweet -> {
+                    Bits encodeNeg = codecNegative.encodePPM(tweet.getText(), 2);
+                    Bits encodePos = codecPositive.encodePPM(tweet.getText(), 2);
+                    int prediction = (encodeNeg.bitLength > encodePos.bitLength) ? 1 : 0;
+                    return prediction == tweet.category ? 1 : 0;
+                }).average().getAsDouble();
+                return String.format("Accuracy = %.3f%%, %.3f%%", positiveAccuracy, negativeAccuracy);
             });
         }
     }
@@ -196,6 +321,77 @@ public class TrieDemo {
         System.out.println("Total Indexed Document (KB): " + trie.getIndexedSize() / 1024);
         System.out.println("Total Node Count: " + trie.getNodeCount());
         System.out.println("Total Index Memory Size (KB): " + trie.getMemorySize() / 1024);
+    }
+
+    @Test
+    @Category(TestCategories.Report.class)
+    public void demoCompression() throws IOException {
+        try (MarkdownPrintStream log = MarkdownPrintStream.get(this).addCopy(System.out)) {
+            HashSet<String> articles = new HashSet<String>(Arrays.asList("A"));
+
+            log.p("This will demonstrate how to serialize a CharTrie class in compressed format\n");
+
+            log.p("First, we decompose the text into an n-gram trie:");
+            List<WikiArticle> articleList = WikiArticle.load()
+                    .limit(1000).filter(x->articles.contains(x.getTitle())).limit(articles.size())
+                    .collect(Collectors.toList());
+            CharTrieIndex index = log.code(() -> {
+                CharTrieIndex trie = new CharTrieIndex();
+                articleList.forEach(article -> {
+                    System.out.println(String.format("Indexing %s", article.getTitle()));
+                    trie.addDocument(article.getText());
+                });
+                System.out.println(String.format("Indexing %s bytes of documents",
+                        trie.getIndexedSize()));
+                trie.index(4, 0);
+                return trie;
+            });
+            CharTrie trie = index.truncate();
+            log.p("\n\nThen, we compress the trie:");
+            byte[] serializedTrie = log.code(() -> {
+                print(trie);
+                byte[] bytes = new FullTrieSerializer().serialize(trie.copy());
+                System.out.println(String.format("%s in ram, %s bytes in serialized form, %s%% compression",
+                        trie.getMemorySize(), bytes.length, 100 - (bytes.length * 100.0 / trie.getMemorySize())));
+                return bytes;
+            });
+            log.p("Then, we encode the data used to create the dictionary:");
+            List<byte[]> compressedArticles = log.code(() -> {
+                PPMCodec codec = new PPMCodec(trie);
+                return articleList.stream().map(article -> {
+                    String text = article.getText();
+                    String title = article.getTitle();
+                    TimedResult<Bits> compressed = TimedResult.time(()->codec.encodePPM(text, Integer.MAX_VALUE));
+                    TimedResult<String> decompressed = TimedResult.time(()->codec.decodePPM(compressed.obj.getBytes(), Integer.MAX_VALUE));
+                    System.out.println(String.format("Serialized %s: %s chars -> %s bytes (%s%%) in %s sec; %s",
+                            title, article.getText().length(), compressed.obj.bitLength / 8.0,
+                            compressed.obj.bitLength * 100.0 / (8.0 * article.getText().length()),
+                            compressed.timeNanos / 1000000000.0, text.equals(decompressed.obj)?"Verified":"Failed Validation"));
+                    return compressed.obj.getBytes();
+                }).collect(Collectors.toList());
+            });
+            int totalSize = compressedArticles.stream().mapToInt(x->x.length).sum();
+            log.p("Compressed %s bytes of documents -> %s (%s dictionary + %s ppm)",
+                    index.getIndexedSize(), (totalSize + serializedTrie.length),
+                    serializedTrie.length, totalSize);
+
+            log.p("And decompress to verfy data:");
+            log.code(() -> {
+                PPMCodec codec = new PPMCodec(trie);
+                compressedArticles.forEach(article -> {
+                    TimedResult<String> decompressed = TimedResult.time(()->codec.decodePPM(article, Integer.MAX_VALUE));
+                    System.out.println(String.format("Deserialized %s bytes -> %s chars in %s sec",
+                            article.length, decompressed.obj.length(),
+                            decompressed.timeNanos / 1000000000.0));
+                });
+            });
+            log.p("\n\nAnd verify tree structure:");
+            log.code(() -> {
+                CharTrie restored = new FullTrieSerializer().deserialize(serializedTrie);
+                boolean verified = restored.root().equals(trie.root());
+                System.out.println(String.format("Tree Verified: %s", verified));
+            });
+        }
     }
 
     @Test
@@ -211,8 +407,8 @@ public class TrieDemo {
                 WikiArticle.load().limit(100).forEach(article -> {
                     charTrieIndex.addDocument(article.getText());
                 });
-                System.out.println(String.format("Indexing %s KB of documents",
-                        charTrieIndex.getIndexedSize() / 1024));
+                System.out.println(String.format("Indexing %s bytes of documents",
+                        charTrieIndex.getIndexedSize()));
                 charTrieIndex.index(6, 0);
                 return charTrieIndex;
             });
@@ -222,7 +418,7 @@ public class TrieDemo {
             String serialized = log.code(() -> {
                 byte[] bytes = new FullTrieSerializer().serialize(tree.copy());
                 System.out.println(String.format("%s in ram, %s bytes in serialized form, %s%% compression",
-                        tree.getMemorySize(), bytes.length, 100 - (bytes.length / tree.getMemorySize())));
+                        tree.getMemorySize(), bytes.length, 100 - (bytes.length * 100.0 / tree.getMemorySize())));
                 return Base64.getEncoder().encodeToString(bytes);
             });
 

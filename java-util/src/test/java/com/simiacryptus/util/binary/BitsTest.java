@@ -6,6 +6,8 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Random;
 
@@ -90,7 +92,7 @@ public class BitsTest
     Assert.assertEquals(String.format("Concatenate %s and %s", a, b), asString,
         bits.toBitString());
   }
-  
+
   @Test
   @Category(TestCategories.UnitTest.class)
   public void testFixedLength() throws JSONException, IOException
@@ -100,7 +102,22 @@ public class BitsTest
       this.testFixedLength(this.randomLong());
     }
   }
-  
+
+  @Test
+  @Category(TestCategories.UnitTest.class)
+  public void testVarLongs() throws JSONException, IOException
+  {
+    for (int i = 0; i < 1000; i++)
+    {
+      ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+      try(BitOutputStream out = new BitOutputStream(buffer)) {
+        out.writeVarLong(i);
+      }
+      BitInputStream in = new BitInputStream(new ByteArrayInputStream(buffer.toByteArray()));
+      Assert.assertEquals(i, in.readVarLong());
+    }
+  }
+
   private void testFixedLength(final long value)
   {
     String asString = 0 == value ? "" : Long.toBinaryString(value);

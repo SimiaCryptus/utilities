@@ -91,15 +91,17 @@ public class BitOutputStream implements AutoCloseable
     this.write(new Bits(value, 32));
   }
 
-  public void writeBoundedLong(final long value, final long max)
+  public Bits writeBoundedLong(final long value, final long max)
       throws IOException
   {
     final int bits = 0 >= max ? 0 : (int) (Math
             .floor(Math.log(max) / Math.log(2))+1);
     if (0 < bits)
     {
-      this.write(new Bits(value, bits));
-    }
+      Bits toWrite = new Bits(value, bits);
+      this.write(toWrite);
+      return toWrite;
+    } else return Bits.NULL;
   }
   
   public void writeVarLong(final long value) throws IOException
