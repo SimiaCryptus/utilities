@@ -343,7 +343,7 @@ public class TrieDemo {
                 });
                 System.out.println(String.format("Indexing %s bytes of documents",
                         trie.getIndexedSize()));
-                trie.index(4, 0);
+                trie.index(6, 1);
                 return trie;
             });
             CharTrie trie = index.truncate();
