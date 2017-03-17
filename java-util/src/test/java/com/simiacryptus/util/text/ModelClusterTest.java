@@ -139,8 +139,8 @@ public abstract class ModelClusterTest {
         tree.addDocument(text.getText());
         tree = tree.index(ppmModelDepth, model_minPathWeight);
         String name = String.format("ENT_%s", index.incrementAndGet());
-        TextGenerator generator = tree.getGenerator();
-        Function<TestDocument,Double> ppmCompressor = t -> generator.measureEntropy(t.getText(), 1.0);
+        TextAnalysis analysis = tree.getAnalyzer();
+        Function<TestDocument,Double> ppmCompressor = t -> analysis.entropy(t.getText());
         synchronized (compressors) {
           compressors.put(name, ppmCompressor);
         }

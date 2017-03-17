@@ -149,7 +149,7 @@ public class TrieNode {
                 return Optional.of(node);
             }
         }
-        //assert !getChildren().filter(x -> x.getChar() == token).findFirst().isPresent();
+        //assert !getChildren().keywords(x -> x.getChar() == token).findFirst().isPresent();
         return Optional.empty();
     }
 
@@ -194,7 +194,7 @@ public class TrieNode {
     }
 
     public boolean hasChildren() {
-      return 0 < data.numberOfChildren;
+      return 0 < getNumberOfChildren();
     }
 
     NodeData update(Function<NodeData, NodeData> update) {

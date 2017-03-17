@@ -103,7 +103,7 @@ public class IndexNode extends TrieNode {
             return Optional.of(node);
         }
     }
-    //assert !getChildren().filter(x -> x.getChar() == token).findFirst().isPresent();
+    //assert !getChildren().keywords(x -> x.getChar() == token).findFirst().isPresent();
     return Optional.empty();
   }
 

@@ -56,6 +56,11 @@ public class FullTrieSerializer {
                 AtomicLong nodeCounter = new AtomicLong();
                 TreeMap<Character, ? extends TrieNode> godchildren = node.godparent().getChildrenMap();
                 TreeMap<Character, ? extends TrieNode> children = node.getChildrenMap();
+                try {
+                    out.writeBoundedLong(children.size(), godchildren.size());
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
                 godchildren.forEach((token, godchild) -> {
                     int godchildAdj = godchildCounters.getOrDefault(godchild.getDebugString(), 0);
                     TrieNode child = children.get(token);
@@ -125,6 +130,12 @@ public class FullTrieSerializer {
                 TrieNode godparent = node.godparent();
                 TreeMap<Character, ? extends TrieNode> godchildren = godparent.getChildrenMap();
                 TreeMap<Character, Long> children = new TreeMap<>();
+                final long numberOfChildren;
+                try {
+                    numberOfChildren = in.readBoundedLong(godchildren.size());
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
                 godchildren.forEach((token, godchild) -> {
                     try {
                         int godchildAdj = godchildCounters.getOrDefault(godchild.getDebugString(), 0);

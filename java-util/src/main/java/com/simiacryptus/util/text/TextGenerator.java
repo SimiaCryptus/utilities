@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class TextGenerator {
@@ -41,18 +40,6 @@ public class TextGenerator {
         break;
     }
     return str;
-  }
-
-  public double measureEntropy(String message, double smoothness) {
-    double total = IntStream.range(0, message.length()).parallel().mapToDouble(i -> {
-      Character next = message.charAt(i);
-      String prefix = message.substring(0, i);
-      TrieNode node = inner.matchPredictor(prefix);
-      Map<Character, Double> lookahead = lookahead(node, smoothness);
-      double sum = lookahead.values().stream().mapToDouble(x -> x).sum();
-      return Math.log(lookahead.getOrDefault(next, 0.0) / sum);
-    }).sum();
-    return -total / Math.log(2.0);
   }
 
   public String generateDictionary(int length, int context, final String seed, int lookahead, boolean destructive) {
@@ -112,7 +99,7 @@ public class TextGenerator {
   private TrieNode maxNextNode(TrieNode node, int lookahead) {
     Stream<TrieNode> childStream = node.getChildren().map(x->x);
     for (int level = 0; level < lookahead; level++) {
-      childStream = childStream.flatMap(child -> child.getChildren());
+      childStream = childStream.flatMap(child -> child.hasChildren()?child.getChildren():Stream.of(child));
     }
     TrieNode result = childStream.max(Comparator.comparingLong(x -> x.getCursorCount())).orElse(null);
     if (null == result) {

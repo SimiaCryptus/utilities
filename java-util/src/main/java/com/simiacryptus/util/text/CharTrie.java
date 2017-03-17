@@ -166,6 +166,7 @@ public class CharTrie {
         }
         i = (3 * max + min) / 4;
       }
+      if(winner < 0) return root();
       String matched = search.substring(search.length() - winner);
       return traverse(matched);
     }
@@ -207,6 +208,10 @@ public class CharTrie {
 
     public TextGenerator getGenerator() {
         return new TextGenerator(this.truncate().copy());
+    }
+
+    public TextAnalysis getAnalyzer() {
+        return new TextAnalysis(this.truncate().copy());
     }
 
     protected CharTrie truncate() {

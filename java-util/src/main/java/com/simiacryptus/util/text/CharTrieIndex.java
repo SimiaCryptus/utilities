@@ -3,6 +3,8 @@ package com.simiacryptus.util.text;
 import com.simiacryptus.util.data.SerialArrayList;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -130,4 +132,23 @@ public class CharTrieIndex extends CharTrie {
     return root().traverse(search);
   }
 
+    public static CharTrie create(Collection<String> documents, int maxLevels, int minWeight) {
+      List<List<String>> a = new ArrayList<>();
+      List<String> b = new ArrayList<>();
+      int blockSize = 1024 * 1024;
+      for(String s : documents) {
+        b.add(s);
+        if(b.stream().mapToInt(x->x.length()).sum() > blockSize) {
+          a.add(b);
+          b = new ArrayList<>();
+        }
+      }
+      a.add(b);
+      return a.parallelStream().map(list->{
+        CharTrieIndex trie = new CharTrieIndex();
+        list.forEach(s->trie.addDocument(s));
+        trie.index(maxLevels, minWeight);
+        return (CharTrie) trie;
+      }).reduce((l,r)->l.add(r)).get();
+    }
 }

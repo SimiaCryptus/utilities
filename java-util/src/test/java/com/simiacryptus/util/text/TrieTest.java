@@ -258,7 +258,7 @@ public class TrieTest {
         for (Map.Entry<String, CharTrie> ea : trees.entrySet()) {
             for (Map.Entry<String, CharTrie> eb : trees.entrySet()) {
                 String str = ea.getValue().getGenerator().generateMarkov(sampleSize, maxLevels - 1, "");
-                Double crossEntropy = eb.getValue().getGenerator().measureEntropy(str, smoothness) / str.length();
+                Double crossEntropy = eb.getValue().getAnalyzer().entropy(str) / str.length();
                 HashMap<String, Object> map = new HashMap<>();
                 map.put("source", ea.getKey());
                 map.put("model", eb.getKey());
@@ -493,7 +493,7 @@ public class TrieTest {
                 int decompressBits16 = CompressionUtil.encodeLZ(s, dictionary.substring(0, 16 * 1024)).length * 8;
                 map1.put(".decompressBits16", decompressBits16);
                 // map2.put(key+".decompressBits16", decompressBits16);
-                double ppmBits = tree.getGenerator().measureEntropy(s, smoothness);
+                double ppmBits = tree.getAnalyzer().entropy(s);
                 map1.put(".ppmBits", ppmBits);
                 // map2.put(key+".ppmBits", ppmBits);
                 map1.put(".bitsPerChar", ppmBits / s.length());

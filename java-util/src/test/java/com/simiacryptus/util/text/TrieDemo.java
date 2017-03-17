@@ -225,12 +225,9 @@ public class TrieDemo {
         try (MarkdownPrintStream log = MarkdownPrintStream.get(this).addCopy(System.out)) {
             int testingSize = 1000;
             int trainingSize = 500000;
-            int minWeight = 0;
+            int minWeight = 1;
             int groups = trainingSize / 50000;
             int maxLevels = 7;
-            int lookahead = 1;
-            int dictionarySampleSize = 4 * 1024;
-            int context = 5;
             log.p("First, we load positive and negative sentiment tweets into two seperate models");
             List<TweetSentiment> tweetsPositive = log.code(() -> {
                 ArrayList<TweetSentiment> list = new ArrayList<>(TweetSentiment.load()
@@ -238,7 +235,7 @@ public class TrieDemo {
                 Collections.shuffle(list);
                 return list;
             });
-            List<TweetSentiment> tweetsNegative= log.code(() -> {
+            List<TweetSentiment> tweetsNegative = log.code(() -> {
                 ArrayList<TweetSentiment> list = new ArrayList<>(TweetSentiment.load()
                         .filter(x -> x.category == 0).limit(testingSize + trainingSize).collect(Collectors.toList()));
                 Collections.shuffle(list);
@@ -273,14 +270,14 @@ public class TrieDemo {
                 PPMCodec codecPositive = triePositive.getCodec();
                 PPMCodec codecNegative = trieNegative.getCodec();
                 double positiveAccuracy = 100.0 * tweetsPositive.stream().limit(testingSize).mapToDouble(tweet -> {
-                    Bits encodeNeg = codecNegative.encodePPM(tweet.getText(), 2);
-                    Bits encodePos = codecPositive.encodePPM(tweet.getText(), 2);
+                    Bits encodeNeg = codecNegative.encodePPM(tweet.getText(), Integer.MAX_VALUE);
+                    Bits encodePos = codecPositive.encodePPM(tweet.getText(), Integer.MAX_VALUE);
                     int prediction = (encodeNeg.bitLength > encodePos.bitLength) ? 1 : 0;
                     return prediction == tweet.category ? 1 : 0;
                 }).average().getAsDouble();
                 double negativeAccuracy = 100.0 * tweetsNegative.stream().limit(testingSize).mapToDouble(tweet -> {
-                    Bits encodeNeg = codecNegative.encodePPM(tweet.getText(), 2);
-                    Bits encodePos = codecPositive.encodePPM(tweet.getText(), 2);
+                    Bits encodeNeg = codecNegative.encodePPM(tweet.getText(), Integer.MAX_VALUE);
+                    Bits encodePos = codecPositive.encodePPM(tweet.getText(), Integer.MAX_VALUE);
                     int prediction = (encodeNeg.bitLength > encodePos.bitLength) ? 1 : 0;
                     return prediction == tweet.category ? 1 : 0;
                 }).average().getAsDouble();
@@ -301,8 +298,8 @@ public class TrieDemo {
                 PPMCodec codecPositive = positiveVector.getCodec();
                 PPMCodec codecNegative = negativeVector.getCodec();
                 double positiveAccuracy = 100.0 * tweetsPositive.stream().limit(testingSize).mapToDouble(tweet -> {
-                    Bits encodeNeg = codecNegative.encodePPM(tweet.getText(), 2);
-                    Bits encodePos = codecPositive.encodePPM(tweet.getText(), 2);
+                    Bits encodeNeg = codecNegative.encodePPM(tweet.getText(), Integer.MAX_VALUE);
+                    Bits encodePos = codecPositive.encodePPM(tweet.getText(), Integer.MAX_VALUE);
                     int prediction = (encodeNeg.bitLength > encodePos.bitLength) ? 1 : 0;
                     return prediction == tweet.category ? 1 : 0;
                 }).average().getAsDouble();
@@ -343,7 +340,7 @@ public class TrieDemo {
                 });
                 System.out.println(String.format("Indexing %s bytes of documents",
                         trie.getIndexedSize()));
-                trie.index(6, 1);
+                trie.index(5, 1);
                 return trie;
             });
             CharTrie trie = index.truncate();
@@ -390,6 +387,47 @@ public class TrieDemo {
                 CharTrie restored = new FullTrieSerializer().deserialize(serializedTrie);
                 boolean verified = restored.root().equals(trie.root());
                 System.out.println(String.format("Tree Verified: %s", verified));
+            });
+        }
+    }
+
+    @Test
+    @Category(TestCategories.Report.class)
+    public void demoWikiSummary() throws IOException {
+        try (MarkdownPrintStream log = MarkdownPrintStream.get(this).addCopy(System.out)) {
+            HashSet<String> articles = new HashSet<>();
+            Arrays.asList("Alabama", "Alchemy", "Algeria", "Altruism", "Abraham Lincoln", "ASCII", "Apollo", "Alaska").forEach(articles::add);
+            log.p("This will demonstrate how to serialize a CharTrie class in compressed format\n");
+            log.h3("First, we load training and testing data:");
+            List<WikiArticle> articleList = log.code(() -> {
+                return WikiArticle.load().limit(1000)
+                        .filter(x -> articles.contains(x.getTitle())).limit(articles.size())
+                        .collect(Collectors.toList());
+            });
+            List<WikiArticle> trainingList = log.code(() -> {
+                return WikiArticle.load()
+                        .filter(x -> x.getText().length() > 4 * 1024).filter(x -> !articles.contains(x.getTitle()))
+                        .limit(1000).collect(Collectors.toList());
+            });
+            log.h3("Then, we decompose the text into an n-gram trie:");
+            int depth = 7;
+            CharTrie referenceTrie = log.code(() -> {
+                CharTrie trie = CharTrieIndex.create(trainingList.stream().map(x -> x.getText()).collect(Collectors.toList()), depth, 0);
+                print(trie);
+                return trie;
+            });
+            articleList.forEach(testArticle->{
+                log.h2(testArticle.getTitle());
+                log.h3("Keywords");
+                log.code(() -> {
+                    return referenceTrie.getAnalyzer().setVerbose(System.out).keywords(testArticle.getText())
+                            .stream().map(s->'"'+s+'"').collect(Collectors.joining("\n"));
+                });
+                log.h3("Tokenization");
+                log.code(() -> {
+                    return referenceTrie.getAnalyzer().setVerbose(System.out).split(testArticle.getText(), 5)
+                            .stream().map(s->'"'+s+'"').collect(Collectors.joining("\n"));
+                });
             });
         }
     }

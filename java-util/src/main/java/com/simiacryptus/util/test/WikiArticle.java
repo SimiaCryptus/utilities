@@ -17,7 +17,7 @@ public class WikiArticle extends TestDocument {
     public static String url = "https://dumps.wikimedia.org/enwiki/latest/enwiki-latest-pages-articles-multistream.xml.bz2";
     public static String file = "enwiki-latest-pages-articles-multistream.xml.bz2";
     private volatile static Thread thread;
-    private final static ArrayList<WikiArticle> queue = new ArrayList<>();
+    private final static List<WikiArticle> queue = Collections.synchronizedList(new ArrayList<>());
 
     public static void clear() throws InterruptedException {
         if (thread != null) {
@@ -55,8 +55,6 @@ public class WikiArticle extends TestDocument {
                     Stack<String> prefix = new Stack<String>();
                     Stack<Map<String, AtomicInteger>> indexes = new Stack<Map<String, AtomicInteger>>();
                     private String title;
-                    private int pages = 0;
-                    private boolean verbose = false;
                     StringBuilder nodeString = new StringBuilder();
 
                     @Override
@@ -92,7 +90,6 @@ public class WikiArticle extends TestDocument {
                         } else if ("text".equals(qName)) {
                             //System.p.println(String.format("Read #%s - %s", queue.size(), this.title));
                             queue.add(new WikiArticle(this.title, text));
-                            if(queue.size() > 10000) throw new RuntimeException();
                         }
                         super.endElement(uri, localName, qName);
                     }
