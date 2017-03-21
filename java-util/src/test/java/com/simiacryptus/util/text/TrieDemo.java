@@ -6,6 +6,7 @@ import com.simiacryptus.util.test.MarkdownPrintStream;
 import com.simiacryptus.util.test.TestCategories;
 import com.simiacryptus.util.test.TweetSentiment;
 import com.simiacryptus.util.test.WikiArticle;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -128,8 +129,8 @@ public class TrieDemo {
     @Category(TestCategories.ResearchCode.class)
     public void demoTweetGeneration() throws IOException {
         try (MarkdownPrintStream log = MarkdownPrintStream.get(this).addCopy(System.out)) {
-            int testingSize = 1000;
-            int trainingSize = 500000;
+            int testingSize = 100;
+            int trainingSize = 50000;
             int minWeight = 0;
             int groups = trainingSize / 50000;
             int maxLevels = 7;
@@ -180,6 +181,10 @@ public class TrieDemo {
             log.code(() -> {
                 return triePositive.getGenerator().generateDictionary(dictionarySampleSize, context, "", lookahead, true);
             });
+            log.p("The tree can also be reversed:");
+            log.code(() -> {
+                return triePositive.reverse().getGenerator().generateDictionary(dictionarySampleSize, context, "", lookahead, true);
+            });
             log.p("And can be combined with a variety of operations:");
             CharTrie trieProduct = log.code(() -> {
                 return triePositive.product(trieNegative);
@@ -215,6 +220,48 @@ public class TrieDemo {
                         return positiveVector.getGenerator().generateDictionary(dictionarySampleSize, ctx, "", l, true);
                     });
                 });
+            });
+        }
+    }
+
+    @Test
+    @Category(TestCategories.ResearchCode.class)
+    public void demoReversal() throws IOException {
+        try (MarkdownPrintStream log = MarkdownPrintStream.get(this).addCopy(System.out)) {
+            int testingSize = 100;
+            int trainingSize = 50000;
+            int minWeight = 0;
+            int groups = trainingSize / 50000;
+            int maxLevels = 7;
+            int lookahead = 1;
+            int dictionarySampleSize = 4 * 1024;
+            int context = 5;
+            log.p("First, we load text into a model");
+            List<TweetSentiment> tweetsPositive = log.code(() -> {
+                ArrayList<TweetSentiment> list = new ArrayList<>(TweetSentiment.load()
+                        .filter(x -> x.category == 1).limit(testingSize + trainingSize).collect(Collectors.toList()));
+                Collections.shuffle(list);
+                return list;
+            });
+            CharTrie triePositive = log.code(() -> {
+                CharTrie charTrie = tweetsPositive.stream().skip(testingSize).limit(trainingSize)
+                        .collect(Collectors.groupingByConcurrent(x -> new Random().nextInt(groups), Collectors.toList())).entrySet().stream()
+                        .parallel().map(e -> {
+                            CharTrieIndex charTrieIndex = new CharTrieIndex();
+                            e.getValue().forEach(article -> charTrieIndex.addDocument(article.getText()));
+                            charTrieIndex.index(maxLevels, minWeight);
+                            return charTrieIndex.truncate();
+                        }).reduce(CharTrie::add).get();
+                print(charTrie);
+                return charTrie;
+            });
+            log.p("This source model produces representative texts:");
+            log.code(() -> {
+                return triePositive.getGenerator().generateDictionary(dictionarySampleSize, context, "", lookahead, true);
+            });
+            log.p("The tree can also be reversed:");
+            log.code(() -> {
+                return triePositive.reverse().getGenerator().generateDictionary(dictionarySampleSize, context, "", lookahead, true);
             });
         }
     }
@@ -393,6 +440,25 @@ public class TrieDemo {
 
     @Test
     @Category(TestCategories.Report.class)
+    public void scratch() throws IOException {
+        try (MarkdownPrintStream log = MarkdownPrintStream.get(this).addCopy(System.out)) {
+            log.code(() -> {
+                Assert.assertEquals("testing", TextAnalysis.combine("test", "sting", 2));
+                Assert.assertEquals(null, TextAnalysis.combine("test", "sting", 3));
+                Assert.assertEquals("this is a test", TextAnalysis.combine("this is a test", "is a", 3));
+                Assert.assertEquals("this is a test", TextAnalysis.combine("this is a test", "this is", 3));
+                Assert.assertEquals("this is a test", TextAnalysis.combine("this is a test", " test", 3));
+                Assert.assertEquals("this is a test", TextAnalysis.combine("is a", "this is a test", 3));
+                Assert.assertEquals("this is a test", TextAnalysis.combine("this is", "this is a test", 3));
+                Assert.assertEquals("this is a test", TextAnalysis.combine(" test", "this is a test", 3));
+                Assert.assertEquals(null, TextAnalysis.combine("sting", "test", 3));
+                Assert.assertEquals("testing", TextAnalysis.combine("sting", "test", 2));
+            });
+        }
+    }
+
+    @Test
+    @Category(TestCategories.Report.class)
     public void demoWikiSummary() throws IOException {
         try (MarkdownPrintStream log = MarkdownPrintStream.get(this).addCopy(System.out)) {
             HashSet<String> articles = new HashSet<>();
@@ -418,15 +484,48 @@ public class TrieDemo {
             });
             articleList.forEach(testArticle->{
                 log.h2(testArticle.getTitle());
+                CharTrie articleTrie = log.code(() -> {
+                    //CharTrie trie = CharTrieIndex.create(Arrays.asList(testArticle.getText()), depth, 0);
+                    //print(trie);
+                    return referenceTrie;//.add(trie);
+                });
                 log.h3("Keywords");
                 log.code(() -> {
-                    return referenceTrie.getAnalyzer().setVerbose(System.out).keywords(testArticle.getText())
-                            .stream().map(s->'"'+s+'"').collect(Collectors.joining("\n"));
+                    return articleTrie.getAnalyzer().setVerbose(System.out).keywords(testArticle.getText())
+                            .stream().map(s->'"'+s+'"').collect(Collectors.joining(", "));
                 });
                 log.h3("Tokenization");
                 log.code(() -> {
-                    return referenceTrie.getAnalyzer().setVerbose(System.out).split(testArticle.getText(), 5)
-                            .stream().map(s->'"'+s+'"').collect(Collectors.joining("\n"));
+                    return articleTrie.getAnalyzer().setVerbose(System.out).split(testArticle.getText())
+                            .stream().map(s->'"'+s+'"').collect(Collectors.joining(", "));
+                });
+            });
+        }
+    }
+
+    @Test
+    @Category(TestCategories.Report.class)
+    public void demoWikiSpelling() throws IOException {
+        try (MarkdownPrintStream log = MarkdownPrintStream.get(this).addCopy(System.out)) {
+            log.p("This will demonstrate how to serialize a CharTrie class in compressed format\n");
+            log.h3("First, we load training and testing data:");
+
+            List<WikiArticle> trainingList = log.code(() -> {
+                return WikiArticle.load()
+                        .filter(x -> x.getText().length() > 4 * 1024)
+                        .limit(100).collect(Collectors.toList());
+            });
+            log.h3("Then, we decompose the text into an n-gram trie:");
+            int depth = 7;
+            CharTrie referenceTrie = log.code(() -> {
+                CharTrie trie = CharTrieIndex.create(trainingList.stream().map(x -> x.getText()).collect(Collectors.toList()), depth, 0);
+                print(trie);
+                return trie;
+            });
+            Arrays.asList("nessecary", " test ", "Washington", "needed", "temperarily ", "four ").forEach(testArticle->{
+                log.h2("Spelling check: testArticle");
+                log.code(() -> {
+                    return referenceTrie.getAnalyzer().setVerbose(System.out).spelling(testArticle);
                 });
             });
         }

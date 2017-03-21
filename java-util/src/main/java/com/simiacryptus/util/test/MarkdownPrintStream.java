@@ -71,7 +71,7 @@ public class MarkdownPrintStream extends PrintStream {
     }
 
     public <T> T code(Supplier<T> fn) {
-        return code(fn, 4 * 1024, 3);
+        return code(fn, 16 * 1024, 3);
     }
 
     public <T> T code(Supplier<T> fn, int maxLog, int framesNo) {

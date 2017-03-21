@@ -89,7 +89,7 @@ public class TextGenerator {
       node.getChildren().forEach(child -> {
         map.put(child.getChar(), factor * child.getCursorCount() + map.getOrDefault(child.getToken(), 0.0));
       });
-      if (null != node.parent) {
+      if (null != node.getParent()) {
         lookahead(inner.matchPredictor(node.getString().substring(1)), map,
             factor * (smoothness / (smoothness + node.getCursorCount())), smoothness);
       }

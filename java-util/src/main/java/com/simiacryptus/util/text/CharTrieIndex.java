@@ -81,8 +81,8 @@ public class CharTrieIndex extends CharTrie {
    */
   public CharTrieIndex index(int maxLevels, int minWeight) {
     root().visitFirst(node -> {
-      if (node.depth < maxLevels && node.getCursorCount() > minWeight
-          && (node.getChar() != PPMCodec.END_OF_STRING || node.depth == 0))
+      if (node.getDepth() < maxLevels && node.getCursorCount() > minWeight
+          && (node.getChar() != PPMCodec.END_OF_STRING || node.getDepth() == 0))
         ((IndexNode)node).split();
     });
     return this;

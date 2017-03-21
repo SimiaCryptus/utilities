@@ -12,7 +12,7 @@ import java.util.stream.Stream;
 public class IndexNode extends TrieNode {
 
   public IndexNode(CharTrie charTrieIndex, short depth, int index, TrieNode parent) {
-    super(charTrieIndex, depth, index, parent);
+    super(charTrieIndex, index, parent);
   }
 
   public Map<String, List<Cursor>> getCursorsByDocument() {
@@ -21,7 +21,7 @@ public class IndexNode extends TrieNode {
 
   public Stream<Cursor> getCursors() {
     return LongStream.range(0, getData().cursorCount).mapToObj(i -> {
-      return new Cursor((CharTrieIndex)this.trie, ((CharTrieIndex)this.trie).cursors.get((int) (i + getData().firstCursorIndex)), depth);
+      return new Cursor((CharTrieIndex)this.trie, ((CharTrieIndex)this.trie).cursors.get((int) (i + getData().firstCursorIndex)), getDepth());
     });
   }
 
@@ -44,7 +44,7 @@ public class IndexNode extends TrieNode {
           .setFirstChildIndex(this.trie.nodes.addAll(childNodes))
           .setNumberOfChildren((short) childNodes.size())
           );
-      return new IndexNode(this.trie, depth, index, parent);
+      return new IndexNode(this.trie, getDepth(), index, getParent());
     } else {
       return this;
     }
@@ -77,7 +77,7 @@ public class IndexNode extends TrieNode {
   public Stream<? extends IndexNode> getChildren() {
     if (getData().firstChildIndex >= 0) {
       return IntStream.range(0, getData().numberOfChildren)
-          .mapToObj(i -> new IndexNode(this.trie, (short) (depth + 1), getData().firstChildIndex + i, this));
+          .mapToObj(i -> new IndexNode(this.trie, (short) (getDepth() + 1), getData().firstChildIndex + i, this));
     } else {
       return Stream.empty();
     }
@@ -90,7 +90,7 @@ public class IndexNode extends TrieNode {
     int max = data.firstChildIndex + data.numberOfChildren - 1;
     while(min <= max) {
         int i = (min + max) / 2;
-        IndexNode node = new IndexNode(this.trie, (short) (depth + 1), i, this);
+        IndexNode node = new IndexNode(this.trie, (short) (getDepth() + 1), i, this);
         char c = node.getChar();
         int compare = Character.compare(c, token);
         if(c < token) {

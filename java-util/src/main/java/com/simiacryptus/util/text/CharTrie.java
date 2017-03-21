@@ -2,12 +2,14 @@ package com.simiacryptus.util.text;
 
 import com.simiacryptus.util.data.SerialArrayList;
 
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static com.simiacryptus.util.text.PPMCodec.END_OF_STRING;
+import static com.simiacryptus.util.text.PPMCodec.ESCAPE;
+import static com.simiacryptus.util.text.PPMCodec.FALLBACK;
 
 /**
  * A character sequence index using a prefix tree, commonly known as a full-text
@@ -17,6 +19,8 @@ import java.util.stream.Stream;
  */
 public class CharTrie {
     protected final SerialArrayList<NodeData> nodes;
+    protected int[] parentIndex = null;
+    protected int[] godparentIndex = null;
 
     public CharTrie(SerialArrayList<NodeData> nodes) {
         super();
@@ -24,7 +28,7 @@ public class CharTrie {
     }
 
     public CharTrie() {
-        this(new SerialArrayList<>(NodeType.INSTANCE, new NodeData(PPMCodec.END_OF_STRING, (short)-1, -1, -1, 0)));
+        this(new SerialArrayList<>(NodeType.INSTANCE, new NodeData(END_OF_STRING, (short)-1, -1, -1, 0)));
     }
 
     public CharTrie(CharTrie charTrie) {
@@ -32,13 +36,46 @@ public class CharTrie {
     }
 
     public TrieNode root() {
-      return new TrieNode(this, (short) 0, 0, null);
+      return new TrieNode(this, 0, null);
+    }
+
+    public CharTrie reverse() {
+        CharTrie result = new CharTrieIndex();
+        TreeMap<Character, ? extends TrieNode> childrenMap = root().getChildrenMap();
+        reverseSubtree(childrenMap, result.root());
+        return result.recomputeCursorDetails();
+    }
+
+    private void reverseSubtree(TreeMap<Character, ? extends TrieNode> childrenMap, TrieNode destination) {
+        String suffix = new StringBuilder(destination.getRawString()).reverse().toString();
+        TreeMap<Character, Long> children = new TreeMap<>();
+        childrenMap.forEach((token, node)->{
+            TrieNode analog = node.traverse(suffix);
+            if((token + suffix).equals(analog.getRawString())) {
+                children.put(token, analog.getCursorCount());
+            }
+        });
+        destination.writeChildren(children);
+        destination.getChildren().forEach(child->reverseSubtree(childrenMap, child));
     }
 
     public CharTrie rewrite(BiFunction<TrieNode, Map<Character, TrieNode>, TreeMap<Character, Long>> fn) {
         CharTrie result = new CharTrieIndex();
         rewriteSubtree(root(), result.root(), fn);
         return result.recomputeCursorDetails();
+    }
+
+    private void rewriteSubtree(TrieNode sourceNode, TrieNode destNode, BiFunction<TrieNode, Map<Character, TrieNode>, TreeMap<Character, Long>> fn) {
+        CharTrie result = destNode.getTrie();
+        TreeMap<Character, ? extends TrieNode> sourceChildren = sourceNode.getChildrenMap();
+        TreeMap<Character, Long> newCounts = fn.apply(sourceNode, (Map<Character, TrieNode>) sourceChildren);
+        destNode.writeChildren(newCounts);
+        TreeMap<Character, ? extends TrieNode> newChildren = destNode.getChildrenMap();
+        newCounts.keySet().forEach(key -> {
+            if (sourceChildren.containsKey(key)) {
+                rewriteSubtree(sourceChildren.get(key), newChildren.get(key), fn);
+            }
+        });
     }
 
     public static BiFunction<CharTrie,CharTrie,CharTrie> reducer(BiFunction<TrieNode, TrieNode, TreeMap<Character, Long>> fn) {
@@ -82,17 +119,25 @@ public class CharTrie {
     }
 
     CharTrie recomputeCursorDetails() {
-      recomputeCursorTotals(root());
-      recomputeCursorPositions(root(), 0);
+        godparentIndex = new int[getNodeCount()];
+        parentIndex = new int[getNodeCount()];
+        Arrays.fill(godparentIndex,0, godparentIndex.length, -1);
+        Arrays.fill(parentIndex,0, parentIndex.length, -1);
+        System.gc();
+        recomputeCursorTotals(root());
+        System.gc();
+        recomputeCursorPositions(root(), 0);
+        System.gc();
       return this;
     }
 
     private NodeData recomputeCursorTotals(TrieNode node) {
-      List<NodeData> newChildren = node.getChildren().map(child->recomputeCursorTotals(child)).collect(Collectors.toList());
-      if(newChildren.isEmpty()) return node.getData();
-      long cursorCount = newChildren.stream().mapToLong(n->n.cursorCount).sum();
-      assert(0 < cursorCount);
-      return node.update(d -> d.setCursorCount(cursorCount));
+        parentIndex[node.index] = null == node.getParent() ? -1 : node.getParent().index;
+        List<NodeData> newChildren = node.getChildren().map(child -> recomputeCursorTotals(child)).collect(Collectors.toList());
+        if (newChildren.isEmpty()) return node.getData();
+        long cursorCount = newChildren.stream().mapToLong(n -> n.cursorCount).sum();
+        assert (0 < cursorCount);
+        return node.update(d -> d.setCursorCount(cursorCount));
     }
 
     private void recomputeCursorPositions(TrieNode node, final int position) {
@@ -103,19 +148,6 @@ public class CharTrie {
         recomputeCursorPositions(child, childPosition);
         childPosition += child.getCursorCount();
       }
-    }
-
-    private void rewriteSubtree(TrieNode sourceNode, TrieNode destNode, BiFunction<TrieNode, Map<Character, TrieNode>, TreeMap<Character, Long>> fn) {
-        CharTrie result = destNode.getTrie();
-        TreeMap<Character, ? extends TrieNode> sourceChildren = sourceNode.getChildrenMap();
-        TreeMap<Character, Long> newCounts = fn.apply(sourceNode, (Map<Character, TrieNode>) sourceChildren);
-        destNode.writeChildren(newCounts);
-        TreeMap<Character, ? extends TrieNode> newChildren = destNode.getChildrenMap();
-        newCounts.keySet().forEach(key -> {
-            if (sourceChildren.containsKey(key)) {
-                rewriteSubtree(sourceChildren.get(key), newChildren.get(key), fn);
-            }
-        });
     }
 
     private void reduceSubtree(TrieNode sourceNodeA, TrieNode sourceNodeB, TrieNode destNode, BiFunction<TrieNode, TrieNode, TreeMap<Character, Long>> fn) {
@@ -196,8 +228,8 @@ public class CharTrie {
         return new PPMCodec(this.truncate().rewrite((sourceNode, sourceChildren) -> {
             TreeMap<Character, Long> newCounts = new TreeMap<Character, Long>();
             sourceChildren.forEach((key, value) -> newCounts.put(key, value.getCursorCount()));
-            if (0 == sourceNode.depth) newCounts.put(PPMCodec.ESCAPE, 1l);
-            newCounts.put(PPMCodec.FALLBACK, 1l);
+            if (0 == sourceNode.getDepth()) newCounts.put(ESCAPE, 1l);
+            newCounts.put(FALLBACK, 1l);
             return newCounts;
         }));
     }
@@ -231,5 +263,11 @@ public class CharTrie {
     @Override
     public int hashCode() {
         return nodes.hashCode();
+    }
+
+    public Set<Character> tokens() {
+        return root().getChildrenMap().keySet().stream()
+                .filter(c->c!=END_OF_STRING && c!=FALLBACK && c!=ESCAPE)
+                .collect(Collectors.toSet());
     }
 }

@@ -100,7 +100,7 @@ public class PPMCodec {
           String prefix = fromNode.getString();
           // fromNode.getChildrenMap()
           TrieNode toNode = fromNode.traverse(text);
-          int segmentChars = toNode.depth - fromNode.depth;
+          int segmentChars = toNode.getDepth() - fromNode.getDepth();
           if(toNode.hasChildren()) {
             if(prefix.isEmpty() && 0 == segmentChars) {
               Optional<? extends TrieNode> child = toNode.getChild(ESCAPE);

@@ -3,24 +3,33 @@ package com.simiacryptus.util.text;
 import com.simiacryptus.util.binary.Bits;
 import com.simiacryptus.util.binary.Interval;
 
+import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 
 public class TrieNode {
-    public final short depth;
-    public final TrieNode parent;
+    private transient short depth = -1;
+    private transient TrieNode parent = null;
     protected final CharTrie trie;
     protected final int index;
     private transient NodeData data;
 
-    public TrieNode(CharTrie trie, short depth, int index, TrieNode parent) {
+    public TrieNode(CharTrie trie, int index) {
         this.trie = trie;
-        this.depth = depth;
+        assert(depth < 100);
+        this.index = index;
+    }
+
+    public TrieNode(CharTrie trie, int index, TrieNode parent) {
+        this.trie = trie;
+        this.depth = (short) (null==parent?0:(parent.depth+1));
+        assert(depth < 100);
         this.index = index;
         this.parent = parent;
     }
@@ -37,8 +46,19 @@ public class TrieNode {
     }
 
     public TrieNode godparent() {
+        if(null == getParent()) return null;
+        if(null != trie.godparentIndex && trie.godparentIndex.length > index) {
+            int godparentIndex = trie.godparentIndex[this.index];
+            if(godparentIndex >= 0) {
+               return new TrieNode(trie, godparentIndex);
+           }
+        }
         String string = getRawString();
-        return null == parent ? null : this.trie.traverse(string.substring(1));
+        TrieNode godparent = this.trie.traverse(string.substring(1));
+        if(null != trie.godparentIndex && trie.godparentIndex.length > index) {
+            trie.godparentIndex[this.index] = godparent.index;
+        }
+        return godparent;
     }
 
     public TrieNode refresh() {
@@ -48,16 +68,16 @@ public class TrieNode {
 
     public String getString(TrieNode root) {
       if(this == root) return "";
-      String parentStr = null == parent ? "" : parent.getString(root);
+      String parentStr = null == getParent() ? "" : getParent().getString(root);
       return parentStr + getToken();
     }
 
     public String getRawString() {
-        return (null == parent ? "" : parent.getRawString()) + (0 == depth ? "" : new String(new char[]{getChar()}));
+        return (0 == depth ? "" : (getParent().getRawString() + new String(new char[]{getChar()})));
     }
 
     public String getString() {
-        return (null == parent ? "" : parent.getString()) + (0 == depth ? "" : getToken());
+        return (null == getParent() ? "" : getParent().getString()) + (0 == depth ? "" : getToken());
     }
 
     public String getDebugString() {
@@ -66,7 +86,7 @@ public class TrieNode {
 
     public String getDebugString(TrieNode root) {
       if(this == root) return "";
-      String parentStr = null == parent ? "" : parent.getDebugString(root);
+      String parentStr = null == getParent() ? "" : getParent().getDebugString(root);
       return parentStr + getDebugToken();
     }
 
@@ -97,7 +117,15 @@ public class TrieNode {
     }
 
     public short getDepth() {
-      return depth;
+        if(-1 == depth) {
+            synchronized(this) {
+                if(-1 == depth) {
+                    TrieNode parent = getParent();
+                    depth = (short) (null==parent?0:(parent.depth + 1));
+                }
+            }
+        }
+        return depth;
     }
 
     public long getCursorIndex() {
@@ -124,7 +152,7 @@ public class TrieNode {
     public Stream<? extends TrieNode> getChildren() {
       if (getData().firstChildIndex >= 0) {
         return IntStream.range(0, getData().numberOfChildren)
-            .mapToObj(i -> new TrieNode(this.trie, (short) (depth + 1), getData().firstChildIndex + i, TrieNode.this));
+            .mapToObj(i -> new TrieNode(this.trie, getData().firstChildIndex + i, TrieNode.this));
       } else {
         return Stream.empty();
       }
@@ -136,7 +164,7 @@ public class TrieNode {
         int max = data.firstChildIndex + data.numberOfChildren - 1;
         while(min <= max) {
             int i = (min + max) / 2;
-            TrieNode node = new TrieNode(this.trie, (short) (depth + 1), i, TrieNode.this);
+            TrieNode node = new TrieNode(this.trie, i, TrieNode.this);
             char c = node.getChar();
             int compare = Character.compare(c, token);
             if(c < token) {
@@ -155,8 +183,8 @@ public class TrieNode {
 
     protected void decrementCursorCount(long count) {
       this.trie.nodes.update(index, data -> data.setCursorCount(Math.max(data.cursorCount - count, 0)));
-      if (null != parent)
-        parent.decrementCursorCount(count);
+      if (null != getParent())
+        getParent().decrementCursorCount(count);
     }
 
     public TrieNode traverse(String str) {
@@ -208,7 +236,7 @@ public class TrieNode {
 
     public boolean isStringTerminal() {
       if(getChar() == PPMCodec.END_OF_STRING) return true;
-      if(getChar() == PPMCodec.FALLBACK && null != parent) return parent.isStringTerminal();
+      if(getChar() == PPMCodec.FALLBACK && null != getParent()) return getParent().isStringTerminal();
       return false;
     }
 
@@ -237,6 +265,14 @@ public class TrieNode {
         return map;
     }
 
+    public Map<Character,TrieNode> getGodChildren() {
+        String postContext = this.getString().substring(1);
+        return trie.tokens().stream().collect(Collectors.toMap(x->x, token->{
+            TrieNode traverse = trie.traverse(token + postContext);
+            return traverse.getString().equals(token + postContext)?traverse:null;
+        })).entrySet().stream().filter(e->null!=e.getValue()).collect(Collectors.toMap(e->e.getKey(),e->e.getValue()));
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -250,5 +286,16 @@ public class TrieNode {
     @Override
     public int hashCode() {
         return getChildrenMap().hashCode() ^ Long.hashCode(getCursorCount());
+    }
+
+    public TrieNode getParent() {
+        if(null == parent && -1 == depth) {
+            synchronized (this) {
+                if(null == parent && -1 == depth) {
+                    parent = new TrieNode(trie, trie.parentIndex[index]);
+                }
+            }
+        }
+        return parent;
     }
 }
