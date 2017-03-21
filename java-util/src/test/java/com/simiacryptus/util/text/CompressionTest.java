@@ -153,7 +153,7 @@ public class CompressionTest {
 
       @Override
       public String uncompress(byte[] data) {
-        return CompressionUtil.decodeLZ(data, dictionary);
+        return CompressionUtil.decodeLZToString(data, dictionary);
       }
     });
 

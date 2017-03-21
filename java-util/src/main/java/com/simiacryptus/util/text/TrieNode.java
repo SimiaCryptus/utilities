@@ -46,15 +46,15 @@ public class TrieNode {
     }
 
     public TrieNode godparent() {
-        if(null == getParent()) return null;
+        if(0 == getDepth()) return null;
+        if(1 == getDepth()) return trie.root();
         if(null != trie.godparentIndex && trie.godparentIndex.length > index) {
             int godparentIndex = trie.godparentIndex[this.index];
             if(godparentIndex >= 0) {
                return new TrieNode(trie, godparentIndex);
            }
         }
-        String string = getRawString();
-        TrieNode godparent = this.trie.traverse(string.substring(1));
+        TrieNode godparent = this.getParent().godparent().getChild(getChar()).orElseGet(()->null);
         if(null != trie.godparentIndex && trie.godparentIndex.length > index) {
             trie.godparentIndex[this.index] = godparent.index;
         }
@@ -121,7 +121,7 @@ public class TrieNode {
             synchronized(this) {
                 if(-1 == depth) {
                     TrieNode parent = getParent();
-                    depth = (short) (null==parent?0:(parent.depth + 1));
+                    depth = (short) (null==parent?0:(parent.getDepth() + 1));
                 }
             }
         }
@@ -291,7 +291,7 @@ public class TrieNode {
     public TrieNode getParent() {
         if(null == parent && -1 == depth) {
             synchronized (this) {
-                if(null == parent && -1 == depth) {
+                if(null == parent) {
                     parent = new TrieNode(trie, trie.parentIndex[index]);
                 }
             }

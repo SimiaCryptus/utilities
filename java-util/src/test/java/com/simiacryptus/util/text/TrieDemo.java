@@ -118,7 +118,7 @@ public class TrieDemo {
                 log.p("\n\nAnd decompress to verify:");
                 String uncompressed = log.code(() -> {
                     byte[] bytes = Base64.getDecoder().decode(compressed);
-                    return CompressionUtil.decodeLZ(bytes, dictionary);
+                    return CompressionUtil.decodeLZToString(bytes, dictionary);
                 });
             }
 
@@ -554,14 +554,15 @@ public class TrieDemo {
             log.p("\n\nThen, we compress the tree:");
             String serialized = log.code(() -> {
                 byte[] bytes = new FullTrieSerializer().serialize(tree.copy());
+                byte[] bytes2 = CompressionUtil.encodeLZ(bytes); // Demonstrate compression results with standard LZ post-filter
                 System.out.println(String.format("%s in ram, %s bytes in serialized form, %s%% compression",
-                        tree.getMemorySize(), bytes.length, 100 - (bytes.length * 100.0 / tree.getMemorySize())));
-                return Base64.getEncoder().encodeToString(bytes);
+                        tree.getMemorySize(), bytes2.length, 100 - (bytes2.length * 100.0 / tree.getMemorySize())));
+                return Base64.getEncoder().encodeToString(bytes2);
             });
 
             log.p("\n\nAnd decompress to verify:");
             int dictionaryLength = log.code(() -> {
-                byte[] bytes = Base64.getDecoder().decode(serialized);
+                byte[] bytes = CompressionUtil.decodeLZ(Base64.getDecoder().decode(serialized));
                 CharTrie restored = new FullTrieSerializer().deserialize(bytes);
                 boolean verified = restored.root().equals(tree.root());
                 System.out.println(String.format("Tree Verified: %s", verified));

@@ -77,7 +77,7 @@ public class DictionaryMethodTest {
 
             @Override
             public String uncompress(byte[] data) {
-                return CompressionUtil.decodeLZ(data, dictionary);
+                return CompressionUtil.decodeLZToString(data, dictionary);
             }
         });
     }
@@ -97,7 +97,7 @@ public class DictionaryMethodTest {
 
             @Override
             public String uncompress(byte[] data) {
-                return CompressionUtil.decodeLZ(data, genDictionary);
+                return CompressionUtil.decodeLZToString(data, genDictionary);
             }
         });
         String genMarkov = dictionaryTree.copy().getGenerator().generateMarkov(8 * 1024, dictionary_context, "");
@@ -112,7 +112,7 @@ public class DictionaryMethodTest {
 
             @Override
             public String uncompress(byte[] data) {
-                return CompressionUtil.decodeLZ(data, genMarkov);
+                return CompressionUtil.decodeLZToString(data, genMarkov);
             }
         });
     }

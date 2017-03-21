@@ -18,24 +18,38 @@ public class CompressionUtil {
     public static final Random random = new Random();
 
     public static byte[] encodeLZ(String data, String dictionary) {
-      byte[] output = new byte[data.length() * 2];
-      Deflater compresser = new Deflater();
-      try {
-        compresser.setInput(data.getBytes("UTF-8"));
-          if(!dictionary.isEmpty()) {
-              byte[] bytes = dictionary.getBytes("UTF-8");
-              compresser.setDictionary(bytes);
-          }
-      } catch (UnsupportedEncodingException e) {
-        throw new RuntimeException(e);
-      }
-      compresser.finish();
-      int compressedDataLength = compresser.deflate(output);
-      compresser.end();
-      return Arrays.copyOf(output, compressedDataLength);
+        byte[] asBytes = new byte[0];
+        try {
+            asBytes = data.getBytes("UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
+        return encodeLZ(asBytes, dictionary);
     }
 
-    public static String decodeLZ(byte[] data, String dictionary) {
+    public static byte[] encodeLZ(byte[] bytes) {
+        return encodeLZ(bytes,"");
+    }
+
+    public static byte[] encodeLZ(byte[] bytes, String dictionary) {
+        byte[] output = new byte[(int) (bytes.length * 1.05 + 32)];
+        Deflater compresser = new Deflater();
+        try {
+            compresser.setInput(bytes);
+            if(null != dictionary && !dictionary.isEmpty()) {
+                byte[] bytes2 = dictionary.getBytes("UTF-8");
+                compresser.setDictionary(bytes2);
+            }
+        } catch (UnsupportedEncodingException e) {
+          throw new RuntimeException(e);
+        }
+        compresser.finish();
+        int compressedDataLength = compresser.deflate(output);
+        compresser.end();
+        return Arrays.copyOf(output, compressedDataLength);
+    }
+
+    public static byte[] decodeLZ(byte[] data, String dictionary) {
       try {
         Inflater decompresser = new Inflater();
         decompresser.setInput(data, 0, data.length);
@@ -51,7 +65,7 @@ public class CompressionUtil {
         }
         resultLength = decompresser.inflate(result);
         decompresser.end();
-        return new String(result, 0, resultLength, "UTF-8");
+        return Arrays.copyOfRange(result, 0, resultLength);
       } catch (DataFormatException | UnsupportedEncodingException e) {
         throw new RuntimeException(e);
       }
@@ -61,7 +75,23 @@ public class CompressionUtil {
       return encodeLZ(data, "");
     }
 
-    public static String decodeLZ(byte[] data) {
+    public static String decodeLZToString(byte[] data, String dictionary) {
+        try {
+            return new String(decodeLZ(data),"UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static String decodeLZToString(byte[] data) {
+        try {
+            return new String(decodeLZ(data),"UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static byte[] decodeLZ(byte[] data) {
       return decodeLZ(data, "");
     }
 

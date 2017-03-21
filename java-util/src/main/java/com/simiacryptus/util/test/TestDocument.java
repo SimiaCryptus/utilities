@@ -21,7 +21,7 @@ public class TestDocument {
     }
 
     public String getText() {
-        return CompressionUtil.decodeLZ(text);
+        return CompressionUtil.decodeLZToString(text);
     }
 
     public String getTitle() {

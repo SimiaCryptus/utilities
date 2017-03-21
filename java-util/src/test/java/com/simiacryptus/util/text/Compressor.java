@@ -116,7 +116,7 @@ public interface Compressor {
 
       @Override
       public String uncompress(byte[] data) {
-        return CompressionUtil.decodeLZ(data);
+        return CompressionUtil.decodeLZToString(data);
       }
     });
   }
