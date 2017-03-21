@@ -70,3 +70,165 @@ Logging:
 
 Then, we encode the data used to create the dictionary:
 
+Code from [TrieDemo.java:573](../../src/test/java/com/simiacryptus/util/text/TrieDemo.java#L573) executed in 171.43 seconds: 
+```java
+      PPMCodec codec = tree.getCodec();
+      int totalSize = WikiArticle.load().limit(100).map(article -> {
+          TimedResult<Bits> compressed = TimedResult.time(()->codec.encodePPM(article.getText(), 4));
+          System.out.println(String.format("Serialized %s: %s chars -> %s bytes (%s%%) in %s sec",
+                  article.getTitle(), article.getText().length(), compressed.obj.bitLength / 8.0,
+                  compressed.obj.bitLength * 100.0 / (8.0 * article.getText().length()),
+                  compressed.timeNanos / 1000000000.0));
+          return compressed.obj.getBytes();
+      }).mapToInt(bytes->bytes.length).sum();
+      return String.format("Compressed %s KB of documents -> %s KB (%s dictionary + %s ppm)",
+              index.getIndexedSize() / 1024, (totalSize + dictionaryLength)/ 1024,
+              dictionaryLength / 1024, totalSize / 1024);
+```
+Returns: 
+```
+    Compressed 1947 KB of documents -> 2062 KB (1087 dictionary + 974 ppm)
+```
+Logging: 
+```
+    Serialized AccessibleComputing: 69 chars -> 22.0 bytes (31.884057971014492%) in 0.005494134 sec
+    Serialized Anarchism: 186232 chars -> 102826.625 bytes (55.21426231796899%) in 15.814950364 sec
+    Serialized AfghanistanHistory: 57 chars -> 20.25 bytes (35.526315789473685%) in 6.96667E-4 sec
+    Serialized AfghanistanGeography: 59 chars -> 21.5 bytes (36.440677966101696%) in 4.35111E-4 sec
+    Serialized AfghanistanPeople: 62 chars -> 22.375 bytes (36.08870967741935%) in 3.90622E-4 sec
+    Serialized AfghanistanCommunications: 64 chars -> 21.875 bytes (34.1796875%) in 3.96489E-4 sec
+    Serialized AfghanistanTransportations: 79 chars -> 39.5 bytes (50.0%) in 5.96445E-4 sec
+    Serialized AfghanistanMilitary: 54 chars -> 17.875 bytes (33.101851851851855%) in 3.12889E-4 sec
+    Serialized AfghanistanTransnationalIssues: 67 chars -> 23.75 bytes (35.44776119402985%) in 4.35112E-4 sec
+    Serialized AssistiveTechnology: 55 chars -> 21.875 bytes (39.77272727272727%) in 3.83777E-4 sec
+    Serialized AmoeboidTaxa: 41 chars -> 13.625 bytes (33.23170731707317%) in 2.93333E-4 sec
+    Serialized Autism: 149779 chars -> 87026.5 bytes (58.10327215430735%) in 10.441041948 sec
+    Serialized AlbaniaHistory: 53 chars -> 19.5 bytes (36.79245283018868%) in 4.60534E-4 sec
+    Serialized AlbaniaPeople: 58 chars -> 21.875 bytes (37.71551724137931%) in 3.46622E-4 sec
+    Serialized AsWeMayThink: 50 chars -> 33.625 bytes (67.25%) in 4.60533E-4 sec
+    Serialized AlbaniaGovernment: 54 chars -> 20.75 bytes (38.425925925925924%) in 3.22178E-4 sec
+    Serialized AlbaniaEconomy: 53 chars -> 18.25 bytes (34.43396226415094%) in 2.95777E-4 sec
+    Serialized Albedo: 35354 chars -> 19346.5 bytes (54.72223793630141%) in 0.811166503 sec
+    Serialized AfroAsiaticLanguages: 56 chars -> 19.0 bytes (33.92857142857143%) in 3.53956E-4 sec
+    Serialized ArtificalLanguages: 142 chars -> 45.375 bytes (31.954225352112676%) in 8.13022E-4 sec
+    Serialized AbacuS: 41 chars -> 12.5 bytes (30.48780487804878%) in 2.21956E-4 sec
+    Serialized AbalonE: 42 chars -> 13.75 bytes (32.73809523809524%) in 2.332E-4 sec
+    Serialized AbbadideS: 50 chars -> 16.25 bytes (32.5%) in 2.73289E-4 sec
+    Serialized AbbesS: 41 chars -> 12.5 bytes (30.48780487804878%) in 2.13155E-4 sec
+    Serialized AbbevilleFrance: 44 chars -> 14.125 bytes (32.10227272727273%) in 3.79378E-4 sec
+    Serialized AbbeY: 40 chars -> 13.0 bytes (32.5%) in 2.288E-4 sec
+    Serialized AbboT: 40 chars -> 13.125 bytes (32.8125%) in 2.35156E-4 sec
+    Serialized Abbreviations: 44 chars -> 14.75 bytes (33.52272727272727%) in 2.55689E-4 sec
+    Serialized AtlasShrugged: 50 chars -> 15.875 bytes (31.75%) in 2.74266E-4 sec
+    Serialized ArtificialLanguages: 55 chars -> 18.125 bytes (32.95454545454545%) in 2.99689E-4 sec
+    Serialized AtlasShruggedCharacters: 68 chars -> 23.75 bytes (34.9264705882353%) in 3.916E-4 sec
+    Serialized AtlasShruggedCompanies: 49 chars -> 15.0 bytes (30.612244897959183%) in 2.87467E-4 sec
+    Serialized AyersMusicPublishingCompany: 67 chars -> 20.125 bytes (30.03731343283582%) in 3.62756E-4 sec
+    Serialized AfricanAmericanPeople: 52 chars -> 18.0 bytes (34.61538461538461%) in 2.98711E-4 sec
+    Serialized AdolfHitler: 47 chars -> 14.125 bytes (30.0531914893617%) in 2.46889E-4 sec
+    Serialized AbeceDarians: 46 chars -> 14.875 bytes (32.33695652173913%) in 2.78667E-4 sec
+    Serialized AbeL: 48 chars -> 16.5 bytes (34.375%) in 2.64489E-4 sec
+    Serialized AbensbergGermany: 44 chars -> 13.875 bytes (31.53409090909091%) in 2.48844E-4 sec
+    Serialized AberdeenSouthDakota: 57 chars -> 18.125 bytes (31.79824561403509%) in 3.39289E-4 sec
+    Serialized ArthurKoestler: 50 chars -> 15.75 bytes (31.5%) in 2.74267E-4 sec
+    Serialized AynRand: 43 chars -> 13.125 bytes (30.523255813953487%) in 2.23911E-4 sec
+    Serialized AlexanderTheGreat: 53 chars -> 17.25 bytes (32.54716981132076%) in 3.83289E-4 sec
+    Serialized AnchorageAlaska: 51 chars -> 15.25 bytes (29.901960784313726%) in 3.61778E-4 sec
+    Serialized ArgumentForms: 47 chars -> 15.0 bytes (31.914893617021278%) in 3.33422E-4 sec
+    Serialized ArgumentsForTheExistenceOfGod: 50 chars -> 17.0 bytes (34.0%) in 3.71555E-4 sec
+    Serialized AnarchY: 43 chars -> 13.625 bytes (31.686046511627907%) in 3.12889E-4 sec
+    Serialized AsciiArt: 43 chars -> 12.125 bytes (28.197674418604652%) in 2.91867E-4 sec
+    Serialized AcademyAwards: 48 chars -> 15.375 bytes (32.03125%) in 3.45156E-4 sec
+    Serialized AcademyAwards/BestPicture: 96 chars -> 33.625 bytes (35.026041666666664%) in 6.80533E-4 sec
+    Serialized AustriaLanguage: 50 chars -> 16.875 bytes (33.75%) in 2.77689E-4 sec
+    Serialized AcademicElitism: 45 chars -> 13.375 bytes (29.72222222222222%) in 2.98711E-4 sec
+    Serialized AxiomOfChoice: 49 chars -> 14.875 bytes (30.357142857142858%) in 2.57156E-4 sec
+    Serialized AmericanFootball: 51 chars -> 15.75 bytes (30.88235294117647%) in 2.86E-4 sec
+    Serialized AnnaKournikova: 50 chars -> 15.75 bytes (31.5%) in 2.80623E-4 sec
+    Serialized AndorrA: 42 chars -> 13.5 bytes (32.142857142857146%) in 2.27333E-4 sec
+    Serialized AustroAsiaticLanguages: 57 chars -> 18.375 bytes (32.23684210526316%) in 3.05555E-4 sec
+    Serialized ActresseS: 62 chars -> 20.5 bytes (33.064516129032256%) in 3.42711E-4 sec
+    Serialized A: 19452 chars -> 6671.75 bytes (34.29852971416821%) in 0.48862984 sec
+    Serialized AnarchoCapitalism: 52 chars -> 17.0 bytes (32.69230769230769%) in 3.124E-4 sec
+    Serialized AnarchoCapitalists: 52 chars -> 17.0 bytes (32.69230769230769%) in 2.86489E-4 sec
+    Serialized ActressesS: 50 chars -> 18.0 bytes (36.0%) in 2.96266E-4 sec
+    Serialized AnAmericanInParis: 54 chars -> 19.375 bytes (35.879629629629626%) in 3.03111E-4 sec
+    Serialized AutoMorphism: 46 chars -> 14.875 bytes (32.33695652173913%) in 2.43466E-4 sec
+    Serialized ActionFilm: 45 chars -> 14.125 bytes (31.38888888888889%) in 2.57155E-4 sec
+    Serialized Alabama: 168088 chars -> 57842.25 bytes (34.411885440959495%) in 28.011115868 sec
+    Serialized AfricA: 41 chars -> 12.875 bytes (31.402439024390244%) in 2.51778E-4 sec
+    Serialized Achilles: 51211 chars -> 18248.5 bytes (35.633945831950165%) in 2.818478535 sec
+    Serialized AppliedStatistics: 44 chars -> 14.875 bytes (33.80681818181818%) in 2.62044E-4 sec
+    Serialized Abraham Lincoln: 179104 chars -> 63365.0 bytes (35.37888601036269%) in 32.012181577 sec
+    Serialized Aristotle: 110077 chars -> 55700.0 bytes (50.60094297628024%) in 5.818380828 sec
+    Serialized An American in Paris: 15603 chars -> 9138.5 bytes (58.56886496186631%) in 0.237682652 sec
+    Serialized Academy Award for Best Production Design: 86370 chars -> 54488.5 bytes (63.08729883061248%) in 3.914386675 sec
+    Serialized Academy Awards: 78000 chars -> 44532.125 bytes (57.092467948717946%) in 3.663356865 sec
+    Serialized Action Film: 56 chars -> 19.875 bytes (35.49107142857143%) in 3.44178E-4 sec
+    Serialized Actrius: 5763 chars -> 3565.375 bytes (61.8666493145931%) in 0.069485298 sec
+    Serialized Animalia (book): 5783 chars -> 3283.625 bytes (56.78065018156666%) in 0.067607964 sec
+    Serialized International Atomic Time: 11976 chars -> 7049.125 bytes (58.86042919171677%) in 0.182645001 sec
+    Serialized Altruism: 67373 chars -> 35369.75 bytes (52.49840440532557%) in 2.502815162 sec
+    Serialized AutoRacing: 45 chars -> 18.5 bytes (41.111111111111114%) in 4.74711E-4 sec
+    Serialized Ayn Rand: 89381 chars -> 45458.375 bytes (50.859103165102205%) in 3.957967703 sec
+    Serialized Alain Connes: 6198 chars -> 3540.875 bytes (57.12931590835753%) in 0.066815475 sec
+    Serialized Allan Dwan: 11264 chars -> 6858.0 bytes (60.88423295454545%) in 0.161426732 sec
+    Serialized Algeria/People: 57 chars -> 22.5 bytes (39.473684210526315%) in 3.57378E-4 sec
+    Serialized Algeria/Transnational Issues: 62 chars -> 23.875 bytes (38.50806451612903%) in 3.65689E-4 sec
+    Serialized Algeria: 120072 chars -> 41429.625 bytes (34.50398510893464%) in 15.059052756 sec
+    Serialized List of Atlas Shrugged characters: 31725 chars -> 11603.375 bytes (36.574862096138695%) in 1.175456727 sec
+    Serialized Topics of note in Atlas Shrugged: 28 chars -> 9.625 bytes (34.375%) in 2.23422E-4 sec
+    Serialized Anthropology: 92134 chars -> 32527.125 bytes (35.30414939110426%) in 8.68162448 sec
+    Serialized Agricultural science: 13822 chars -> 4875.125 bytes (35.27076399942121%) in 0.266290478 sec
+    Serialized Alchemy: 81528 chars -> 28584.75 bytes (35.06126729467177%) in 6.886158785 sec
+    Serialized Air Transport: 22 chars -> 8.0 bytes (36.36363636363637%) in 1.93111E-4 sec
+    Serialized Alien: 3799 chars -> 1299.625 bytes (34.209660436957094%) in 0.041171294 sec
+    Serialized Astronomer: 8253 chars -> 2956.375 bytes (35.821822367623895%) in 0.126287838 sec
+    Serialized Ameboid stage: 20 chars -> 6.75 bytes (33.75%) in 1.31511E-4 sec
+    Serialized ASCII: 100765 chars -> 71135.125 bytes (70.59507269389172%) in 5.416234466 sec
+    Serialized Ashmore And Cartier Islands: 72 chars -> 28.5 bytes (39.583333333333336%) in 7.28445E-4 sec
+    Serialized Austin (disambiguation): 2073 chars -> 1025.375 bytes (49.46333815726001%) in 0.018944447 sec
+    Serialized Animation: 56003 chars -> 30542.875 bytes (54.53792653964966%) in 1.767738847 sec
+    Serialized Apollo: 126677 chars -> 79998.375 bytes (63.15146001247267%) in 8.427340626 sec
+    Serialized Andre Agassi: 108263 chars -> 66655.25 bytes (61.56789484865559%) in 5.950761689 sec
+    
+```
+
+For reference, we encode some sample articles that are NOT in the dictionary:
+
+Code from [TrieDemo.java:589](../../src/test/java/com/simiacryptus/util/text/TrieDemo.java#L589) executed in 38.79 seconds: 
+```java
+      PPMCodec codec = tree.getCodec();
+      WikiArticle.load().skip(100).limit(20).forEach(article -> {
+          TimedResult<Bits> compressed = TimedResult.time(()->codec.encodePPM(article.getText(), 4));
+          System.out.println(String.format("Serialized %s: %s chars -> %s bytes (%s%%) in %s sec",
+                  article.getTitle(), article.getText().length(), compressed.obj.bitLength / 8.0,
+                  compressed.obj.bitLength * 100.0 / (8.0 * article.getText().length()),
+                  compressed.timeNanos / 1000000000.0));
+      });
+```
+Logging: 
+```
+    Serialized Artificial languages: 78 chars -> 38.5 bytes (49.35897435897436%) in 6.26756E-4 sec
+    Serialized Austroasiatic languages: 27408 chars -> 17042.25 bytes (62.179838003502624%) in 0.569128339 sec
+    Serialized Afro-asiatic languages: 66 chars -> 23.25 bytes (35.22727272727273%) in 5.22622E-4 sec
+    Serialized Afroasiatic languages: 47485 chars -> 34667.625 bytes (73.00752869327155%) in 1.394536666 sec
+    Serialized Andorra: 61684 chars -> 33771.375 bytes (54.749002982945335%) in 2.075557997 sec
+    Serialized Andorra/Transnational issues: 103 chars -> 44.25 bytes (42.96116504854369%) in 7.41645E-4 sec
+    Serialized Arithmetic mean: 11367 chars -> 5997.875 bytes (52.76568135831794%) in 0.143648774 sec
+    Serialized American Football Conference: 12135 chars -> 7367.625 bytes (60.71384425216316%) in 0.168300021 sec
+    Serialized Albert Gore: 42 chars -> 28.875 bytes (68.75%) in 3.80355E-4 sec
+    Serialized AnEnquiryConcerningHumanUnderstanding: 76 chars -> 28.125 bytes (37.00657894736842%) in 4.58578E-4 sec
+    Serialized Animal Farm: 69803 chars -> 39139.875 bytes (56.071909516782945%) in 2.585186106 sec
+    Serialized Amphibian: 130679 chars -> 71937.75 bytes (55.04920453936746%) in 8.069486136 sec
+    Serialized Albert Arnold Gore/Criticisms: 21 chars -> 15.375 bytes (73.21428571428571%) in 2.244E-4 sec
+    Serialized Alaska: 141209 chars -> 76891.375 bytes (54.452177269154234%) in 9.207644058 sec
+    Serialized Auteur Theory Film: 20 chars -> 10.125 bytes (50.625%) in 1.62311E-4 sec
+    Serialized Agriculture: 108723 chars -> 55784.25 bytes (51.30860075604978%) in 5.672826854 sec
+    Serialized Aldous Huxley: 49379 chars -> 16928.125 bytes (34.28203284797181%) in 2.68178323 sec
+    Serialized Abstract Algebra: 61 chars -> 19.875 bytes (32.58196721311475%) in 3.48089E-4 sec
+    Serialized Ada: 3353 chars -> 1158.125 bytes (34.53996421115419%) in 0.031091382 sec
+    Serialized Aberdeen (disambiguation): 6684 chars -> 2321.125 bytes (34.72658587672053%) in 0.081515877 sec
+    
+```
+

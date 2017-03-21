@@ -284,7 +284,7 @@ public class TrieTest {
         int articleCount = 1000;
         double selectivity = 0.1;
 
-        Map<String, String> articles = WikiArticle.load().filter(x -> x.getText().length() > minArticleLength)
+        Map<String, String> articles = WikiArticle.ENGLISH.load().filter(x -> x.getText().length() > minArticleLength)
                 .filter(x -> selectivity > Math.random()).limit(Math.max(articleCount, dictionaryCount))
                 .collect(Collectors.toMap(d -> d.getTitle(), d -> d.getText()));
 

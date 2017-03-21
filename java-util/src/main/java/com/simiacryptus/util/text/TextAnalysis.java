@@ -179,12 +179,13 @@ public class TextAnalysis {
 
   private double getJointNats(TrieNode priorNode, TrieNode followingNode) {
     String postContext = followingNode.getString().substring(1);
-    double sumOfProduct = inner.tokens().stream().mapToDouble(token->{
+    Map<Character, Long> code = inner.tokens().stream().collect(Collectors.toMap(x -> x, token -> {
       TrieNode altFollowing = inner.traverse(token + postContext);
-      long a = altFollowing.getString().equals(token + postContext)?altFollowing.getCursorCount():0;
+      long a = altFollowing.getString().equals(token + postContext) ? altFollowing.getCursorCount() : 0;
       long b = priorNode.getParent().getChild(token).map(x -> x.getCursorCount()).orElse(0l);
       return a * b;
-    }).sum();
+    }));
+    double sumOfProduct = code.values().stream().mapToDouble(x->x).sum();
     double product = followingNode.getCursorCount()* priorNode.getCursorCount();
     return -Math.log(product / sumOfProduct);
   }

@@ -2,10 +2,7 @@ package com.simiacryptus.util.text;
 
 import com.simiacryptus.util.binary.Bits;
 import com.simiacryptus.util.lang.TimedResult;
-import com.simiacryptus.util.test.MarkdownPrintStream;
-import com.simiacryptus.util.test.TestCategories;
-import com.simiacryptus.util.test.TweetSentiment;
-import com.simiacryptus.util.test.WikiArticle;
+import com.simiacryptus.util.test.*;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -39,7 +36,7 @@ public class TrieDemo {
                 return new CharTrieIndex();
             });
             Map<Integer, String> documents = log.code(() -> {
-                return WikiArticle.load().limit(100).collect(Collectors.toMap(
+                return WikiArticle.ENGLISH.load().limit(100).collect(Collectors.toMap(
                         article -> trie.addDocument(article.getText()),
                         article -> article.getTitle()
                 ));
@@ -71,7 +68,7 @@ public class TrieDemo {
             log.p("First, we load some data into an index:");
             CharTrie trie = log.code(() -> {
                 CharTrieIndex charTrieIndex = new CharTrieIndex();
-                WikiArticle.load().limit(100).forEach(article -> {
+                WikiArticle.ENGLISH.load().limit(100).forEach(article -> {
                     charTrieIndex.addDocument(article.getText());
                 });
                 charTrieIndex.index(5, 1);
@@ -84,7 +81,7 @@ public class TrieDemo {
 
             log.p("\n\nThen, we use it to encode strings:");
             WikiArticle wikiArticle = log.code(() -> {
-                return WikiArticle.load().skip(100)
+                return WikiArticle.ENGLISH.load().skip(100)
                         .filter(article -> article.getText().length() > 1024 && article.getText().length() < 4096)
                         .findFirst().get();
             });
@@ -361,6 +358,88 @@ public class TrieDemo {
         }
     }
 
+    @Test
+    @Category(TestCategories.Report.class)
+    public void demoLanguageClassification() throws IOException {
+        try (MarkdownPrintStream log = MarkdownPrintStream.get(this).addCopy(System.out)) {
+            int testingSize = 100;
+            int trainingSize = 5;
+            int minWeight = 1;
+            int maxLevels = 5;
+            int minArticleSize = 4 * 1024;
+            log.p("First, we load positive and negative sentiment tweets into two seperate models");
+            List<WikiArticle> english = log.code(() -> {
+                return new ArrayList<>(WikiArticle.ENGLISH.load().filter(x->x.getText().length()> minArticleSize)
+                        .limit(testingSize + trainingSize).collect(Collectors.toList()));
+            });
+            List<WikiArticle> french = log.code(() -> {
+                return new ArrayList<>(WikiArticle.FRENCH.load().filter(x->x.getText().length()> minArticleSize)
+                        .limit(testingSize + trainingSize).collect(Collectors.toList()));
+            });
+            CharTrie trieEnglish = log.code(() -> {
+                CharTrie charTrie = CharTrieIndex.create(english.subList(0,trainingSize)
+                        .stream().map(x->x.getText()).collect(Collectors.toList()), maxLevels, minWeight);
+                print(charTrie);
+                return charTrie;
+            });
+            CharTrie trieFrench = log.code(() -> {
+                CharTrie charTrie = CharTrieIndex.create(french.subList(testingSize,french.size())
+                        .stream().map(x->x.getText()).collect(Collectors.toList()), maxLevels, minWeight);
+                print(charTrie);
+                return charTrie;
+            });
+            log.p("Each model can be used out-of-the-box to perform classification:");
+            log.code(() -> {
+                PPMCodec codecA = trieEnglish.getCodec();
+                PPMCodec codecB = trieFrench.getCodec();
+                double englishAccuracy = 100.0 * english.stream().limit(testingSize).mapToDouble(tweet -> {
+                    Bits encodeB = codecB.encodePPM(tweet.getText(), Integer.MAX_VALUE);
+                    Bits encodeA = codecA.encodePPM(tweet.getText(), Integer.MAX_VALUE);
+                    return (encodeB.bitLength > encodeA.bitLength) ? 1 : 0;
+                }).average().getAsDouble();
+                double frenchAccuracy = 100.0 * french.stream().limit(testingSize).mapToDouble(tweet -> {
+                    Bits encodeB = codecB.encodePPM(tweet.getText(), Integer.MAX_VALUE);
+                    Bits encodeA = codecA.encodePPM(tweet.getText(), Integer.MAX_VALUE);
+                    return (encodeB.bitLength < encodeA.bitLength) ? 1 : 0;
+                }).average().getAsDouble();
+                return String.format("Accuracy = %.3f%%, %.3f%%", englishAccuracy, frenchAccuracy);
+            });
+            log.p("Or can be combined with a variety of operations:");
+            CharTrie trieSum = log.code(() -> {
+                return trieEnglish.add(trieFrench);
+            });
+            CharTrie frenchVector = log.code(() -> {
+                return trieFrench.divide(trieSum, 100);
+            });
+            CharTrie englishVector = log.code(() -> {
+                return trieEnglish.divide(trieSum, 100);
+            });
+            log.p("For fun:");
+            log.code(() -> {
+                return trieSum.getGenerator().generateDictionary(1024,3,"",0,true);
+            });
+            log.code(() -> {
+                return trieEnglish.product(trieFrench).getGenerator().generateDictionary(1024,3,"",0,true);
+            });
+            log.p("These composite tries can also be used to perform classification:");
+            log.code(() -> {
+                PPMCodec codecA = englishVector.getCodec();
+                PPMCodec codecB = frenchVector.getCodec();
+                double englishAccuracy = 100.0 * english.stream().limit(testingSize).mapToDouble(tweet -> {
+                    Bits encodeB = codecB.encodePPM(tweet.getText(), Integer.MAX_VALUE);
+                    Bits encodeA = codecA.encodePPM(tweet.getText(), Integer.MAX_VALUE);
+                    return (encodeB.bitLength > encodeA.bitLength) ? 1 : 0;
+                }).average().getAsDouble();
+                double frenchAccuracy = 100.0 * french.stream().limit(testingSize).mapToDouble(tweet -> {
+                    Bits encodeB = codecB.encodePPM(tweet.getText(), Integer.MAX_VALUE);
+                    Bits encodeA = codecA.encodePPM(tweet.getText(), Integer.MAX_VALUE);
+                    return (encodeB.bitLength < encodeA.bitLength) ? 1 : 0;
+                }).average().getAsDouble();
+                return String.format("Accuracy = %.3f%%, %.3f%%", englishAccuracy, frenchAccuracy);
+            });
+        }
+    }
+
     private void print(CharTrie trie) {
         System.out.println("Total Indexed Document (KB): " + trie.getIndexedSize() / 1024);
         System.out.println("Total Node Count: " + trie.getNodeCount());
@@ -376,7 +455,7 @@ public class TrieDemo {
             log.p("This will demonstrate how to serialize a CharTrie class in compressed format\n");
 
             log.p("First, we decompose the text into an n-gram trie:");
-            List<WikiArticle> articleList = WikiArticle.load()
+            List<WikiArticle> articleList = WikiArticle.ENGLISH.load()
                     .limit(1000).filter(x->articles.contains(x.getTitle())).limit(articles.size())
                     .collect(Collectors.toList());
             CharTrieIndex index = log.code(() -> {
@@ -466,12 +545,12 @@ public class TrieDemo {
             log.p("This will demonstrate how to serialize a CharTrie class in compressed format\n");
             log.h3("First, we load training and testing data:");
             List<WikiArticle> articleList = log.code(() -> {
-                return WikiArticle.load().limit(1000)
+                return WikiArticle.ENGLISH.load().limit(1000)
                         .filter(x -> articles.contains(x.getTitle())).limit(articles.size())
                         .collect(Collectors.toList());
             });
             List<WikiArticle> trainingList = log.code(() -> {
-                return WikiArticle.load()
+                return WikiArticle.ENGLISH.load()
                         .filter(x -> x.getText().length() > 4 * 1024).filter(x -> !articles.contains(x.getTitle()))
                         .limit(1000).collect(Collectors.toList());
             });
@@ -510,22 +589,22 @@ public class TrieDemo {
             log.p("This will demonstrate how to serialize a CharTrie class in compressed format\n");
             log.h3("First, we load training and testing data:");
 
-            List<WikiArticle> trainingList = log.code(() -> {
-                return WikiArticle.load()
-                        .filter(x -> x.getText().length() > 4 * 1024)
-                        .limit(100).collect(Collectors.toList());
+            List<Misspelling> trainingList = log.code(() -> {
+                return Misspelling.BIRKBECK.load().collect(Collectors.toList());
             });
             log.h3("Then, we decompose the text into an n-gram trie:");
             int depth = 7;
             CharTrie referenceTrie = log.code(() -> {
-                CharTrie trie = CharTrieIndex.create(trainingList.stream().map(x -> x.getText()).collect(Collectors.toList()), depth, 0);
+                List<String> list = trainingList.stream().map(x -> x.getTitle()).collect(Collectors.toList());
+                CharTrie trie = CharTrieIndex.create(list, depth, 0);
                 print(trie);
                 return trie;
             });
-            Arrays.asList("nessecary", " test ", "Washington", "needed", "temperarily ", "four ").forEach(testArticle->{
-                log.h2("Spelling check: testArticle");
+            trainingList.stream().limit(20).forEach(testArticle->{
+
+                log.p("Spelling check: %s -> %s", testArticle.getText(), testArticle.getTitle());
                 log.code(() -> {
-                    return referenceTrie.getAnalyzer().setVerbose(System.out).spelling(testArticle);
+                    return referenceTrie.getAnalyzer().setVerbose(System.out).spelling(testArticle.getText());
                 });
             });
         }
@@ -541,7 +620,7 @@ public class TrieDemo {
             log.p("First, we load some data into an index:");
             CharTrieIndex index = log.code(() -> {
                 CharTrieIndex charTrieIndex = new CharTrieIndex();
-                WikiArticle.load().limit(100).forEach(article -> {
+                WikiArticle.ENGLISH.load().limit(100).forEach(article -> {
                     charTrieIndex.addDocument(article.getText());
                 });
                 System.out.println(String.format("Indexing %s bytes of documents",
@@ -572,7 +651,7 @@ public class TrieDemo {
             log.p("Then, we encode the data used to create the dictionary:");
             log.code(() -> {
                 PPMCodec codec = tree.getCodec();
-                int totalSize = WikiArticle.load().limit(100).map(article -> {
+                int totalSize = WikiArticle.ENGLISH.load().limit(100).map(article -> {
                     TimedResult<Bits> compressed = TimedResult.time(()->codec.encodePPM(article.getText(), 4));
                     System.out.println(String.format("Serialized %s: %s chars -> %s bytes (%s%%) in %s sec",
                             article.getTitle(), article.getText().length(), compressed.obj.bitLength / 8.0,
@@ -588,7 +667,7 @@ public class TrieDemo {
             log.p("For reference, we encode some sample articles that are NOT in the dictionary:");
             log.code(() -> {
                 PPMCodec codec = tree.getCodec();
-                WikiArticle.load().skip(100).limit(20).forEach(article -> {
+                WikiArticle.ENGLISH.load().skip(100).limit(20).forEach(article -> {
                     TimedResult<Bits> compressed = TimedResult.time(()->codec.encodePPM(article.getText(), 4));
                     System.out.println(String.format("Serialized %s: %s chars -> %s bytes (%s%%) in %s sec",
                             article.getTitle(), article.getText().length(), compressed.obj.bitLength / 8.0,

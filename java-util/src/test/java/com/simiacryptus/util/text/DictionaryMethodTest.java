@@ -40,7 +40,7 @@ public class DictionaryMethodTest {
             int modelCount = 100;
             int testCount = 100;
             log.p("This notebook uses a variety of methods to generate compression dictionaries for a database of Wikipedia articles\n");
-            test(log, () -> WikiArticle.load().limit(modelCount + testCount), modelCount);
+            test(log, () -> WikiArticle.ENGLISH.load().limit(modelCount + testCount), modelCount);
         }
     }
 

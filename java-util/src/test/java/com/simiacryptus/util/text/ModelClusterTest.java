@@ -29,7 +29,7 @@ public abstract class ModelClusterTest {
 
     @Override
     protected Stream<? extends TestDocument> source() {
-      return WikiArticle.load().filter(wikiArticle -> {
+        return WikiArticle.ENGLISH.load().filter(wikiArticle -> {
         int kb = wikiArticle.getText().length() / 1024;
         return kb > 50 && kb < 150;
       }).limit(getModelCount() + testCount);

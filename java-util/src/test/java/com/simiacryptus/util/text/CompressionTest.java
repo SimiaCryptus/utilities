@@ -114,7 +114,7 @@ public class CompressionTest {
     int encodingContext = 2;
     int modelCount = 100;
     int testCount = 100;
-    Supplier<Stream<? extends TestDocument>> source = ()->WikiArticle.load().filter(x -> x.getText().length() > 8 * 1024).limit(modelCount + testCount);
+    Supplier<Stream<? extends TestDocument>> source = () -> WikiArticle.ENGLISH.load().filter(x -> x.getText().length() > 8 * 1024).limit(modelCount + testCount);
 
     MarkdownPrintStream log = MarkdownPrintStream.get(this).addCopy(System.out);
     Map<String, Compressor> compressors = buildCompressors(source, ppmModelDepth, model_minPathWeight, dictionary_lookahead, dictionary_context, encodingContext, modelCount);

@@ -39,7 +39,7 @@ public abstract class ModelMetaTest {
 
     @Override
     protected Stream<? extends TestDocument> source() {
-      return WikiArticle.load().limit(getModelCount() + testCount);
+        return WikiArticle.ENGLISH.load().limit(getModelCount() + testCount);
     }
 
     @Override
