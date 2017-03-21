@@ -298,4 +298,8 @@ public class TrieNode {
         }
         return parent;
     }
+
+    public TrieNode getContinuation(char c) {
+        return ((Optional<TrieNode>) getChild(c)).orElseGet(()->godparent().getContinuation(c));
+    }
 }

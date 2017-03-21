@@ -593,18 +593,17 @@ public class TrieDemo {
                 return Misspelling.BIRKBECK.load().collect(Collectors.toList());
             });
             log.h3("Then, we decompose the text into an n-gram trie:");
-            int depth = 7;
             CharTrie referenceTrie = log.code(() -> {
-                List<String> list = trainingList.stream().map(x -> x.getTitle()).collect(Collectors.toList());
-                CharTrie trie = CharTrieIndex.create(list, depth, 0);
+                List<String> list = trainingList.stream().map(x -> "|"+x.getTitle()+"|").collect(Collectors.toList());
+                CharTrie trie = CharTrieIndex.create(list, Integer.MAX_VALUE, 0);
                 print(trie);
                 return trie;
             });
+            Collections.shuffle(trainingList);
             trainingList.stream().limit(20).forEach(testArticle->{
-
                 log.p("Spelling check: %s -> %s", testArticle.getText(), testArticle.getTitle());
                 log.code(() -> {
-                    return referenceTrie.getAnalyzer().setVerbose(System.out).spelling(testArticle.getText());
+                    return referenceTrie.getAnalyzer().setVerbose(System.out).spelling("|"+testArticle.getText()+"|");
                 });
             });
         }

@@ -7,9 +7,7 @@ import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.simiacryptus.util.text.PPMCodec.END_OF_STRING;
-import static com.simiacryptus.util.text.PPMCodec.ESCAPE;
-import static com.simiacryptus.util.text.PPMCodec.FALLBACK;
+import static com.simiacryptus.util.text.PPMCodec.*;
 
 /**
  * A character sequence index using a prefix tree, commonly known as a full-text
@@ -269,5 +267,9 @@ public class CharTrie {
         return root().getChildrenMap().keySet().stream()
                 .filter(c->c!=END_OF_STRING && c!=FALLBACK && c!=ESCAPE)
                 .collect(Collectors.toSet());
+    }
+
+    public boolean contains(String text) {
+        return traverse(text).getString().endsWith(text);
     }
 }
