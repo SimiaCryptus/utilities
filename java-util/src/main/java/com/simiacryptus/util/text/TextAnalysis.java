@@ -257,11 +257,11 @@ public class TextAnalysis {
     List<String> matches = new ArrayList<>();
     String accumulator = "";
     for(int i=0;i<text.length();i++){
-      if(null == node) break;
       short prevDepth = node.getDepth();
       TrieNode prevNode = node;
       node = node.getContinuation(text.charAt(i));
-      if(!accumulator.isEmpty() && (null == node || node.getDepth() < prevDepth || (prevNode.hasChildren() && node.getDepth() == prevDepth))) {
+      if(null == node) node = inner.root();
+      if(!accumulator.isEmpty() && (node.getDepth() < prevDepth || (prevNode.hasChildren() && node.getDepth() == prevDepth))) {
         if(accumulator.length() > minSize) {
           matches.add(accumulator);
           node = ((Optional<TrieNode>) inner.root().getChild(text.charAt(i))).orElse(inner.root());
@@ -269,7 +269,7 @@ public class TextAnalysis {
         accumulator = "";
       } else if(!accumulator.isEmpty()) {
         accumulator += text.charAt(i);
-      } else if(accumulator.isEmpty() && (null != node && node.getDepth() > prevDepth)) {
+      } else if(accumulator.isEmpty() && node.getDepth() > prevDepth) {
         accumulator = node.getString();
       };
     }

@@ -595,14 +595,14 @@ public class TrieDemo {
                         .filter(x -> articles.contains(x.getTitle())).limit(articles.size())
                         .collect(Collectors.toList());
             });
-//            List<EnglishWords> trainingList = log.code(() -> {
-//                return EnglishWords.load().collect(Collectors.toList());
-//            });
-            List<WikiArticle> trainingList = log.code(() -> {
-                return WikiArticle.ENGLISH.load()
-                        .filter(x -> x.getText().length() > 4 * 1024).filter(x -> !articles.contains(x.getTitle()))
-                        .limit(1000).collect(Collectors.toList());
+            List<EnglishWords> trainingList = log.code(() -> {
+                return EnglishWords.load().collect(Collectors.toList());
             });
+//            List<WikiArticle> trainingList = log.code(() -> {
+//                return WikiArticle.ENGLISH.load()
+//                        .filter(x -> x.getText().length() > 4 * 1024).filter(x -> !articles.contains(x.getTitle()))
+//                        .limit(1000).collect(Collectors.toList());
+//            });
             log.h3("Then, we decompose the text into an n-gram trie:");
             int depth = 7;
             CharTrie referenceTrie = log.code(() -> {
@@ -615,7 +615,7 @@ public class TrieDemo {
                 log.h2(testArticle.getTitle());
                 log.h3("Tokenization");
                 List<String> tokens = log.code(() -> {
-                    return referenceTrie.getAnalyzer().setVerbose(System.out).splitMatches(testArticle.getText(), 5);
+                    return referenceTrie.getAnalyzer().setVerbose(System.out).splitMatches(testArticle.getText(), 2);
                 });
                 log.h3("Keywords");
                 log.code(() -> {
