@@ -575,8 +575,53 @@ public class TrieDemo {
                 });
                 log.h3("Tokenization");
                 log.code(() -> {
-                    return articleTrie.getAnalyzer().setVerbose(System.out).split(testArticle.getText())
+                    return articleTrie.getAnalyzer().setVerbose(System.out).splitChars(testArticle.getText())
                             .stream().map(s->'"'+s+'"').collect(Collectors.joining(", "));
+                });
+            });
+        }
+    }
+
+    @Test
+    @Category(TestCategories.Report.class)
+    public void demoWordlist() throws IOException {
+        try (MarkdownPrintStream log = MarkdownPrintStream.get(this).addCopy(System.out)) {
+            HashSet<String> articles = new HashSet<>();
+            Arrays.asList("Alabama", "Alchemy", "Algeria", "Altruism", "Abraham Lincoln", "ASCII", "Apollo", "Alaska").forEach(articles::add);
+            log.p("This will demonstrate how to serialize a CharTrie class in compressed format\n");
+            log.h3("First, we load training and testing data:");
+            List<WikiArticle> articleList = log.code(() -> {
+                return WikiArticle.ENGLISH.load().limit(1000)
+                        .filter(x -> articles.contains(x.getTitle())).limit(articles.size())
+                        .collect(Collectors.toList());
+            });
+//            List<EnglishWords> trainingList = log.code(() -> {
+//                return EnglishWords.load().collect(Collectors.toList());
+//            });
+            List<WikiArticle> trainingList = log.code(() -> {
+                return WikiArticle.ENGLISH.load()
+                        .filter(x -> x.getText().length() > 4 * 1024).filter(x -> !articles.contains(x.getTitle()))
+                        .limit(1000).collect(Collectors.toList());
+            });
+            log.h3("Then, we decompose the text into an n-gram trie:");
+            int depth = 7;
+            CharTrie referenceTrie = log.code(() -> {
+                CharTrie trie = CharTrieIndex.create(trainingList.stream().map(x -> x.getText())
+                        .collect(Collectors.toList()), depth, 0);
+                print(trie);
+                return trie;
+            });
+            articleList.forEach(testArticle->{
+                log.h2(testArticle.getTitle());
+                log.h3("Tokenization");
+                List<String> tokens = log.code(() -> {
+                    return referenceTrie.getAnalyzer().setVerbose(System.out).splitMatches(testArticle.getText(), 5);
+                });
+                log.h3("Keywords");
+                log.code(() -> {
+                    return tokens.stream().collect(Collectors.groupingBy(x->x, Collectors.counting())).entrySet().stream()
+                            .sorted(Comparator.comparing(x->-x.getValue()))
+                            .map(e->String.format("%s=%s",e.getKey(),e.getValue())).collect(Collectors.joining(", "));
                 });
             });
         }

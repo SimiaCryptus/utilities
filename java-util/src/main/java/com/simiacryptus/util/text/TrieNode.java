@@ -300,6 +300,10 @@ public class TrieNode {
     }
 
     public TrieNode getContinuation(char c) {
-        return ((Optional<TrieNode>) getChild(c)).orElseGet(()->godparent().getContinuation(c));
+        return ((Optional<TrieNode>) getChild(c)).orElseGet(() -> {
+            TrieNode godparent = godparent();
+            if(null == godparent) return null;
+            return godparent.getContinuation(c);
+        });
     }
 }
