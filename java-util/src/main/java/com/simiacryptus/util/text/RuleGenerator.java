@@ -9,12 +9,13 @@ import java.util.stream.Stream;
 public class RuleGenerator {
 
     private PrintStream verbose = null;
+    private double minLeafWeight = 5;
 
     public Function<String,Map<String,Double>> categorizationTree(Map<String,List<String>> categories, int depth) {
         return categorizationTree(categories, depth,"");
     }
 
-    public Function<String,Map<String,Double>> categorizationTree(Map<String,List<String>> categories, int depth, String indent) {
+    private Function<String,Map<String,Double>> categorizationTree(Map<String,List<String>> categories, int depth, String indent) {
         if(0 == depth) {
             return str -> {
                 int sum = categories.values().stream().mapToInt(x -> x.size()).sum();
@@ -59,7 +60,7 @@ public class RuleGenerator {
                 categoryMap.put(trie.addDocument(text), categoryNumber);
             }
         }
-        trie.index(7, 0);
+        trie.index(10, 0);
         return categorizationSubstring(trie.root(), categoryMap, sum)
                 .map(nodeInfo->nodeInfo.node.getString()).orElse("");
     }
@@ -110,6 +111,8 @@ public class RuleGenerator {
         double sumSum = sum.values().stream().mapToDouble(x -> x).sum();
         double leftSum = left.values().stream().mapToDouble(x -> x).sum();
         double rightSum = sumSum - leftSum;
+        if(rightSum < minLeafWeight) return -Double.MAX_VALUE;
+        if(leftSum < minLeafWeight) return -Double.MAX_VALUE;
         return (sum.keySet().stream().mapToDouble(category->{
             Long leftCnt = left.getOrDefault(category, 0l);
             return leftCnt * Math.log((leftCnt + smoothing) * 1.0 /(leftSum + smoothing * sum.size()));
