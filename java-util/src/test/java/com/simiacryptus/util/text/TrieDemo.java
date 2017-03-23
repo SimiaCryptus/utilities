@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -41,7 +42,7 @@ public class TrieDemo {
                         article -> article.getTitle()
                 ));
             });
-            log.p("And then compute the index trie:");
+            log.p("And then compute the index node:");
             log.code(() -> {
                 trie.index(Integer.MAX_VALUE,1);
                 print(trie);
@@ -359,6 +360,48 @@ public class TrieDemo {
     }
 
     @Test
+    @Category(TestCategories.ResearchCode.class)
+    public void demoTweetClassificationTree() throws IOException {
+        try (MarkdownPrintStream log = MarkdownPrintStream.get(this).addCopy(System.out)) {
+            int testingSize = 1000;
+            int trainingSize = 50000;
+            log.p("First, we load positive and negative sentiment tweets into two seperate models");
+            List<TweetSentiment> tweetsPositive = log.code(() -> {
+                ArrayList<TweetSentiment> list = new ArrayList<>(TweetSentiment.load()
+                        .filter(x -> x.category == 1).limit(testingSize + trainingSize).collect(Collectors.toList()));
+                Collections.shuffle(list);
+                return list;
+            });
+            List<TweetSentiment> tweetsNegative = log.code(() -> {
+                ArrayList<TweetSentiment> list = new ArrayList<>(TweetSentiment.load()
+                        .filter(x -> x.category == 0).limit(testingSize + trainingSize).collect(Collectors.toList()));
+                Collections.shuffle(list);
+                return list;
+            });
+            Function<String, Map<String, Double>> rule = log.code(()->{
+                HashMap<String, List<String>> map = new HashMap<>();
+                map.put("pos", tweetsPositive.stream().limit(trainingSize).map(x -> x.getText()).collect(Collectors.toList()));
+                map.put("neg", tweetsNegative.stream().limit(trainingSize).map(x -> x.getText()).collect(Collectors.toList()));
+                return new RuleGenerator().setVerbose(System.out).categorizationTree(map, 12);
+            });
+            log.code(()->{
+                return tweetsPositive.stream().skip(trainingSize).map(x->x.getText()).mapToDouble(str->{
+                    Map<String, Double> prob = rule.apply(str);
+                    System.out.println(String.format("%s -> %s", str, prob));
+                    return prob.getOrDefault("pos", 0.0) < 0.5 ? 0.0 : 1.0;
+                }).average().getAsDouble();
+            });
+            log.code(()->{
+                return tweetsNegative.stream().skip(trainingSize).map(x->x.getText()).mapToDouble(str->{
+                    Map<String, Double> prob = rule.apply(str);
+                    System.out.println(String.format("%s -> %s", str, prob));
+                    return prob.getOrDefault("neg", 0.0) < 0.5 ? 0.0 : 1.0;
+                }).average().getAsDouble();
+            });
+        }
+    }
+
+    @Test
     @Category(TestCategories.Report.class)
     public void demoLanguageClassification() throws IOException {
         try (MarkdownPrintStream log = MarkdownPrintStream.get(this).addCopy(System.out)) {
@@ -454,7 +497,7 @@ public class TrieDemo {
 
             log.p("This will demonstrate how to serialize a CharTrie class in compressed format\n");
 
-            log.p("First, we decompose the text into an n-gram trie:");
+            log.p("First, we decompose the text into an n-gram node:");
             List<WikiArticle> articleList = WikiArticle.ENGLISH.load()
                     .limit(1000).filter(x->articles.contains(x.getTitle())).limit(articles.size())
                     .collect(Collectors.toList());
@@ -470,7 +513,7 @@ public class TrieDemo {
                 return trie;
             });
             CharTrie trie = index.truncate();
-            log.p("\n\nThen, we compress the trie:");
+            log.p("\n\nThen, we compress the node:");
             byte[] serializedTrie = log.code(() -> {
                 print(trie);
                 byte[] bytes = new FullTrieSerializer().serialize(trie.copy());
@@ -554,7 +597,7 @@ public class TrieDemo {
                         .filter(x -> x.getText().length() > 4 * 1024).filter(x -> !articles.contains(x.getTitle()))
                         .limit(1000).collect(Collectors.toList());
             });
-            log.h3("Then, we decompose the text into an n-gram trie:");
+            log.h3("Then, we decompose the text into an n-gram node:");
             int depth = 7;
             CharTrie referenceTrie = log.code(() -> {
                 CharTrie trie = CharTrieIndex.create(trainingList.stream().map(x -> x.getText()).collect(Collectors.toList()), depth, 0);
@@ -564,9 +607,9 @@ public class TrieDemo {
             articleList.forEach(testArticle->{
                 log.h2(testArticle.getTitle());
                 CharTrie articleTrie = log.code(() -> {
-                    //CharTrie trie = CharTrieIndex.create(Arrays.asList(testArticle.getText()), depth, 0);
-                    //print(trie);
-                    return referenceTrie;//.add(trie);
+                    //CharTrie node = CharTrieIndex.create(Arrays.asList(testArticle.getText()), depth, 0);
+                    //print(node);
+                    return referenceTrie;//.add(node);
                 });
                 log.h3("Keywords");
                 log.code(() -> {
@@ -603,10 +646,10 @@ public class TrieDemo {
 //                        .filter(x -> x.getText().length() > 4 * 1024).filter(x -> !articles.contains(x.getTitle()))
 //                        .limit(1000).collect(Collectors.toList());
 //            });
-            log.h3("Then, we decompose the text into an n-gram trie:");
+            log.h3("Then, we decompose the text into an n-gram node:");
             int depth = 7;
             CharTrie referenceTrie = log.code(() -> {
-                CharTrie trie = CharTrieIndex.create(trainingList.stream().map(x -> x.getText())
+                CharTrie trie = CharTrieIndex.createWordList(trainingList.stream().map(x -> x.getText())
                         .collect(Collectors.toList()), depth, 0);
                 print(trie);
                 return trie;
@@ -637,7 +680,7 @@ public class TrieDemo {
             List<Misspelling> trainingList = log.code(() -> {
                 return Misspelling.BIRKBECK.load().collect(Collectors.toList());
             });
-            log.h3("Then, we decompose the text into an n-gram trie:");
+            log.h3("Then, we decompose the text into an n-gram node:");
             CharTrie referenceTrie = log.code(() -> {
                 List<String> list = trainingList.stream().map(x -> "|"+x.getTitle()+"|").collect(Collectors.toList());
                 CharTrie trie = CharTrieIndex.create(list, Integer.MAX_VALUE, 0);

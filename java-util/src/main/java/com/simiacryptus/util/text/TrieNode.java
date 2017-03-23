@@ -54,7 +54,18 @@ public class TrieNode {
                return new TrieNode(trie, godparentIndex);
            }
         }
-        TrieNode godparent = this.getParent().godparent().getChild(getChar()).orElseGet(()->null);
+        TrieNode parent = this.getParent();
+        TrieNode godparent;
+        if(null == parent) {
+            godparent = trie.root();
+        } else {
+            TrieNode greatgodparent = parent.godparent();
+            if(null == greatgodparent) {
+                godparent = trie.root();
+            } else {
+                godparent = greatgodparent.getChild(getChar()).orElseGet(()->null);
+            }
+        }
         if(null != trie.godparentIndex && trie.godparentIndex.length > index) {
             trie.godparentIndex[this.index] = godparent.index;
         }

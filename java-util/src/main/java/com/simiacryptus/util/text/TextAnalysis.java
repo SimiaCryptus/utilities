@@ -175,7 +175,7 @@ public class TextAnalysis {
       char temp = charArray[pos - 1];
       charArray[pos - 1] = charArray[pos];
       charArray[pos] = temp;
-      //if(null!=verbose) verbose.println("  swap left");
+      //if(null!=verbose) verbose.println("  swap categoryWeights");
       return Stream.of(new WordSpelling(new String(charArray)));
     }
 
@@ -187,7 +187,7 @@ public class TextAnalysis {
 
     private Stream<WordSpelling> mutateAddLeft(int pos) {
       Stream<Character> newCharStream = pick(getJointExpectation(leftNodes.get(pos), (0>=pos)?inner.root():rightNodes.get(pos-1)));
-      //if(null!=verbose) verbose.println("  mutate left: " + newChar);
+      //if(null!=verbose) verbose.println("  mutate categoryWeights: " + newChar);
       return newCharStream.map(newChar->new WordSpelling(text.substring(0,pos)+newChar+text.substring(pos)));
     }
 

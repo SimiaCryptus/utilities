@@ -90,7 +90,27 @@ public class CharTrieIndex extends CharTrie {
 
   /**
    * Adds a document to be indexed. This can only be performed before splitting.
-   * 
+   *
+   * @param document
+   * @return this
+   */
+  public int addDictionary(String document) {
+    if (root().getNumberOfChildren() >= 0)
+      throw new IllegalStateException("Tree sorting has begun");
+    final int index;
+    synchronized (this) {
+      index = documents.size();
+      documents.add(document);
+    }
+    cursors.addAll(
+            IntStream.range(0, 1).mapToObj(i -> new CursorData(index, i)).collect(Collectors.toList()));
+    nodes.update(0, node -> node.setCursorCount(cursors.length()));
+    return index;
+  }
+
+  /**
+   * Adds a document to be indexed. This can only be performed before splitting.
+   *
    * @param document
    * @return this
    */
@@ -103,7 +123,7 @@ public class CharTrieIndex extends CharTrie {
       documents.add(document);
     }
     cursors.addAll(
-        IntStream.range(0, document.length() + 1).mapToObj(i -> new CursorData(index, i)).collect(Collectors.toList()));
+            IntStream.range(0, document.length() + 1).mapToObj(i -> new CursorData(index, i)).collect(Collectors.toList()));
     nodes.update(0, node -> node.setCursorCount(cursors.length()));
     return index;
   }
@@ -132,23 +152,38 @@ public class CharTrieIndex extends CharTrie {
     return root().traverse(search);
   }
 
-    public static CharTrie create(Collection<String> documents, int maxLevels, int minWeight) {
-      List<List<String>> a = new ArrayList<>();
-      List<String> b = new ArrayList<>();
-      int blockSize = 1024 * 1024;
-      for(String s : documents) {
-        b.add(s);
-        if(b.stream().mapToInt(x->x.length()).sum() > blockSize) {
-          a.add(b);
-          b = new ArrayList<>();
-        }
+  public static CharTrie create(Collection<String> documents, int maxLevels, int minWeight) {
+    return _create(documents, maxLevels, minWeight, false);
+  }
+
+  public static CharTrie createWordList(Collection<String> documents, int maxLevels, int minWeight) {
+    return _create(documents, maxLevels, minWeight, true);
+  }
+
+  private static CharTrie _create(Collection<String> documents, int maxLevels, int minWeight, boolean words) {
+    List<List<String>> a = new ArrayList<>();
+    List<String> b = new ArrayList<>();
+    int blockSize = 1024 * 1024;
+    for(String s : documents) {
+      b.add(s);
+      if(b.stream().mapToInt(x->x.length()).sum() > blockSize) {
+        a.add(b);
+        b = new ArrayList<>();
       }
-      a.add(b);
-      return a.parallelStream().map(list->{
-        CharTrieIndex trie = new CharTrieIndex();
-        list.forEach(s->trie.addDocument(s));
-        trie.index(maxLevels, minWeight);
-        return (CharTrie) trie;
-      }).reduce((l,r)->l.add(r)).get();
     }
+    a.add(b);
+    return a.parallelStream().map(list->{
+      CharTrieIndex trie = new CharTrieIndex();
+      list.forEach(s->{
+        if(words) {
+          trie.addDictionary(s);
+        } else {
+          trie.addDocument(s);
+        }
+      });
+      trie.index(maxLevels, minWeight);
+      return (CharTrie) trie;
+    }).reduce((l,r)->l.add(r)).get();
+  }
+
 }
