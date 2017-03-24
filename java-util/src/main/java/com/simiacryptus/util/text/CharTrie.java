@@ -37,6 +37,33 @@ public class CharTrie {
       return new TrieNode(this, 0, null);
     }
 
+    synchronized void ensureParentIndexCapacity(int start, int length, int parentId) {
+        int end = start + length;
+        if(null == parentIndex) {
+            parentIndex = new int[end];
+            Arrays.fill(parentIndex, parentId);
+        } else {
+            int newLength = parentIndex.length;
+            while(newLength < end) newLength *= 2;
+            if(newLength > parentIndex.length) {
+                parentIndex = Arrays.copyOfRange(parentIndex,0, newLength);
+                Arrays.fill(parentIndex, end, newLength, -1);
+            }
+            Arrays.fill(parentIndex, start, end, parentId);
+        }
+        if(null == godparentIndex) {
+            godparentIndex = new int[end];
+            Arrays.fill(godparentIndex, -1);
+        } else {
+            int newLength = godparentIndex.length;
+            while(newLength < end) newLength *= 2;
+            if(newLength > godparentIndex.length) {
+                godparentIndex = Arrays.copyOfRange(godparentIndex,0, newLength);
+                Arrays.fill(godparentIndex, end, newLength, -1);
+            }
+        }
+    }
+
     public CharTrie reverse() {
         CharTrie result = new CharTrieIndex();
         TreeMap<Character, ? extends TrieNode> childrenMap = root().getChildrenMap();
@@ -272,4 +299,5 @@ public class CharTrie {
     public boolean contains(String text) {
         return traverse(text).getString().endsWith(text);
     }
+
 }

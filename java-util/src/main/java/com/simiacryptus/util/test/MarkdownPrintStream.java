@@ -77,8 +77,8 @@ public class MarkdownPrintStream extends PrintStream {
     public <T> T code(Supplier<T> fn, int maxLog, int framesNo) {
         try {
             StackTraceElement callingFrame = Thread.currentThread().getStackTrace()[framesNo];
-            TimedResult<SysOutInterceptor.LoggedResult<T>> result = TimedResult.time(() -> SysOutInterceptor.withOutput(() -> fn.get()));
             String sourceCode = getInnerText(callingFrame);
+            TimedResult<SysOutInterceptor.LoggedResult<T>> result = TimedResult.time(() -> SysOutInterceptor.withOutput(() -> fn.get()));
             out("Code from [%s:%s](%s#L%s) executed in %.2f seconds: ",
                     callingFrame.getFileName(), callingFrame.getLineNumber(),
                     pathTo(file.getParentFile(), findFile(callingFrame)), callingFrame.getLineNumber(), result.seconds());

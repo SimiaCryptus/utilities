@@ -42,11 +42,15 @@ public class TrieTest {
         Assert.assertEquals("te", tree.traverse("te").getString());
         Assert.assertEquals(3, tree.traverse("te").getCursorCount());
         Assert.assertEquals(1, tree.traverse("dog").getCursorCount());
-        Assert.assertEquals("do", tree.traverse("dog").getString());
+        Assert.assertEquals("dog", tree.traverse("dog").getString());
         Assert.assertEquals(1, tree.traverse("do").getCursorCount());
         Assert.assertEquals(6, tree.traverse("o").getCursorCount());
         Assert.assertEquals(3, tree.traverse("test").getCursorCount());
         Assert.assertEquals("tes", tree.traverse("test").getString());
+        Assert.assertEquals(2, tree.traverse("this ").getCursorCount());
+        Assert.assertEquals(1, tree.traverse(" dog").getCursorCount());
+        Assert.assertEquals(1, tree.traverse("dog").getCursorCount());
+        Assert.assertEquals(1, tree.traverse("a quick").getCursorCount());
     }
 
     @Test

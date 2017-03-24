@@ -95,6 +95,7 @@ public class SerialArrayList<U> {
         duplicate.position(unitSize * i);
         return duplicate;
     }
+
     private synchronized void ensureCapacity(int bytes) {
         if(maxByte < bytes) {
             maxByte = bytes;
@@ -106,13 +107,13 @@ public class SerialArrayList<U> {
         }
     }
 
-    public int addAll(Collection<U> data) {
+    public synchronized int addAll(Collection<U> data) {
         int startIndex = length();
         putAll(data, startIndex);
         return startIndex;
     }
 
-    public void putAll(Collection<U> data, int startIndex) {
+    public synchronized void putAll(Collection<U> data, int startIndex) {
         putAll(new SerialArrayList<U>(factory, data), startIndex);
     }
 

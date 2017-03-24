@@ -66,7 +66,7 @@ public class CharTrieIndex extends CharTrie {
    * @return this
    */
   public CharTrieIndex index(int maxLevels) {
-    return index(maxLevels, 1);
+    return index(maxLevels, 0);
   }
 
   /**
@@ -81,9 +81,13 @@ public class CharTrieIndex extends CharTrie {
    */
   public CharTrieIndex index(int maxLevels, int minWeight) {
     root().visitFirst(node -> {
-      if (node.getDepth() < maxLevels && node.getCursorCount() > minWeight
-          && (node.getChar() != PPMCodec.END_OF_STRING || node.getDepth() == 0))
+      TrieNode godparent = node.godparent();
+      if (node.getDepth() < maxLevels &&
+              (null==godparent || godparent.getCursorCount() > minWeight) &&
+              (node.getChar() != PPMCodec.END_OF_STRING || node.getDepth() == 0))
+      {
         ((IndexNode)node).split();
+      }
     });
     return this;
   }
@@ -123,7 +127,7 @@ public class CharTrieIndex extends CharTrie {
       documents.add(document);
     }
     cursors.addAll(
-            IntStream.range(0, document.length() + 1).mapToObj(i -> new CursorData(index, i)).collect(Collectors.toList()));
+            IntStream.range(0, document.length()+1).mapToObj(i -> new CursorData(index, i)).collect(Collectors.toList()));
     nodes.update(0, node -> node.setCursorCount(cursors.length()));
     return index;
   }
@@ -152,15 +156,15 @@ public class CharTrieIndex extends CharTrie {
     return root().traverse(search);
   }
 
-  public static CharTrie create(Collection<String> documents, int maxLevels, int minWeight) {
-    return _create(documents, maxLevels, minWeight, false);
+  public static CharTrie indexWords(Collection<String> documents, int maxLevels, int minWeight) {
+    return create(documents, maxLevels, minWeight, true);
   }
 
-  public static CharTrie createWordList(Collection<String> documents, int maxLevels, int minWeight) {
-    return _create(documents, maxLevels, minWeight, true);
+  public static CharTrie indexFulltext(Collection<String> documents, int maxLevels, int minWeight) {
+    return create(documents, maxLevels, minWeight, false);
   }
 
-  private static CharTrie _create(Collection<String> documents, int maxLevels, int minWeight, boolean words) {
+  private static CharTrie create(Collection<String> documents, int maxLevels, int minWeight, boolean words) {
     List<List<String>> a = new ArrayList<>();
     List<String> b = new ArrayList<>();
     int blockSize = 1024 * 1024;

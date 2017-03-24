@@ -11,8 +11,12 @@ import java.util.stream.Stream;
 
 public class IndexNode extends TrieNode {
 
-  public IndexNode(CharTrie charTrieIndex, short depth, int index, TrieNode parent) {
-    super(charTrieIndex, index, parent);
+  public IndexNode(CharTrie trie, short depth, int index, TrieNode parent) {
+    super(trie, index, parent);
+  }
+
+  public IndexNode(CharTrie trie, int index) {
+    super(trie, index);
   }
 
   public Map<String, List<Cursor>> getCursorsByDocument() {
@@ -40,14 +44,23 @@ public class IndexNode extends TrieNode {
         childNodes.add(new NodeData(e.getKey(), (short) -1, -1, length, cursorWriteIndex));
         cursorWriteIndex += length;
       }
-      this.trie.nodes.update(index, data -> data
-          .setFirstChildIndex(this.trie.nodes.addAll(childNodes))
-          .setNumberOfChildren((short) childNodes.size())
-          );
+      int firstChildIndex = this.trie.nodes.addAll(childNodes);
+      short size = (short) childNodes.size();
+      trie.ensureParentIndexCapacity(firstChildIndex, size, index);
+      this.trie.nodes.update(index, data -> {
+        return data
+                .setFirstChildIndex(firstChildIndex)
+                .setNumberOfChildren(size);
+      });
       return new IndexNode(this.trie, getDepth(), index, getParent());
     } else {
       return this;
     }
+  }
+
+  @Override
+  protected TrieNode newNode(int index) {
+    return new IndexNode(trie, index);
   }
 
   @Override

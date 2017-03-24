@@ -363,8 +363,8 @@ public class TrieDemo {
     @Category(TestCategories.ResearchCode.class)
     public void demoTweetClassificationTree() throws IOException {
         try (MarkdownPrintStream log = MarkdownPrintStream.get(this).addCopy(System.out)) {
-            int testingSize = 1000;
-            int trainingSize = 50000;
+            int testingSize = 10000;
+            int trainingSize = 5000;
             log.p("First, we load positive and negative sentiment tweets into two seperate models");
             List<TweetSentiment> tweetsPositive = log.code(() -> {
                 ArrayList<TweetSentiment> list = new ArrayList<>(TweetSentiment.load()
@@ -382,7 +382,7 @@ public class TrieDemo {
                 HashMap<String, List<String>> map = new HashMap<>();
                 map.put("pos", tweetsPositive.stream().limit(trainingSize).map(x -> x.getText()).collect(Collectors.toList()));
                 map.put("neg", tweetsNegative.stream().limit(trainingSize).map(x -> x.getText()).collect(Collectors.toList()));
-                return new RuleGenerator().setVerbose(System.out).categorizationTree(map, 12);
+                return new ClassificationTree().setVerbose(System.out).categorizationTree(map, 16);
             });
             log.code(()->{
                 return tweetsPositive.stream().skip(trainingSize).map(x->x.getText()).mapToDouble(str->{
@@ -420,13 +420,13 @@ public class TrieDemo {
                         .limit(testingSize + trainingSize).collect(Collectors.toList()));
             });
             CharTrie trieEnglish = log.code(() -> {
-                CharTrie charTrie = CharTrieIndex.create(english.subList(0,trainingSize)
+                CharTrie charTrie = CharTrieIndex.indexFulltext(english.subList(0,trainingSize)
                         .stream().map(x->x.getText()).collect(Collectors.toList()), maxLevels, minWeight);
                 print(charTrie);
                 return charTrie;
             });
             CharTrie trieFrench = log.code(() -> {
-                CharTrie charTrie = CharTrieIndex.create(french.subList(testingSize,french.size())
+                CharTrie charTrie = CharTrieIndex.indexFulltext(french.subList(testingSize,french.size())
                         .stream().map(x->x.getText()).collect(Collectors.toList()), maxLevels, minWeight);
                 print(charTrie);
                 return charTrie;
@@ -600,7 +600,7 @@ public class TrieDemo {
             log.h3("Then, we decompose the text into an n-gram node:");
             int depth = 7;
             CharTrie referenceTrie = log.code(() -> {
-                CharTrie trie = CharTrieIndex.create(trainingList.stream().map(x -> x.getText()).collect(Collectors.toList()), depth, 0);
+                CharTrie trie = CharTrieIndex.indexFulltext(trainingList.stream().map(x -> x.getText()).collect(Collectors.toList()), depth, 0);
                 print(trie);
                 return trie;
             });
@@ -649,7 +649,7 @@ public class TrieDemo {
             log.h3("Then, we decompose the text into an n-gram node:");
             int depth = 7;
             CharTrie referenceTrie = log.code(() -> {
-                CharTrie trie = CharTrieIndex.createWordList(trainingList.stream().map(x -> x.getText())
+                CharTrie trie = CharTrieIndex.indexWords(trainingList.stream().map(x -> x.getText())
                         .collect(Collectors.toList()), depth, 0);
                 print(trie);
                 return trie;
@@ -683,7 +683,7 @@ public class TrieDemo {
             log.h3("Then, we decompose the text into an n-gram node:");
             CharTrie referenceTrie = log.code(() -> {
                 List<String> list = trainingList.stream().map(x -> "|"+x.getTitle()+"|").collect(Collectors.toList());
-                CharTrie trie = CharTrieIndex.create(list, Integer.MAX_VALUE, 0);
+                CharTrie trie = CharTrieIndex.indexFulltext(list, Integer.MAX_VALUE, 0);
                 print(trie);
                 return trie;
             });

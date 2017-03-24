@@ -21,17 +21,18 @@ public class TrieNode {
     private transient NodeData data;
 
     public TrieNode(CharTrie trie, int index) {
+        assert(0<=index);
+        assert(trie.parentIndex[index]>=0);
         this.trie = trie;
-        assert(depth < 100);
         this.index = index;
     }
 
     public TrieNode(CharTrie trie, int index, TrieNode parent) {
+        assert(0<=index);
         this.trie = trie;
-        this.depth = (short) (null==parent?0:(parent.depth+1));
-        assert(depth < 100);
         this.index = index;
         this.parent = parent;
+        assert(null == trie.parentIndex || 0 == index || trie.parentIndex[index]>=0);
     }
 
     NodeData getData() {
@@ -51,7 +52,7 @@ public class TrieNode {
         if(null != trie.godparentIndex && trie.godparentIndex.length > index) {
             int godparentIndex = trie.godparentIndex[this.index];
             if(godparentIndex >= 0) {
-               return new TrieNode(trie, godparentIndex);
+               return newNode(godparentIndex);
            }
         }
         TrieNode parent = this.getParent();
@@ -66,10 +67,14 @@ public class TrieNode {
                 godparent = greatgodparent.getChild(getChar()).orElseGet(()->null);
             }
         }
-        if(null != trie.godparentIndex && trie.godparentIndex.length > index) {
+        if(null != godparent && null != trie.godparentIndex && trie.godparentIndex.length > index) {
             trie.godparentIndex[this.index] = godparent.index;
         }
         return godparent;
+    }
+
+    protected TrieNode newNode(int index) {
+        return new TrieNode(trie, index);
     }
 
     public TrieNode refresh() {
@@ -132,6 +137,7 @@ public class TrieNode {
             synchronized(this) {
                 if(-1 == depth) {
                     TrieNode parent = getParent();
+                    assert(null == parent || parent.index < index);
                     depth = (short) (null==parent?0:(parent.getDepth() + 1));
                 }
             }
@@ -266,6 +272,7 @@ public class TrieNode {
             if(v > 0) trie.nodes.add(new NodeData(k, (short) -1, -1, v, -1));
         });
         short length = (short) (trie.nodes.length() - firstIndex);
+        trie.ensureParentIndexCapacity(firstIndex, length, index);
         update(n -> n.setFirstChildIndex(firstIndex).setNumberOfChildren(length));
         data = null;
     }
@@ -300,10 +307,12 @@ public class TrieNode {
     }
 
     public TrieNode getParent() {
+        if(0==index) return null;
         if(null == parent && -1 == depth) {
             synchronized (this) {
                 if(null == parent) {
-                    parent = new TrieNode(trie, trie.parentIndex[index]);
+                    parent = newNode(trie.parentIndex[index]);
+                    assert(parent.index < index);
                 }
             }
         }
