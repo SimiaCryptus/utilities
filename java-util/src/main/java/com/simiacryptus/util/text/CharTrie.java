@@ -58,8 +58,9 @@ public class CharTrie {
             int newLength = godparentIndex.length;
             while(newLength < end) newLength *= 2;
             if(newLength > godparentIndex.length) {
+                int prevLength = godparentIndex.length;
                 godparentIndex = Arrays.copyOfRange(godparentIndex,0, newLength);
-                Arrays.fill(godparentIndex, end, newLength, -1);
+                Arrays.fill(godparentIndex, prevLength, newLength, -1);
             }
         }
     }

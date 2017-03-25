@@ -5,6 +5,7 @@ import com.simiacryptus.util.data.SerialArrayList;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -80,15 +81,31 @@ public class CharTrieIndex extends CharTrie {
    * @return this
    */
   public CharTrieIndex index(int maxLevels, int minWeight) {
-    root().visitFirst(node -> {
-      TrieNode godparent = node.godparent();
-      if (node.getDepth() < maxLevels &&
-              (null==godparent || godparent.getCursorCount() > minWeight) &&
-              (node.getChar() != PPMCodec.END_OF_STRING || node.getDepth() == 0))
-      {
-        ((IndexNode)node).split();
+    
+    AtomicInteger numberSplit = new AtomicInteger(0);
+    int depth = -1;
+    do{
+      numberSplit.set(0);
+      if(0 == ++depth) {
+        numberSplit.incrementAndGet();
+        root().split();
+      } else {
+        root().streamDecendents(depth).forEach(node->{
+          TrieNode godparent = node.godparent();
+          if (node.getDepth() < maxLevels)
+          {
+            if (null==godparent || godparent.getCursorCount() > minWeight)
+            {
+              if (node.getChar() != PPMCodec.END_OF_STRING || node.getDepth() == 0)
+              {
+                ((IndexNode)node).split();
+                numberSplit.incrementAndGet();
+              }
+            }
+          }
+        });
       }
-    });
+    } while(numberSplit.get() > 0);
     return this;
   }
 

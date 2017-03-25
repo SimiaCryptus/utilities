@@ -78,34 +78,51 @@ public class MarkdownPrintStream extends PrintStream {
         try {
             StackTraceElement callingFrame = Thread.currentThread().getStackTrace()[framesNo];
             String sourceCode = getInnerText(callingFrame);
-            TimedResult<SysOutInterceptor.LoggedResult<T>> result = TimedResult.time(() -> SysOutInterceptor.withOutput(() -> fn.get()));
+            SysOutInterceptor.LoggedResult<TimedResult<Object>> result = SysOutInterceptor.withOutput(() -> {
+                try {
+                    return TimedResult.time(() -> fn.get());
+                } catch (Throwable e) {
+                    return new TimedResult(e,0);
+                }
+            });
             out("Code from [%s:%s](%s#L%s) executed in %.2f seconds: ",
                     callingFrame.getFileName(), callingFrame.getLineNumber(),
-                    pathTo(file.getParentFile(), findFile(callingFrame)), callingFrame.getLineNumber(), result.seconds());
+                    pathTo(file.getParentFile(), findFile(callingFrame)), callingFrame.getLineNumber(), result.obj.seconds());
             out("```java");
             out("  " + sourceCode.replaceAll("\n","\n  "));
             out("```");
-            T eval = result.obj.obj;
+            Object eval = result.obj.obj;
             out("Returns: ");
             out("```");
-            String valTxt = eval.toString().replaceAll("\n", "\n    ");
+            String str;
+            if(result.obj.obj instanceof Throwable) {
+                ByteArrayOutputStream out = new ByteArrayOutputStream();
+                ((Throwable) result.obj.obj).printStackTrace(new PrintStream(out));
+                str = new String(out.toByteArray(), "UTF-8");
+            } else {
+                str = eval.toString();
+            }
+            String valTxt = str.replaceAll("\n", "\n    ");
             if(valTxt.length() > maxLog) {
                 valTxt = valTxt.substring(0, maxLog) + String.format("... and %s more bytes", valTxt.length() - maxLog);
             }
             out("    " + valTxt);
             out("```");
-            if(!result.obj.log.isEmpty()) {
+            if(!result.log.isEmpty()) {
                 out("Logging: ");
                 out("```");
-                String logSrc = result.obj.log.replaceAll("\n", "\n    ");
-                if(logSrc.length() > maxLog) {
-                    logSrc = logSrc.substring(0, maxLog) + String.format("... and %s more bytes", logSrc.length() - maxLog);
+                String logSrc = result.log;
+                if(logSrc.length() > maxLog * 2) {
+                    logSrc = logSrc.substring(0, maxLog) + String.format("\n...skipping %s bytes...\n", logSrc.length() - 2 * maxLog) + logSrc.substring(logSrc.length()-maxLog);
+                } else if(logSrc.length() > 0){
+                    logSrc = logSrc;
                 }
+                logSrc = logSrc.replaceAll("\n", "\n    ");
                 out("    " + logSrc);
                 out("```");
             }
             out("");
-            return eval;
+            return (T) eval;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

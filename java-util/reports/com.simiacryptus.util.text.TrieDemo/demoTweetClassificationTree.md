@@ -1,6 +1,6 @@
 First, we load positive and negative sentiment tweets into two seperate models
 
-Code from [TrieDemo.java:369](../../src/test/java/com/simiacryptus/util/text/TrieDemo.java#L369) executed in 1.22 seconds: 
+Code from [TrieDemo.java:369](../../src/test/java/com/simiacryptus/util/text/TrieDemo.java#L369) executed in 4.02 seconds: 
 ```java
       ArrayList<TweetSentiment> list = new ArrayList<>(TweetSentiment.load()
               .filter(x -> x.category == 1).limit(testingSize + trainingSize).collect(Collectors.toList()));
@@ -9,10 +9,10 @@ Code from [TrieDemo.java:369](../../src/test/java/com/simiacryptus/util/text/Tri
 ```
 Returns: 
 ```
-    [TweetSentiment{title='@Adam9309 good morning my wee darling!...*waving*'}, TweetSentiment{title='@48StatesAway Flurry of Twitter weirdnesses the last hour or so  Email me @ insomniacgrafx@mac.com and we can talk about your logo!'}, TweetSentiment{title='' @minghao Maybe you can pop @StarHubCares a tweet. They are quite active on twitter.'}, TweetSentiment{title='@_yoyo Sweet! Name your price chicklet. DM me please'}, TweetSentiment{title='@agir  saw your email! Will send a response in a bit!'}, TweetSentiment{title='"@acarback.  yes'}, TweetSentiment{title='...but at least i'm ticket free'}, TweetSentiment{title='? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ?    ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ?     ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? ?  twitterart'}, TweetSentiment{title='- last minute 3-hour session in the studio...just got done. tired.'}, TweetSentiment{title='#followfriday @aceweekly @pkoduri @KimmyVille @robmorris2 all are really smart and have good things to say'}, TweetSentiment{title='&quot;My name's Pitt. And your ass ain't talkin' your way out of this shit. &quot; (watchin' Pulp fiction)'}, TweetSentiment{title='@ ThornesWorld Thanks for the follow - it's nice to meet you! BB'}, TweetSentiment{title='@a_liss_a I rate you my most interesting person I follow!!'}, TweetSentiment{title='"@AceMas21 Yeah'}, TweetSentiment{title='#dreamwidth invites are all gone for now! I'll offer up some more on here when I get them'}, TweetSentiment{title='@1sweetwhirl yw hun. You put up some good stuff  Hope you're good.'}, TweetSentiment{title='"#uptime 20:24  up 6 days'}, TweetSentiment{title='#musicmonday : Evanesence (Spell check) This group is on point like a thorn.'}, TweetSentiment{title='@_MisterG Hope the tests for your Dad go well.'}, TweetSentiment{title='"@AbbeyEmm Haha. If you like him'}, TweetSentiment{title='&quot;@mom&quot;where are you  that Miley write with you ????I write to Miley but Miley never answered =( what am I to do that Miley write with me??'}, TweetSentiment{title='.@BlowhornOz thanks mate!!! you ROCK!!  #NoUndiesSunday'}, TweetSentiment{title='"@ACC_ Thanks so much!!! and good night  it's 2 am here'}, TweetSentiment{title='@Ahmad_Alharthi ?? ???????'}, TweetSentiment{title='@mgph3nom chilling on twitter via my spanking new blackberry w/ unlimited internet : http://tr.im/mZVC'}, TweetSentiment{title='"#WhyITweet? For instant WOM recommendations and info for work'}, TweetSentiment{title='@A12291994 you are lame  go make me breakfast!!'}, TweetSentiment{title='(Trying to) Manage his projects among raptors'}, TweetSentiment{title='. @ronnieledesma I don't know... K! So are you going to beat box on Wed. I created a list on my FB if you want some ideas'}, TweetSentiment{title='"#followfriday @mamakelly'}, TweetSentiment{title='@ABROWN314 hey teets'}, TweetSentiment{title='@aahoogendoorn Interesting. I am looking forward to your new insights...'}, TweetSentiment{title='"@_BRENDUHHH_  and that's my suggestions.  they're all diff genres so maybe you'll like them'}, TweetSentiment{title='....coming to America!'}, TweetSentiment{title='... years. In Maths (D I've got Jamie which isn't too bad'}, TweetSentiment{title='@1000wattmarc well that's the problem with thinking this is as easy as breathing.'}, TweetSentiment{title='@64Colors Congrats again guys. You two rule!! Now when are we gonna get pics.'}, TweetSentiment{title='"#followfriday gal that is very Tweet &amp; lots of fun. Check out @passionsista &amp; follow her'}, TweetSentiment{title='@ elises_url u don't even know!  But robert pattinson makes up for it'}, TweetSentiment{title='@Aarathon Yes!  Do it!   I'm in the lottery.'}, TweetSentiment{title='things just might be turning around. *Knocks on wood*'}, TweetSentiment{title='#FollowFriday @kocanuts_com @rosstimson @ashleyemma @joe_carney  @SimpleCMS @colbywright @ianoxley @onion2k @AndyTait @scottjsalisbury'}, TweetSentiment{title='#FollowFriday @Mia__Cavallo my Lil Sis who is a wonderful person to have around and she plays some mighty tracks!!!'}, TweetSentiment{title='@ahj just pretend you are a student - have to wear creased thingy for weeks on end'}, TweetSentiment{title='( Give me back 1976   ABBA - Dancing Queen Live http://bit.ly/vJkYs'}, TweetSentiment{title='#musicmonday listening to the  &quot;cut copy&quot; station along with &quot;MGMT&quot; on Pandora.com!'}, TweetSentiment{title=': Had a healthy weekend by going for a jog before saying goodbye to Sun..'}, TweetSentiment{title='".@nik_kee_dee well'}, TweetSentiment{title='#followfriday My girl who always makes time to reply to me when she can @BabygirlsoMajor  Love ya'}, TweetSentiment{title='???????????  She has a good point and weak point extremely. Funny'}, TweetSentiment{title='..is watching Enchanted with my babeee Hayley'}, TweetSentiment{title='"@AgataAlexander Thats one reason Im 50/50 about moving'}, TweetSentiment{title='"@aaamylee Bacon'}, TweetSentiment{title='@accidbrrittanny lol hey'}, TweetSentiment{title='&quot;@MandyyJirouxx&quot; hi mandy you are really pretty  I love the Miley and mandy show write me back pls'}, TweetSentiment{title='(drum roll) please welcome Christian Retailing (@christianretail) to Twitter! Follow for latest industry news. retweets appreciated.'}, TweetSentiment{title='@_E13_ yeah ..i'm not normal  LOL'}, TweetSentiment{title='@_Bryony_ Brilliant pics! Thanks for sharing'}, TweetSentiment{title='@11640447 when I get on the computer... we gotta take more later on in the week!'}, TweetSentiment{title='"*smacks head* NOOOOO!! Not exams!! I dont want to do the Human biology exam on Fridayy'}, TweetSentiment{title=': don't forget to watch School Rumbel at Multimedia Saturday 20 June 2009  4 o'clock. Thanx'}, TweetSentiment{title='#whatif I was a boy'}, TweetSentiment{title='"&quot;select /*+ ALL_ROWS */ * from Table&quot; A new way to do Queries... outstanding performance'}, TweetSentiment{title='@_yps Ð¼Ð¾Ð¹ Ñ‚ÐµÐ±Ðµ Ñ?Ð¾Ð²ÐµÑ‚ Ð¸Ð·Ð±Ð°Ð²ÑŒÑ?Ñ? Ð¾Ñ‚ Ð½ÐµÑ‘ Ðº Ñ…ÑƒÑ?Ð¼'}, TweetSentiment{title='@AcrossTheSkies Thanks for that haha.  The randoms do seem a bit rigged though.'}, TweetSentiment{title='"@aarongillespie didn't have you down as a Coldplay fan'}, TweetSentiment{title='"?????? twitter-account @NicePlaces ??? ??????? ????? ?????????? ????? www.Nice-Places.com. ?????????'}, TweetSentiment{title='"$25 mani-pedi @ denovo - only for today'}, TweetSentiment{title='*Sigh* I Love You my Jim Sturgess..'}, TweetSentiment{title='"&quot;Enjoy when you can'}, TweetSentiment{title='"&quot;she's like the wind... &quot; yea'}, TweetSentiment{title='"@_supernatual_ Give me some Dean tied up Pron'}, TweetSentiment{title='You have a faible for white legwear. But the pullover made in Ecudaor makes it a really cool outfit! http://lookbook.nu/look/154014'}, TweetSentiment{title='just finished 10k run and already booking in for more in the coming months! Such fun!'}, TweetSentiment{title='@72prufrocks You shouldn't expect absolute perfection'}, TweetSentiment{title='@ Antsje having a great time! Just went for a walk with the 2 little kids . so cute!!!'}, TweetSentiment{title='@ jscott1092 thank u! it worked!'}, TweetSentiment{title='smile GOD loves you'}, TweetSentiment{title='@aaamylee Hey! No shame in using trending to advantage  And so agree about spammers! Care to add a nice Englishman? x'}, TweetSentiment{title='Good morning sunshine!!!'}, TweetSentiment{title='"@aalaap cool'}, TweetSentiment{title='@4ut my twongue is twired'}, TweetSentiment{title='???????????! Coffee time with some chocolate'}, TweetSentiment{title='"@_Angeline_ they should make where it makes it easier to add @ replies so u don't need to type as much. I know'}, TweetSentiment{title='@adamgoldston   WHOOHOOOO!!!!  That's my team!!!!    ........I got a friend...........sniff sniff'}, TweetSentiment{title='@1sweetwhirl Sounds like you had a good one.  Mine was a little crappy.  Better luck nxt wkend.'}, TweetSentiment{title='#FOLLOW @PrincessSuperC Tha Very Talented Singer/Song Writer Ciara!!  FOLLOW Her Y'all!!!'}, TweetSentiment{title='&quot;He's just not that into you...&quot; &lt;3 this movie!'}, TweetSentiment{title='@abirtmo im good haha im goin to nj soon to see my family. we should meet up at the garden state plaza hah'}, TweetSentiment{title='#followfriday @MyChemChat'}, TweetSentiment{title='@1045CHUMFM # PLS///THX!!! XOXO'}, TweetSentiment{title='@aaronlafferty Haha! I can see that now!'}, TweetSentiment{title='"@5w Thanks'}, TweetSentiment{title='@30SECONDSTOMARS Hello Steve'}, TweetSentiment{title='*caugh* *caugh* I am ... Darth Batman!  http://hex.io/kkf  most brilliant crossover ever'}, TweetSentiment{title='@118247 yeah I love it!! It's screams 'weebl' at me but that's why I like it.. It's very cool and catchy'}, TweetSentiment{title='"@_shutupandsmile ow  .. we go back to your last avatar'}, TweetSentiment{title='#myweakness - hmm choc chip cookies  &amp; ferrero rocher MILKSHAKE!'}, TweetSentiment{title='&quot;Your leffe moments&quot; alltsÃ¥  [?]'}, TweetSentiment{title='@24websurf NOW I'm having ice cream!!!'}, TweetSentiment{title='**Writing**....finishing up this script!&quot; FINALLY! haha'}, TweetSentiment{title='#myweakness Slow dancing to Tim McGraw!'}, TweetSentiment{title='@abstanfield Beet greens ROCK!  They're my favorite. Glad you liked my recipe!'}, TweetSentiment{title='@aeg0707 Thanks friend!! Will do! I am SO excited! Let's catch up when I get back'}, TweetSentiment{title='"@21O3 wow! 1'}, TweetSentiment{title='sierra's gon' be super-sierra and invade my brother's hideout in graffiti town to go interrogate him. goodbye twitter. &lt;3'}, TweetSentiment{title='@addictedtotext yes its called hippie'}, TweetSentiment{title='"@afeeqnadzrin8 yeah but the way Adam sang it made it pitchy'}, TweetSentiment{title='@aarteepotnis Do you want to swap weather for a bit?'}, TweetSentiment{title='@10isjess  they can play poker while we do nkotb stuff  just a thought.'}, TweetSentiment{title='@adamoxford Thanks for all the tweets - it's been fascinating'}, TweetSentiment{title='....These spam bots here on twitter are getting super annoying. FIX THIS NOW TWITTER.'}, TweetSentiment{title='"#techdays_ca 2009 reg is near'}, TweetSentiment{title='@_supernatural_ thanks for making my day'}, TweetSentiment{title='#followfriday @LifeRollsOn @LifeRollsOnPD @mystorybooklady @rmilana @markhundley @rdelizo34 @Gamerchix_Kelly @sweeethart427 --great ppl'}, TweetSentiment{title='"&quot;you look a little pink&quot; was an understatment. an hour later and i'm definitely burned. not too bad'}, TweetSentiment{title='"&quot;If you change your mind'}, TweetSentiment{title='#followfriday gutzanu'}, TweetSentiment{title='@Aarooooon tell Cassia I say hello'}, TweetSentiment{title='@ahmedzainal thanks man off course friends 4 good'}, TweetSentiment{title='@2Mini i will have gotten many awards then'}, TweetSentiment{title='"@AdamParnell  Nah'}, TweetSentiment{title='"@acidsmile morning morning'}, TweetSentiment{title='@_Alectrona_ thanks love.  x'}, TweetSentiment{title='"#1 son'}, TweetSentiment{title='"&quot;Tell me all your dreams'}, TweetSentiment{title='@Aamyhaanson Okey dokey.  &lt;3MyBlackBird&lt;3'}, TweetSentiment{title='"(Yes'}, TweetSentiment{title='@09 Get 100 followers a day using www.tweeterfollow.com Once you add everyone you are on the train or pay vip'}, TweetSentiment{title='@_Kel_ I want Rocky Raccoon'}, TweetSentiment{title='@8leo i'm so jealous!! you'll have such a cool time though'}, TweetSentiment{title='"@_CrC_ Happy 30th'}, TweetSentiment{title='"@abramsandbettes Would love to stay &amp; tweet w/ ya'}, TweetSentiment{title='#FollowFriday @NickCharney for giving me faith that there is a hope in hell for the public sector'}, TweetSentiment{title='"- toothache subsiding'}, TweetSentiment{title='off to California!!!!'}, TweetSentiment{title='"@abby_mcfly heya'}, TweetSentiment{title='Home sweet home (: finally back XD'}, TweetSentiment{title='@262RUNR thanks for the follow friday love  any fun plans for the long weekend besides being at the marathon?'}, TweetSentiment{title='.. is having a good time waiting for DAREL's text.. lol'}, TweetSentiment{title='"@adecembertruth hey adt'}, TweetSentiment{title='&quot;circo obama&quot; UGH! is it safe to say that @iamdiddy fck up day 26 song?! .. Willie &amp; Que can sooooo &quot;get it&quot;'}, TweetSentiment{title='- is it me OR is jeremih a lil cutie ...  ... http://bit.ly/15tP6e'}, TweetSentiment{title='"&quot;I love slaves!&quot; by David Raccah'}, TweetSentiment{title='#iremember when i was young and it was so uncomplicated... no bills... no boyfriends... it was all lego and grilled cheese'}, TweetSentiment{title='@_Michelle_Berg_ aww cutie from way back'}, TweetSentiment{title='...might have to break out the hookah'}, TweetSentiment{title='"&quot;tweet me'}, TweetSentiment{title='@5leepless Eels beat Knights'}, TweetSentiment{title='#rcncongress Did someone just say some people deserve to be shot?'}, TweetSentiment{title='@ahmedsiddiqui good luck. Hope things turn out well for you'}, TweetSentiment{title='(cont!!!)... @katiececil @shelbycobraaa  happy follow friday!'}, TweetSentiment{title='... I'm shopping in Switzerland's most beautiful City ... Lucerne'}, TweetSentiment{title='@3L1SE assheads? lmfao! i'm using that  all for gits and shiggles. haha.'}, TweetSentiment{title='" movie'}, TweetSentiment{title='.@greystonebar me too!! thanks also for the follow. i see you will be hosting one of .@MoocherGirl's tweetups?'}, TweetSentiment{title='"@AblativMeatshld We just added a bunch of people to the SR proofing pool. But'}, TweetSentiment{title='@25superstar That would be amazing.    Okay.  Now it's bed time.  Goodnight babe!'}, TweetSentiment{title='@30stshannonleto sounds good!  I know i saw a hotel not far from london eye earlier too going to check that out too and will let you know'}, TweetSentiment{title='@dustincary yea I really wanna see a win for him at daytona'}, TweetSentiment{title='"(ok blip'}, TweetSentiment{title='@abooth202 That's Ok then'}, TweetSentiment{title='"@agoodfried aw happy mothers day amanda'}, TweetSentiment{title='&quot;Twitter Cypher&quot; Verse is up'}, TweetSentiment{title='"(@EvaIsOnFire) oh cool'}, TweetSentiment{title='"#mycrack pink nail polish'}, TweetSentiment{title='"...well'}, TweetSentiment{title='#FF @KittyKatana cuz she works harder than hard workin @Smurfakins cuz she's HILARIOUS and bizarre *Smh wierd lil black girl'}, TweetSentiment{title='...i was an enjoyable experience. as i haven't watched bob esponja in forever.'}, TweetSentiment{title='#tipoftheday Get in front of a lens if you want to now how your models feel while shooting them. Selfportrait but better other photog'}, TweetSentiment{title='@afwife08 hehehe ^^ thank you'}, TweetSentiment{title='@A_Bizzle Well they always cut the episodes early! Totally sucks but Im glad Dean and Sammy somewhat made up!'}, TweetSentiment{title='"$67 for my books'}, TweetSentiment{title='i will can you believe its been a month already!'}, TweetSentiment{title='"@14tonystewart Way to go Tony'}, TweetSentiment{title='"@_BellaCullen18_ Hey'}, TweetSentiment{title='"@admanic Yeah  It was hard and although it worked for me and I'm now doing very well'}, TweetSentiment{title='#ally #ally haha'}, TweetSentiment{title='"#myweakness NSFW content to follow:  Large DD breasted nurse that minored in massage therapy.  Yes'}, TweetSentiment{title=':@ :@ :@ Super Angry .. and I don't even know why  [ ????? ??? ??????? ?? ?????? ????? ????? ????? ??? ]'}, TweetSentiment{title='"@1miletogo now that youve mentioned it'}, TweetSentiment{title='@aammoune  why aren't u here and y u not coming to yelenas?'}, TweetSentiment{title='@Lakers!! I love you guyssss! Those rings.. Mmmyeahh! Bling blingg'}, TweetSentiment{title='"&quot;do you like bread?&quot; &quot;do you have a beard?&quot; wtf'}, TweetSentiment{title='#yam Digitale Muurkrant is hiermee een variant van Netvibes? een Social SharePoint community in company? Social services to the max!'}, TweetSentiment{title='@1Omarion &quot;grab a bite&quot; lol its breakfast time. stay home &amp; make something'}, TweetSentiment{title='#jonaswebcast hilarious'}, TweetSentiment{title='@_Schiavonn_ you have a good one!'}, TweetSentiment{title='&quot;The old saying is true:'Breaking up is hard to do.' But breaking down is easy to do...&quot; ... and 1318288 more bytes
+    [TweetSentiment{title='#FF THX ALL OF YOU!  YOU ARE ALL AWESOME!!!!!!!! @FollowMe_RnBE @davidgideon @yuliakatkova @CharPrincessa'}, TweetSentiment{title='"@ABeautifulMind1 Fingers &amp; toes crossed'}, TweetSentiment{title='@AngelMordeno You like him!!! Admit it!'}, TweetSentiment{title='"@atmanes Enjoy. No spoilers please'}, TweetSentiment{title='@BabeHound hey I don't remember that deal lol but at least I let u noe that I wasn't coming......so that's not fair'}, TweetSentiment{title='"@amruth92 well! Awesome. I gotta go'}, TweetSentiment{title='@barfbutt hmmmmm.... we'll see.'}, TweetSentiment{title='"&quot;Why should I gain from His reward? I cannot give an answer. But this I know with all my heart'}, TweetSentiment{title='@armySLOB you'll have to let me know how you and Markie's night ended'}, TweetSentiment{title='@CITYPUBLICITY  What's #IM0509? Looks like some interesting people are going'}, TweetSentiment{title='"@BCerInToronto So again'}, TweetSentiment{title='@CarlPlage Yip  Well you've got to slow down sometimes and enjoy lifes little luxuries'}, TweetSentiment{title='#followfriday @OHatDL @KyleJDufield - thanks guys - you're the best'}, TweetSentiment{title='@bettinalove Haha. I think being able to see Carlisle's natural skin tone on the back of his neck against all the white makeup bugged me'}, TweetSentiment{title='@AlexFraiser good tip this worked'}, TweetSentiment{title='#followfriday @atarikari just because she's good Twitter people.'}, TweetSentiment{title='"@AlgorithmFundFX No'}, TweetSentiment{title='@CocaBeenSlinky Thankyou for your lovely message. I do want to do it! I will go on the site now and have a look again.'}, TweetSentiment{title='@arthurandesya oh okaaayy. hahaha my bad! lets meet up next week soalnya tgl 23 im coming back'}, TweetSentiment{title='@bounder not an inspiring away kit is it'}, TweetSentiment{title='" @ssandall That's it! Removing bots is like weeding a garden. Not fun'}, TweetSentiment{title='@daisyjanine Yeah I'm defo thinking about it!'}, TweetSentiment{title='@caseeyrae the shire is the shizzle.'}, TweetSentiment{title='@BillBoorman Now THAT's celebrating in style!'}, TweetSentiment{title='"@chelseasms same here'}, TweetSentiment{title='......and vote for my Background http://twitterbackgroundsgallery.com/2009/05/28/bllq21/'}, TweetSentiment{title='@arjbarker   You rocked on Rove'}, TweetSentiment{title='"@andysowards haha - I know what u mean! Hope u have a great week'}, TweetSentiment{title='@aplusk what does ding dong ditch mean? sorry for now knowing.'}, TweetSentiment{title='@ClaireBoyles You are always saying good morning when I'm about to say Good night.  Something very Beatles about that'}, TweetSentiment{title='"@amykate morning  ..... why did you mention work? booooo - theres still half the weekend left! lol (that said'}, TweetSentiment{title='"(x) @LaylaNatalie ouch'}, TweetSentiment{title='"@CarrieGutfeld I'm not sure'}, TweetSentiment{title='#followfriday Many thanks for the love  @bigdawg10 @avenueofthearts @labelladiva @linnetwoods @michaelheiniger @rleseberg @Follow_Steph'}, TweetSentiment{title='"@amandabynes I already have'}, TweetSentiment{title='@cassieventura I agree there is something a lil off about that...not sure what but something! Hope your hotel stay is going well'}, TweetSentiment{title='@angiecas sounds like it'}, TweetSentiment{title='"@9_6 thought of'}, TweetSentiment{title='#ATV-BS just got back from bestbuy. Got the Geforce 9400GT'}, TweetSentiment{title='"@anthonyblando Ah no'}, TweetSentiment{title='"@daniela_aiton Yeah'}, TweetSentiment{title='@cliffysmom Ahem.... 1970'}, TweetSentiment{title='@abooth202 I mentioned London Irish the Rugby Team and now they are following me    Hmm lets take this all the way. So.......Brad Pitt!!'}, TweetSentiment{title='@Cassie2757 did you get my email?  how was the aquarium btw?'}, TweetSentiment{title='"@93octane i IE8 in a virtual machine'}, TweetSentiment{title='@antonie now that's what they call suffering for Jesus (and/or a slave free world)'}, TweetSentiment{title='@amandanolan awe  too bad i was watching this crazy magic show lol'}, TweetSentiment{title='"@bryan_kavanagh damn spinlocks'}, TweetSentiment{title='"@ AmandaNaomi We're indochine-ing tommorrow'}, TweetSentiment{title='#dontuhateitwhen i start twittering random lame ish.. LOL... just unfollow'}, TweetSentiment{title='@beckyinthesky  congrats on starting the CPA Exam process! VSCPA is on twitter too. Follow us @VSCPANews.'}, TweetSentiment{title='@AprilShotYou hell yeah!!!!!!! im excited too'}, TweetSentiment{title='@CoachDeb LOL...your first quake was in bed on Oahu...too funny.'}, TweetSentiment{title='@Chad_Sway  twitter should have video chat... it'd be fun!!'}, TweetSentiment{title='#3hotwords - fancy a 'coffee''}, TweetSentiment{title='"@AnnikeDase I'm not dressing up'}, TweetSentiment{title='@Akelaa aww thanks for caring'}, TweetSentiment{title='"@DaleChumbley no kidding'}, TweetSentiment{title='#vanesse says: lets enjoy nice weekend together   Lets make things better together'}, TweetSentiment{title='@Bubba_Q Haha see?? Millie DOES love me and I am ALWAYS KIND to her!'}, TweetSentiment{title='"@3rdLife Woohoo! Would be great to see you again  Great location'}, TweetSentiment{title='@amysmorris did yoo were fromm.. i hatee thatt too dont be in the business if yoo dont want to appretiate the fans that you have  x'}, TweetSentiment{title='&quot;i think she will like me&quot;- Maddison Buzer about @taylorswift13 ... quote of the day'}, TweetSentiment{title='@angryman78 yeah just had to vent'}, TweetSentiment{title='@Creepy_E_98KUPD Just as long as you cuddle with me afterwards.  It's the only way I'll ever do that with you.'}, TweetSentiment{title='"@bjack25'}, TweetSentiment{title='"@BlueEyedGirl18 hey  yer not bad thanks'}, TweetSentiment{title='@AdeleLouise wow and I thought you'd be supporting a hangover today'}, TweetSentiment{title='@billybofh That's cheered me up no end'}, TweetSentiment{title='@agentsnow glad to hear you enjoyed it...now read my article on Emergent Village'}, TweetSentiment{title='"@ariestotle yeap'}, TweetSentiment{title='@benwin we'll make our own wilderness explorer shirt!'}, TweetSentiment{title='&quot;Theres a light on in chicago and i know i should be home&quot;...miss you mommy! Happy mothers day.  please stop calling me Crissy. Thanks.'}, TweetSentiment{title='"@AlexAllTimeLow ohh snapp'}, TweetSentiment{title='"@ashleytisdale Ashley ? You're in Germany ?? That is so cool I'm in Germany'}, TweetSentiment{title='@coreyfbaby @jmtorrey Steeler fans are everywhere.  People are just smart and pick the greatest team ever'}, TweetSentiment{title='"@_Kaden_ Hi  I've no idea  Lazily'}, TweetSentiment{title='@Audrey_O is nat coming too? let me know how many of us are really going. hotel near for more $ or 4 miles away for under $100?'}, TweetSentiment{title='@Armano they were. But were liquidated in the restructuring. Got 5 cents on the dollar for a LI venture group.'}, TweetSentiment{title='@2sweets I usually talk on here so I'm trying to figure out the boards there now. We're both from SE AK orig. so that's close enough'}, TweetSentiment{title='" &lt;--- That is all'}, TweetSentiment{title='"@arsenalarran really struggling with that arsenal thing ;-)  oh well'}, TweetSentiment{title='@babygirlparis http://twitpic.com/6vq0e - LOL They defnitley look like there enjoying life'}, TweetSentiment{title='@chomaee Thanks for the follow Friday'}, TweetSentiment{title='@AuthenticStyle Thx for your encouraging tweets today!'}, TweetSentiment{title='"@Charliegirl11 I need to get season one off you'}, TweetSentiment{title='@aulia &quot;alternate means of acquisition&quot; sounds sorta noble'}, TweetSentiment{title='&quot;Man that dude is creepy.&quot; HAHA. Oh Casey! Then Chuck still looks longingly towards where Sarah went  #chuckmemondays #chuck'}, TweetSentiment{title='"@amysav83 i'm very well thanks'}, TweetSentiment{title='@alphonso I'm in SF right now'}, TweetSentiment{title='@andyfromhell Hi Andy  Are you ready to rock this evening =D ?'}, TweetSentiment{title='@Bunnieblog heh. we're useless together. we need to go hit some balls'}, TweetSentiment{title='@caseydamnmorgan @azbutterfly24 aw thanks'}, TweetSentiment{title='!@dossy that's what i was thinking 1x/hr and move would only work if the space was available'}, TweetSentiment{title='@Buffy73 http://twitpic.com/6hb2y - You're just one person!  LOL ...I want a mangoooo.'}, TweetSentiment{title='&quot;Not everybody has to go college. Pizzas don't deliver themselves&quot; haha'}, TweetSentiment{title='@alsiladka... naah @khouryrt is a sweet person! she never harms nobody!  (I hope I said something nice rita and true!)'}, TweetSentiment{title='"@Ashleegaston yes'}, TweetSentiment{title='@columalmighty I'm nearly at school! I'm on the bus'}, TweetSentiment{title='@AmyNicolee Really? How do you know? I saw the left-handed store for the 1st time in SF recenty'}, TweetSentiment{title='@bellalove Thank you &amp; also I'm sorry to hear of your sister. But it's comforting to know someone else writes too.'}, TweetSentiment{title='&quot;the sun is in the sky and it is gonna be a gloriuos day&quot; so im going to shower and get some vitamin D  its hotter/as hot as yesterday'}, TweetSentiment{title='"@_supernatural_ Ah  So really'}, TweetSentiment{title='@coreyhaines it was awesome having you here! Thanks a lot for joining in!!!'}, TweetSentiment{title='@crysolivarez Well enjoy the day off'}, TweetSentiment{title='@cwbtoad Thanks bro.'}, TweetSentiment{title='@ACLAZ92 #pens wins ALWAYS make a person feel better!'}, TweetSentiment{title='@BobWarren hi Bob! How are ya? Just finished 4hr run!'}, TweetSentiment{title='@BrokePimpStyles Hi! Happy Sunday! How are you?!?!  Thinking of adding one more day to my weekend...'}, TweetSentiment{title='@brockjohn09 lol i only shoot like every three months haha bcuz of skool im almost done but okie dokie!  no prob lets do it'}, TweetSentiment{title='"@BlatzLiquor he will be thr! We need suggestions 4 R own little beer sampling party ths evening'}, TweetSentiment{title='"@AaliyahLove69 You're gonna hit 1'}, TweetSentiment{title='"#followfriday @foyboy 1) She had Skips on her face earlier this week'}, TweetSentiment{title='"@billyraycyrus Right Back At Ya ;) today everythings closed in norway'}, TweetSentiment{title='@AmandaRumm ; omggg thats a double chance that i'll be able to goo. sweeeeeeeet'}, TweetSentiment{title='"@creaturekebab Yeah'}, TweetSentiment{title='@alex_washington you're welcome'}, TweetSentiment{title='@clarasdiary Sara won! Awesome right??? I'm so glad!  she's beautiful!!!'}, TweetSentiment{title='i have a buzz'}, TweetSentiment{title='@AdamSurak Dï¿½ky @vbulant Dï¿½ky p?ehlï¿½dl jsem ten VirtualBox v tweetu  @karimartin Vyzkouï¿½ï¿½m ten VirtualBox. Dï¿½ky vï¿½em ;)'}, TweetSentiment{title='@bsaunders Let us know if you have any questions  ^AG'}, TweetSentiment{title='"@AdPaid Yeah'}, TweetSentiment{title='@_iDANCE19 I fell in love with one!  This one.. when he was little. AMAZING! http://bit.ly/17ifJI  &quot;Tell me Why&quot;'}, TweetSentiment{title='"@aquamage Profile hopping. Wow'}, TweetSentiment{title='@_alps actually i gave up when I knew I could not google a photo..u know that of that veteran cricketer'}, TweetSentiment{title='@blitzy_UK Hi!!!! Sadly I'm off to bed.. Wish you also a awesomely positive and happy day.. when ever that is for you'}, TweetSentiment{title='@biancaduhh aww. i think someone put it up on youtube lol'}, TweetSentiment{title='"@clvrmnky: s/coffee/beer.  go on'}, TweetSentiment{title='@AmberLorraine_ haha amberr u neeeed to tell him!!!  &lt;3'}, TweetSentiment{title='"@_supernatual_ Give me some Dean tied up Pron'}, TweetSentiment{title='#alexisonfire &quot;young cardinals&quot; â™« http://twt.fm/143932 -- can't wait 'till the new album comes out'}, TweetSentiment{title='"@caitlyndewar oh thanks'}, TweetSentiment{title='"@alyssarenee_ poor girl'}, TweetSentiment{title='@Cinequest Checking my schedule! Want to be there too!'}, TweetSentiment{title='@bargainr Sounds sinister to me!'}, TweetSentiment{title='"(@EvaIsOnFire) oh cool'}, TweetSentiment{title='"@Anishaflower THANK YOU! My feet and legs are aching'}, TweetSentiment{title='"@angelbear7 Getting back online'}, TweetSentiment{title='@billt thanks for your support'}, TweetSentiment{title='"@alandavies1: Technically your contract is with the Apple store'}, TweetSentiment{title='"@BeyondBeads  agreed'}, TweetSentiment{title='&quot;I hid under your porch because I love you&quot; ... I want a dog so hard.'}, TweetSentiment{title='@BrandyandIce Raised just over 2.5k...so think that counts as lots!  x'}, TweetSentiment{title='#inever had sex w | 2 bitches at once.... ok im lying phaha. i love females'}, TweetSentiment{title='@brownsugakisses  i miss u guys and i miss complaining with u about how long our hair used 2 b LOL we still look fab tho!'}, TweetSentiment{title='@angelstar1632 Have a good night  Sweet dreams'}, TweetSentiment{title='@AutumnDances Oh I hope your nephew does well at tryouts!'}, TweetSentiment{title='@babyjobamboo @littlebirdphoto Congratulations on your stunning photo shoot! Such a great showcase of both skills and product'}, TweetSentiment{title='"@animatedme 'A 10 ten minute''}, TweetSentiment{title=':p ONLY HAVE 1 EXAM LEFT!!!!!!!!!! YAY..... its gunna be easy and summers coming  happy happy &lt;3'}, TweetSentiment{title='@christieelliott Of course!'}, TweetSentiment{title='just got home'}, TweetSentiment{title='@atrybe - i feel exactly the same dude. E3 looks superb this year.'}, TweetSentiment{title='@BoudoirSexToys Thanks very much here is hoping :S... just needs to be finished off properly run built and chicken wire added'}, TweetSentiment{title='"@16_MileyCyrus no'}, TweetSentiment{title='@bodylikemind We will'}, TweetSentiment{title='@andygriffwozere i had one for glasgow but decided i couldn't pay the train fare to be rejected lol. Was going to sing'}, TweetSentiment{title='@craw4d nothin a little robitussin won't kill  thanks for the well wishes now I feel better but can't sleep'}, TweetSentiment{title='@bsmrocks http://www.facebook.com/username/  almost certain you can do it for groups'}, TweetSentiment{title='@CaptainMurdo Everyone's entitled to their own opinion.'}, TweetSentiment{title='Follow me on Twitter!  http://bit.ly/P1I1h'}, TweetSentiment{title='@_Alectrona_ okay i'll let you off  xoxox'}, TweetSentiment{title='@CrazyCatLadie oooh - they did the apprehensive move up to kiss and then didn't - was awesome! Total tease  Audience loved it'}, TweetSentiment{title='"&quot;I haven't been pepper sprayed in an entire year.&quot; Line of the night.  Sleeping until'}, TweetSentiment{title='@Authentic973 nothing'}, TweetSentiment{title='"@bezotes thanks'}, TweetSentiment{title='"@chelseyyymarie aw! I didn't know it hurt that bad'}, TweetSentiment{title='I'm tired...gonna go to bed most probably...hah gonna watch some TV and then hit the hay!'}, TweetSentiment{title='@andrianjones11 Can I now delete the friends you added to my facebook account when I wasn't looking? or shall I up the prank stakes?'}, TweetSentiment{title='@BookingIt Thanks  But having a hard time justifying all the lovely sugar in said ice cream ;)'}, TweetSentiment{title='@crystallynn09 I know!! Yayy'}, TweetSentiment{title='"@daniel_eason Never seen him anything with a golf club before'}, TweetSentiment{title='@BrianNewberry Interesting idea  I'll make sure to pass that along.'}, TweetSentiment{title='@ausi1 Have a great day'}, TweetSentiment{title='@crystallmeth haha omg i was thinking the other day and remember in 9th grade when we had fcs together and she always confused us'}, TweetSentiment{title='@clueless_bimbo I guess so. I just don't like to leave things unfinished   Now if my job was acting...I'd have tons of fun with it hahha'}, TweetSentiment{title='"@autumnconfusion OMG!!!  You are so lucky O_O Waooww.  What do you expect'}, TweetSentiment{title='@ArfanChaudhry Then go to bed ... sleep tight'}, TweetSentiment{title='@_q Interesting website. Thank you for sharing it with me. I will continue to research it...   - Jay Jeter The Coming Storm'}, TweetSentiment{title='@Alyssa_Milano Your grandma rocks!'}, TweetSentiment{title='"@amazon_reviews Yep'}, TweetSentiment{title='@beccabarakitty aww... and 5264011 more bytes
 ```
 
-Code from [TrieDemo.java:375](../../src/test/java/com/simiacryptus/util/text/TrieDemo.java#L375) executed in 0.03 seconds: 
+Code from [TrieDemo.java:375](../../src/test/java/com/simiacryptus/util/text/TrieDemo.java#L375) executed in 0.95 seconds: 
 ```java
       ArrayList<TweetSentiment> list = new ArrayList<>(TweetSentiment.load()
               .filter(x -> x.category == 0).limit(testingSize + trainingSize).collect(Collectors.toList()));
@@ -21,60 +21,165 @@ Code from [TrieDemo.java:375](../../src/test/java/com/simiacryptus/util/text/Tri
 ```
 Returns: 
 ```
-    [TweetSentiment{title='#work won't be home till late tonight'}, TweetSentiment{title='@Abbybn u sick????   something is going around and I got it too'}, TweetSentiment{title='::::So now i have to wait around til after for uploaded vids to see Rob &amp; the New Moon tease  FRIG! me = NO patience lol'}, TweetSentiment{title='i wish i could sleep in like everyone else.'}, TweetSentiment{title='@2kutekreations Oh no I missed itttttttttttttttttttt   I am sickkkkk and slow today   Sorryyyy! I'm sure you were fabluous though!'}, TweetSentiment{title='the weather has been really bad. Bad enought to cut out our cable.'}, TweetSentiment{title='? up early again today.... B is still not feeling like herself'}, TweetSentiment{title='. home from temecula. ergh i wanted to go to the party  i want to get drunk hahaha lol'}, TweetSentiment{title='#inaperfectworld i'd be going to the jb's tour kickoff concert tomorrow'}, TweetSentiment{title='@acadnurul daaappppppp nyee. You made me want to fly home right now knurl~~  Oh come July quickk.'}, TweetSentiment{title='@aherne148 omg torrential rain forecast for west wales pm today'}, TweetSentiment{title='- another dbl shift tomorrow.. on Father's day  which means: minimal time with gpa. the illest man ever :['}, TweetSentiment{title='...first time away from my gorgeous girl....HATING it'}, TweetSentiment{title='@ work not one soul is in here....so sad  wanna dance to highway to the danger zone...hehe'}, TweetSentiment{title='@_Mintage  that sucks so yourve been to doctors?'}, TweetSentiment{title='*Really* wish I was still on vacation'}, TweetSentiment{title='bcd's closed! i guess nodaji it is.'}, TweetSentiment{title='; worst day ever'}, TweetSentiment{title='#geekcamp multitasking trying to test Internet connection to see if can do live demo later - but looks like no'}, TweetSentiment{title='#itsucks that it's Thursday and not Friday..'}, TweetSentiment{title='#inaperfectworld final exams wouldn't exist and i would be sleeping very confy right now!'}, TweetSentiment{title='myspace isn't working'}, TweetSentiment{title='&quot;Hey&quot; was on Music Choice! But they spelled @mitchelmusso's name wrong...  SUCH a good song tho!!'}, TweetSentiment{title='" After turning my fan club into a religion'}, TweetSentiment{title='"@427 was it random or during a friends cut? And did they say why? Also'}, TweetSentiment{title='@akaTrent don't you wanna know what i'm doing at every second of the day?  haha'}, TweetSentiment{title='".@paul_steele Phew! Just in time'}, TweetSentiment{title='@___hotperlita y was it funny to see me on tv'}, TweetSentiment{title='..suffering from 'noASSetol''}, TweetSentiment{title='@AcePower  is there no chance to pay your school by installments or after graduation? scholarship? credit?'}, TweetSentiment{title='wishes more of my friends were on twitter! GOSH.'}, TweetSentiment{title='Miss my love Jamie'}, TweetSentiment{title='" jb is in toronto'}, TweetSentiment{title='@818Princess I told u I had the money a while a ago sweet thing! I totally would have come give it 2 u but I don't invite me over anymore'}, TweetSentiment{title='#inaperfectworld Nadal would be fit for Wimbledon'}, TweetSentiment{title='&quot;I'm In Driver's Ed Get Me Out of Here&quot; all week'}, TweetSentiment{title='";; ugh'}, TweetSentiment{title='"   let's have a moment of silence for our childhood homes... sadly'}, TweetSentiment{title='"@_kimcaldwell i just saw ur message 2 me! yes popstarts u had long beautiful hair'}, TweetSentiment{title='skool holidays are over and skool sux but we do have a cool new sports teacher lol he looks like the guy who does The Evolution of Dance'}, TweetSentiment{title='"#goodsex~has been gone'}, TweetSentiment{title='#woofwednesday I want a puppyyyyyyyyyyyyyyyyy'}, TweetSentiment{title='*sigh* I could sit around at home'}, TweetSentiment{title='@6flix havent gotten instructions?...did i miss it some how?'}, TweetSentiment{title='; MY GOSH. This blocked nose is killing me'}, TweetSentiment{title='@adeezyy yes i'm ok just eh lonely!  i miss school.'}, TweetSentiment{title='"#eu09 Shit the fucking bed'}, TweetSentiment{title='@___Annabel___ i caved  bought the most F-ing  disgusting smokes... hopefully that will help in the el quito jobo.'}, TweetSentiment{title='my girl cant come over today. Gonna have2 wait 2 see her until 2morrow. Hopefully shes not busy. Gonna get 2 hardly see her next week.'}, TweetSentiment{title='I just saw a squished kitty outside my gate....I feel sad...'}, TweetSentiment{title='@5forfighting77 where did you see Addekk crossover talk?'}, TweetSentiment{title='*peeks in* Ugh. Twitter after hours is sad and borderline perverted'}, TweetSentiment{title='just busted my head on my friends windshield. i hurt.'}, TweetSentiment{title='another day of running!! ......Today is fresh to death Friday (everyday is fresh to death Friday 4 me) Ha Ha lol!!!!'}, TweetSentiment{title='@abatko Tag is #vanchangecamp ... I keep forgetting to put it on mine'}, TweetSentiment{title='@_Bootsie_ y am I selfish now  *and to fink I'm bussin my ass to try hook u up* never appreciate nefing.. U seee u yeh.. Smdh'}, TweetSentiment{title='" I'm really annoyed about this telstra bill'}, TweetSentiment{title='For a minute there I was all happy thinking it was THIS Tuesday we finished.'}, TweetSentiment{title='" down'}, TweetSentiment{title='"@Abcmsaj I just saw it on Dave'}, TweetSentiment{title='@6morningnews  Got up this morning specifically to see the shuttle (from front yard)      Morning not a total loss thanks to you guys.'}, TweetSentiment{title='@___Maira___ Now I'm totally embarrassed &amp; am worried that he thinks I'm a psycho. I have no doubt that I will never hear from him again.'}, TweetSentiment{title='@700stories ha! i did that on purpose... no not really'}, TweetSentiment{title='#firstsongoftheday Bob Seger &quot;Turn the Page&quot;. Early morn bus driver cranking classic rock.  Hate to leave SF &amp; my sis'}, TweetSentiment{title='@_sputnik but weight is so much easier to maintain than your skin!'}, TweetSentiment{title='@aarkid_chris Well never had stay creased chino's myself but love my proper jeans...hate Lycra in denims'}, TweetSentiment{title='@abigailcrook Having sandwiches nearly every day really does suck  so we tend to go out on Friday lunch breaks to relax in the pub :p'}, TweetSentiment{title='"#Giro stage 2 preview'}, TweetSentiment{title='"-- I won't feel guilty and like I should be revising stuff after today'}, TweetSentiment{title='"&quot;There's a shadow hanging over me&quot;'}, TweetSentiment{title='@16_MileyCyrus yeah im getting my tickets on Friday i hope i get some'}, TweetSentiment{title='*yawn* omg! super super tired! but not sleepy at all     no sleep last night hmm no sleep tonight???? boo!'}, TweetSentiment{title='sad face !'}, TweetSentiment{title='I think people get out of bed in the mornings wondering how they can piss me off.'}, TweetSentiment{title='"@__mares__ I'm doing OK - think Dexy gave me his gastro tho'}, TweetSentiment{title='@0mGiiTzRee THANKS GIRLIE I LOVE YO MAIN PIC TOO BUT I CANT SEE UR BACKGROUND PIC'}, TweetSentiment{title='&quot;And now my mom and her friend are drinking.. Greatt..&quot;'}, TweetSentiment{title='"@AbbieandBrian oh i've got that book! will's brother gave it to me i think'}, TweetSentiment{title='"@1019MIXChicago I love going to the Cell'}, TweetSentiment{title='@ailinmcc ever since I left HR house I feel sick as fuck! Really tired and shivering like a motherfucker'}, TweetSentiment{title='"#hangover had one on thursday'}, TweetSentiment{title='@ AcidRainDropz I'm soooooop bored I wish my girlfriend were here'}, TweetSentiment{title='@10TheDoctor10 Take good care of yourself hun. You've got us very worried at present'}, TweetSentiment{title='"#inaperfectworld I'd be with you...  but unfortunately'}, TweetSentiment{title='Run's family makes me happy. Thats a frown because it expresses my emotion better.'}, TweetSentiment{title='@ABIBAN awwwww! Go forth and SHAG!!! Omg. It's 2am. I have to be up at 7'}, TweetSentiment{title='"@_justmitch_ nah'}, TweetSentiment{title='my dad just took off his shoes and his feet smell. eeeeeeeew'}, TweetSentiment{title='(: â™¥ â™¥ ...love is not bad but it's just a little difficult to understand  ...live isn't so easy!!! â™¥ â™¥'}, TweetSentiment{title='*sniff* May have to hold off sanding wood until the outside world is less pollen based'}, TweetSentiment{title='@AaronMShaffer I was actually really into a Cavs vs Lakers matchup. LEBRON'}, TweetSentiment{title='i have to start studying for finals'}, TweetSentiment{title='"#WeAreStupid what worries me most'}, TweetSentiment{title='#Pleasestop (Twitter) Playing hide and seek with my profile pic. Where the hell is my picture???'}, TweetSentiment{title='@4_idiots yep i can vouch for that !'}, TweetSentiment{title='(--- Checkn myself in Twitter rehab.'}, TweetSentiment{title='"@_Lauren_Mallory Yes *pouts* I've been resting so much I'm bored! *giggles softly* I still feel kind of beat though'}, TweetSentiment{title='woke up early to wash and dry my tie dye shirt...the stupid thing is still wet. =[ FML.'}, TweetSentiment{title='this night shouldn't end'}, TweetSentiment{title='*Totally behind on everything* OH SNAP I WANT TO GO TO COMIC CON'}, TweetSentiment{title='#inaperfectworld i'd be able to start an MMA career without trying so hard! yeahhh not in RI'}, TweetSentiment{title='*sigh* I'm so fucking worried about my bby'}, TweetSentiment{title='"- fuck'}, TweetSentiment{title='&quot;My head feels like there's a Frenchman living in it&quot;  ow ow ow'}, TweetSentiment{title='"    awhhe man.... I'm completely useless rt now. Funny'}, TweetSentiment{title='more exams! noooooooooo!!'}, TweetSentiment{title='Tony is getting three boxes. UGH I just don't know how to make it all fit into one  STUPID LITTE BOXES'}, TweetSentiment{title='... I can't take anymore'}, TweetSentiment{title='@A7X_Bat_Angel well that is just odd. wait ummmmm i dunno what to do  um sign in as guest for now i guess'}, TweetSentiment{title='#ASOT400 Odd transition... anyone know when the video should be up?'}, TweetSentiment{title='#smx no free wifi apparently  thats baaaaad #smxlondon'}, TweetSentiment{title='(@lisa365) NTS: do not floss the morning before a dentist appt. I has a hurt'}, TweetSentiment{title='#Aion beta starts @ 3AM for WA players... I don't know if i can force myself to stay awake that long  MUST DO IT FOR MMOEY GOODNESS.'}, TweetSentiment{title='*Is still in the process of making some tough choices...*'}, TweetSentiment{title='"@_callmeCourt yes'}, TweetSentiment{title='#asot400 -5 mins left  . Join the fb group @ http://bit.ly/asot400'}, TweetSentiment{title='@afylayouts i know  im deleting them when they do lol'}, TweetSentiment{title='nobody loves me... Everybody hates me .. I'm going to go eat worms now'}, TweetSentiment{title='".@mooseharris oh the shame ... I'm killing myself now. Gin-fingers'}, TweetSentiment{title='@3ree6ixty COZ im underage!  well that should've worked ill give it to you later then. Damn it i really wanted to see you again!!!'}, TweetSentiment{title='@_sophielouise i wish you were'}, TweetSentiment{title='@abraham awwwwww i'm jealous...  i wanna wanna wanna shelf full of pogo'}, TweetSentiment{title='@211me UGH! After trying for awhile I got the form filled out and then it went offline   I think I should win out of frustration!'}, TweetSentiment{title='how the duck am i supposed to write 1500 art history words on something i can hardly see!'}, TweetSentiment{title='&quot;Bodies found from tragic Air France flight&quot; - http://www.timesonline.co.uk/tol/news/uk/article6444498.ece'}, TweetSentiment{title='" this guy thru at least $5 worth of change at this poor girl on stage'}, TweetSentiment{title='@Alainesinga Another video!!! Wowweeee... How come I don't get an invite  goo alaine!!'}, TweetSentiment{title='"@ MuEpAce09 hey'}, TweetSentiment{title='@ab_normal Shucks!  Sorry!  Sometimes I get wrapped up in FB and forget to check  how you doin'?'}, TweetSentiment{title='i might not walk and go to the dance. if you dont have all your books turn in you cant :'('}, TweetSentiment{title='"@abirtmo i've been well! how about you? ya i heard you guys were in town the day of your show'}, TweetSentiment{title='...ready to be confused all over again'}, TweetSentiment{title='times by like a million'}, TweetSentiment{title='"*tear* I'm watching Betty White on Chelsea Lately and she's so cute'}, TweetSentiment{title='&amp; in need of a bowl of pho tai. baaaaddddd'}, TweetSentiment{title=';( but in america I was like--a's and b's!!  Im sad.'}, TweetSentiment{title='@accionatasha then she left.'}, TweetSentiment{title='"@AlanCarr Shit'}, TweetSentiment{title='#RareBreeds farmer in pollution legal battle with @NationalTrust takes own life. Sad business all round  http://ur1.ca/4xy7'}, TweetSentiment{title='@_rValentine_ I've read it b4 and thought it was useful but then promptly 4got everything I read. I guess i have no commen sense'}, TweetSentiment{title='@_misslizzie_ None of them seem to  You can look here for Japan's holidays: http://bit.ly/GlVbi'}, TweetSentiment{title='@ bizoink want to but no dinero!'}, TweetSentiment{title='#myweakness is  the Dominos cheeseburst pizza....shit I want it now!'}, TweetSentiment{title='"@_ophelia Oh'}, TweetSentiment{title='i am soooo sad...at this point of night i'd be cuddling with jonathan like i did for 4 years'}, TweetSentiment{title='*sigh* still no Iphone OS 3.0 B / Unlock for Windows'}, TweetSentiment{title='** Aww My baby's Walking around the house Saying &quot; Mommy It's my birthday I'm 2.. ** Aww Shes So Big...  **'}, TweetSentiment{title='" it was announced that I am officially leaving work'}, TweetSentiment{title='...I tried a liitle afternoon meditation to clear my thoughts and fell asleep.'}, TweetSentiment{title='@__Kizzle Conan came back? Damn I hope he did well with ratings. I missed it.'}, TweetSentiment{title='@aisfornala Oh. So people laugh at me huh?  Your words are like an ice dagger to my heart etc etc ;)'}, TweetSentiment{title='Athens landmark Georgia Theater  on fire... http://bit.ly/EOL7s'}, TweetSentiment{title='"@2legittooquit i dont know! this movie is insane  im goodish'}, TweetSentiment{title='"&quot;You're asking me about the weather?&quot; &quot;I don't really like the rain'}, TweetSentiment{title='.. I always have to take a second and feel bad whenever I see an ad for a missing child...'}, TweetSentiment{title='....damages knee.....gets drunk.....makes it worse!!!!!'}, TweetSentiment{title='@8carl8 Bloody... yes! Didn't pick it up! Ashamed  used to be the Slusho! Masteress.'}, TweetSentiment{title='i wish u guys would stop fighting'}, TweetSentiment{title='"(must tell myself) I love my Job'}, TweetSentiment{title='@ starbucks studying turkish. Called in to work this morning cuz of my cough'}, TweetSentiment{title='#3turnoffwords out of gravy'}, TweetSentiment{title='"#barcampevn09 starts in 4'}, TweetSentiment{title='.. But definitely not this time.  At least she's smiling now.'}, TweetSentiment{title='&quot;I not need &quot; - http://twlol.com/tw/?v1-133326 #lol #ichc #cat /// still miss mine  dang it! :/'}, TweetSentiment{title='@AAmyHaanson I'd have to get one from Walmart. All the good deals on the internet aren't on prepaid.'}, TweetSentiment{title='bed time......................................................'}, TweetSentiment{title='...is doing a good job of procrastinating this morning.  I should be out delivering neighborhood newsletters but I really don't want to.'}, TweetSentiment{title='@__mares__ thats some traffic jam when the walkers are going faster than the cars i feel your pain. been there done that!!'}, TweetSentiment{title=': m actually supposed to go n study.. but... it seems like m GLUED to to the screen..'}, TweetSentiment{title='"@_idioteque Exams suck  I handed 1st piece of MRes work in on Fri. Not got anything to hand in until Sept now'}, TweetSentiment{title='@ work . . bored'}, TweetSentiment{title='*fingers crossed* hope youtube doesn't rip the audio off'}, TweetSentiment{title='I cant take the hurt...'}, TweetSentiment{title='@adamschoales ooo that one is kinda cool! I always wanted a (RED) shirt but the ones they have at the gap don't fit me right'}, TweetSentiment{title='#... and 1318631 more bytes
+    [TweetSentiment{title='@chantellmarie get outta here with that BS'}, TweetSentiment{title='@Aussie_Nicole I know exactly what you mean. Earlier tonight my friend from Singapore found out she CAN'T come and do a M&amp;G w/me.'}, TweetSentiment{title='@drts but of course you exist! sorry we missed you on thursday night'}, TweetSentiment{title='"@bztak1020 actually'}, TweetSentiment{title='@BrentLauren I can't have dairy'}, TweetSentiment{title='@bellybuilders not sure what you mean by posts.'}, TweetSentiment{title='@DenzelBurks no u dont  i dont remebr atleast its all good i see how it is tho lol im jp jp i love yall both its jus funny 4 me'}, TweetSentiment{title='@DoubleyDee Awww. Thanks! But still.'}, TweetSentiment{title='@ChloePatrick4 Yes they crashed 640km northeast of Brazil's fernando do norohna island'}, TweetSentiment{title='@bumblydore dittooo. bad blood circulation?'}, TweetSentiment{title='@AbbyRo I would go in like 2 seconds if I wasn't 2300 miles away. I miss you.  And them. @megtastic1521 @samaracb'}, TweetSentiment{title='"@Anime81 LOL Do I remember? haha'}, TweetSentiment{title='... I'm gonna go home and cry now'}, TweetSentiment{title='"@bobryuu hey man!  The show is actually at the Park Grill'}, TweetSentiment{title='@cbain84 not started yet no  was good seeing ya today'}, TweetSentiment{title='craig's a cokehead'}, TweetSentiment{title='"@bexyboodle @mishfics @Jackattack008 @singhisiksha Did all you guys just have IT?? hahaha'}, TweetSentiment{title='&lt;-------- This is the way i feel right now...'}, TweetSentiment{title='@aprilyim @starwing wait for me to feel better as well! i cant be BKT'ing with a sprained neck / shoulder right?'}, TweetSentiment{title='@_glurch what if all those answers apply to me?'}, TweetSentiment{title='I hate you forever.'}, TweetSentiment{title='@dr_zu DAMN It...  I tried... not to be there.'}, TweetSentiment{title='"@all_stars_fade'}, TweetSentiment{title='@boudledidge before I scrolled down I thought you were talking about girl talk the dj and went  lol. But wow thats a pretty offensive blog'}, TweetSentiment{title='"@Cadistra NOOOO I'll miss you too much!  I went stag to my prom and all the high school and middle school dances'}, TweetSentiment{title='@comebackPAUL @KevinRuddPM he hasnt answered me'}, TweetSentiment{title='"@chrismarquardt Same thing happened to me with my d700 today'}, TweetSentiment{title='"@CosmicMother Agree with you about Susan.. I didnt watch the program'}, TweetSentiment{title='@billyraycyrus ups sorry... about that towel... my english is not as good as it should be... greetings from germany...'}, TweetSentiment{title='@cassielei05 it says on the website no signs/flags allowed in coliseum'}, TweetSentiment{title='@darciakw i know right?! already tried that and rick said no go.'}, TweetSentiment{title='"@_aizen I don't even know how I can help'}, TweetSentiment{title='@chocolate_dip the homies went last week &amp; said it was jumpin &amp; they were faded.. i cant party on thursdays no more'}, TweetSentiment{title='@DeansSexFiend not busy like rush hour but contantly need to moniter. I can access blip but other sites blocked. n can't use mobile.'}, TweetSentiment{title='worst moment of my lifeeee... WILSON IS MOVING TO COLORADOOOO'}, TweetSentiment{title='dad is leaving and wont be back til the wedding.'}, TweetSentiment{title='#firstrecord Behind the Green Door - shakey Stevens  dont' laugh to much'}, TweetSentiment{title='@ashleyryanfosho I have my exam 9:55-11:55... that's bullshit'}, TweetSentiment{title='"@3sixty5days Inoriteee'}, TweetSentiment{title='@AshleeNino Hahaha. You never ask me.'}, TweetSentiment{title='@DMB_ whatever'}, TweetSentiment{title='#Pakistan Army Chief takes a ride of F16. Menno ve chootaa chae da aay.. mai ve F16 da chhoota laina aay'}, TweetSentiment{title='"#RG09 for the women'}, TweetSentiment{title='@atrphotography Pulling teeth is traumatic!  My grandma always lied to me and told me it wouldn't hurt  Is she ok?'}, TweetSentiment{title='@benjamminspears re: grayson high students -  i don't want that'}, TweetSentiment{title='&quot;Each day's a gift and not a given right&quot; from the song &quot;Today was Your Last Day&quot;..pretty good insight!       Driving home from my vacay'}, TweetSentiment{title='@apsylus and yes United should be shut down for making your family miss your graduation  remember how they lost my luggage too?'}, TweetSentiment{title='#masheu09 The worldcat registry API does not support a request based on IP'}, TweetSentiment{title='@alexalltimelow let me sing remembering sunday with you tomorrow'}, TweetSentiment{title='@catplan touch screen one no bluetooth  or wifi. either. sucks!'}, TweetSentiment{title='@AlexGalas33 I think you should especially since work is getting to you. Hope it gets better.'}, TweetSentiment{title='@Clareybear I was on my lunch. They never blocked it previously'}, TweetSentiment{title='Didn't win the twitter contest. BOO'}, TweetSentiment{title='@Carl_Thompson its not arrived in hertfordshire yet'}, TweetSentiment{title='@alexiacm I miss you too'}, TweetSentiment{title='@BrianaSimmons wow that stinks'}, TweetSentiment{title='"@Blogsdna wow... m floored. Today I have to customize blogger template for my friends'}, TweetSentiment{title='@Dorsath aww'}, TweetSentiment{title='&quot;Kinda of sucks Knowing that happiness doesnt existed in my life Almost Lovers A Fine Frenzy &lt;333 Goodbye My Almost Lover&quot; wat do u mean?'}, TweetSentiment{title='#asylm J2 panel is over. Guess it's back to normal life.'}, TweetSentiment{title='@AndreeaBerghea you're right'}, TweetSentiment{title='@Budor where'd they go?  LOL'}, TweetSentiment{title='"@coledude unfortunately'}, TweetSentiment{title='@darkknightwvu well... it'd have to be the senate reflecting pool. and i'd have to have a lunch break.  ugh.'}, TweetSentiment{title='@anticipating I got so much random spam bounced back to my catch-all account which apparently were all sent by me.'}, TweetSentiment{title='@cameron_crazy so is the show done?  They can't possibly want to air their family through that'}, TweetSentiment{title='@amit3d so i think i'm the only one..'}, TweetSentiment{title='@_Stephhh_ Awww  I heard he is the sweetest guy with fans.'}, TweetSentiment{title='@claudiatan  go for a good long swim!'}, TweetSentiment{title='"@Bluenscottish I've been good'}, TweetSentiment{title='@1luv633  Clean Me!'}, TweetSentiment{title='@andersoncooper if you muust go after Mr President cant it be for dont ask dont tell still vey much in place'}, TweetSentiment{title='@denyseduhaime my dad SO wanted to run that  he trained so hard and then the doc said he had to stop bc of a heart condition'}, TweetSentiment{title='*sigh* gotta wait over 8 months for more of this...  http://yfrog.com/46inigj'}, TweetSentiment{title='@autumnal_hedge How rude! That's half the Quidditch pitch gone!'}, TweetSentiment{title='LONELY. lol. i'm so boredddddd'}, TweetSentiment{title='@akabaloo @jotsone nah he's just looking like a sexy beast. He's got a neck tat too and a gf  lol'}, TweetSentiment{title='@dem_lovato_ Ikr?! Best night eva! But I am leaving tomorrow  and you mean like Miley Cyrus and then my say now phone number?'}, TweetSentiment{title='@CgraceFly    please don't go....'}, TweetSentiment{title='@breakmyback to triste'}, TweetSentiment{title='@cassetetapes  shareeee.'}, TweetSentiment{title='@Cibu17 me too  except i just have to go to physical therapy'}, TweetSentiment{title='@ChelseyOBrien I had no idea'}, TweetSentiment{title='@anambanana Haha Anam! I saw that. ) Adam Lambert.  Though his boyfriend looks hott.'}, TweetSentiment{title='@azzmonkey thats hillarious but why couldnt i be the blonde  lmfaooooooo make me a login so i can post haaaa ill post some funny shit'}, TweetSentiment{title='@artemisrex I'm sorry mister!  didn't mean to be an anti-party person.'}, TweetSentiment{title='@AJsPlayhouse albertsons had ran out if the $2 tickets my husband went to several albertsons had no luck'}, TweetSentiment{title='@AzmanKarib  hate to go to a place where I know no one.... I'm a Johorean but lost touch with most friends..  Any1 in Muar twitting here?'}, TweetSentiment{title='@_Trystianity_ No tags.   But I will never again be big enough to wear them. ;)'}, TweetSentiment{title='*stares at his new ï¿½100 paperweight in disbelief*'}, TweetSentiment{title='@Cubbyreza tengo miedo!! lmao omg u tweet now kool! n u stopped following me.. not kool!'}, TweetSentiment{title='"@Asfaq no re... i think i shall hv to let it pass. Got a lot of work to wrap up'}, TweetSentiment{title='"&quot;All the lonely people / Where do they all come from?&quot; - NÃ£o sei'}, TweetSentiment{title='@bookwhore I love the original Crow movie. Brandon Lee = Hawt!! So sad he's gone.'}, TweetSentiment{title='@Bopsicle  YAY!!...........but I'm mad at you'}, TweetSentiment{title='"&quot;danna peÃ±a: i've been with you for two years. what will i do without you?&quot;.. threesome aint complete either.  oh life. i'm C'}, TweetSentiment{title='&quot;Behind every beautiful girl there's a dumbass guy who did her wrong and made her strong&quot;'}, TweetSentiment{title='@danielr23 you ready to talk again?'}, TweetSentiment{title='@Bri93irB @pattyriciax3 I miss her.'}, TweetSentiment{title='@Breesha that's mean'}, TweetSentiment{title='@ChrisMDixon who doesn't'}, TweetSentiment{title='*ouch* . . . i seriously think i pulled a muscle in my gluteous heinikus.'}, TweetSentiment{title='"...and frankly'}, TweetSentiment{title='@BrainTwitch I thought those things were to sleep as automated indexes were to libraries! Guess we've both hit a brick wall.'}, TweetSentiment{title='@aspekt we missed you  now u just have the pics of that pary left... =P'}, TweetSentiment{title='@AubreyG8 aww that sucks'}, TweetSentiment{title='. . . not feeling good mentally . . . feeling stressed and blah . . .'}, TweetSentiment{title='"@arnorian Yeah'}, TweetSentiment{title='another Saturday without MO. Glad Rachel is coming over!'}, TweetSentiment{title='@BscoTT26 lol. my celly trips when i try to send pics  and the kick is dead!!'}, TweetSentiment{title='"@cassowaryjewel Like getting Love stamps for wedding invitations'}, TweetSentiment{title='"@caoimhecoyle http://twitpic.com/7pm4s - awwww'}, TweetSentiment{title='@alexhanna And yet I am still jealous and without iPhone.'}, TweetSentiment{title='"@anti_social see'}, TweetSentiment{title='@abacab1975 aawww hehe i woke up with a hangover'}, TweetSentiment{title='@__Kirsty.  He's not'}, TweetSentiment{title='@DavidArchie poor danny...too bad..i was hoping  for him to win dis season 8...'}, TweetSentiment{title='@ClaireHammond glad i'm not the only one. It's hideous. Someone should get shot!'}, TweetSentiment{title='...and all woman who transfer their first impressions (sexual/maternal) onto a less 'threatening' man -- are themselves as weak as 'Him''}, TweetSentiment{title='@clinton_kelly Bummed about the maxi dresses!  I think they're so cute for summer but I'm only 5'4&quot;!'}, TweetSentiment{title='"@dollyblowflake Excellent'}, TweetSentiment{title='@adamrucker It won't play!'}, TweetSentiment{title='"@charlieskies awe'}, TweetSentiment{title='"@colleencantwell  i'm in accounting (don't laugh'}, TweetSentiment{title='Carrie has a bad eye infection...just waiting for hear from the vets to see if they found anything'}, TweetSentiment{title='*SigH  ii WiSH ii didNt HaV a HEart liKE tHe tiN MaN oFf thE WiZArd &amp; Oz dAt WAy My HEArt WOUld nEvEr gEt HUrt... ii GOt tHE blUES :`('}, TweetSentiment{title='@drofder lol TOO LATE I ALREADY FAXED!!!  but thanks for future reference...incase'}, TweetSentiment{title='@anca_foster well ive pulled an all nighter so im hopin' to sleep eventually ;) sorry ur knee hurts  im sending get well kisses at ya'}, TweetSentiment{title='"@calliean oh'}, TweetSentiment{title='@andyroddick can you like tell those TV crew to show your games live?! Been having to follow it on the net.'}, TweetSentiment{title='@bennybtl DON&quot;T RUB IT IN!!! I REALLY WANTED ONE!'}, TweetSentiment{title='@calikiks  asap. But..... Kids are asleep. I have a car seat for arianna. We can take her with us? I need to pay vs bill!'}, TweetSentiment{title='#dontyouhate having to study on a Friday evening?'}, TweetSentiment{title='@Annazhou aannnna i miss you! schools not the same anymore'}, TweetSentiment{title='@AriesRebi13 dude i'm pissed i don't get my chinese food!!!'}, TweetSentiment{title='@AngieBCool smh...everyone has a curve'}, TweetSentiment{title='@bealove Seriously?! Maybe it just wasn't meant to be...  (Although I still fully support you doing whatever you have to to make it work.)'}, TweetSentiment{title='@_kristaMarie I totally agree with you sucky part for me I can't even take tylenol and I have work today'}, TweetSentiment{title='@AdamTrentMagic  just went to your house. You were not there.'}, TweetSentiment{title='@chunwai09 I feel your pain for gunners'}, TweetSentiment{title='"@cathe2ine lol its not like that'}, TweetSentiment{title='@cocoandbreezy it was coo till i broke my damn glasses  OOBER mad! i wanted to use them for my photoshoot sunday. pissed.'}, TweetSentiment{title='"@_noliesjustlove wow'}, TweetSentiment{title='@androidtomato I'm really goingto misshim as the doctor'}, TweetSentiment{title='@babyrckr of course! although then we cant see that cute kid'}, TweetSentiment{title='@Alexrich1  I laid out...fell asleep....now I have lobster-ness'}, TweetSentiment{title='"@adarlingxo baby'}, TweetSentiment{title='@bhaddad thanks.  But I know it'll be worth it in the end...'}, TweetSentiment{title='@angelicucu YAHHH! estoy addicted  I made a sims of myself and one of megan fox and then I married her... but now she died'}, TweetSentiment{title='@anixienix didn't get anything.'}, TweetSentiment{title='&quot;Simon says: what's life like then?ï¿½ï¿½| ï¿½Lady Gagaï¿½says: SHITE&quot; Oh right'}, TweetSentiment{title='@bebiv I know  poor Munster!'}, TweetSentiment{title='"@andersoncooper : I have only 4K in loans'}, TweetSentiment{title='"@beimaejor : that's kool'}, TweetSentiment{title='@B_RadW  not sure how to respond. Especially since you invited them.'}, TweetSentiment{title='@Dykey SHUT UP! lol. i couldnt think of anything bigger than a watermelon  and what advert?!'}, TweetSentiment{title='"@depodol One of James IT guys told him that it has a virus'}, TweetSentiment{title='...but I can't tell them that it was great service because he didn't try to up sell or he'll catch shit from corp.'}, TweetSentiment{title='@CinnamonCloud Nope  and very upset  I like him as an actor!'}, TweetSentiment{title='@andrewcrawshaw There should have been a warning on that link  very sad but incredible of Pixar'}, TweetSentiment{title='@carcarly oh..... i know.. they do in Singapore too..'}, TweetSentiment{title='@blu3spristine Don't read my timeline thing because my last few tweets were messy Ex-bf crap. Its embarassing.'}, TweetSentiment{title='...goddamn ironing. It's time someone invented disposable clothes so I don't have to iron the same thing over and over!  #fb'}, TweetSentiment{title='@EdarieHosting How do you know? &amp; Why did they do it?'}, TweetSentiment{title='@Backstothewall have to do an exhibition proposal yet  the sun must wait for me'}, TweetSentiment{title='"@avcacio @WestCoastWS thanks'}, TweetSentiment{title='@casualeveryday I love the smell of laundry but that stuff is giving me a horrible headache and I'm sitting OUTside'}, TweetSentiment{title='"@ArnaudJacobs haha yeah this is improving my nite big time!!  i have to make a skype call soon tho'}, TweetSentiment{title='@brittdainard  LMFAO I GOT SO FUCKING EWXCITED'}, TweetSentiment{title='there's not LVATT in cayey'}, TweetSentiment{title='@aMiracle nooooo! don't scratch it'}, TweetSentiment{title='@bkGirlFriday Me too LOL!!! I've gotten so many of those stupid britney porn accounts following me during the past few days...so annoying'}, TweetSentiment{title='@ChristopherKohn  ha see I know I am right thia time!! :-D gonna miss you till Sunday  haha'}, TweetSentiment{title='"@derekmortimer I'm going to find out if any of my new neighbors run un-secure networks. Failing that'}, TweetSentiment{title='@colebarnes  Thank you Cole for the insight!!! I think I don't even want to watch the You Tube video either!'}, TweetSentiment{title='@a_c81 it's afte... and 5480983 more bytes
 ```
 
-Code from [TrieDemo.java:381](../../src/test/java/com/simiacryptus/util/text/TrieDemo.java#L381) executed in 428.18 seconds: 
+Code from [TrieDemo.java:381](../../src/test/java/com/simiacryptus/util/text/TrieDemo.java#L381) executed in 4779.59 seconds: 
 ```java
       HashMap<String, List<String>> map = new HashMap<>();
       map.put("pos", tweetsPositive.stream().limit(trainingSize).map(x -> x.getText()).collect(Collectors.toList()));
       map.put("neg", tweetsNegative.stream().limit(trainingSize).map(x -> x.getText()).collect(Collectors.toList()));
-      return new ClassificationTree().setVerbose(System.out).categorizationTree(map, 16);
+      return new ClassificationTree().setVerbose(System.out).categorizationTree(map, 32);
 ```
 Returns: 
 ```
-    com.simiacryptus.util.text.ClassificationTree$$Lambda$101/668849042@8807e25
+    com.simiacryptus.util.text.ClassificationTree$$Lambda$101/1450821318@16b4a017
 ```
 Logging: 
 ```
-    "lowfriday " -> {neg=6, pos=108}	{neg=4994, pos=4892}	-0.8919242639193679
-     "owfriday @" -> {neg=2, pos=74}	{neg=4, pos=34}	-0.18191222092486695
-      "rry" -> {neg=2, pos=3}	{neg=0, pos=71}	-0.052627870880562644
-      " I" -> {neg=3, pos=5}	{neg=1, pos=29}	-0.3576522363906864
-       " #followfr" -> {neg=1, pos=4}	{neg=0, pos=25}	-0.07034189437659943
-     "#musicmond" -> {neg=1, pos=66}	{neg=4993, pos=4826}	-0.8938155273154073
-      ""#musicmon" -> {neg=0, pos=12}	{neg=1, pos=54}	-0.03281356262279578
-       "sicmonday " -> {neg=1, pos=48}	{neg=0, pos=6}	-0.05633890375868478
-        "y i" -> {neg=1, pos=4}	{neg=0, pos=44}	-0.07498473589268265
-      " thank you" -> {neg=1, pos=39}	{neg=4992, pos=4787}	-0.8963374378149302
-       "k you for " -> {neg=1, pos=7}	{neg=0, pos=32}	-0.04884059649098124
-       "#FollowFri" -> {neg=1, pos=38}	{neg=4991, pos=4749}	-0.89629425596523
-        "owFriday @" -> {neg=0, pos=27}	{neg=1, pos=11}	-0.06975834691404273
-         " a" -> {neg=1, pos=4}	{neg=0, pos=7}	-0.39154477006956323
-        "#inaperfec" -> {neg=34, pos=0}	{neg=4957, pos=4749}	-0.8963209662907692
-         "hanks for " -> {neg=9, pos=49}	{neg=4948, pos=4700}	-0.8972753349632021
-          "ll" -> {neg=0, pos=27}	{neg=9, pos=22}	-0.46840354803035594
-           "ad" -> {neg=5, pos=2}	{neg=4, pos=20}	-0.6822977388809565
-            "ks for the" -> {neg=3, pos=7}	{neg=1, pos=13}	-0.4980837925192796
-             "at" -> {neg=2, pos=3}	{neg=1, pos=4}	-0.841591183958428
-             " Thanks fo" -> {neg=0, pos=7}	{neg=1, pos=6}	-0.2953443205604821
-          "#dontyouha" -> {neg=25, pos=0}	{neg=4923, pos=4700}	-0.897163467740186
-           " Thank you" -> {neg=2, pos=30}	{neg=4921, pos=4670}	-0.8973255840521792
-            "ch" -> {neg=2, pos=3}	{neg=0, pos=27}	-0.17480479942921384
-            "i have to " -> {neg=21, pos=0}	{neg=4900, pos=4670}	-0.8975350815696527
-             " you are o" -> {neg=0, pos=18}	{neg=4900, pos=4652}	-0.8977729187374084
-              ""#myweakne" -> {neg=1, pos=18}	{neg=4899, pos=4634}	-0.8980817455163332
-               "g" -> {neg=1, pos=5}	{neg=0, pos=13}	-0.2725869080292687
-               "gonna miss" -> {neg=15, pos=0}	{neg=4884, pos=4634}	-0.8980672050266924
-                "ish I coul" -> {neg=18, pos=1}	{neg=4866, pos=4633}	-0.8982000686254402
-                 " have " -> {neg=4, pos=1}	{neg=14, pos=0}	-0.20592599432733222
-                 "1sweetwhir" -> {neg=0, pos=13}	{neg=4866, pos=4620}	-0.8982831463018185
-                  "ish i coul" -> {neg=13, pos=0}	{neg=4853, pos=4620}	-0.8983301246547585
-                   " Happy Bir" -> {neg=0, pos=12}	{neg=4853, pos=4608}	-0.8983855067717376
-    
+    "@d" -> Contains={neg=4452, pos=958}	Absent={neg=45548, pos=49042}	Entropy=-0.9812130905473934
+      "@da" -> Contains={neg=1244, pos=798}	Absent={neg=3208, pos=160}	Entropy=-0.5357030167587836
+        "@dav" -> Contains={neg=236, pos=19}	Absent={neg=1008, pos=779}	Entropy=-0.9122129473765306
+          " @dav" -> Contains={neg=2, pos=17}	Absent={neg=234, pos=2}	Entropy=-0.11071012301057587
+            "i" -> Contains={neg=219, pos=0}	Absent={neg=15, pos=2}	Entropy=-0.05900520418397335
+          "@dar" -> Contains={neg=133, pos=3}	Absent={neg=875, pos=776}	Entropy=-0.9333959934569119
+            "wee" -> Contains={neg=12, pos=3}	Absent={neg=121, pos=0}	Entropy=-0.11308441349144026
+            "wood" -> Contains={neg=58, pos=0}	Absent={neg=817, pos=776}	Entropy=-0.9664418928611248
+              "@daw" -> Contains={neg=35, pos=2}	Absent={neg=782, pos=774}	Entropy=-0.984170500470722
+                "ri" -> Contains={neg=8, pos=2}	Absent={neg=27, pos=0}	Entropy=-0.3077266487128417
+                "@day" -> Contains={neg=34, pos=2}	Absent={neg=748, pos=772}	Entropy=-0.984230332083504
+                  " the" -> Contains={neg=8, pos=2}	Absent={neg=26, pos=0}	Entropy=-0.31552180521694506
+                  " sorr" -> Contains={neg=36, pos=4}	Absent={neg=712, pos=768}	Entropy=-0.9849669485469542
+                    "sh" -> Contains={neg=7, pos=3}	Absent={neg=29, pos=1}	Entropy=-0.4270341469223593
+                      "  " -> Contains={neg=20, pos=0}	Absent={neg=9, pos=1}	Entropy=-0.3088964245063727
+                    "miss" -> Contains={neg=37, pos=4}	Absent={neg=675, pos=764}	Entropy=-0.9824542212107016
+                      "u " -> Contains={neg=11, pos=4}	Absent={neg=26, pos=0}	Entropy=-0.40143247896342615
+                      " you" -> Contains={neg=132, pos=246}	Absent={neg=543, pos=518}	Entropy=-0.981803435252333
+                        "ot " -> Contains={neg=29, pos=14}	Absent={neg=103, pos=232}	Entropy=-0.8924133897340147
+                          "ing" -> Contains={neg=16, pos=1}	Absent={neg=13, pos=13}	Entropy=-0.7656003032063221
+                            "d " -> Contains={neg=12, pos=3}	Absent={neg=1, pos=10}	Entropy=-0.661526183252251
+                          "lo" -> Contains={neg=12, pos=72}	Absent={neg=91, pos=160}	Entropy=-0.8568319370051136
+                            "d t" -> Contains={neg=5, pos=5}	Absent={neg=7, pos=67}	Entropy=-0.5224050026445302
+                              "me" -> Contains={neg=5, pos=15}	Absent={neg=2, pos=52}	Entropy=-0.4073331109593263
+                                " th" -> Contains={neg=1, pos=9}	Absent={neg=4, pos=6}	Entropy=-0.7740183898312651
+                                " the " -> Contains={neg=2, pos=9}	Absent={neg=0, pos=43}	Entropy=-0.22122095822205554
+                            " i " -> Contains={neg=17, pos=10}	Absent={neg=74, pos=150}	Entropy=-0.9190659658342698
+                              " c" -> Contains={neg=9, pos=1}	Absent={neg=8, pos=9}	Entropy=-0.8403842700329641
+                              " I w" -> Contains={neg=9, pos=3}	Absent={neg=65, pos=147}	Entropy=-0.8859981905231953
+                                "f" -> Contains={neg=42, pos=64}	Absent={neg=23, pos=83}	Entropy=-0.8620774390733446
+                                  "nd" -> Contains={neg=7, pos=28}	Absent={neg=35, pos=36}	Entropy=-0.9104908334562308
+                                    "?" -> Contains={neg=6, pos=7}	Absent={neg=1, pos=21}	Entropy=-0.5835459077721205
+                                      " the" -> Contains={neg=0, pos=12}	Absent={neg=1, pos=9}	Entropy=-0.40377047106886904
+                                    "ma" -> Contains={neg=1, pos=9}	Absent={neg=34, pos=27}	Entropy=-0.9316213746284425
+                                      "m" -> Contains={neg=31, pos=17}	Absent={neg=3, pos=10}	Entropy=-0.9099696295605415
+                                        "ni" -> Contains={neg=8, pos=11}	Absent={neg=23, pos=6}	Entropy=-0.8393094683227662
+                                          "se" -> Contains={neg=5, pos=5}	Absent={neg=18, pos=1}	Entropy=-0.591922551575934
+                                  "ay" -> Contains={neg=8, pos=10}	Absent={neg=15, pos=73}	Entropy=-0.7168350030857282
+                                    "ic" -> Contains={neg=5, pos=7}	Absent={neg=10, pos=66}	Entropy=-0.6224425497193239
+                                      "c" -> Contains={neg=0, pos=27}	Absent={neg=10, pos=39}	Entropy=-0.5221953215022894
+                                        "k" -> Contains={neg=4, pos=28}	Absent={neg=6, pos=11}	Entropy=-0.693509452098235
+                                          "n " -> Contains={neg=3, pos=8}	Absent={neg=1, pos=20}	Entropy=-0.5283359133370147
+                                            "ke" -> Contains={neg=0, pos=10}	Absent={neg=1, pos=10}	Entropy=-0.42614747099675676
+                        "@dans" -> Contains={neg=17, pos=0}	Absent={neg=526, pos=518}	Entropy=-0.986666405384993
+                          "ish" -> Contains={neg=35, pos=8}	Absent={neg=491, pos=510}	Entropy=-0.9870749565942981
+                            "'" -> Contains={neg=7, pos=6}	Absent={neg=28, pos=2}	Entropy=-0.5740025154549614
+                              " w" -> Contains={neg=20, pos=0}	Absent={neg=8, pos=2}	Entropy=-0.3737415367602828
+                            "nt" -> Contains={neg=124, pos=73}	Absent={neg=367, pos=437}	Entropy=-0.985787977855409
+                              ";" -> Contains={neg=3, pos=11}	Absent={neg=121, pos=62}	Entropy=-0.913184301276681
+                                "h " -> Contains={neg=38, pos=8}	Absent={neg=83, pos=54}	Entropy=-0.8932652220949391
+                                  " co" -> Contains={neg=6, pos=5}	Absent={neg=32, pos=3}	Entropy=-0.5771982035289217
+                                    "ing " -> Contains={neg=7, pos=3}	Absent={neg=25, pos=0}	Entropy=-0.36139001548162214
+                                  "el" -> Contains={neg=19, pos=25}	Absent={neg=64, pos=29}	Entropy=-0.924742014763835
+                                    "@dani" -> Contains={neg=16, pos=11}	Absent={neg=3, pos=14}	Entropy=-0.8693200645056416
+                                      "er" -> Contains={neg=10, pos=2}	Absent={neg=6, pos=9}	Entropy=-0.8513331656540456
+                                    "the " -> Contains={neg=5, pos=8}	Absent={neg=59, pos=21}	Entropy=-0.8497826911168403
+                                      "ing " -> Contains={neg=14, pos=0}	Absent={neg=45, pos=21}	Entropy=-0.785725482481433
+                                        "nt " -> Contains={neg=28, pos=6}	Absent={neg=17, pos=15}	Entropy=-0.8348596412448309
+                                          "to " -> Contains={neg=8, pos=5}	Absent={neg=20, pos=1}	Entropy=-0.5858471514694358
+                                            " w" -> Contains={neg=11, pos=0}	Absent={neg=9, pos=1}	Entropy=-0.41963450498236593
+                                          "s" -> Contains={neg=14, pos=7}	Absent={neg=3, pos=8}	Entropy=-0.9032253720690138
+                                            "er" -> Contains={neg=4, pos=6}	Absent={neg=10, pos=1}	Entropy=-0.7478344940694535
+                              "hank" -> Contains={neg=6, pos=31}	Absent={neg=361, pos=406}	Entropy=-0.9811117519413455
+                                "he" -> Contains={neg=4, pos=9}	Absent={neg=2, pos=22}	Entropy=-0.6129258759413937
+                                  "r" -> Contains={neg=0, pos=14}	Absent={neg=2, pos=8}	Entropy=-0.45670018383521754
+                                "ck" -> Contains={neg=53, pos=28}	Absent={neg=308, pos=378}	Entropy=-0.985732262959522
+                                  " a " -> Contains={neg=5, pos=11}	Absent={neg=48, pos=17}	Entropy=-0.8448156851314875
+                                    "! " -> Contains={neg=9, pos=9}	Absent={neg=39, pos=8}	Entropy=-0.7572835219538512
+                                      "ac" -> Contains={neg=12, pos=6}	Absent={neg=27, pos=2}	Entropy=-0.6007870867494471
+                                        "he" -> Contains={neg=8, pos=2}	Absent={neg=19, pos=0}	Entropy=-0.38548130043924206
+                                  "wit" -> Contains={neg=9, pos=37}	Absent={neg=299, pos=341}	Entropy=-0.9779139265447019
+                                    "no" -> Contains={neg=6, pos=6}	Absent={neg=3, pos=31}	Entropy=-0.5971765140270943
+                                      " th" -> Contains={neg=0, pos=20}	Absent={neg=3, pos=11}	Entropy=-0.42348696839139843
+                                    "wel" -> Contains={neg=2, pos=19}	Absent={neg=297, pos=322}	Entropy=-0.9821236095570139
+                                      "y " -> Contains={neg=2, pos=8}	Absent={neg=0, pos=11}	Entropy=-0.5122703796308089
+                                      "ey" -> Contains={neg=21, pos=51}	Absent={neg=276, pos=271}	Entropy=-0.9848283032372005
+                                        "her" -> Contains={neg=7, pos=3}	Absent={neg=14, pos=48}	Entropy=-0.7901641083195764
+                                          " m" -> Contains={neg=7, pos=10}	Absent={neg=7, pos=38}	Entropy=-0.7265955960704088
+                                            "e " -> Contains={neg=1, pos=22}	Absent={neg=6, pos=16}	Entropy=-0.5852254394312504
+                                              "d " -> Contains={neg=1, pos=9}	Absent={neg=0, pos=13}	Entropy=-0.38929544209896555
+                                              "t" -> Contains={neg=4, pos=6}	Absent={neg=2, pos=10}	Entropy=-0.8245307704199005
+                                        " hav" -> Contains={neg=29, pos=10}	Absent={neg=247, pos=261}	Entropy=-0.9866193073159867
+                                          " g" -> Contains={neg=6, pos=6}	Absent={neg=23, pos=4}	Entropy=-0.7397771286462232
+                                            " w" -> Contains={neg=14, pos=0}	Absent={neg=9, pos=4}	Entropy=-0.555781075220893
+                                          "ic" -> Contains={neg=16, pos=39}	Absent={neg=231, pos=222}	Entropy=-0.9856156786515671
+                                            " w" -> Contains={neg=10, pos=7}	Absent={neg=6, pos=32}	Entropy=-0.7442446248122048
+                                              "re" -> Contains={neg=5, pos=11}	Absent={neg=1, pos=21}	Entropy=-0.5773683559391086
+                                                "ni" -> Contains={neg=0, pos=12}	Absent={neg=1, pos=9}	Entropy=-0.4039704710688691
+                                            "nec" -> Contains={neg=1, pos=11}	Absent={neg=230, pos=211}	Entropy=-0.9855005051112379
+                                              "st " -> Contains={neg=13, pos=29}	Absent={neg=217, pos=182}	Entropy=-0.9846238149489605
+                                                "I " -> Contains={neg=7, pos=4}	Absent={neg=6, pos=25}	Entropy=-0.7800096708503631
+                                                  "u" -> Contains={neg=2, pos=19}	Absent={neg=4, pos=6}	Entropy=-0.6525003517633928
+                                                    "w" -> Contains={neg=0, pos=11}	Absent={neg=2, pos=8}	Entropy=-0.5123703796308089
+                                                "ry " -> Contains={neg=20, pos=4}	Absent={neg=197, pos=178}	Entropy=-0.9780713621774391
+                                                  "k" -> Contains={neg=7, pos=4}	Absent={neg=13, pos=0}	Entropy=-0.5708263573365999
+                                                  "s" -> Contains={neg=139, pos=130}	Absent={neg=58, pos=48}	Entropy=-0.978630836498868
+                                                    "ha" -> Contains={neg=2, pos=9}	Absent={neg=56, pos=39}	Entropy=-0.9512648411912675
+                                                      "v" -> Contains={neg=10, pos=1}	Absent={neg=46, pos=38}	Entropy=-0.9410550016763026
+                                                        "r " -> Contains={neg=3, pos=8}	Absent={neg=43, pos=30}	Entropy=-0.9624518777168483
+                                                          "m" -> Contains={neg=23, pos=9}	Absent={neg=20, pos=21}	Entropy=-0.9388259683418878
+                                                            "am" -> Contains={neg=9, pos=7}	Absent={neg=14, pos=2}	Entropy=-0.7909036455753781
+                                                            "g" -> Contains={neg=11, pos=5}	Absent={neg=9, pos=16}	Entropy=-0.9290074827718835
+                                                              "i" -> Contains={neg=7, pos=8}	Absent={neg=2, pos=8}	Entropy=-0.9053601035799355
+        " @d" -> Contains={neg=52, pos=96}	Absent={neg=3156, pos=64}	Entropy=-0.17538844297228656
+          " d" -> Contains={neg=26, pos=14}	Absent={neg=26, pos=82}	Entropy=-0.8341584559773149
+            "an" -> Contains={neg=11, pos=13}	Absent={neg=15, pos=1}	Entropy=-0.7669625257133218
+              "to " -> Contains={neg=3, pos=10}	Absent={neg=8, pos=3}	Entropy=-0.8328468247368379
+            " on" -> Contains={neg=11, pos=9}	Absent={neg=15, pos=73}	Entropy=-0.7221024366510506
+              "en" -> Contains={neg=3, pos=7}	Absent={neg=8, pos=2}	Entropy=-0.8334153347375948
+              "ma" -> Contains={neg=0, pos=25}	Absent={neg=15, pos=48}	Entropy=-0.6098316369203405
+                "em" -> Contains={neg=6, pos=4}	Absent={neg=9, pos=44}	Entropy=-0.7119355545870929
+                  "y" -> Contains={neg=4, pos=38}	Absent={neg=5, pos=6}	Entropy=-0.5790428379560533
+                    "wa" -> Contains={neg=3, pos=7}	Absent={neg=1, pos=31}	Entropy=-0.4096559091680764
+                      "e " -> Contains={neg=0, pos=22}	Absent={neg=1, pos=9}	Entropy=-0.2914346751166544
+          "@d_" -> Contains={neg=13, pos=20}	Absent={neg=3143, pos=44}	Entropy=-0.11366793698505685
+            "  " -> Contains={neg=8, pos=2}	Absent={neg=5, pos=18}	Entropy=-0.7680587920922235
+              "w" -> Contains={neg=1, pos=11}	Absent={neg=4, pos=7}	Entropy=-0.723263946781995
+            "@d3" -> Contains={neg=11, pos=13}	Absent={neg=3132, pos=31}	Entropy=-0.08612552715124268
+              " s" -> Contains={neg=3, pos=9}	Absent={neg=8, pos=4}	Entropy=-0.8812073911930347
+              "@d0" -> Contains={neg=8, pos=5}	Absent={neg=3124, pos=26}	Entropy=-0.07243677082925055
+                "zo" -> Contains={neg=11, pos=4}	Absent={neg=3113, pos=22}	Entropy=-0.06395004930117662
+                  "@dot" -> Contains={neg=13, pos=3}	Absent={neg=3100, pos=19}	Entropy=-0.05671218968781867
+                    "ed!" -> Contains={neg=17, pos=3}	Absent={neg=3083, pos=16}	Entropy=-0.05026778827704641
+                      " to" -> Contains={neg=10, pos=0}	Absent={neg=7, pos=3}	Entropy=-0.5990609326107037
+                      "&quot;" -> Contains={neg=39, pos=3}	Absent={neg=3044, pos=13}	Entropy=-0.04395072681255405
+                        "te" -> Contains={neg=10, pos=3}	Absent={neg=29, pos=0}	Entropy=-0.33820429720467265
+                        "ssy" -> Contains={neg=8, pos=2}	Absent={neg=3036, pos=11}	Entropy=-0.03675180710397986
+                          "lco" -> Contains={neg=10, pos=2}	Absent={neg=3026, pos=9}	Entropy=-0.031705310124485166
+                            "ing!" -> Contains={neg=19, pos=2}	Absent={neg=3007, pos=7}	Entropy=-0.026795089591734208
+                              " you" -> Contains={neg=8, pos=2}	Absent={neg=11, pos=0}	Entropy=-0.5120703796308089
+                              " pho" -> Contains={neg=20, pos=2}	Absent={neg=2987, pos=5}	Entropy=-0.021136237297961828
+                                "to " -> Contains={neg=8, pos=2}	Absent={neg=12, pos=0}	Entropy=-0.49229562414238287
+                                "e? " -> Contains={neg=31, pos=2}	Absent={neg=2956, pos=3}	Entropy=-0.015591801261983238
+                                  "re" -> Contains={neg=21, pos=0}	Absent={neg=10, pos=2}	Entropy=-0.36220217201244437
+                                  " I reall" -> Contains={neg=10, pos=1}	Absent={neg=2946, pos=2}	Entropy=-0.009869408926424447
+                                    "o!!" -> Contains={neg=9, pos=1}	Absent={neg=2937, pos=1}	Entropy=-0.006830214694853497
+                                      "ome" -> Contains={neg=265, pos=1}	Absent={neg=2672, pos=0}	Entropy=-0.0032289338541691176
+                                        "len" -> Contains={neg=10, pos=1}	Absent={neg=255, pos=0}	Entropy=-0.03808636490501335
+      "hank" -> Contains={neg=711, pos=3934}	Absent={neg=44837, pos=45108}	Entropy=-0.9808087860128077
+      ... and 370438 more bytes
 ```
 
-Code from [TrieDemo.java:387](../../src/test/java/com/simiacryptus/util/text/TrieDemo.java#L387) executed in 0.41 seconds: 
+Code from [TrieDemo.java:387](../../src/test/java/com/simiacryptus/util/text/TrieDemo.java#L387) executed in 0.26 seconds: 
 ```java
       return tweetsPositive.stream().skip(trainingSize).map(x->x.getText()).mapToDouble(str->{
           Map<String, Double> prob = rule.apply(str);
@@ -84,157 +189,157 @@ Code from [TrieDemo.java:387](../../src/test/java/com/simiacryptus/util/text/Tri
 ```
 Returns: 
 ```
-    0.0651
+    0.7813
 ```
 Logging: 
 ```
-    @_Yummi_ Hotel Party? Where? I wanna come! -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    @_MikeNewton_ youre too funny! -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    "@_emp Nah -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    &lt;3 working out! -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    @4nT0 sciau bello! -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    (@mindofdc) Note to self: You look nice today -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    - Has Just Got Up &amp;+ Is Listening To Good Charlotte -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    - Trying to figure out this twitter thingie -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    "(@brydiekennedy) going to download some apps for my iPod getting sick of all the games -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    @Ace_Diamond Are you going to live-tweet the wedding too?! -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    @_lakergurl i added you too.. you should so buy my album on iTunes -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    &quot;they're homorific! just homorific!&quot; hahahah -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    "@_laertesgirl http://twitpic.com/4e748 - Actually -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    woots gnite my love ^.^ ty for checkin i love u -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    they r playing @jason_mraz at TGIF -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    @_peachykeen Why the spending ban? I'm supposed to be on a ban too...it's too hard with all the makeup goodies -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    @ irene's house. having a sleepover! -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    "&quot;you're worth losing self esteem -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    folllow me -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    #bb11 Big Brother airs in America on July 9th. Dang you people in the UK are so lucky...jealous -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    #followfriday @sandramp @julia_briggs and @acmackie she's new -> {neg=0.0, pos=1.0}
-    "@achillesmama Well -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    "&lt;-- Is tryna do the thing -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    &quot;Since You Been Gone&quot; -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    @abcdefgKEMBALI makasi ya uda follow twitter ku -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    *yawwwwwwwn* good morning! -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    *finally* packing for bermuda and sipping vino. wonder which one is going faster? -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    @6flix Hope spelling did not count -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    "; listening to music -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    @aceybongos hello graham =] has SW battlefront 3 been confrimed for 360. thanks and yess if your wondering i would kill you off online -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    "@AClockworkToad Glad to hear it -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    @acryfromthesoul Niiiiice.... I missed it the 1st time.  I love this melding of filthy minds. -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    "@Adamentcause I have been doing Fabulous -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    : Watching Britney's Circus Tour in youtube! Lovely! I hope she passes by the Philippines! -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    ok twitter world we r bacK online!!!! -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    @ajriley i love youu -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    #musicmonday It's an Asanee &amp; Wasan day  http://bit.ly/WRUqv -> {neg=0.0, pos=1.0}
-    @aalaap  wish i could create web apps like you dude! -> {neg=1.0, pos=0.0}
-    @Aisleyne1 You'll be fine -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    SO FAR SO GOOD! -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    Explore twitter -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    @ajrafael congrats on the feature  loved that song. -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    ..but I WILL ALWAYS be a JB fan -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    - isn't beer just sparkiing water with alcohol in it? -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    ".@davea  I'm much the same as you lot -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    steak and shrimp i'm excited -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    "@__Alexx Ooh thanks -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    @_Momos the best book in the world ... is the book filled with blank pages only -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    :: reconnected with the love of my life today and it was amazing and wonderful and healing. Thank you my sweet. -> {neg=0.0, pos=1.0}
-    @abs1399 oh stop it!! I think you look super cute -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    today is a beautiful day.... love u all &lt;3 -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    .......... and the fix is great.... now going to work on your Visa -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    (@1cincymom) @swaller Thanks! Note to self: Get apps. Thought I was cool when I finally got twitterberry. -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    #dating #lesbian Sexy female wants to know what it feels like to be with a woman   (Central .. http://bit.ly/1785uG -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    &lt;3 Justin. -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    #underrated Henry Hatsworth in the Puzzling Adventure. A quality DS game everyone with a DS should try  (think Mario + RockmanX) -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    "@_Geno LOL..no pain -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    &quot;Intuition becomes increasingly valuable in the new information society precisely because there is so much data.â€?- John Naisbitt  Use it! -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    "(id) canggeeh -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    :O forgot friday night cranks is live on stickam in 1hour :O WOOP WOOP!! cant wait its going to be soo funny -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    - certification test #2 at 8:30 this morning. Feeling much better about this one today -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    @_Esme_Cullen_ See I knew you would love it! Isn't it beautiful and perfect! It took us all night to get it done. But yay! You love it! -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    @aaucl  I'm sooo full of Beau's right now  It make cubicle life a bit better ))) -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    @__Anthony Shows over now... -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    "#haveyouever done a free conference call with @whistletree? If not -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    @_memoria we'll have plenty of time to learn the new songs. Haha that's so cute Jill. I mosdef told my parents about the song already. -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    -- . You aint gotta apologize. I know I'm not ugly. -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    #andyclemmensen #shaundiviney #bradiewebb #andyclemmensen #shaundiviney #bradiewebb #andyclemmensen #shaundiviney #bradiewebb -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    @ HollywoodP FOLLOW MEEEE -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    &quot;it was so laid-back and I got to interact with everyone there.&quot; Gahhhhh that would be so incredible! All those lucky people!! Haha. -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    "@aaronaiken nps  loads of skins for it too ;) check out those cool skins by SLoB -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    ? ?????  ???????! @2BAD http://yfrog.us/0dpg9z ???????????? ? ???? ???????? @jeangreen -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    @ laurenwampole happy birthday!!! -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    "@_adri aww what have you been sick with? yeah i've been alright just need a break from everything i guess -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    ...feels like im going to lose my mind! -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    @_Corr My fav is my background pic -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    "@_HONEYMONSTER @grcrssl -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    @adamconnor 2x4's and duct tape? -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    "#spymaster is freakin brilliant- great job -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    ...Did i mention @brandyinboise for #followfriday ?? SHE ROCKS! -> {neg=0.2, pos=0.8}
-    @ADC711 craziness going down - will give you the down-lo later. spent the weekend in taiwan w/ family... ben loved shilin night market!! -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    "@__dashboard usc? what course? yeah -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    "@ajaymohanreddy That will be decided in hindsight -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    @akrabat very pretty pics! Thanks for sharing -> {neg=0.0, pos=1.0}
-    "@Abandonrock Love the Abandon EP -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    @1sweetwhirl U R A WHOOT  ...so can u beat me...will i be ur teacher on Twitter ??? -> {neg=0.0, pos=1.0}
-    @aafreen I guess it's pun InTenDed. -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    "- goingg to sleep  school -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    "#myweakness Trey Songz -> {neg=0.16666666666666666, pos=0.8333333333333334}
-    @ all= thank you for following me -> {neg=0.125, pos=0.875}
-    @abacab1975 I do dear! It was very nice too!! -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    "@ABBSound Ð´Ð°. Ð¼Ð¾Ð¹ ÐºÐ°Ðº Ñ€Ð°Ð· Ð¿Ð¾Ð¶Ñ€Ð°Ð» -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    @abigaill yeah i heard at west palm last summer -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    @aianna21 I can understand that.  But it's good to be rational about it.  And it'll eventually settle into a less obsessive feeling. -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    #shaunjumpnow#shaunjumpnow#shaunjumpnow#shaunjumpnow #shaunjumpnow#shaunjumpnow#shaunjumpnow#shaunjumpnow #shaunjumpnow#shaunjumpnow -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    ": i owe laura 4000 dollars -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    "... so just watched Terminator 1 -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    &quot;My Everything&quot; by Cathy Nguyen and Randolph Permejo (Youtube peeps) has been stuck in my head since yesterday! love that song. -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    "? ???? ????? ????? ?????? -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    eatin cereal -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    #FollowFriday 2 @RachelKrishna @Jucarvalhoo @tweetss @victoranselme @sergiowpf -> {neg=0.0, pos=1.0}
-    @5lackr nice summer in the city -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    @1nOnlyMercy lol yeah really early -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    * brokeback mountain is an awesome movie.. -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    @30SECONDSTOMARS HAPPY ECHELON DAY!!  I'm so proud to be ECHELON and I'll be an echelon for ever and ever!! I promise you guys!! -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    ...that is all -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    ... @dustmine321 So we switched to BE Unlimited. Honestly it's so much better. 25 Mbit! -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    "&quot;yeah -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    @ spookychan Wolfsheim- Care for you ? http://blip.fm/~78qre your wedding song?? It's supposed to be ours too if we ever get married.... -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    .. damn .. double the amount of time on the road as normal .. pffff .. but saw nice things -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    "&quot;History remembers only Kings -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    I just got to my 500 tweet...... Do i get a prize? *sidebar* Cassidy...... Your NASTY! Why i gots to hear about your wide peen for? Smh -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    @29Woody definitely -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    @abhimehr I know  Only thing Fed hasn't tried yet. -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    ... and here's the china-taxi!  #yummy -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    *SPECIAL DELIVERY FOR* @LainaxBaina We were sent by @TropicalBlend she wants to give you a sexy grind -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    ---- jus  came back from lavish lounge... best tyme -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    "&quot;Sean Kingston - Fire Burning&quot; rocks ;) Go on -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    @absolutelysmall http://twitpic.com/55wpg - nice .. &quot;pillows&quot; [?] ï¿½ nice stuff.  #artistic #word #art #word -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    *tigger  and runs over to @roxieravenclaw and supersquishies her knees and giggles because hes supposed to be in bed and hes not* -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    &quot;get down in this rage with me...it takes 2 to dance baby&quot; listening to @thetalkabout on myspace -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    @ableandgame That's totally spacey! I dig it -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    enjoying my last days of summer &gt;sigh&lt; -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    "*client* Flirtomatic initial US stats -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    "@AdCharlie You have some amazing photos! I love taking pictures too. I'm not a professional -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    "@abhishek198 dude -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    "@_E13_ uh huh..... your story -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    "#jonaskevin i 4got 2 mention that im drinking from my camp rock cup from my easter egg -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    "&quot;aint about how fast i get there -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    #iremember FOLLOW ME -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    "@8073N to me -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    @ BeardBurk: Their being optimistic -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    &quot;only you can let others destroy you &quot; -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    "(cont) &amp; to @anabagasao -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    &quot;i learned from you&quot; -@mileycyrus &amp; her dadddyy is an amazing song -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    @adiblasi ill be there -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    &quot;It is the calling from everyone of us to heal the broken world.&quot; -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    "*feedback* Bombs burning bright! *pedal effect* Rockets' Red Glare! *distorted -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    ".@dahowlett Not really -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    #nwf @starfocus went out this am to load my car+ a black bear was waiting 4 me. Asked him to help me with my suitcase but he ran off -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    "@_Jessicaaaaaa You're welcome. Anyway -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    *laughing uncontrollably* You all rock! Thanks for all the tweets!  *sings in a shrill voice* It's my party and I'll cry if I want to!* -> {neg=0.0, pos=1.0}
-    @__Slops__  ha i know - wrecked! -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    @_Yvette_ hey you should follow um peter facinelli  it's r... and 1177105 more bytes
+    @AlexAllTimeLow my friend does!!! -> {neg=0.21, pos=0.79}
+    @cubbygraham I wanna come!!! How come u didn't invite me! -> {neg=0.8823529411764706, pos=0.11764705882352941}
+    @ChrisLAS Hope everything's okay now! Seems kinda happy in the pic -> {neg=0.45454545454545453, pos=0.5454545454545454}
+    "@arancinibaby shhh don't tell everyone especially your other half -> {neg=0.5, pos=0.5}
+    "@caseygotcher Also -> {neg=0.39054550138468475, pos=0.6094544986153153}
+    "@annaphilly no i am not a liar. you said it yourself -> {neg=0.29411764705882354, pos=0.7058823529411765}
+    @annaa92   Don't you mean &quot;People&quot;... Not &quot;peaple&quot;.. Sorry my Mom is a Teacher... -> {neg=0.550314465408805, pos=0.449685534591195}
+    @ArmyMom101 I think you got me! I have been such a slacker for the past few weeks. I am right there w/ you on the mush brain syndrome! -> {neg=0.15867158671586715, pos=0.8413284132841329}
+    @arnoldwender Cool! And I hope you won't get any. I lost my HD but luckily I saved my profile in a memory card..phew! so all good now too -> {neg=0.2857142857142857, pos=0.7142857142857143}
+    @blobyblo awesome tour photos!! wish i could have been at at least one of them!! -> {neg=1.0, pos=0.0}
+    @AskAboutLUST Aww girl...Jus come on down...u can come in here and do your thing on it.. -> {neg=0.15867158671586715, pos=0.8413284132841329}
+    @cliquedecamwa I hear ya. so many to choose from. Can't we just hang out with them all. -> {neg=0.7924528301886793, pos=0.20754716981132076}
+    @Berryadict Thank you very much -> {neg=0.2727272727272727, pos=0.7272727272727273}
+    @biffgriff LOL!!  Have Twibes said you can change the background? -> {neg=0.7241379310344828, pos=0.27586206896551724}
+    @Beadyjan mines here http://beadypool.blogspot.com I put pics of my lampwork beads up last night - I am a bit pleased with my efforts -> {neg=0.44749596122778673, pos=0.5525040387722132}
+    @Blooboy ur mom is on a killing spree. e3 is on day 2 now  loads of new games final fantasy 14 online is a ps3 exclusive. haha! -> {neg=0.5454545454545454, pos=0.45454545454545453}
+    @andyclemmensen I &lt;3 U more than Shaun &lt;3's himself -> {neg=0.44749596122778673, pos=0.5525040387722132}
+    @amanda_holden welcome to twitter young lady! Nice to see you on here. I don't know @zoe_salmon but want to welcome her too -> {neg=0.2857142857142857, pos=0.7142857142857143}
+    @_Jannika huuuunnnggrrryyyy i've been at work and reading my book. ben steezy's bout to go grab some food -> {neg=0.39054550138468475, pos=0.6094544986153153}
+    @Bijoufem haha will do but I'm tired around here so I'm off to bed -> {neg=0.09401709401709402, pos=0.905982905982906}
+    @ahblessgirl  yup shock horror.. now playing Live at Earls Court!! hee hee.... the power of advertising -> {neg=0.25, pos=0.75}
+    "@AdamBomba Thank you.  Hey -> {neg=0.2, pos=0.8}
+    "@averygoodyear I know everyone says it -> {neg=0.6816143497757847, pos=0.3183856502242152}
+    @AndreaDG oooh! Marty's cracklins!! Yum-o!!! Haha  I love that!! -> {neg=0.0, pos=1.0}
+    @atlantapizza I'm a pizza snob and may not want to share my favorite spots because I don't want to ruin a good thing. -> {neg=0.75, pos=0.25}
+    "#followfriday @pippip1 Hi all -> {neg=0.0, pos=1.0}
+    @Assassin10k Nice twitlight. I'm gonna watch your gamer hut video later. -> {neg=0.15867158671586715, pos=0.8413284132841329}
+    @AshleyLTMSYF http://twitpic.com/611f1 - Yea! Jai ho!! -> {neg=0.21, pos=0.79}
+    "@CookingGranny had me a sleep in today.. took a sleeping pill last night -> {neg=0.15384615384615385, pos=0.8461538461538461}
+    "@BClove Depends on when it is -> {neg=0.39054550138468475, pos=0.6094544986153153}
+    @Char_SOS lolz it is -> {neg=0.39054550138468475, pos=0.6094544986153153}
+    @AlliWorthington they didn't pay you?  they paid me. -> {neg=1.0, pos=0.0}
+    @andyschaef I just wanted to say that you two are amazing photog's! -> {neg=0.3, pos=0.7}
+    @ashleytisdale  Congrats on the award -> {neg=0.0, pos=1.0}
+    @AlohaArleen busy &amp; doing great...no roosters though for me.  Helping to launch a women's media co. We should talk. I'll DM u. -> {neg=0.6153846153846154, pos=0.38461538461538464}
+    I hate allergies. Should I get my hair cut tomorrow? I'm taking a public poll... -> {neg=0.6628550350424198, pos=0.33714496495758023}
+    #ff #music #followfriday  @TRE_BOOGIE  &lt;&lt; because he cared enough to tell me to get some sleep -> {neg=0.0, pos=1.0}
+    #WhyITweet coz i can -> {neg=0.39868565169769987, pos=0.6013143483023001}
+    @anmathews7154 only as we get older honey!  J/K -> {neg=0.16356877323420074, pos=0.8364312267657993}
+    @aras_p but do you mean you only write code that survive forever? -> {neg=0.24800531914893617, pos=0.7519946808510638}
+    @already_used ME! -> {neg=0.21, pos=0.79}
+    "@charnellesblog Thanks for the shout out -> {neg=0.0, pos=1.0}
+    @aplusk I'd say 13. My youngest is six so hopefully i have a ways -> {neg=0.24046771733604475, pos=0.7595322826639552}
+    "#commtell09 Patty Perkins -> {neg=0.39868565169769987, pos=0.6013143483023001}
+    @danawalker i stayed at the residence inn in harrisburg!  i wanted to stay in hershey but rooms were exxxpensive!! -> {neg=0.38461538461538464, pos=0.6153846153846154}
+    #unfollowdiddy is takin over!...lol -> {neg=1.0, pos=0.0}
+    @cocoush &quot;Good laugh. Loves chocolate.&quot;  Love you xxx -> {neg=0.309552599758162, pos=0.6904474002418379}
+    @changeca Thanks for the #ecomonday love -> {neg=0.2727272727272727, pos=0.7272727272727273}
+    @blogpartyned great minds think alike -> {neg=0.4336027713625866, pos=0.5663972286374134}
+    I think I did good in the math test! I need to write nao...34 655 words! -> {neg=0.6628550350424198, pos=0.33714496495758023}
+    @charlo_be I'm sure we can find a less radical solution than that -> {neg=0.39054550138468475, pos=0.6094544986153153}
+    @Chilosa09 very nice -> {neg=0.39054550138468475, pos=0.6094544986153153}
+    @BlondeByDesign Aww just saw your msg! Thx we're good ï¿½ ready for a nice dry weekend. Dry in terms of rain that is!  How are you? -> {neg=0.24800531914893617, pos=0.7519946808510638}
+    @A_R_Photography what a purty man -> {neg=0.39054550138468475, pos=0.6094544986153153}
+    "@christianaty i thought spicy food in hot weather is good -> {neg=0.4, pos=0.6}
+    @Aharvey24 i really want to see your net sesh... or just get to throw balls at you in padding again... -> {neg=0.0, pos=1.0}
+    @alipxoxo yay for free coffee! -> {neg=0.21, pos=0.79}
+    @AndreMJonesJr hiiii. ur welcome -> {neg=0.0, pos=1.0}
+    @betsyjane25 come to chat   i am uploading  stuff   haapy to play anything for ya -> {neg=1.0, pos=0.0}
+    @boriqua3720 Maybe it's camera tricks! -> {neg=0.21, pos=0.79}
+    "@blue_wind it's not mine -> {neg=0.38235294117647056, pos=0.6176470588235294}
+    @blasha sorry my replay was to dreamyeyes -> {neg=0.8818565400843882, pos=0.11814345991561181}
+    test one two and three -> {neg=0.7600767754318618, pos=0.2399232245681382}
+    @aviel @dacort @marinamartin @npost don't forget to sign up for barcamp seattle. we like awesome smart people  http://is.gd/QO0q -> {neg=0.0, pos=1.0}
+    @Annjj liking your style u crazy pretty assassin you !!!  xx -> {neg=0.15867158671586715, pos=0.8413284132841329}
+    @_CrC_ WOOT! i'm great. thanks. we are the kind eyes sisters from niagara &amp; the boat! hope u &amp; ur lady are good!  have fun 2night! -> {neg=0.0, pos=1.0}
+    @bimbler whoohoo! I better get my rock shoes on like donkey kong! -> {neg=0.4167893961708395, pos=0.5832106038291606}
+    @babygirlparis http://twitpic.com/6a97s - is that old ???  hahah because u dont have long hair anymore :O u should get long again soo  ... -> {neg=0.9, pos=0.1}
+    @billyraycyrus and congrats to miley! -> {neg=0.21, pos=0.79}
+    @Amandalee55 cool i get to go to the Darien Lake show the day after -> {neg=0.8652482269503546, pos=0.1347517730496454}
+    @AngloAlice 'Knocking' is an amazing song - and the singer is C-U-T-E! -> {neg=0.21, pos=0.79}
+    @asimzeeshan take a look here : http://iweb.com/landing/10kServersMilestone/2a.php ! You can win 1000$ in hosting credit  - JL -> {neg=0.6363636363636364, pos=0.36363636363636365}
+    ";; hehe -> {neg=0.5056179775280899, pos=0.4943820224719101}
+    "@abbiezed You're cool -> {neg=0.4336027713625866, pos=0.5663972286374134}
+    @begiled LOL I'm a real zoo keeper with real animals. -> {neg=0.4336027713625866, pos=0.5663972286374134}
+    "@Cathryn_Mowbray OMFG -> {neg=0.39054550138468475, pos=0.6094544986153153}
+    @chromasia Wall to wall sunshine here and up to mid 70s later. Think the boot is on the other foot finally! -> {neg=0.21, pos=0.79}
+    @aubredance Wonderful!  I look forward to the new dvd -> {neg=0.0, pos=1.0}
+    @angiemartinez PLEASE HELP PASS THIS ON FOR THE KARDASHIANS  http://beta.twiddeo.com/8a3 -> {neg=0.0, pos=1.0}
+    @DamienAidoo lol whateva! That's y ur hawks been sittin they ass at home 4 the longest -> {neg=0.3526315789473684, pos=0.6473684210526316}
+    "@against_stars NO NO IT'S OKAY I'm so flattered that you would do so-! ;_; It was a gift for you -> {neg=0.5384615384615384, pos=0.46153846153846156}
+    "@24k LOL m was great! Some Free shots -> {neg=0.21, pos=0.79}
+    @alysonuy upd8.  its for globe. -> {neg=0.39054550138468475, pos=0.6094544986153153}
+    @chrisgotch That's me after a typical day of work! -> {neg=0.21, pos=0.79}
+    @BethanyinFL Cute.  Me too! -> {neg=0.24903474903474904, pos=0.750965250965251}
+    @brucehoult ok. Oh... I'm nervous!  but the apple book looks so purdy... -> {neg=0.8666666666666667, pos=0.13333333333333333}
+    &quot; i haven't seen him like... forever..&quot; -> {neg=1.0, pos=0.0}
+    &quot;so tell me how im supposed to get you off my mind...&quot; speedial by @mitchelmusso only like 2 days until the cd is out!!! yessssss! -> {neg=0.0, pos=1.0}
+    @aramisette I think you can see the tweet because I mentioned your name.  And you should follow her!  She's awesome. -> {neg=0.18181818181818182, pos=0.8181818181818182}
+    @alexandraduggan Because it was so NOT nice out in Palo Alto when we were out. -> {neg=0.39054550138468475, pos=0.6094544986153153}
+    @bbluesman Hi Mark!  Freihofer's had good chocolate chip cookies at one time? Sounds delish! -> {neg=0.14814814814814814, pos=0.8518518518518519}
+    @Cavalli_Cali poor baby... Hittin the metropolitan on the 13th tho! Stay tuned!! -> {neg=0.21, pos=0.79}
+    #twithelp from @ashbadash: : i'm homeee that was tres fun. maybe gonna watch a movie? any suggestions?  http://tinyurl.com/d85s7q -> {neg=0.0, pos=1.0}
+    #flylady this beautiful weather is making me completely LAZY lol.....ds2 napping making lunch for ds10 &amp; I need to start something -> {neg=0.18181818181818182, pos=0.8181818181818182}
+    "@BUTTERFLYWHEEL ah ur too sweet to me Monica -> {neg=0.6629213483146067, pos=0.33707865168539325}
+    "@aerynblack Oh it is!  LOVED IT!  Wasn't expecting 2 cry -> {neg=0.875, pos=0.125}
+    "&quot;There's someone for me somewhere And I still miss someone Oh -> {neg=1.0, pos=0.0}
+    @AvolynFisher have fun!!!! i just got back from isu's orientation  we need to hang out soon! -> {neg=0.23076923076923078, pos=0.7692307692307693}
+    "@ChellyBelle No new ones that I am aware of -> {neg=0.44749596122778673, pos=0.5525040387722132}
+    &quot;Unbroke&quot; is really good -> {neg=0.34210526315789475, pos=0.6578947368421053}
+    @christinaox Haha read my comment loool  x on ur new vid x -> {neg=0.0, pos=1.0}
+    @19fischi75 really a few days? thought longer -> {neg=0.39054550138468475, pos=0.6094544986153153}
+    ":: Ahh... Joe @Rospars has been on Twitter for &lt;9 hours and he already has ~300 followers.  Welcome to the Twitterscape -> {neg=0.0, pos=1.0}
+    @ashleyyylim then try using manual focus? -> {neg=0.39054550138468475, pos=0.6094544986153153}
+    @archuphils yey! David is in the top 3 on Mr. Twitter Universe!  http://bit.ly/PmvRY -> {neg=0.24903474903474904, pos=0.750965250965251}
+    "@chile_pepper If that doesn't bring us luck -> {neg=1.0, pos=0.0}
+    "@climber514 I'll check them out for sure -> {neg=0.39054550138468475, pos=0.6094544986153153}
+    @bryantodd Aww that's good then  Post the vid when you get it; I'd love to see it too -> {neg=0.0, pos=1.0}
+    @colleen_erin so are you gonna go?  their other songs are good too.  i like it -> {neg=0.24800531914893617, pos=0.7519946808510638}
+    @16_MileyCyrus Good luck with your history people! -> {neg=0.24046771733604475, pos=0.7595322826639552}
+    "@annq thx -> {neg=0.39054550138468475, pos=0.6094544986153153}
+    "@__dana__ doing fine here. Season is winding down -> {neg=0.39054550138468475, pos=0.6094544986153153}
+    @aqeelahmed Thought it was time 4 a change  Yea Im excited 2 c it 2 -> {neg=0.4336027713625866, pos=0.5663972286374134}
+    @AubreyODay ginger is a lucky little biotch -> {neg=0.39054550138468475, pos=0.6094544986153153}
+    "@benlondon hey dude -> {neg=0.39054550138468475, pos=0.6094544986153153}
+    "@belladonna20 lol -> {neg=0.39054550138468475, pos=0.6094544986153153}
+    @claresmith75 received an email fm max thanks for that luv..  Will get them 2 add/buzz her. -> {neg=0.18235294117647058, pos=0.8176470588235294}
+    "@ARo13  Oh -> {neg=0.39054550138468475, pos=0.6094544986153153}
+    @Beachacreresort lol - thanks -> {neg=0.18235294117647058, pos=0.8176470588235294}
+    i joined twitter 24 January 2009. daayyuuummm. i thought it would have been in like april. lololol. hi mom. -> {neg=0.6628550350424198, pos=0.33714496495758023}
+    @aliciastacy3522 Hopefully Cayla will make the Top 12. Katie's sis wanted Brownies today... thats how it all started! -> {neg=0.21, pos=0.79}
+    @BlakeLewis you were amazing yesterday at pride! just wanted to let you know -> {neg=0.1, pos=0.9}
+    "*stewie walks in naked* &quot;just passing through -> {neg=0.14909090909090908, pos=0.850909090909091}
+    &quot;Fly with me&quot; -@jonasbrothers   I cant wait for their music video premiere on Disney Channel Sunday at 8pm!!! -> {neg=0.0, pos=1.0}
+    @aspaonline my pleasure. Have a top weekend. -> {neg=0.26105717367853293, pos=0.7389428263214671}
+    @bethharte. YOUR FIRED  c its easy. -> {neg=0.39054550138468475, pos=0.6094544986153153}
+    @claicham What can I say. -> {neg=0.44749596122778673, pos=0.5525040387722132}
+    "@buckhollywood hello -> {neg=0.38461538461538464, pos=0.6153846153846154}
+    @CCab oh i think i figured it out!! cornucopia=amazing! i like the chocolate covered ones  yyuumm -> {neg=0.0, pos=1.0}
+    @Custumz Cause we never grabbed them when we were at my house. I'll bring them down tomorrow. -> {neg=0.6153846153846154, pos=0.38461538461538464}
+    @ChristinaluvzJK ON MY WAY. -> {neg=0.39054550138468475, pos=0.6094544986153153}
+    @AlastairHW the health option for lunch  I am very jealous -> {neg=0.44749596122778673, pos=0.5525040387722132}
+    @Annjj do u know what a dutchrudder is?????? -> {neg=0.39054550138468475, pos=0.6094544986153153}
+    ...nice and easy reviewer comments to deal with -> {neg=0.6628550350424198, pos=0.33714496495758023}
+    "@amorousmusings but not &quot;hurt you the most -> {neg=0.7, pos=0.3}
+    "@ajitfoldsfive Noooo! D: I mergesorted by partitioning them -> {neg=0.4167893961708395, pos=0.5832106038291606}
+    @cali_g510 ok   I got you! -> {neg=0.309552599758162, pos=0.6904474002418379}
+    @beebawler_08 it is EASY! Super easssy BP! -> {neg=0.21, pos=0.79}
+    @AlexAllTimeLow lovelovelove sydney -> {neg=0.39054550138468475, pos=0.6094544986153153}
+    @beulahgg I think that people are modifying their streams by unfollowing others. I'm pleased they update my followers this way -> {neg=0.44749596122778673, pos=0.5525040387722132}
+    @CraigMadison How's my #1 student? -> {neg=0.26105717367853293, pos=0.7389428263214671}
+    hey all im bored and since im wating for cliare before going to my grans i thought i would twitter lol -> {neg=0.9090909090909091, pos=0.09090909090909091}
+    @BigRedOMalley Hi! I'm not crazy...or drunk. That was a silly message to Angela. -> {neg=0.5555555555555556, pos=0.4444444444444444}
+    @beckerdoodlez: jump on the bandwagon and send Krissy an &quot;ihateyourillegalpig&quot; reply -> {neg=0.39054550138468475, pos=0.6094544986153... and 1089448 more bytes
 ```
 
-Code from [TrieDemo.java:394](../../src/test/java/com/simiacryptus/util/text/TrieDemo.java#L394) executed in 0.31 seconds: 
+Code from [TrieDemo.java:394](../../src/test/java/com/simiacryptus/util/text/TrieDemo.java#L394) executed in 0.19 seconds: 
 ```java
       return tweetsNegative.stream().skip(trainingSize).map(x->x.getText()).mapToDouble(str->{
           Map<String, Double> prob = rule.apply(str);
@@ -244,148 +349,158 @@ Code from [TrieDemo.java:394](../../src/test/java/com/simiacryptus/util/text/Tri
 ```
 Returns: 
 ```
-    0.9953
+    0.5858
 ```
 Logging: 
 ```
-    ...went to a lot of places today. I miss going to school. -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    #xboxe3 I was hoping an XNA announcement might've been shoehorned into here... -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    "#shoutout2 my mommy -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    "!Identica currently has rather severe problems concerning performance -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    ...Im on that Jack Nicholson from &quot;As Good As It Gets&quot;-type ish. OCD is NOTHING NICE to have. True Story. -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    @3sixty5days aww  me monday morning Chinese paper 1&amp;2 double crappy -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    No more witty #Squarespace Tweets... -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    @ school in the computer room just a little bored -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    #iranelection the audio tape CNN just played sounded like that scene in Schindler's List when the Krakow Ghetto was liquidated. -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    "&quot;I give it my heart. My determination -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    goodbye hair length -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    &quot;Dude u have a naked pic of Jennifer Aniston on ur site... im not that kinda girl. sorry  &quot; i just received this interesting shout. -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    @abs1399  I see you woke up for that  meh. -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    ...ehh im beat.  my stinky lil man just got back frm fishing. hes bein the biggest lil grouch ever. -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    @ o my God this class is tooooo long. I still have an hour left and my back hurts -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    hate public transport stood waiting over half an hour for a bus which didnt show up luckily i got a lift to work -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    looks like im not going anywhere this summer! being poor sucks! -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    @_serb_ man prison break got baaaaaaad fast this year -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    @_santi how many times do I have to tell you its the other way around...no one listens to poor tj -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    "@_GERM damn it -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    ...so much to do today - hope it rains so that my garden gets some water - my hose is broken and been using a watering can  ...not fun! -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    @AdamParnell Hopefully the links to new articles about Bev's new album will cheer you up! Just posted them. Hope you feel better!  xx -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    "&quot;True love asks nothing to return&quot; ~~~&gt; ( ( ( poor Yuan da Ying -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    "...wait -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    @2Mbs: to triste -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    @achallis  It's a bad day -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    @_IANNE swaggg!  dnt make me feel sad than im already am. Miss u already! -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    "@agcruc Girl -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    ...and then bitches whisper in the bathroom  is this high school? -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    @_EmilyYoung oh i'm really sorry to hear that -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    :O last Saturday in England  one week till LA wooooooooo -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    ...insomnia sucks! Seriously! -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    "&quot;There is only one sin -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    mayfield psychiatric hospital. -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    #haveyouever tried mixing in peanut butter into chocolate milk?... Don't. Don't you ever do such a horrible thing. -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    #BTS is fallin!!   #BTS #BTS #BTS #BTS #BTS #BTS #BTS #BTS #BTS #BTS #BTS #BTS #BTS #BTS #BTS #BTS #BTS #BTS #BTS #BTS #BTS #BTS #BTS -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    ..and my phone is dead -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    @_georgie not even in bed yet? it's 5am and i have to get out of bed now... -> {neg=1.0, pos=0.0}
-    I just got crop dusted. -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    "@Ablanchetjr come over boo whenever you can and we can nap together -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    ....work...realllllllllly?? -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    " My turtle food! Its starving. ;( Im sorry -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    *cough cough hack hack -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    *sigh* SARS. U make me want to cry -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    RIP Allan King. Canada's film landscape is a lot flatter today. http://bit.ly/Od4IY -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    "&quot;Exams -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    "@AFairCoop our chickens have completely obliterated the grass in their enclosure -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    @addieking Energy drinks never work for me. I don't know what I have to resort to. -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    #dontyouhate how ugly T.i.'s wife is? &amp; how the fk did she get a show? that's BET for ya -> {neg=1.0, pos=0.0}
-    why oh why... a spot... 2 days before i have a date *cries* -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    #iremember the Oregon trail ... I miss that -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    @abramsandbettes i sent one abrams  and it was all surrounded with weather -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    " - Well i wrote a missive post about last night and all the things that happened -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    "&quot;Sorry but it appears you have already voted for this user on this wall.&quot; How would you know that -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    i wish someone was here to watch this movie with me. sucks watching titanic alone. haha depresing! -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    "&quot;Love -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    "&quot;On popular music&quot; by T.W.Adorno is probably the most difficult reading ever prescribed -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    @acontradiction I'm having the same problem as you then. -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    "...everyone heading to Rottingdean beach -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    " i love u bro. thanks for all the memories:saran wrap -> {neg=0.0, pos=1.0}
-    &quot;let's go! Don't wait!&quot; I heart blink 182 spewing another weekend us gone  I love music -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    .@nyrbclassics My new paperback of J.F. Powers' short stories (pub. by you) is already losing pages.  Can you suggest a NYC (re)binder? -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    Maria is a loser. She sucks at point break -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    "@30SECONDSTOMARS I'd like to chat -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    ... But i miss my shannon.  i wuvvv her to death -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    "@Adjectiveless LOL -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    ....so my camera is broken  i tryed to make a video for youtube and the motherfucker broke so i cant even take pics either -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    "@30STMluva it's so sick -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    " today is the day!! Last school day!  i have my costume on and ready -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    I need you more than you need me...and this hurts Paige. -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    @4point0show awwww... don't be hurt was just teasin ya!!  I don't know how to do that!!! Show-off lol -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    re: twitter - yet another US centric app which fails internationally! actual practical features (sms updates) a no go suomessa... -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    #lr - May have to say goodbye : hey guys.  i might have to get rid of my disco soon  there may be too m.. http://tinyurl.com/nen598 -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    ...is it friday yet?  just passing time til then -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    @jonasbrothers Why is your YouTube account suspended? lol Single Ladies dance? I NEED TO WATCH IT AGAIN! -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    @_Alectrona_ I bet you smiling looks wonderful! Im fine thanks..at work and its grey clouds -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    @_hayles thinking of a celeb/hollywood fancy dress theme. want a marquee but its so expensive -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    &amp; more I seemed to have missed following  &gt;&gt;@teamwinnipeg @cherrybocks @doroftei @rfengineer @critters62 -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    @aiimee_x its not working -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    my tummy really hurts now oh noes -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    I'm not very well! ): -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    @_rriz they mus! it hasn't stopped in ages! 2 bad that we hate them -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    too much french for my mentality :S -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    *pours out a 40 for Steve Nash* Pity that Phoenix is starting to become a retirement home for Hall of Famers past their prime -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    "#r2i Digital Transition -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    ...My Life is like a Card House...Everything is changing... -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    ".@FakerStephanieR aw -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    ".. chugged 2 imperial pints for dinner &amp; 1 for dessert. i tried the fish cakes. Good and tasty -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    "#inaperfectworld they'd sell Fanta LimÃ³n in Guate!  ....hahaha (quÃ© engase -> {neg=1.0, pos=0.0}
-    "#finaltweet Guys -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    "@adamisarockstar I realize some people actually LIKE Want -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    " grrrrr. why can't they just go away for like 2 days! haha. this is stupid. i have to pack for mexico -> {neg=1.0, pos=0.0}
-    tired to the highest level -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    @absolutfeli packing and moving -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    got a headache -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    &quot;We will have 90 mins of maintenance &quot; ohhh -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    #dontyouhate thinkin' about the days when you WERE Boo'd up -> {neg=1.0, pos=0.0}
-    im gonna miss all of the peeps in the play smgt!!! -> {neg=1.0, pos=0.0}
-    *bounces around* so I turn my head to the easttttt... oh am so white its painful -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    Not happy about having to drive mom's car for the next couple of days till my car gets worked on. -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    #BB10 I wanna learn Ole Bamboo.. -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    @akirarhymes and yet you dont share -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    "@30SECONDSTOMARS ï¿½ï¿½ why not today -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    "(no-one probably cares about it -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    @abram110 were do you live? i know .....rain  = -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    "@5LiveF1 so what's up with rosberg -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    no encontre a pololo en Mr Twitter -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    "#liesboystell Your the only one -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    nyaaaaaa christina is gointa die of boredom  and she still wants to go to newry. &gt;.&lt; and dan is gayyyyyyy &gt;.&gt; -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    " she's leaving on a jetplane -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    it's so nice and warm out but I'm stuck in this stupid cold diner -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    #myweakness myweakness is to sit somewhere with lots of Girls  I got no self confidence because of my body shape -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    Have to drive home now &amp; leave the show in the middle.........be back soon! -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    @_rachelx sozzzle rach for signing out of msn it went wierd and now it wont let me back on -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    fine. I should be anyway. see you at the 4th quarter. -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    "@__mares__ Not sure -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    *focus*focus*focus*  OUCHMYSHOULDER -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    @_mystique_ lol you know how much i love derek -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    ... i was doing so good. -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    @a_c81 i know my mate picked the wrong wkd to marry in sooo many ways. Missed CC twitters -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    (( hmmmmmm. loveyousomuchhhbabeee  xxxxxxxxxxxxx -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    @acmaurer No wonder I didn't get into Urbana -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    @AKNickerson  no idea. it used to be on display in the town hall. I'll see if I can find out if it's still there. (i.e. ask my mom) -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    #myweakness asian guys  i don't think i'll find another asian guy who is interested in a mexican girl again. *cries* -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    @ kbal24 I am sorry that you are feeling that way. -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    @agirlwhocan what happened! But summary to the story: gettin annoyed bein tony the tiger surrounded by frosted flakes -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    @aeromimi sounds like you're having quite the adventure .. Wish I was there w you -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    @_CrC_  oh i missed the pic -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    Heroes is losing it's momentum ): come on writers pick it up!!! -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    i want everything to be back to normal. -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    #TwitHive seems to be a cool Twitter App. Looks like  the small TweetDeck Web Edition ... cant yet upload images  http://twithive.com -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    ..That blows. The jobs been filled.  ..Ilovematt.. -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    ... not having such a good day -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    you need to find someone -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    @16thstreetj Probably the terrorist since tix are $35/person. -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    @1mgoldstars Sunshine felt so good this morning! Now stuck in office building. Boo -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    :O 17 pages i have to type out -> {neg=1.0, pos=0.0}
-    "..&amp; u still fucked it up @datsexybriteady -> {neg=0.5129478913434098, pos=0.4870521086565902}
-    this makes me c... and 1187324 more bytes
+    @cookersz This show is awesome!  I can't believe people kill whales like that -> {neg=1.0, pos=0.0}
+    @aaronlowe I'm gonna miss that blue bumper. -> {neg=0.6666666666666666, pos=0.3333333333333333}
+    @analovesme yum mcdonalds  cant give in 2 temptation -> {neg=1.0, pos=0.0}
+    @dreamgir1 is he really? that's sad -> {neg=1.0, pos=0.0}
+    &quot;I WANT REVENGE will not run in the Kentucky Derby due to a wrenched ankle.&quot;  #fb -> {neg=0.8125, pos=0.1875}
+    "@ChantelleDaily sold out in 6 stores -> {neg=0.39054550138468475, pos=0.6094544986153153}
+    "@dr3amingd3ad Unfortunately -> {neg=1.0, pos=0.0}
+    " no MMS on 2G iPhone!  Why does Apple say its a hardware limit when jailbroken iphones can -> {neg=0.8, pos=0.2}
+    "@BundaQeela if this statement related 2 what we've been talking about this afternun -> {neg=0.3333333333333333, pos=0.6666666666666666}
+    @disagreer isn't tom2 good enough? -> {neg=1.0, pos=0.0}
+    @ thomasdofficial  mein herzliches Beileid -> {neg=0.39054550138468475, pos=0.6094544986153153}
+    "@bobbi10100 still feeling quite dodgy -> {neg=0.39054550138468475, pos=0.6094544986153153}
+    "@cloverdash I'm sorry about Freddie -> {neg=0.7, pos=0.3}
+    @_kalanigordon I wanted to meet the infamous mama gordon.  tell her hi -> {neg=0.6666666666666666, pos=0.3333333333333333}
+    @ mileycyrus i cant sleep either its now 6:10am -> {neg=0.7368421052631579, pos=0.2631578947368421}
+    (@gbsinkers) Oh snap!  Just broke my windshield while replacing my wiper blades. -> {neg=0.24903474903474904, pos=0.750965250965251}
+    @CHRISDJMOYLES have a great day Chris .... Im very very very jealous ... always wanted 2 go 2 Silverstone for Gran Prix -> {neg=0.6153846153846154, pos=0.38461538461538464}
+    "@brookiemiller hahahaha -> {neg=0.7333333333333333, pos=0.26666666666666666}
+    .........I hate washing my hair myself -> {neg=0.6628550350424198, pos=0.33714496495758023}
+    @candacecbure Yes! like every year it happens -> {neg=0.21, pos=0.79}
+    @briannanicoleee awww yes -> {neg=1.0, pos=0.0}
+    @CityHaze  not funny. Can't you come kill them for me? -> {neg=1.0, pos=0.0}
+    @bjolena hangovers suck -> {neg=1.0, pos=0.0}
+    @DJPlaZma they were closed -> {neg=1.0, pos=0.0}
+    @B_Smoorez at this point anywhere I've put in apps at like every dept. store in s'ville... No one wants me  lol -> {neg=0.25, pos=0.75}
+    @_dznr Welcome home! Guess i'm not seeing you tonight? -> {neg=0.6666666666666666, pos=0.3333333333333333}
+    @brazenone u know yer spellin my twit name wrong. some fool took my name lordofbeer so I had to take lordObeer -> {neg=0.6666666666666666, pos=0.3333333333333333}
+    @breedimetria mannnn hell yea dat nigga be parkin lot pumpin.....I made a mistake &amp;saw a parkin lot scene in his phone one day! Kilt me -> {neg=0.21, pos=0.79}
+    @acieissobloggin Oh God. 1 out of 6 lang ata ako dun. And to think na kabarkada ko pa siya -> {neg=0.39054550138468475, pos=0.6094544986153153}
+    @Aryn21md haha for some reason it's not letting me upload pics! ima keep trying even if it takes all night -> {neg=0.4, pos=0.6}
+    @cerabateman i read that book freshman year. poor little fat kid -> {neg=0.3333333333333333, pos=0.6666666666666666}
+    @bowskii i know i asked @calihikidd where u was and he said u were sick  hope ur feeling better babes. we need to do a beach day soon!!! -> {neg=0.8652482269503546, pos=0.1347517730496454}
+    @Cohoons_World. Today is not a good day!! -> {neg=1.0, pos=0.0}
+    @BLKPARISHILTON1 mine either -> {neg=0.39054550138468475, pos=0.6094544986153153}
+    (@findingmickey) #ohatdl fantasmic canceled! -> {neg=0.21, pos=0.79}
+    @chuchoisabadass but it's not the same... it's like someone's heart is rippen into two      ok.. nooot xD -> {neg=1.0, pos=0.0}
+    @alteredattic lol. I understand. Lots of rattie owners are traumatized and put off ratties when they die -> {neg=0.44749596122778673, pos=0.5525040387722132}
+    "@Autumn_Sandeen  You are not holding your breath -> {neg=0.6666666666666666, pos=0.3333333333333333}
+    @alperdotr i got bored   lunch time? -> {neg=0.30097087378640774, pos=0.6990291262135923}
+    @DABoloso u shoulda been watchin family guy cant go wrong with that...kinda sad i missed it tho -> {neg=0.875, pos=0.125}
+    @claudiamcfly 2 weeks. 2 very short weeks  hbu? -> {neg=0.39054550138468475, pos=0.6094544986153153}
+    stuck inside revising &amp; my throat KILLS! at least it's sunny :o) -> {neg=0.0, pos=1.0}
+    @Austinslide sort of..... its called work.... -> {neg=0.4336027713625866, pos=0.5663972286374134}
+    "@AtlantaJJ Lots of rampant speculation -> {neg=0.5714285714285714, pos=0.42857142857142855}
+    @a_nobel ? ? ?????????????  = ?????? ?????? ?????? ?? ???? -> {neg=0.39054550138468475, pos=0.6094544986153153}
+    "@bethsweeney1 Can I go 10 days without technology?you bet I'd WANT to -> {neg=0.875, pos=0.125}
+    @callimuffin I read it I jus dunno how to send one bak  I don't think I can from my fone lol -> {neg=0.875268817204301, pos=0.12473118279569892}
+    @AmandaJagdeo Aww! I miss you too! Come back to Columbia!! -> {neg=0.375, pos=0.625}
+    I have heartburn...cheap pizza sauce -> {neg=0.6628550350424198, pos=0.33714496495758023}
+    "@bitofmomsense You can tweet in from your cell phone -> {neg=0.3075221238938053, pos=0.6924778761061947}
+    "@ChelseaParadiso YAE!! Wish i can go see you guys -> {neg=0.3075221238938053, pos=0.6924778761061947}
+    @ArUrbEx we're closing -> {neg=0.39054550138468475, pos=0.6094544986153153}
+    got my college interview in an hour -> {neg=0.7600767754318618, pos=0.2399232245681382}
+    @CoolTeacherLady that's disappointing  have fun at the wedding! -> {neg=0.4, pos=0.6}
+    "@antzpantz yes -> {neg=0.39054550138468475, pos=0.6094544986153153}
+    @Auntywainright 14! yay!  yes you're right Appleby horse fair causes us problems both to and from it's route -> {neg=0.15867158671586715, pos=0.8413284132841329}
+    @bowenandarrow so sad not to be going  stupid baby ruins everything :p -> {neg=1.0, pos=0.0}
+    &quot;Spider-Man&quot;. Sorry. Lost some geek points there. -> {neg=0.8818565400843882, pos=0.11814345991561181}
+    @aWorldApart  Sorry to hear your you-know-what still hurts. -> {neg=0.9333333333333333, pos=0.06666666666666667}
+    @BenjaminReid got your email yettt? none for moi -> {neg=0.8, pos=0.2}
+    @drewryanscott you made me saddd -> {neg=1.0, pos=0.0}
+    just hadda tell a pt they were in early stages of kidney failure and headed for dialysis... sometimes this is harder than others... -> {neg=0.6628550350424198, pos=0.33714496495758023}
+    @ach705 no you yelled at me yesterday! -> {neg=0.8235294117647058, pos=0.17647058823529413}
+    "@backstreetboys Oh noes!  I tried to vote for you guys but there's no plus sign on your picture -> {neg=0.5384615384615384, pos=0.46153846153846156}
+    @angie_k2 I know -> {neg=0.6816143497757847, pos=0.3183856502242152}
+    @dbrendanm I heard The Hood Internet cancelled their set tonight -> {neg=1.0, pos=0.0}
+    "@ChristieCiarlo  Hang in there Ciarlo. July's the month of grilling -> {neg=0.26105717367853293, pos=0.7389428263214671}
+    @atticusjackson1 O_o Huh? And please give back the favor by taking a piss in Houston...I really need it to rain -> {neg=0.4336027713625866, pos=0.5663972286374134}
+    @DaniPLQ But weekends are FOOTBALL time! I only hate them because I work and miss half the football -> {neg=0.09090909090909091, pos=0.9090909090909091}
+    @Beckinelson idkk if il get to see it again -> {neg=0.39054550138468475, pos=0.6094544986153153}
+    @Ashkayk Ah. Thank you! I forgot what website it was from. I fell for the maze one.  lol -> {neg=0.2, pos=0.8}
+    @aiimee_x I am lost. Please help me find a good home. -> {neg=1.0, pos=0.0}
+    @ChelCLately Oh you KNOOOOOW I will!!! some spray and a Kubotan are in the process of being shipped to this addy after hearing your news -> {neg=0.5161290322580645, pos=0.4838709677419355}
+    ...I'm so tired... -> {neg=0.6628550350424198, pos=0.33714496495758023}
+    @DanielFielding  its really annoying! -> {neg=0.5, pos=0.5}
+    @adamasity_britt omg ur wack! -> {neg=0.21, pos=0.79}
+    last day in turks and caicos... i will miss you -> {neg=1.0, pos=0.0}
+    @dfjamir welcome back! I'm about to be outta here though... -> {neg=0.8333333333333334, pos=0.16666666666666666}
+    @Beau_Monde Wow so cool it said you had other colors to but you didnt show -> {neg=1.0, pos=0.0}
+    @DailyMusicGuide Wish i was  Line-up looks soooo good this year but instead i have the fun of coursework and revision lol -> {neg=0.17647058823529413, pos=0.8235294117647058}
+    "#photography #fail -> {neg=1.0, pos=0.0}
+    @Anita_PvR me too now! and i have salad for dinner -> {neg=0.4, pos=0.6}
+    @alsointocats omg I want to color  and I thought of you today because I realized I need to start making a ~list~ -> {neg=0.8, pos=0.2}
+    @adammshankman AMAZING show tonight! Hard to figure who might be going home. #sytycd Sad you won't be back for so long. -> {neg=0.0, pos=1.0}
+    "@Adrienne604 I used 2 do it -> {neg=0.44749596122778673, pos=0.5525040387722132}
+    Im watching vids of Enter Shikari wanting to go to their signing 2morow. might just go on my own and sit oustide hmv all day like a hobo -> {neg=0.6628550350424198, pos=0.33714496495758023}
+    "@DelilahLaClairr babe -> {neg=1.0, pos=0.0}
+    @ the office enfermita -> {neg=0.39054550138468475, pos=0.6094544986153153}
+    @ArchisM I m just really really wondering why nobody ever bakes cakes for me -> {neg=0.6221889055472264, pos=0.3778110944527736}
+    @AceyBongos xbl is down for my birthday -> {neg=0.39054550138468475, pos=0.6094544986153153}
+    @BetaChris I can't DM you because you aren't following me   thank you!!!! -> {neg=0.2777777777777778, pos=0.7222222222222222}
+    @aniqa_x ha! yeah was alright! my sisters went shopping in london but i couldnt go cos i had school!!  and i already missed last week lol -> {neg=1.0, pos=0.0}
+    @Amie__88 It does say delayed on the schedule. I only read the NEW part..LOL Guess I should have looked for the live. -> {neg=0.44749596122778673, pos=0.5525040387722132}
+    @doombox i know  i hope your internet goes back to normal -> {neg=1.0, pos=0.0}
+    @abigaill Eminem is one of my favorite rappers so thats why i was like wtf...mannn  not cool -> {neg=0.6221889055472264, pos=0.3778110944527736}
+    @BarelyBlind wow finally a show i can drink at!!! lol. but who knows if i can even make it -> {neg=0.25, pos=0.75}
+    "@ddaze123 Lol -> {neg=1.0, pos=0.0}
+    @diinos the jo sisters sang my song? -> {neg=1.0, pos=0.0}
+    @ArieleMoonfire   It's so fucked up. -> {neg=0.4336027713625866, pos=0.5663972286374134}
+    @calvin141170 If it's any consolation I've had to abandon the back garden thanks to my super-reflective laptop screen -> {neg=0.6, pos=0.4}
+    @AFMikey413 oh my so its still happening  perverts -> {neg=0.39054550138468475, pos=0.6094544986153153}
+    @chamillionaire wish i could see you in corpus but bills are keeping me in sa. -> {neg=1.0, pos=0.0}
+    @AlFerretti Poor Molly Brown tried to talk her boat into going back but no one will.     Good thing you and I are not there right now! -> {neg=0.3, pos=0.7}
+    @ComcastCares I've been watching '24' online because of bad HD signal on DVR. Now I can't watch my Derby DVR for the same reason. -> {neg=1.0, pos=0.0}
+    "@DJTygerLilly hey babygirl! Ur in MD? Damn -> {neg=1.0, pos=0.0}
+    "@AmitTi thx you for your help -> {neg=0.05263157894736842, pos=0.9473684210526315}
+    "@CorinneAM Oh no -> {neg=0.8571428571428571, pos=0.14285714285714285}
+    **but that means no netball next weekend -> {neg=1.0, pos=0.0}
+    @amariie sorry for touching your sunburn -> {neg=0.5454545454545454, pos=0.45454545454545453}
+    @denissahady iyah ni  thank you syggg -> {neg=1.0, pos=0.0}
+    WHAHHH!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! NOO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -> {neg=0.5882352941176471, pos=0.4117647058823529}
+    "@Dravor thanks for that. not sure how permanent the sim swap change will make. also the link you gave is for iphone 3G -> {neg=1.0, pos=0.0}
+    @DBISTWOFACED I know -> {neg=1.0, pos=0.0}
+    so tierd from last nights homework I stayed up till 5am .it's official I hate school More than barneys I love you song crazy right ?? -> {neg=1.0, pos=0.0}
+    "@30STMluva it's so sick -> {neg=0.39054550138468475, pos=0.6094544986153153}
+    ( *hates* when you can't block a spam bot on your follow list....  ) -> {neg=0.6666666666666666, pos=0.3333333333333333}
+    #inaperfectworld it would be sunny and 80 degrees like it should be in July. Fuck you New England! -> {neg=0.24046771733604475, pos=0.7595322826639552}
+    "@_J_A_M_E_S awwww thx! Luv u! Now it's the day after my birthday -> {neg=0.21, pos=0.79}
+    "@aisy yeah it isnt.  I went all out in soccer this year -> {neg=0.38461538461538464, pos=0.6153846153846154}
+    #musicmonday I've totally been obsessed with @anberlin/@stephenanberlin/@anchorbraille lately. Wish I coulda seen them in WA... -> {neg=0.44749596122778673, pos=0.5525040387722132}
+    ...doesnt know if that was an insult or not -> {neg=1.0, pos=0.0}
+    "#pakistan #t20 #cricket afridi won't play that well in final -> {neg=0.6, pos=0.4}
+    "@denimdebutante For some reason -> {neg=1.0, pos=0.0}
+    @dmwrights I love those days! My hair gets real big and I feel the heat in my bones...sigh. The heat never makes it to my bones in OR. -> {neg=1.0, pos=0.0}
+    @beccaalmond you ignore my txts -> {neg=0.24046771733604475, pos=0.7595322826639552}
+    guy troubles...he just has to have a girlfriend... -> {neg=0.6628550350424198, pos=0.33714496495758023}
+    @advil0 LOL I saw I had a mention and got so excited thinking it was #squarespace ... I was wrong -> {neg=0.46153846153846156, pos=0.5384615384615384}
+    "@adrijohnson i think me too    yes he is -> {neg=0.49236641221374045, pos=0.5076335877862596}
+    @berylboat whaaat that game is so bad -> {neg=1.0, pos=0.0}
+    #FollowFriday @mattlogelin 'life and death. all in a 27-hour period' This cool guy lost his wife within 24 hours of their bub being born -> {neg=0.0, pos=1.0}
+    " crap day - feel sick and my phone has the battery life of -> {neg=0.8058252427184466, pos=0.1941747572815534}
+    @CARINAargh Nooo! I so didn't wna here dat! Hav u got woteva I missed on Monday? Sherdinator wnt b there but we may hav class  dangit -> {neg=0.9, pos=0.1}
+    "@alexandramusic DIVERSITY WON  it was between saxophone player -> {neg=0.39054550138468475, pos=0.6094544986153153}
+    @Callie06  youll find it eventually! and if not... get a new one! its good for kell anyways -> {neg=0.09090909090909091, pos=0.9090909090909091}
+    @chaselisbon I'm on my iPhone and can't retweet a post co it doesn't let me  and I meant alt not apt in my private MSG LOL -> {neg=0.6153846153846154, pos=0.38461538461538464}
+    "@AberOnline Bore da -> {neg=0.39054550138468475, pos=0.6094544986153153}
+    @audreyellen my wrist is rebelling against me in a sore war. -> {neg=0.39054550138468475, pos=0.6094544986153153}
+    @DeathbyVolcano it destroys my feet -> {neg=1.0, pos=0.0}
+    @DonnieWahlberg Hey baby just saw in concert at Palladium had HOT PINK BOAS tried to get you attention you did not see me &amp; now im sad -> {neg=1.0, pos=0.0}
+    "@AnneBeanVA oh -> {neg=0.39054550138468475, pos=0.6094544986153153}
+    @bfrank87 Man! You keep missing all the 1 vs. 100 fun  I think it runs until 9:30 tonight though so maybe you'll get to play a bit. -> {neg=1.0, pos=0.0}
+    @colbsi The Wombles were my Premier League team... before they disappeared. -> {neg=0.6153846153846154, pos=0.38461538461538464}
+    @chadmichaelx yeah it makes me miserable. -> {neg=0.39054550138468475, pos=0.6094544986153153}
+    "@BUNNIE311 ummm wrk is missin someone -> {neg=1.0, pos=0.0}
+    @AndyBumatai  or your favorite rock tune in muzak...make me sad -> {neg=1.0, pos=0.0}
+    "@anz_rocks19 yeh -> {neg=0.39054550138468475, pos=0.6094544986153153}
+    @BoomKatt  i want more but its just so bittersweet lol -> {neg=0.5882352941176471, pos=0.4117647058823529}
+    @digitalizzm hahaha agree.especially since we podium hogged!but I left after bump -> {neg=0.7, pos=0.3}
+    @byronicman Don't kill people it's bad  Daddy told me -> {neg=0.... and 1093732 more bytes
 ```
 

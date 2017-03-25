@@ -14,7 +14,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class FullTrieSerializer {
-    PrintStream verbose = null;
+    private PrintStream verbose = null;
 
     public byte[] serialize(CharTrie charTrie) {
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
@@ -54,18 +54,23 @@ public class FullTrieSerializer {
             HashMap<String,Integer> godchildCounters = new HashMap<>();
             root.streamDecendents(level).forEach(node -> {
                 AtomicLong nodeCounter = new AtomicLong();
-                TreeMap<Character, ? extends TrieNode> godchildren = node.godparent().getChildrenMap();
+                TrieNode godparent = node.getDepth()==0?root:node.godparent();
+                TreeMap<Character, ? extends TrieNode> godchildren = godparent.getChildrenMap();
                 TreeMap<Character, ? extends TrieNode> children = node.getChildrenMap();
                 try {
                     out.writeBoundedLong(children.size(), godchildren.size());
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
+                if(null != verbose) verbose.println(String.format("Recursing %s with godparent %s and %s of %s potential children %s", node.getDebugString(), godparent.getDebugString(), children.size(), godchildren.size(), godchildren.keySet()));
                 godchildren.forEach((token, godchild) -> {
                     int godchildAdj = godchildCounters.getOrDefault(godchild.getDebugString(), 0);
                     TrieNode child = children.get(token);
                     try {
-                        long upperBound = Math.min(node.getCursorCount() - nodeCounter.get(), godchild.getCursorCount() - godchildAdj);
+                        long upperBound = Math.min(
+                                node.getCursorCount() - nodeCounter.get()
+                                ,godchild.getCursorCount() - godchildAdj
+                        );
                         if(upperBound > 0) {
                             if(null == child) {
                                 if(null != verbose) verbose.println(String.format("Write ZERO token %s", node.getDebugString() + godchild.getDebugToken()));
@@ -127,7 +132,8 @@ public class FullTrieSerializer {
             HashMap<String,Integer> godchildCounters = new HashMap<>();
             root.streamDecendents(level).forEach(node -> {
                 AtomicInteger nodeCounter = new AtomicInteger();
-                TrieNode godparent = node.godparent();
+                TrieNode godparent = node.getDepth()==0?root:node.godparent();
+                assert(1 >= node.getDepth() || node.getString().substring(1).equals(godparent.getString()));
                 TreeMap<Character, ? extends TrieNode> godchildren = godparent.getChildrenMap();
                 TreeMap<Character, Long> children = new TreeMap<>();
                 final long numberOfChildren;
@@ -136,10 +142,14 @@ public class FullTrieSerializer {
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
+                if(null != verbose) verbose.println(String.format("Recursing %s with godparent %s and %s of %s potential children %s", node.getDebugString(), godparent.getDebugString(), numberOfChildren, godchildren.size(), godchildren.keySet()));
                 godchildren.forEach((token, godchild) -> {
                     try {
                         int godchildAdj = godchildCounters.getOrDefault(godchild.getDebugString(), 0);
-                        long upperBound = Math.min(node.getCursorCount() - nodeCounter.get(), godchild.getCursorCount() - godchildAdj);
+                        long upperBound = Math.min(
+                                node.getCursorCount() - nodeCounter.get()
+                                , godchild.getCursorCount() - godchildAdj
+                        );
                         if(upperBound > 0) {
                             if(!in.readBool()) {
                                 if(null != verbose) verbose.println(String.format("Read ZERO token %s, input buffer = %s", node.getDebugString() + godchild.getDebugToken(), in.peek(24)));
@@ -148,12 +158,11 @@ public class FullTrieSerializer {
                                 if(null != verbose) verbose.println(String.format("Read token %s = %s/%s, input buffer = %s", node.getDebugString() + godchild.getDebugToken(), childCount, upperBound, in.peek(24)));
                                 assert(childCount <= node.getCursorCount() - nodeCounter.get());
                                 assert(childCount <= godchild.getCursorCount() - godchildAdj);
-                                assert(childCount > 0);
+                                assert(childCount >= 0);
                                 children.put(token, childCount);
                                 nodesRead.incrementAndGet();
                                 nodeCounter.addAndGet((int) childCount);
                                 godchildCounters.put(godchild.getDebugString(), (int) (godchildAdj + childCount));
-                                //godchild.decrementCursorCount((int) childCount);
                             }
                         } else {
                             if(null != verbose) verbose.println(String.format("Implicit ZERO token %s, input buffer = %s", node.getDebugString() + godchild.getDebugToken(), in.peek(24)));
@@ -167,5 +176,14 @@ public class FullTrieSerializer {
         }
 
         return nodesRead.get();
+    }
+
+    public PrintStream getVerbose() {
+        return verbose;
+    }
+
+    public FullTrieSerializer setVerbose(PrintStream verbose) {
+        this.verbose = verbose;
+        return this;
     }
 }

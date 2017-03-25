@@ -37,6 +37,7 @@ public class IndexNode extends TrieNode {
                               cursor -> new SerialArrayList<>(CursorType.INSTANCE, cursor.data),
                               (left, right) -> left.add(right)))));
       long cursorWriteIndex = getData().firstCursorIndex;
+      //System.err.println(String.format("Splitting %s into children: %s", getDebugString(), sortedChildren.keySet()));
       ArrayList<NodeData> childNodes = new ArrayList<>(sortedChildren.size());
       for (Map.Entry<Character, SerialArrayList<CursorData>> e : sortedChildren.entrySet()) {
         int length = e.getValue().length();

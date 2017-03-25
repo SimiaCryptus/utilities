@@ -9,10 +9,10 @@ import java.util.stream.Stream;
 public class ClassificationTree {
 
     private PrintStream verbose = null;
-    private double minLeafWeight = 5;
-    private int maxLevels = 10;
-    private int minWeight = 3;
-    private double depthBias = 0.001;
+    private double minLeafWeight = 10;
+    private int maxLevels = 8;
+    private int minWeight = 5;
+    private double depthBias = 0.0001;
     private int smoothing = 3;
 
     public Function<String,Map<String,Double>> categorizationTree(Map<String,List<String>> categories, int depth) {

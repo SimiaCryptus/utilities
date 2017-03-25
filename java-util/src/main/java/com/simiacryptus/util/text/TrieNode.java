@@ -32,7 +32,7 @@ public class TrieNode {
         this.trie = trie;
         this.index = index;
         this.parent = parent;
-        assert(null == trie.parentIndex || 0 == index || trie.parentIndex[index]>=0);
+        //assert(null == trie.parentIndex || 0 == index || trie.parentIndex[index]>=0);
     }
 
     NodeData getData() {
@@ -48,7 +48,8 @@ public class TrieNode {
 
     public TrieNode godparent() {
         if(0 == getDepth()) return null;
-        if(1 == getDepth()) return trie.root();
+        TrieNode root = trie.root();
+        if(1 == getDepth()) return root;
         if(null != trie.godparentIndex && trie.godparentIndex.length > index) {
             int godparentIndex = trie.godparentIndex[this.index];
             if(godparentIndex >= 0) {
@@ -58,14 +59,16 @@ public class TrieNode {
         TrieNode parent = this.getParent();
         TrieNode godparent;
         if(null == parent) {
-            godparent = trie.root();
+            godparent = root;
         } else {
             TrieNode greatgodparent = parent.godparent();
             if(null == greatgodparent) {
-                godparent = trie.root();
+                godparent = root;
             } else {
-                godparent = greatgodparent.getChild(getChar()).orElseGet(()->null);
+                godparent = greatgodparent.getChild(getChar())
+                        .map(x->(TrieNode)x).orElseGet(() -> root);
             }
+            //assert(getString().isEmpty() || getString().substring(1).equals(godparent.getString()));
         }
         if(null != godparent && null != trie.godparentIndex && trie.godparentIndex.length > index) {
             trie.godparentIndex[this.index] = godparent.index;

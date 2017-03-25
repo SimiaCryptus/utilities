@@ -364,7 +364,7 @@ public class TrieDemo {
     public void demoTweetClassificationTree() throws IOException {
         try (MarkdownPrintStream log = MarkdownPrintStream.get(this).addCopy(System.out)) {
             int testingSize = 10000;
-            int trainingSize = 5000;
+            int trainingSize = 50000;
             log.p("First, we load positive and negative sentiment tweets into two seperate models");
             List<TweetSentiment> tweetsPositive = log.code(() -> {
                 ArrayList<TweetSentiment> list = new ArrayList<>(TweetSentiment.load()
@@ -382,7 +382,7 @@ public class TrieDemo {
                 HashMap<String, List<String>> map = new HashMap<>();
                 map.put("pos", tweetsPositive.stream().limit(trainingSize).map(x -> x.getText()).collect(Collectors.toList()));
                 map.put("neg", tweetsNegative.stream().limit(trainingSize).map(x -> x.getText()).collect(Collectors.toList()));
-                return new ClassificationTree().setVerbose(System.out).categorizationTree(map, 16);
+                return new ClassificationTree().setVerbose(System.out).categorizationTree(map, 32);
             });
             log.code(()->{
                 return tweetsPositive.stream().skip(trainingSize).map(x->x.getText()).mapToDouble(str->{
@@ -712,18 +712,17 @@ public class TrieDemo {
                 });
                 System.out.println(String.format("Indexing %s bytes of documents",
                         charTrieIndex.getIndexedSize()));
-                charTrieIndex.index(6, 0);
+                charTrieIndex.index(6, 1);
                 return charTrieIndex;
             });
             CharTrie tree = index.truncate();
 
             log.p("\n\nThen, we compress the tree:");
             String serialized = log.code(() -> {
-                byte[] bytes = new FullTrieSerializer().serialize(tree.copy());
-                byte[] bytes2 = CompressionUtil.encodeLZ(bytes); // Demonstrate compression results with standard LZ post-filter
+                byte[] bytes = CompressionUtil.encodeLZ(new FullTrieSerializer().serialize(tree.copy()));
                 System.out.println(String.format("%s in ram, %s bytes in serialized form, %s%% compression",
-                        tree.getMemorySize(), bytes2.length, 100 - (bytes2.length * 100.0 / tree.getMemorySize())));
-                return Base64.getEncoder().encodeToString(bytes2);
+                        tree.getMemorySize(), bytes.length, 100 - (bytes.length * 100.0 / tree.getMemorySize())));
+                return Base64.getEncoder().encodeToString(bytes);
             });
 
             log.p("\n\nAnd decompress to verify:");
@@ -754,7 +753,7 @@ public class TrieDemo {
             log.p("For reference, we encode some sample articles that are NOT in the dictionary:");
             log.code(() -> {
                 PPMCodec codec = tree.getCodec();
-                WikiArticle.ENGLISH.load().skip(100).limit(20).forEach(article -> {
+                WikiArticle.ENGLISH.load().skip(100).limit(10).forEach(article -> {
                     TimedResult<Bits> compressed = TimedResult.time(()->codec.encodePPM(article.getText(), 4));
                     System.out.println(String.format("Serialized %s: %s chars -> %s bytes (%s%%) in %s sec",
                             article.getTitle(), article.getText().length(), compressed.obj.bitLength / 8.0,
