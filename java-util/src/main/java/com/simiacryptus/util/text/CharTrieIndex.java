@@ -27,7 +27,7 @@ public class CharTrieIndex extends CharTrie {
   }
 
   public CharTrieIndex() {
-    this(new SerialArrayList<>(NodeType.INSTANCE, new NodeData(PPMCodec.END_OF_STRING, (short)-1, -1, -1, 0)), new SerialArrayList<>(CursorType.INSTANCE), new ArrayList<>());
+    this(new SerialArrayList<>(NodeType.INSTANCE, new NodeData(NodewalkerCodec.END_OF_STRING, (short)-1, -1, -1, 0)), new SerialArrayList<>(CursorType.INSTANCE), new ArrayList<>());
   }
 
   @Override
@@ -96,7 +96,7 @@ public class CharTrieIndex extends CharTrie {
           {
             if (null==godparent || godparent.getCursorCount() > minWeight)
             {
-              if (node.getChar() != PPMCodec.END_OF_STRING || node.getDepth() == 0)
+              if (node.getChar() != NodewalkerCodec.END_OF_STRING || node.getDepth() == 0)
               {
                 ((IndexNode)node).split();
                 numberSplit.incrementAndGet();

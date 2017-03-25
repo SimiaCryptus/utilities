@@ -117,4 +117,18 @@ public class BitInputStream {
     assert(max >= value);
     return value;
   }
+
+  public short readVarShort() throws IOException {
+    return readVarShort(7);
+  }
+
+  public short readVarShort(int optimal) throws IOException {
+      int[] varShortDepths = new int[]{optimal, 16};
+      final int type = (int) this.read(1).toLong();
+      return (short) this.read(varShortDepths[type]).toLong();
+    }
+
+  public char readChar() throws IOException {
+    return (char)read(16).toLong();
+  }
 }

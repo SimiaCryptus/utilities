@@ -22,7 +22,7 @@ public class TrieNode {
 
     public TrieNode(CharTrie trie, int index) {
         assert(0<=index);
-        assert(trie.parentIndex[index]>=0);
+        assert(0==index || trie.parentIndex[index]>=0);
         this.trie = trie;
         this.index = index;
     }
@@ -111,9 +111,9 @@ public class TrieNode {
 
     public String getDebugToken() {
       char asChar = getChar();
-      if(asChar == PPMCodec.FALLBACK) return "<STOP>";
-      if(asChar == PPMCodec.END_OF_STRING) return "<NULL>";
-      if(asChar == PPMCodec.ESCAPE) return "<ESC>";
+      if(asChar == NodewalkerCodec.FALLBACK) return "<STOP>";
+      if(asChar == NodewalkerCodec.END_OF_STRING) return "<NULL>";
+      if(asChar == NodewalkerCodec.ESCAPE) return "<ESC>";
       if(asChar == '\\') return "\\\\";
       if(asChar == '\n') return "\\n";
       return new String(new char[]{asChar});
@@ -121,9 +121,9 @@ public class TrieNode {
 
     public String getToken() {
       char asChar = getChar();
-      if(asChar == PPMCodec.FALLBACK) return "";
-      if(asChar == PPMCodec.END_OF_STRING) return "";
-      if(asChar == PPMCodec.ESCAPE) return "";
+      if(asChar == NodewalkerCodec.FALLBACK) return "";
+      if(asChar == NodewalkerCodec.END_OF_STRING) return "";
+      if(asChar == NodewalkerCodec.ESCAPE) return "";
       return new String(new char[]{asChar});
     }
 
@@ -136,6 +136,7 @@ public class TrieNode {
     }
 
     public short getDepth() {
+        if(0==index) return 0;
         if(-1 == depth) {
             synchronized(this) {
                 if(-1 == depth) {
@@ -233,6 +234,7 @@ public class TrieNode {
     }
 
     public Bits bitsTo(TrieNode toNode) {
+        if(index==toNode.index) return Bits.NULL;
       return intervalTo(toNode).toBits();
     }
 
@@ -255,8 +257,8 @@ public class TrieNode {
     }
 
     public boolean isStringTerminal() {
-      if(getChar() == PPMCodec.END_OF_STRING) return true;
-      if(getChar() == PPMCodec.FALLBACK && null != getParent()) return getParent().isStringTerminal();
+      if(getChar() == NodewalkerCodec.END_OF_STRING) return true;
+      if(getChar() == NodewalkerCodec.FALLBACK && null != getParent()) return getParent().isStringTerminal();
       return false;
     }
 

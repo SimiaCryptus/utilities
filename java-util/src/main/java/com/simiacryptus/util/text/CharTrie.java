@@ -7,7 +7,7 @@ import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.simiacryptus.util.text.PPMCodec.*;
+import static com.simiacryptus.util.text.NodewalkerCodec.*;
 
 /**
  * A character sequence index using a prefix tree, commonly known as a full-text
@@ -31,6 +31,8 @@ public class CharTrie {
 
     public CharTrie(CharTrie charTrie) {
         this(charTrie.nodes.copy());
+        this.parentIndex = null==charTrie.parentIndex?null:Arrays.copyOf(charTrie.parentIndex, charTrie.parentIndex.length);
+        this.godparentIndex = null==charTrie.godparentIndex?null:Arrays.copyOf(charTrie.godparentIndex, charTrie.godparentIndex.length);
     }
 
     public TrieNode root() {
@@ -250,8 +252,8 @@ public class CharTrie {
         return this.nodes.get(0).cursorCount;
     }
 
-    public PPMCodec getCodec() {
-        return new PPMCodec(this.truncate().rewrite((sourceNode, sourceChildren) -> {
+    public NodewalkerCodec getCodec() {
+        return new NodewalkerCodec(this.truncate().rewrite((sourceNode, sourceChildren) -> {
             TreeMap<Character, Long> newCounts = new TreeMap<Character, Long>();
             sourceChildren.forEach((key, value) -> newCounts.put(key, value.getCursorCount()));
             if (0 == sourceNode.getDepth()) newCounts.put(ESCAPE, 1l);
@@ -260,8 +262,8 @@ public class CharTrie {
         }));
     }
 
-    public PPMCodec getPackingCodec() {
-        return new PPMCodec(this.truncate());
+    public NodewalkerCodec getPackingCodec() {
+        return new NodewalkerCodec(this.truncate());
     }
 
     public TextGenerator getGenerator() {

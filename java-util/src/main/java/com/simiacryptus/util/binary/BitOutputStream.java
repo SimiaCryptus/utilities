@@ -24,8 +24,8 @@ public class BitOutputStream implements AutoCloseable
   private OutputStream inner;
   
   private Bits         remainder       = Bits.NULL;
-  
-  static final int     varLongDepths[] = { 6, 16, 32, 64 };
+
+  static final int     varLongDepths[] = { 6, 14, 30, 62 };
   private int totalBitsWritten = 0;
 
   public BitOutputStream(final OutputStream inner)
@@ -116,9 +116,27 @@ public class BitOutputStream implements AutoCloseable
     this.write(new Bits(value, varLongDepths[type]));
   }
 
+  public void writeVarShort(final short value) throws IOException {
+    writeVarShort(value, 7);
+  }
+
+  public void writeVarShort(final short value, int optimal) throws IOException {
+    if(value < 0) throw new IllegalArgumentException();
+    int[] varShortDepths = new int[]{ optimal, 16};
+    final int bitLength = new Bits(value).bitLength;
+    int type = Arrays.binarySearch(varShortDepths, bitLength);
+    if (type < 0)
+    {
+      type = -type - 1;
+    }
+    this.write(new Bits(type, 1));
+    this.write(new Bits(value, varShortDepths[type]));
+  }
+
   @Override
   public void close() throws IOException {
     flush();
     inner.close();
   }
+
 }

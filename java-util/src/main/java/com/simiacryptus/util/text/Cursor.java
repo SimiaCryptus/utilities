@@ -25,7 +25,7 @@ public class Cursor {
     public char getToken() {
         int index = getPosition();
         String document = getDocument();
-        return index >= document.length() ? PPMCodec.END_OF_STRING : document.charAt(index);
+        return index >= document.length() ? NodewalkerCodec.END_OF_STRING : document.charAt(index);
     }
 
     public Cursor next() {

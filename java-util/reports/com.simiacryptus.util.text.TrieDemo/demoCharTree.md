@@ -25,7 +25,7 @@ Code from [TrieDemo.java:80](../../src/test/java/com/simiacryptus/util/text/Trie
 ```
 Returns: 
 ```
-    com.simiacryptus.util.text.PPMCodec@1ef7fe8e
+    com.simiacryptus.util.text.NodewalkerCodec@1ef7fe8e
 ```
 
 

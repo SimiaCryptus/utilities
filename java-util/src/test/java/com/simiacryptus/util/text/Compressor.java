@@ -122,8 +122,8 @@ public interface Compressor {
   }
 
   public static Compressor buildPPMCompressor(CharTrie baseTree, final int encodingContext) {
-    PPMCodec codec = baseTree.getCodec();
-    System.out.println(String.format("Encoding Tree Memory Size = %s KB", codec.getMemorySize() / 1024));
+    NodewalkerCodec codec = baseTree.getCodec();
+    System.out.println(String.format("Encoding Tree Memory Size = %s KB", codec.inner.getMemorySize() / 1024));
     return new Compressor() {
       @Override
       public byte[] compress(String text) {

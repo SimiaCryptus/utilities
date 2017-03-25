@@ -18,8 +18,8 @@ public class CompressionTest {
     CharTrieIndex tree = new CharTrieIndex();
     tree.addDocument("ababababab");
     tree = tree.index(2,0);
-    PPMCodec codec = tree.getCodec();
-    codec.verbose = true;
+    NodewalkerCodec codec = tree.getCodec();
+    codec.setVerbose(System.out);
     String txt = "ab ba";
     Bits encoded = codec.encodePPM(txt, 1);
     String decoded = codec.decodePPM(encoded.getBytes(), 1);
@@ -38,8 +38,8 @@ public class CompressionTest {
     TweetSentiment.load().skip(articleCount).limit(modelCount).map(t -> t.getText())
             .forEach(txt -> tree.addDocument(txt));
     CharTrie modelTree = tree.index(modelDepth, 0);
-    PPMCodec codec = modelTree.getCodec();
-    TweetSentiment.load().limit(articleCount).parallel().map(t -> t.getText()).forEach(txt->{
+    NodewalkerCodec codec = modelTree.getCodec();
+    TweetSentiment.load().limit(articleCount).map(t -> t.getText()).forEach(txt->{
       try {
         Bits encoded = codec.encodePPM(txt, encodingContext);
         String decoded = codec.decodePPM(encoded.getBytes(), encodingContext);
@@ -49,14 +49,14 @@ public class CompressionTest {
         synchronized (modelTree) {
           System.out.println(String.format("Error encoding \"%s\" - %s", txt, e.getMessage()));
           try {
-            PPMCodec codec2 = codec.copy();
-            codec2.verbose = true;
+            NodewalkerCodec codec2 = codec.setVerbose(System.out);
             Bits encoded = codec2.encodePPM(txt, encodingContext);
             String decoded = codec2.decodePPM(encoded.getBytes(), encodingContext);
             org.junit.Assert.assertEquals(txt, decoded);
             System.out.println(String.format("Verified \"%s\" - %s chars -> %s bits", txt, txt.length(), encoded.bitLength));
+            throw e;
           } catch (Throwable e2) {
-            e2.printStackTrace();
+            throw e2;
             //System.p.println(String.format("Error encoding \"%s\" - %s", txt, e2.getMessage()));
             //throw new RuntimeException(e);
           }

@@ -76,7 +76,7 @@ public class TrieDemo {
                 return charTrieIndex;
             });
             log.p("And then derive a PPM codec:");
-            PPMCodec codec = log.code(() -> {
+            NodewalkerCodec codec = log.code(() -> {
                 return trie.getCodec();
             });
 
@@ -312,8 +312,8 @@ public class TrieDemo {
             });
             log.p("Each model can be used out-of-the-box to perform classification:");
             log.code(() -> {
-                PPMCodec codecPositive = triePositive.getCodec();
-                PPMCodec codecNegative = trieNegative.getCodec();
+                NodewalkerCodec codecPositive = triePositive.getCodec();
+                NodewalkerCodec codecNegative = trieNegative.getCodec();
                 double positiveAccuracy = 100.0 * tweetsPositive.stream().limit(testingSize).mapToDouble(tweet -> {
                     Bits encodeNeg = codecNegative.encodePPM(tweet.getText(), Integer.MAX_VALUE);
                     Bits encodePos = codecPositive.encodePPM(tweet.getText(), Integer.MAX_VALUE);
@@ -340,8 +340,8 @@ public class TrieDemo {
             });
             log.p("These composite tries can also be used to perform classification:");
             log.code(() -> {
-                PPMCodec codecPositive = positiveVector.getCodec();
-                PPMCodec codecNegative = negativeVector.getCodec();
+                NodewalkerCodec codecPositive = positiveVector.getCodec();
+                NodewalkerCodec codecNegative = negativeVector.getCodec();
                 double positiveAccuracy = 100.0 * tweetsPositive.stream().limit(testingSize).mapToDouble(tweet -> {
                     Bits encodeNeg = codecNegative.encodePPM(tweet.getText(), Integer.MAX_VALUE);
                     Bits encodePos = codecPositive.encodePPM(tweet.getText(), Integer.MAX_VALUE);
@@ -433,8 +433,8 @@ public class TrieDemo {
             });
             log.p("Each model can be used out-of-the-box to perform classification:");
             log.code(() -> {
-                PPMCodec codecA = trieEnglish.getCodec();
-                PPMCodec codecB = trieFrench.getCodec();
+                NodewalkerCodec codecA = trieEnglish.getCodec();
+                NodewalkerCodec codecB = trieFrench.getCodec();
                 double englishAccuracy = 100.0 * english.stream().limit(testingSize).mapToDouble(tweet -> {
                     Bits encodeB = codecB.encodePPM(tweet.getText(), Integer.MAX_VALUE);
                     Bits encodeA = codecA.encodePPM(tweet.getText(), Integer.MAX_VALUE);
@@ -466,8 +466,8 @@ public class TrieDemo {
             });
             log.p("These composite tries can also be used to perform classification:");
             log.code(() -> {
-                PPMCodec codecA = englishVector.getCodec();
-                PPMCodec codecB = frenchVector.getCodec();
+                NodewalkerCodec codecA = englishVector.getCodec();
+                NodewalkerCodec codecB = frenchVector.getCodec();
                 double englishAccuracy = 100.0 * english.stream().limit(testingSize).mapToDouble(tweet -> {
                     Bits encodeB = codecB.encodePPM(tweet.getText(), Integer.MAX_VALUE);
                     Bits encodeA = codecA.encodePPM(tweet.getText(), Integer.MAX_VALUE);
@@ -516,14 +516,14 @@ public class TrieDemo {
             log.p("\n\nThen, we compress the node:");
             byte[] serializedTrie = log.code(() -> {
                 print(trie);
-                byte[] bytes = new FullTrieSerializer().serialize(trie.copy());
+                byte[] bytes = new ConvolutionalTrieSerializer().serialize(trie.copy());
                 System.out.println(String.format("%s in ram, %s bytes in serialized form, %s%% compression",
                         trie.getMemorySize(), bytes.length, 100 - (bytes.length * 100.0 / trie.getMemorySize())));
                 return bytes;
             });
             log.p("Then, we encode the data used to create the dictionary:");
             List<byte[]> compressedArticles = log.code(() -> {
-                PPMCodec codec = new PPMCodec(trie);
+                NodewalkerCodec codec = new NodewalkerCodec(trie);
                 return articleList.stream().map(article -> {
                     String text = article.getText();
                     String title = article.getTitle();
@@ -543,7 +543,7 @@ public class TrieDemo {
 
             log.p("And decompress to verfy data:");
             log.code(() -> {
-                PPMCodec codec = new PPMCodec(trie);
+                NodewalkerCodec codec = new NodewalkerCodec(trie);
                 compressedArticles.forEach(article -> {
                     TimedResult<String> decompressed = TimedResult.time(()->codec.decodePPM(article, Integer.MAX_VALUE));
                     System.out.println(String.format("Deserialized %s bytes -> %s chars in %s sec",
@@ -553,7 +553,7 @@ public class TrieDemo {
             });
             log.p("\n\nAnd verify tree structure:");
             log.code(() -> {
-                CharTrie restored = new FullTrieSerializer().deserialize(serializedTrie);
+                CharTrie restored = new ConvolutionalTrieSerializer().deserialize(serializedTrie);
                 boolean verified = restored.root().equals(trie.root());
                 System.out.println(String.format("Tree Verified: %s", verified));
             });
@@ -719,7 +719,7 @@ public class TrieDemo {
 
             log.p("\n\nThen, we compress the tree:");
             String serialized = log.code(() -> {
-                byte[] bytes = CompressionUtil.encodeLZ(new FullTrieSerializer().serialize(tree.copy()));
+                byte[] bytes = CompressionUtil.encodeLZ(new ConvolutionalTrieSerializer().serialize(tree.copy()));
                 System.out.println(String.format("%s in ram, %s bytes in serialized form, %s%% compression",
                         tree.getMemorySize(), bytes.length, 100 - (bytes.length * 100.0 / tree.getMemorySize())));
                 return Base64.getEncoder().encodeToString(bytes);
@@ -728,7 +728,7 @@ public class TrieDemo {
             log.p("\n\nAnd decompress to verify:");
             int dictionaryLength = log.code(() -> {
                 byte[] bytes = CompressionUtil.decodeLZ(Base64.getDecoder().decode(serialized));
-                CharTrie restored = new FullTrieSerializer().deserialize(bytes);
+                CharTrie restored = new ConvolutionalTrieSerializer().deserialize(bytes);
                 boolean verified = restored.root().equals(tree.root());
                 System.out.println(String.format("Tree Verified: %s", verified));
                 return bytes.length;
@@ -736,13 +736,13 @@ public class TrieDemo {
 
             log.p("Then, we encode the data used to create the dictionary:");
             log.code(() -> {
-                PPMCodec codec = tree.getCodec();
+                NodewalkerCodec codec = tree.getCodec();
                 int totalSize = WikiArticle.ENGLISH.load().limit(100).map(article -> {
                     TimedResult<Bits> compressed = TimedResult.time(()->codec.encodePPM(article.getText(), 4));
-                    System.out.println(String.format("Serialized %s: %s chars -> %s bytes (%s%%) in %s sec",
+                    System.out.println(String.format("Serialized %s: %s chars -> %s bytes (%s%%) in %s ms",
                             article.getTitle(), article.getText().length(), compressed.obj.bitLength / 8.0,
                             compressed.obj.bitLength * 100.0 / (8.0 * article.getText().length()),
-                            compressed.timeNanos / 1000000000.0));
+                            compressed.timeNanos / 1000000.0));
                     return compressed.obj.getBytes();
                 }).mapToInt(bytes->bytes.length).sum();
                 return String.format("Compressed %s KB of documents -> %s KB (%s dictionary + %s ppm)",
@@ -752,13 +752,13 @@ public class TrieDemo {
 
             log.p("For reference, we encode some sample articles that are NOT in the dictionary:");
             log.code(() -> {
-                PPMCodec codec = tree.getCodec();
+                NodewalkerCodec codec = tree.getCodec();
                 WikiArticle.ENGLISH.load().skip(100).limit(10).forEach(article -> {
                     TimedResult<Bits> compressed = TimedResult.time(()->codec.encodePPM(article.getText(), 4));
-                    System.out.println(String.format("Serialized %s: %s chars -> %s bytes (%s%%) in %s sec",
+                    System.out.println(String.format("Serialized %s: %s chars -> %s bytes (%s%%) in %s ms",
                             article.getTitle(), article.getText().length(), compressed.obj.bitLength / 8.0,
                             compressed.obj.bitLength * 100.0 / (8.0 * article.getText().length()),
-                            compressed.timeNanos / 1000000000.0));
+                            compressed.timeNanos / 1000000.0));
                 });
             });
 

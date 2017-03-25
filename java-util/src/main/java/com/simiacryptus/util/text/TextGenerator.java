@@ -28,7 +28,7 @@ public class TextGenerator {
       for (TrieNode child : children) {
         fate -= child.getCursorCount();
         if (fate <= 0) {
-          if (child.getChar() != PPMCodec.END_OF_STRING) {
+          if (child.getChar() != NodewalkerCodec.END_OF_STRING) {
             next = child.getToken();
           }
           break;
@@ -67,7 +67,7 @@ public class TextGenerator {
           prefix = prefix.substring(1);
         }
       }
-      if(nextNode.getChar() == PPMCodec.END_OF_STRING) {
+      if(nextNode.getChar() == NodewalkerCodec.END_OF_STRING) {
         if(terminateAtNull) {
           break;
         } else {
