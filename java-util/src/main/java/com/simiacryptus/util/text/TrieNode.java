@@ -92,11 +92,11 @@ public class TrieNode {
     }
 
     public String getRawString() {
-        return (0 == depth ? "" : (getParent().getRawString() + new String(new char[]{getChar()})));
+        return (0 == getDepth() ? "" : (getParent().getRawString() + new String(new char[]{getChar()})));
     }
 
     public String getString() {
-        return (null == getParent() ? "" : getParent().getString()) + (0 == depth ? "" : getToken());
+        return (null == getParent() ? "" : getParent().getString()) + (0 == getDepth() ? "" : getToken());
     }
 
     public String getDebugString() {

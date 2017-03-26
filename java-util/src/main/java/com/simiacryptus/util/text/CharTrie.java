@@ -253,17 +253,7 @@ public class CharTrie {
     }
 
     public NodewalkerCodec getCodec() {
-        return new NodewalkerCodec(this.truncate().rewrite((sourceNode, sourceChildren) -> {
-            TreeMap<Character, Long> newCounts = new TreeMap<Character, Long>();
-            sourceChildren.forEach((key, value) -> newCounts.put(key, value.getCursorCount()));
-            if (0 == sourceNode.getDepth()) newCounts.put(ESCAPE, 1l);
-            newCounts.put(FALLBACK, 1l);
-            return newCounts;
-        }));
-    }
-
-    public NodewalkerCodec getPackingCodec() {
-        return new NodewalkerCodec(this.truncate());
+        return new NodewalkerCodec(this);
     }
 
     public TextGenerator getGenerator() {

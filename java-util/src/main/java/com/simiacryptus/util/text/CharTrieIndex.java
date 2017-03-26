@@ -47,7 +47,7 @@ public class CharTrieIndex extends CharTrie {
    * @return this
    */
   public CharTrie truncate() {
-    return new CharTrie(nodes);
+    return new CharTrie(this);
   }
 
   /**

@@ -91,6 +91,22 @@ public class MarkdownPrintStream extends PrintStream {
             out("```java");
             out("  " + sourceCode.replaceAll("\n","\n  "));
             out("```");
+
+            if(!result.log.isEmpty()) {
+                out("Logging: ");
+                out("```");
+                String logSrc = result.log;
+                if(logSrc.length() > maxLog * 2) {
+                    logSrc = logSrc.substring(0, maxLog) + String.format("\n...skipping %s bytes...\n", logSrc.length() - 2 * maxLog) + logSrc.substring(logSrc.length()-maxLog);
+                } else if(logSrc.length() > 0){
+                    logSrc = logSrc;
+                }
+                logSrc = logSrc.replaceAll("\n", "\n    ");
+                out("    " + logSrc);
+                out("```");
+            }
+            out("");
+
             Object eval = result.obj.obj;
             out("Returns: ");
             out("```");
@@ -108,20 +124,9 @@ public class MarkdownPrintStream extends PrintStream {
             }
             out("    " + valTxt);
             out("```");
-            if(!result.log.isEmpty()) {
-                out("Logging: ");
-                out("```");
-                String logSrc = result.log;
-                if(logSrc.length() > maxLog * 2) {
-                    logSrc = logSrc.substring(0, maxLog) + String.format("\n...skipping %s bytes...\n", logSrc.length() - 2 * maxLog) + logSrc.substring(logSrc.length()-maxLog);
-                } else if(logSrc.length() > 0){
-                    logSrc = logSrc;
-                }
-                logSrc = logSrc.replaceAll("\n", "\n    ");
-                out("    " + logSrc);
-                out("```");
+            if(result.obj.obj instanceof Throwable) {
+                throw new RuntimeException((Throwable) result.obj.obj);
             }
-            out("");
             return (T) eval;
         } catch (IOException e) {
             throw new RuntimeException(e);

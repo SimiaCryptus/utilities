@@ -153,13 +153,21 @@ public class NodewalkerCodec {
             if (encoder.node == null) break;
             child = (Optional<TrieNode>) encoder.node.getChild(token);
         }
+        assert (null == encoder.node || child.isPresent());
         if (null != encoder.node) {
             for (int i = 0; i < 2; i++) {
                 if (0 != encoder.node.index) encoder.node = encoder.node.godparent();
             }
             child = (Optional<TrieNode>) encoder.node.getChild(token);
+            while (!child.isPresent()) {
+                encoder.node = encoder.node.godparent();
+                if (encoder.node == null) break;
+                child = (Optional<TrieNode>) encoder.node.getChild(token);
+            }
+            assert (null == encoder.node || child.isPresent());
         }
         short backupSteps = (short) (encoder.fromNode.getDepth() - (null == encoder.node ? -1 : encoder.node.getDepth()));
+        assert(backupSteps>=0);
         if (verbose != null)
             verbose.println(String.format("Backing up %s from from %s to %s", backupSteps, encoder.fromNode.getDebugString(), null == encoder.node ? null : encoder.node.getDebugString()));
         encoder.out.writeVarShort(backupSteps, 3);

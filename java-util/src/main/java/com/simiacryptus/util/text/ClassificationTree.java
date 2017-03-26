@@ -12,7 +12,7 @@ public class ClassificationTree {
     private double minLeafWeight = 10;
     private int maxLevels = 8;
     private int minWeight = 5;
-    private double depthBias = 0.0001;
+    private double depthBias = 0.0005;
     private int smoothing = 3;
 
     public Function<String,Map<String,Double>> categorizationTree(Map<String,List<String>> categories, int depth) {
@@ -43,7 +43,7 @@ public class ClassificationTree {
             if(0 == lSum || 0 == rSum) {
                 return categorizationTree(categories,0,indent);
             }
-            if(null!= verbose) verbose.println(String.format(indent + "\"%s\" -> Contains=%s\tAbsent=%s\tEntropy=%s", split,
+            if(null!= verbose) verbose.println(String.format(indent + "\"%s\" -> Contains=%s\tAbsent=%s\tEntropy=%5f", split,
                     lSet.entrySet().stream().collect(Collectors.toMap(e->e.getKey(),e->e.getValue().size())),
                     rSet.entrySet().stream().collect(Collectors.toMap(e->e.getKey(),e->e.getValue().size())),
                     info.get().entropy));

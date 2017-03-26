@@ -364,7 +364,7 @@ public class TrieDemo {
     public void demoTweetClassificationTree() throws IOException {
         try (MarkdownPrintStream log = MarkdownPrintStream.get(this).addCopy(System.out)) {
             int testingSize = 10000;
-            int trainingSize = 50000;
+            int trainingSize = 5000;
             log.p("First, we load positive and negative sentiment tweets into two seperate models");
             List<TweetSentiment> tweetsPositive = log.code(() -> {
                 ArrayList<TweetSentiment> list = new ArrayList<>(TweetSentiment.load()
