@@ -25,7 +25,7 @@ public class TrieClassificationBlog {
             int minWeight = 1;
             int maxLevels = 5;
             int minArticleSize = 4 * 1024;
-            log.p("First, we load positive and negative sentiment tweets into two seperate models");
+            log.p("First, we load English and French wikipedia articles into two collections");
             List<WikiArticle> english = log.code(() -> {
                 return new ArrayList<>(WikiArticle.ENGLISH.load().filter(x->x.getText().length()> minArticleSize)
                         .limit(testingSize + trainingSize).collect(Collectors.toList()));
@@ -34,6 +34,7 @@ public class TrieClassificationBlog {
                 return new ArrayList<>(WikiArticle.FRENCH.load().filter(x->x.getText().length()> minArticleSize)
                         .limit(testingSize + trainingSize).collect(Collectors.toList()));
             });
+            log.p("Then, we process each into separate language models");
             CharTrie trieEnglish = log.code(() -> {
                 CharTrie charTrie = CharTrieIndex.indexFulltext(english.subList(0,trainingSize)
                         .stream().map(x->x.getText()).collect(Collectors.toList()), maxLevels, minWeight);
@@ -46,7 +47,7 @@ public class TrieClassificationBlog {
                 print(charTrie);
                 return charTrie;
             });
-            log.p("Each model can be used out-of-the-box to perform classification:");
+            log.p("The models can be used to perform PPM-based classification with excellent results:");
             log.code(() -> {
                 NodewalkerCodec codecA = trieEnglish.getCodec();
                 NodewalkerCodec codecB = trieFrench.getCodec();
@@ -74,10 +75,8 @@ public class TrieClassificationBlog {
             evaluateLanguage(log,"English", WikiArticle.ENGLISH, table);
             evaluateLanguage(log,"French", WikiArticle.FRENCH, table);
             evaluateLanguage(log,"German", WikiArticle.GERMAN, table);
-            log.h3("Summary");
-            log.code(() -> {
-                return table.toTextTable();
-            });
+            log.h3("Results");
+            log.p(table.toTextTable());
         }
     }
 
@@ -85,6 +84,7 @@ public class TrieClassificationBlog {
         int testingSize = 100;
         int minArticleSize = 4 * 1024;
         log.h3(sourceLanguage);
+        log.p("Loading %s articles of %s to test language classification...", testingSize, sourceLanguage);
         log.code(() -> {
             sourceData.load()
                     .map(x->x.getText()).filter(x -> x.length()> minArticleSize).limit(testingSize)
@@ -106,12 +106,12 @@ public class TrieClassificationBlog {
     public void sentiment_analysis_ppm() throws IOException {
         try (MarkdownPrintStream log = MarkdownPrintStream.get(this).addCopy(System.out)) {
             log.h1("Sentiment Analysis via PPM Compression");
-            int testingSize = 1000;
+            int testingSize = 10000;
             int trainingSize = 100000;
             int minWeight = 1;
             int maxLevels = 5;
             log.p("\n\n\n");
-            log.p("First, we load positive and negative sentiment tweets into two seperate models");
+            log.p("First, we load positive and negative sentiment tweets into two separate models");
             List<TweetSentiment> tweetsPositive = log.code(() -> {
                 ArrayList<TweetSentiment> list = new ArrayList<>(TweetSentiment.load()
                         .filter(x -> x.category == 1).limit(testingSize + trainingSize).collect(Collectors.toList()));
@@ -139,7 +139,7 @@ public class TrieClassificationBlog {
                 return charTrie;
             });
             log.p("\n\n\n");
-            log.p("Each model can be used to perform classification:");
+            log.p("Each model can be used to perform classification, which does not work very well in this dataset:");
             log.code(() -> {
                 NodewalkerCodec codecPositive = triePositive.getCodec();
                 NodewalkerCodec codecNegative = trieNegative.getCodec();
@@ -165,8 +165,8 @@ public class TrieClassificationBlog {
     @Category(TestCategories.Report.class)
     public void sentiment_analysis_decision_tree() throws IOException {
         try (MarkdownPrintStream log = MarkdownPrintStream.get(this).addCopy(System.out)) {
-            log.h1("Sentiment Analysis inference using a Decision Tree");
-            int testingSize = 10000;
+            log.h1("Sentiment Analysis using a Decision Tree");
+            int testingSize = 1000;
             int trainingSize = 50000;
             log.p("First, we load positive and negative sentiment tweets into two seperate models");
             List<TweetSentiment> tweetsPositive = log.code(() -> {
@@ -183,24 +183,36 @@ public class TrieClassificationBlog {
             });
             Function<String, Map<String, Double>> rule = log.code(()->{
                 HashMap<String, List<String>> map = new HashMap<>();
-                map.put("pos", tweetsPositive.stream().limit(trainingSize).map(x -> x.getText()).collect(Collectors.toList()));
-                map.put("neg", tweetsNegative.stream().limit(trainingSize).map(x -> x.getText()).collect(Collectors.toList()));
+                map.put("Positive", tweetsPositive.stream().limit(trainingSize).map(x -> x.getText()).collect(Collectors.toList()));
+                map.put("Negative", tweetsNegative.stream().limit(trainingSize).map(x -> x.getText()).collect(Collectors.toList()));
                 return new ClassificationTree().setVerbose(System.out).categorizationTree(map, 32);
             });
+            TableOutput table = new TableOutput();
             log.code(()->{
                 return tweetsPositive.stream().skip(trainingSize).map(x->x.getText()).mapToDouble(str->{
                     Map<String, Double> prob = rule.apply(str);
-                    System.out.println(String.format("%s -> %s", str, prob));
-                    return prob.getOrDefault("pos", 0.0) < 0.5 ? 0.0 : 1.0;
+                    HashMap<String, Object> row = new LinkedHashMap<>();
+                    row.put("Category", "Positive");
+                    row.put("Prediction", prob.entrySet().stream().max(Comparator.comparing(x -> x.getValue())).get().getKey());
+                    prob.forEach((category, count)->row.put(category+"%", count * 100));
+                    row.put("Text", str);
+                    table.putRow(row);
+                    return prob.getOrDefault("Positive", 0.0) < 0.5 ? 0.0 : 1.0;
                 }).average().getAsDouble() * 100.0 + "%";
             });
             log.code(()->{
                 return tweetsNegative.stream().skip(trainingSize).map(x->x.getText()).mapToDouble(str->{
                     Map<String, Double> prob = rule.apply(str);
-                    System.out.println(String.format("%s -> %s", str, prob));
-                    return prob.getOrDefault("neg", 0.0) < 0.5 ? 0.0 : 1.0;
+                    HashMap<String, Object> row = new LinkedHashMap<>();
+                    row.put("Category", "Negative");
+                    row.put("Prediction", prob.entrySet().stream().max(Comparator.comparing(x -> x.getValue())).get().getKey());
+                    prob.forEach((category, count)->row.put(category+"%", count * 100));
+                    row.put("Text", str);
+                    table.putRow(row);
+                    return prob.getOrDefault("Negative", 0.0) < 0.5 ? 0.0 : 1.0;
                 }).average().getAsDouble() * 100.0 + "%";
             });
+            //log.p(table.toTextTable());
         }
     }
 

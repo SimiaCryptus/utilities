@@ -1,6 +1,8 @@
 # Language Detection using prebuilt models
 ### English
-Code from [TrieClassificationBlog.java:85](../../src/test/java/com/simiacryptus/util/text/TrieClassificationBlog.java#L85) executed in 78.85 seconds: 
+Loading 100 articles of English to test language classification...
+
+Code from [TrieClassificationBlog.java:89](../../src/test/java/com/simiacryptus/util/text/TrieClassificationBlog.java#L89) executed in 92.31 seconds: 
 ```java
       sourceData.load()
               .map(x->x.getText()).filter(x -> x.length()> minArticleSize).limit(testingSize)
@@ -17,7 +19,9 @@ Code from [TrieClassificationBlog.java:85](../../src/test/java/com/simiacryptus/
 ```
 
 ### French
-Code from [TrieClassificationBlog.java:85](../../src/test/java/com/simiacryptus/util/text/TrieClassificationBlog.java#L85) executed in 37.56 seconds: 
+Loading 100 articles of French to test language classification...
+
+Code from [TrieClassificationBlog.java:89](../../src/test/java/com/simiacryptus/util/text/TrieClassificationBlog.java#L89) executed in 42.82 seconds: 
 ```java
       sourceData.load()
               .map(x->x.getText()).filter(x -> x.length()> minArticleSize).limit(testingSize)
@@ -34,7 +38,9 @@ Code from [TrieClassificationBlog.java:85](../../src/test/java/com/simiacryptus/
 ```
 
 ### German
-Code from [TrieClassificationBlog.java:85](../../src/test/java/com/simiacryptus/util/text/TrieClassificationBlog.java#L85) executed in 31.73 seconds: 
+Loading 100 articles of German to test language classification...
+
+Code from [TrieClassificationBlog.java:89](../../src/test/java/com/simiacryptus/util/text/TrieClassificationBlog.java#L89) executed in 40.97 seconds: 
 ```java
       sourceData.load()
               .map(x->x.getText()).filter(x -> x.length()> minArticleSize).limit(testingSize)
@@ -50,19 +56,12 @@ Code from [TrieClassificationBlog.java:85](../../src/test/java/com/simiacryptus/
       });
 ```
 
-### Summary
-Code from [TrieClassificationBlog.java:75](../../src/test/java/com/simiacryptus/util/text/TrieClassificationBlog.java#L75) executed in 0.01 seconds: 
-```java
-      return table.toTextTable();
-```
+### Results
+Predicted | Count | Source
+--------- | ----- | ------
+English | 100 | English
+French  | 100 | French 
+French  | 9 | German 
+German  | 91 | German 
 
-Returns: 
-```
-    Predicted | Count | Source
-    --------- | ----- | ------
-    English | 100 | English
-    French  | 100 | French 
-    French  | 8 | German 
-    German  | 92 | German 
-    
-```
+
