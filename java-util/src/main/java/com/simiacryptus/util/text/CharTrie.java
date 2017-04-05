@@ -1,11 +1,14 @@
 package com.simiacryptus.util.text;
 
+import com.google.common.collect.Iterators;
 import com.simiacryptus.util.data.SerialArrayList;
 
 import java.util.*;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import static com.simiacryptus.util.text.NodewalkerCodec.*;
 
@@ -79,7 +82,8 @@ public class CharTrie {
         TreeMap<Character, Long> children = new TreeMap<>();
         childrenMap.forEach((token, node)->{
             TrieNode analog = node.traverse(suffix);
-            if((token + suffix).equals(analog.getRawString())) {
+            boolean found = (token + suffix).equals(analog.getRawString());
+            if(found) {
                 children.put(token, analog.getCursorCount());
             }
         });
@@ -293,4 +297,23 @@ public class CharTrie {
         return traverse(text).getString().endsWith(text);
     }
 
+    public <T extends Comparable<T>> Stream<TrieNode> max(Function<TrieNode, T> fn, int maxResults) {
+        return max(fn, maxResults, root());
+    }
+
+    private <T extends Comparable<T>> Stream<TrieNode> max(Function<TrieNode, T> fn, int maxResults, TrieNode node) {
+        return StreamSupport.stream(Spliterators.spliteratorUnknownSize(
+                Iterators.mergeSorted(
+                        Stream.concat(
+                                Stream.of(Stream.of(node)),
+                                node.getChildren().map(x -> max(fn, maxResults, x))
+                        ).map(x->x.iterator()).collect(Collectors.toList()),
+                        Comparator.comparing(fn).reversed()),
+                Spliterator.ORDERED),
+                false).limit(maxResults).collect(Collectors.toList()).stream();
+    }
+
+    public static <T> Stream<T> toStream(Optional<T> opt) {
+        return Arrays.asList(opt.orElse(null)).stream().filter(y -> null != y);
+    }
 }

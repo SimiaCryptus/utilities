@@ -2,6 +2,8 @@ package com.simiacryptus.util.test;
 
 import com.simiacryptus.util.lang.TimedResult;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -17,14 +19,17 @@ public class MarkdownPrintStream extends PrintStream {
 
     private final List<PrintStream> teeStreams = new ArrayList<>();
     private final File file;
+    private final String methodName;
+    private int imageNumber = 0;
 
     public static MarkdownPrintStream get(Object source) {
         try {
             StackTraceElement callingFrame = Thread.currentThread().getStackTrace()[2];
             String className = null==source?callingFrame.getClassName():source.getClass().getCanonicalName();
-            File path = new File(mkString(File.separator, "reports", className, callingFrame.getMethodName() + ".md"));
+            String methodName = callingFrame.getMethodName();
+            File path = new File(mkString(File.separator, "reports", className, methodName + ".md"));
             path.getParentFile().mkdirs();
-            return new MarkdownPrintStream(path);
+            return new MarkdownPrintStream(path, methodName);
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
@@ -34,8 +39,9 @@ public class MarkdownPrintStream extends PrintStream {
         return Arrays.asList(strs).stream().collect(Collectors.joining(separator));
     }
 
-    public MarkdownPrintStream(File path) throws FileNotFoundException {
+    public MarkdownPrintStream(File path, String methodName) throws FileNotFoundException {
         super(new FileOutputStream(path));
+        this.methodName = methodName;
         this.file = path;
     }
 
@@ -109,21 +115,30 @@ public class MarkdownPrintStream extends PrintStream {
 
             Object eval = result.obj.obj;
             out("Returns: ");
-            out("```");
             String str;
-            if(result.obj.obj instanceof Throwable) {
+            boolean escape;
+            if(eval instanceof Throwable) {
                 ByteArrayOutputStream out = new ByteArrayOutputStream();
-                ((Throwable) result.obj.obj).printStackTrace(new PrintStream(out));
+                ((Throwable) eval).printStackTrace(new PrintStream(out));
                 str = new String(out.toByteArray(), "UTF-8");
+                escape = true;
+            } else if(eval instanceof BufferedImage) {
+                ByteArrayOutputStream out = new ByteArrayOutputStream();
+                File file = new File(this.file.getParentFile(), this.methodName + "." + (imageNumber++) + ".png");
+                ImageIO.write((BufferedImage) eval, "png", file);
+                str = "![Result]("+file.getName()+")";
+                escape = false;
             } else {
                 str = eval.toString();
+                escape = true;
             }
-            String valTxt = str.replaceAll("\n", "\n    ");
-            if(valTxt.length() > maxLog) {
+            if(escape) out("```");
+            String valTxt = escape?str:str.replaceAll("\n", "\n    ");
+            if(escape && valTxt.length() > maxLog) {
                 valTxt = valTxt.substring(0, maxLog) + String.format("... and %s more bytes", valTxt.length() - maxLog);
             }
-            out("    " + valTxt);
-            out("```");
+            out(escape?("    " + valTxt):valTxt);
+            if(escape) out("```");
             if(result.obj.obj instanceof Throwable) {
                 throw new RuntimeException((Throwable) result.obj.obj);
             }

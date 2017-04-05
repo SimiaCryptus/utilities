@@ -3,6 +3,11 @@ package com.simiacryptus.util.text;
 import com.simiacryptus.util.binary.Bits;
 import com.simiacryptus.util.lang.TimedResult;
 import com.simiacryptus.util.test.*;
+import guru.nidi.graphviz.attribute.RankDir;
+import guru.nidi.graphviz.engine.Format;
+import guru.nidi.graphviz.engine.Graphviz;
+import guru.nidi.graphviz.engine.Renderer;
+import guru.nidi.graphviz.model.*;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -14,6 +19,10 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
+import static guru.nidi.graphviz.model.Factory.graph;
+import static guru.nidi.graphviz.model.Factory.node;
+import static guru.nidi.graphviz.model.Link.to;
 
 public class TrieDemo {
 
@@ -262,6 +271,77 @@ public class TrieDemo {
                 return triePositive.reverse().getGenerator().generateDictionary(dictionarySampleSize, context, "", lookahead, true);
             });
         }
+    }
+
+    @Test
+    @Category(TestCategories.ResearchCode.class)
+    public void demoCommonWords() throws IOException {
+        try (MarkdownPrintStream log = MarkdownPrintStream.get(this).addCopy(System.out)) {
+            List<String> trainingData = WikiArticle.ENGLISH.load().map(x -> x.getText()).limit(200).collect(Collectors.toList());
+            int minWeight = 5;
+            int maxLevels = 200;
+            log.p("First, we load text into a model");
+            CharTrie triePositive = log.code(() -> {
+                CharTrie charTrie = CharTrieIndex.indexFulltext(trainingData, maxLevels, minWeight).truncate();
+                print(charTrie);
+                return charTrie;
+            });
+            for(int penalty =0; penalty<10; penalty++) {
+                int _penalty = penalty;
+                log.p("We can then search for high-entropy keywords with encoding penalty %s:", penalty);
+                log.code(() -> {
+                    List<String> candidates = triePositive.max(node -> {
+                        return (node.getDepth() - _penalty) * (node.getCursorCount());
+                    }, 1000).map(x -> x.getString()).collect(Collectors.toList());
+                    List<String> filteredKeywords = new ArrayList<>();
+                    for(String keyword : candidates) {
+                        if(!filteredKeywords.stream().anyMatch(x->x.contains(keyword) || keyword.contains(x))) {
+                            filteredKeywords.add(keyword);
+                        }
+                    }
+                    return filteredKeywords.stream().map(x->'"'+x+'"').collect(Collectors.joining("\n"));
+                });
+            }
+        }
+    }
+
+    @Test
+    @Category(TestCategories.ResearchCode.class)
+    public void demoMarkovGraph() throws IOException {
+        try (MarkdownPrintStream log = MarkdownPrintStream.get(this).addCopy(System.out)) {
+            List<String> trainingData = Arrays.asList("a cat in the hat that can hat the cat");
+            int minWeight = 1;
+            int maxLevels = Integer.MAX_VALUE;
+            log.p("First, we load text into a model");
+            CharTrie trie = log.code(() -> {
+                CharTrie charTrie = CharTrieIndex.indexFulltext(trainingData, maxLevels, minWeight).truncate();
+                print(charTrie);
+                return charTrie;
+            });
+            log.p("The graph:");
+            HashMap<String,Node> nodes = new HashMap<>();
+            log.code(() -> {
+                Node node = buildNode(trie.root(), maxLevels);
+                Graph graph = graph().directed().generalAttr().with(RankDir.LEFT_TO_RIGHT).with(node);
+                Renderer render = Graphviz.fromGraph(graph).width(1200).render(Format.PNG);
+                return render.toImage();
+            });
+        }
+    }
+
+    private Node buildNode(TrieNode root, int levels) {
+        LinkTarget[] links;
+        if(root.getDepth() > levels) {
+            links = new LinkTarget[]{};
+        } else {
+            links = root.getChildren().filter(n->n.getChar()!=Character.MIN_VALUE).map(child -> {
+                Node childNode = buildNode(child, levels); //node(child.getDebugString()).with(Label.of(child.getString()));
+                Link linkNode = to(childNode).with(Label.of(Integer.toString((int) child.getCursorCount())));
+                return linkNode;
+
+            }).toArray(i -> new LinkTarget[i]);
+        }
+        return node(root.getDebugString()).with(Label.of('"'+root.getString()+'"')).link(links);
     }
 
     @Test
