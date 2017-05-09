@@ -5,12 +5,12 @@
 	<parent>
 	    <groupId>com.simiacryptus</groupId>
 	    <artifactId>java-parent</artifactId>
-	    <version>1.0.2</version>
+	    <version>1.0.5</version>
 	    <relativePath>../java-parent/</relativePath>
 	</parent>
 
     <artifactId>java-util</artifactId>
-    <version>1.0.2</version>
+    <version>1.0.5</version>
     <description>Miscellaneous utilities for Java 8</description>
 
     <properties>
