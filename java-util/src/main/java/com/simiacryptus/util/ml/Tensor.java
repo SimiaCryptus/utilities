@@ -291,6 +291,16 @@ public class Tensor {
     return new Tensor(dims, getData());
   }
 
+  public Tensor multiply(final double d) {
+    Tensor tensor = new Tensor(getDims());
+    double[] resultData = tensor.getData();
+    double[] thisData = getData();
+    for (int i = 0; i < thisData.length; i++) {
+      resultData[i] = d * thisData[i];
+    }
+    return tensor;
+  }
+
   public Tensor scale(final double d) {
     for (int i = 0; i < getData().length; i++) {
       getData()[i] *= d;
