@@ -13,6 +13,13 @@ public class TableOutput {
     Map<String,Class<?>> schema = new LinkedHashMap<>();
     List<Map<String,Object>> rows = new ArrayList<>();
 
+    public static TableOutput create(Map<String,Object>... rows) {
+        TableOutput table = new TableOutput();
+        Arrays.stream(rows).forEach(table::putRow);
+        return table;
+
+    }
+
     public void putRow(Map<String,Object> properties) {
         for(Map.Entry<String, Object> prop : properties.entrySet()) {
             String propKey = prop.getKey();
@@ -129,12 +136,12 @@ public class TableOutput {
                                     return "%s";
                             }
                         }).collect(Collectors.joining(" | "));
-                printStream.println(schema.entrySet().stream().map(x->x.getKey()).collect(Collectors.joining(" | ")));
+                printStream.println(schema.entrySet().stream().map(x->x.getKey()).collect(Collectors.joining(" | ")).trim());
                 printStream.println(schema.entrySet().stream().map(x->x.getKey()).map(x->{
                     char[] t = new char[x.length()];
                     Arrays.fill(t, '-');
                     return new String(t);
-                }).collect(Collectors.joining(" | ")));
+                }).collect(Collectors.joining(" | ")).trim());
                 for(Map<String, Object> row : rows) {
                     printStream.println(String.format(formatString, schema.entrySet().stream().map(e->row.get(e.getKey())).toArray()));
                 }

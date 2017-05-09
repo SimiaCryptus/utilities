@@ -19,6 +19,7 @@ public class SysOutInterceptor extends PrintStream {
     public static final SysOutInterceptor INSTANCE = init();
 
     public static <T> LoggedResult<T> withOutput(Supplier<T> fn) {
+        //init();
         try {
             ByteArrayOutputStream buff = new ByteArrayOutputStream();
             try(PrintStream ps = new PrintStream(buff)) {
@@ -49,9 +50,12 @@ public class SysOutInterceptor extends PrintStream {
     }
 
     private static SysOutInterceptor init() {
-        SysOutInterceptor out = new SysOutInterceptor(System.out);
-        System.setOut(out);
-        return out;
+        if(!(System.out instanceof SysOutInterceptor)) {
+            SysOutInterceptor out = new SysOutInterceptor(System.out);
+            System.setOut(out);
+            return out;
+        }
+        return (SysOutInterceptor) System.out;
     }
 
     private ThreadLocal<PrintStream> threadHandler = new ThreadLocal<PrintStream>() {

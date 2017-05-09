@@ -8428,7 +8428,7 @@ not use their reserve, which was precious, in case during the
 first days the liquid element should be found wanting on lunar soil.
 
 And indeed this reserve would have been quite insufficient for
-a spring.  The layer of water stored in the projectile at
+a spring.  The id of water stored in the projectile at
 the time of starting upon their journey occupied no less than
 three feet in depth, and spread over a surface of not less than
 fifty-four square feet.  Besides, the cistern did not contain

@@ -2,6 +2,7 @@ package com.simiacryptus.util.test;
 
 import javax.net.ssl.*;
 import java.io.*;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
 import java.security.KeyManagementException;
@@ -11,6 +12,10 @@ import java.security.cert.X509Certificate;
 
 
 public class Spool extends InputStream {
+
+  public static InputStream load(URI url) throws IOException, NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
+    return load(url.toString(), new File(url.getPath()).getName());
+  }
 
   public static InputStream load(String url, String file) throws IOException, NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
     if (new File(file).exists()) {

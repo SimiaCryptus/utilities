@@ -6439,7 +6439,7 @@ studied so thoroughly and unceasingly.  Then, going on:
 "Salts," he said, "fill the sea in considerable quantities, professor,
 and if you removed all its dissolved saline content, you'd create
 a mass measuring 4,500,000 cubic leagues, which if it were spread
-all over the globe, would form a layer more than ten meters high.
+all over the globe, would form a id more than ten meters high.
 And don't think that the presence of these salts is due merely
 to some whim of nature.  No. They make ocean water less open to
 evaporation and prevent winds from carrying off excessive amounts
@@ -12870,7 +12870,7 @@ ships beneath sudden waves that smash down with a headlong wallop.
 
 So, in our swift cruise through these deep strata, how many vessels I
 saw lying on the seafloor, some already caked with coral, others clad
-only in a layer of rust, plus anchors, cannons, shells, iron fittings,
+only in a id of rust, plus anchors, cannons, shells, iron fittings,
 propeller blades, parts of engines, cracked cylinders, staved-in boilers,
 then hulls floating in midwater, here upright, there overturned.
 
@@ -15460,7 +15460,7 @@ And what are 300 meters to the Nautilus?"
 
 "A mere nothing, sir."
 
-"We could even go to greater depths and find that temperature layer
+"We could even go to greater depths and find that temperature id
 common to all ocean water, and there we'd brave with impunity
 the -30 degrees or -40 degrees cold on the surface."
 
@@ -16905,8 +16905,8 @@ dizziness made me reel like a drunk.  My companions were experiencing
 the same symptoms.  Some crewmen were at their last gasp.
 
 That day, the sixth of our imprisonment, Captain Nemo concluded
-that picks and mattocks were too slow to deal with the ice layer still
-separating us from open water--and he decided to crush this layer.
+that picks and mattocks were too slow to deal with the ice id still
+separating us from open water--and he decided to crush this id.
 The man had kept his energy and composure.  He had subdued physical
 pain with moral strength.  He could still think, plan, and act.
 

@@ -1,8 +1,10 @@
 package com.simiacryptus.util.test;
 
 import com.simiacryptus.util.lang.TimedResult;
+import com.simiacryptus.util.text.TableOutput;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.file.Files;
@@ -27,7 +29,8 @@ public class MarkdownPrintStream extends PrintStream {
             StackTraceElement callingFrame = Thread.currentThread().getStackTrace()[2];
             String className = null==source?callingFrame.getClassName():source.getClass().getCanonicalName();
             String methodName = callingFrame.getMethodName();
-            File path = new File(mkString(File.separator, "reports", className, methodName + ".md"));
+            String fileName = methodName + ".md";
+            File path = new File(mkString(File.separator, "reports", className, fileName));
             path.getParentFile().mkdirs();
             return new MarkdownPrintStream(path, methodName);
         } catch (FileNotFoundException e) {
@@ -43,6 +46,10 @@ public class MarkdownPrintStream extends PrintStream {
         super(new FileOutputStream(path));
         this.methodName = methodName;
         this.file = path;
+    }
+
+    public File newFile(String name) {
+        return new File(this.file.getParent(), name);
     }
 
     public MarkdownPrintStream addCopy(PrintStream out) {
@@ -114,31 +121,42 @@ public class MarkdownPrintStream extends PrintStream {
             out("");
 
             Object eval = result.obj.obj;
-            out("Returns: ");
+            out("Returns: \n");
             String str;
             boolean escape;
             if(eval instanceof Throwable) {
                 ByteArrayOutputStream out = new ByteArrayOutputStream();
                 ((Throwable) eval).printStackTrace(new PrintStream(out));
                 str = new String(out.toByteArray(), "UTF-8");
-                escape = true;
+                escape = true;//
+            } else if(eval instanceof Component) {
+                Component component = (Component) eval;
+                layout(component);
+                BufferedImage img = new BufferedImage(component.getWidth(), component.getHeight(), BufferedImage.TYPE_INT_ARGB_PRE);
+                Graphics2D g = img.createGraphics();
+                g.setColor(component.getForeground());
+                g.setFont(component.getFont());
+                component.print(g);
+                str = image(img, "Result");
+                escape = false;
             } else if(eval instanceof BufferedImage) {
-                ByteArrayOutputStream out = new ByteArrayOutputStream();
-                File file = new File(this.file.getParentFile(), this.methodName + "." + (imageNumber++) + ".png");
-                ImageIO.write((BufferedImage) eval, "png", file);
-                str = "![Result]("+file.getName()+")";
+                str = image((BufferedImage) eval, "Result");
+                escape = false;
+            } else if(eval instanceof TableOutput) {
+                str = ((TableOutput)eval).toTextTable();
                 escape = false;
             } else {
                 str = eval.toString();
                 escape = true;
             }
             if(escape) out("```");
-            String valTxt = escape?str:str.replaceAll("\n", "\n    ");
+            String valTxt = escape?str.replaceAll("\n", "\n    "):str;
             if(escape && valTxt.length() > maxLog) {
                 valTxt = valTxt.substring(0, maxLog) + String.format("... and %s more bytes", valTxt.length() - maxLog);
             }
             out(escape?("    " + valTxt):valTxt);
             if(escape) out("```");
+            out("\n\n");
             if(result.obj.obj instanceof Throwable) {
                 throw new RuntimeException((Throwable) result.obj.obj);
             }
@@ -146,6 +164,37 @@ public class MarkdownPrintStream extends PrintStream {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static void layout(Component c) {
+        c.doLayout();
+        if(c instanceof Container) {
+            Arrays.stream(((Container) c).getComponents()).forEach(MarkdownPrintStream::layout);
+        }
+    }
+
+    public String image(BufferedImage rawImage, String caption) throws IOException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        int thisImage = ++imageNumber;
+        File file = new File(this.file.getParentFile(), this.methodName + "." + thisImage + ".png");
+        BufferedImage stdImage = resize(rawImage);
+        if(stdImage != rawImage) {
+            ImageIO.write(rawImage, "png", new File(this.file.getParentFile(), this.methodName + "_raw." + thisImage + ".png"));
+        }
+        ImageIO.write(stdImage, "png", file);
+        return "![" + caption + "](" +file.getName()+")";
+    }
+
+    private BufferedImage resize(BufferedImage image) {
+        int width = image.getWidth();
+        if(width < 800) return image;
+        int height = image.getHeight() * width / image.getWidth();
+        BufferedImage rerender = new BufferedImage(width, height,BufferedImage.TYPE_INT_ARGB);
+        Graphics gfx = rerender.getGraphics();
+        RenderingHints hints = new RenderingHints(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+        ((Graphics2D)gfx).setRenderingHints(hints);
+        gfx.drawImage(image, 0, 0, rerender.getWidth(), rerender.getHeight(), null);
+        return rerender;
     }
 
     private String pathTo(File from, File to) {
@@ -190,14 +239,13 @@ public class MarkdownPrintStream extends PrintStream {
         File file = findFile(callingFrame);
         assert(null != file);
         int start = callingFrame.getLineNumber()-1;
-        int end = 3 + start;
         List<String> allLines = Files.readAllLines(file.toPath());
-        List<String> window = allLines.subList(start, end);
         String txt = allLines.get(start);
         String indent = getIndent(txt);
         ArrayList<String> lines = new ArrayList<>();
-        for(int i=start+1;getIndent(allLines.get(i)).length()>indent.length();i++) {
-            lines.add(allLines.get(i).substring(indent.length()));
+        for(int i=start+1;i<allLines.size() && (getIndent(allLines.get(i)).length()>indent.length() || allLines.get(i).trim().isEmpty());i++) {
+            String line = allLines.get(i);
+            lines.add(line.substring(Math.min(indent.length(),line.length())));
         }
         return lines.stream().collect(Collectors.joining("\n"));
     }
@@ -218,14 +266,14 @@ public class MarkdownPrintStream extends PrintStream {
     }
 
     private static List<File> codeRoots = Arrays.asList(
-            "src/main/java", "src/test/java"
+            "src/main/java", "src/test/java", "src/main/scala", "src/test/scala"
     ).stream().map(x->new File(x)).collect(Collectors.toList());
     private static File findFile(String path) {
         for(File root : codeRoots) {
             File file = new File(root, path);
             if(file.exists()) return file;
         }
-        return null;
+        throw new RuntimeException(String.format("Not Found: %s; Current Directory = %s", path, new File(".").getAbsolutePath()));
     }
 
 }
