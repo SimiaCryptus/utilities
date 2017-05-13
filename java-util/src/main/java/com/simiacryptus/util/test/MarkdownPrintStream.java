@@ -49,7 +49,7 @@ public class MarkdownPrintStream extends PrintStream {
     }
 
     public File newFile(String name) {
-        return new File(this.file.getParent(), name);
+        return new File(getResourceDir(), name);
     }
 
     public MarkdownPrintStream addCopy(PrintStream out) {
@@ -176,13 +176,19 @@ public class MarkdownPrintStream extends PrintStream {
     public String image(BufferedImage rawImage, String caption) throws IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         int thisImage = ++imageNumber;
-        File file = new File(this.file.getParentFile(), this.methodName + "." + thisImage + ".png");
+        File file = new File(getResourceDir(), this.methodName + "." + thisImage + ".png");
         BufferedImage stdImage = resize(rawImage);
         if(stdImage != rawImage) {
-            ImageIO.write(rawImage, "png", new File(this.file.getParentFile(), this.methodName + "_raw." + thisImage + ".png"));
+            ImageIO.write(rawImage, "png", new File(getResourceDir(), this.methodName + "_raw." + thisImage + ".png"));
         }
         ImageIO.write(stdImage, "png", file);
-        return "![" + caption + "](" +file.getName()+")";
+        return "![" + caption + "](etc/" +file.getName()+")";
+    }
+
+    public File getResourceDir() {
+        File etc = new File(this.file.getParentFile(), "etc");
+        etc.mkdirs();
+        return etc;
     }
 
     private BufferedImage resize(BufferedImage image) {

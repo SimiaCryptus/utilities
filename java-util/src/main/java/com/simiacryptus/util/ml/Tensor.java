@@ -3,10 +3,7 @@ package com.simiacryptus.util.ml;
 import java.awt.image.BufferedImage;
 import java.lang.ref.SoftReference;
 import java.util.*;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.*;
 import java.util.function.DoubleSupplier;
 import java.util.function.ToDoubleBiFunction;
 import java.util.stream.Collectors;
@@ -24,9 +21,20 @@ public class Tensor {
     return total;
   }
 
-  private static ConcurrentHashMap<Integer, BlockingQueue<SoftReference<double[]>>> recycling = new ConcurrentHashMap<>();
+  static {
+    java.util.concurrent.Executors.newScheduledThreadPool(1).scheduleAtFixedRate(new Runnable() {
+      @Override
+      public void run() {
+        recycling.forEach((k,v)->{
+          v.drainTo(new ArrayList<>(), 100);
+          System.gc();
+        });
+      }
+    }, 0, 10, TimeUnit.SECONDS);
+  }
+
+  private static ConcurrentHashMap<Integer, BlockingQueue<double[]>> recycling = new ConcurrentHashMap<>();
   private volatile double[] data;
-  private volatile SoftReference<double[]> dataSoftref;
   protected final int[] dims;
   protected final int[] skips;
 
@@ -39,20 +47,35 @@ public class Tensor {
 
   @Override
   public void finalize() throws Throwable {
-    if(null != data && data.length < 1024*1024) {
-      BlockingQueue<SoftReference<double[]>> bin = recycling.get(data.length);
-      if(null == bin) {
-        bin = new ArrayBlockingQueue<SoftReference<double[]>>(1000);
-        recycling.put(data.length, bin);
-      }
-      if(null == this.dataSoftref) {
-        bin.offer(new SoftReference<>(data));
-      } else {
-        bin.offer(this.dataSoftref);
-      }
+    if(null != data) {
+      recycle(data);
       data = null;
     }
     super.finalize();
+  }
+
+  public static void recycle(double[] data) {
+    if(data.length > 1024*1024) return;
+    if(data.length < 256) return;
+    BlockingQueue<double[]> bin = recycling.get(data.length);
+    if(null == bin) {
+      System.err.println("New Recycle Bin: " + data.length);
+      bin = new ArrayBlockingQueue<double[]>(1000);
+      recycling.put(data.length, bin);
+    }
+    bin.offer(data);
+  }
+
+  public static double[] obtain(int length) {
+    BlockingQueue<double[]> bin = recycling.get(length);
+    if(null != bin) {
+      double[] data = bin.poll();
+      if(null != data) {
+        Arrays.fill(data, 0);
+        return data;
+      }
+    }
+    return new double[length];
   }
 
   public Tensor(final int... dims) {
@@ -197,30 +220,7 @@ public class Tensor {
       synchronized (this) {
         if (null == this.data) {
           int length = Tensor.dim(this.dims);
-          BlockingQueue<SoftReference<double[]>> bin = recycling.getOrDefault(length, new LinkedBlockingDeque<>());
-          SoftReference<double[]> poll;
-          double[] data = null;
-          do {
-            poll = bin.poll();
-            if(null != poll) {
-              data = poll.get();
-              if(null != data) {
-                Arrays.fill(data, 0);
-                break;
-              } else {
-                continue;
-              }
-            } else {
-              break;
-            }
-          } while(null != poll && null == data);
-          if(null == data) {
-            this.data = new double[length];
-            this.dataSoftref = null;
-          } else {
-            this.data = data;
-            this.dataSoftref = poll;
-          }
+          this.data = obtain(length);
         }
       }
     }
@@ -327,7 +327,7 @@ public class Tensor {
     for(int x=0;x<width;x++)
       for(int y=0;y<height;y++) {
         double v = get(x, y);
-        image.getRaster().setSample(x, y, 0, v<0?0:v);
+        image.getRaster().setSample(x, y, 0, v<0?0:v>255?255:v);
       }
     return image;
   }
