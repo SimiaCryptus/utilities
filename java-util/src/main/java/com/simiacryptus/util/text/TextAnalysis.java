@@ -298,7 +298,6 @@ public class TextAnalysis {
     return this;
   }
 
-  pu
   public class WordSpelling {
     private final double[] linkNatsArray;
     private final List<TrieNode> leftNodes;
@@ -430,7 +429,7 @@ public class TextAnalysis {
 
   }
 
-blic List<String> splitChars(String text) {
+  public List<String> splitChars(String text) {
     return splitChars(text, DEFAULT_THRESHOLD);
   }
 }

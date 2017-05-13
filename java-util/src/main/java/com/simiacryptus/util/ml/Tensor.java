@@ -352,6 +352,21 @@ public class Tensor {
     return this;
   }
   
+  public BufferedImage toImage() {
+    int[] dims = getDims();
+    if(3 == dims.length) {
+      if(3 == dims[2]) {
+        return toRgbImage();
+      } else {
+        assert(1 == dims[2]);
+        return toGrayImage();
+      }
+    } else {
+      assert(2 == dims.length);
+      return toGrayImage();
+    }
+  }
+  
   public BufferedImage toGrayImage() {
     int width = getDims()[0];
     int height = getDims()[1];
