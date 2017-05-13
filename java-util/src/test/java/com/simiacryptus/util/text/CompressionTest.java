@@ -1,3 +1,22 @@
+/*
+ * Copyright (c) 2017 by Andrew Charneski.
+ *
+ * The author licenses this file to you under the
+ * Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance
+ * with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
 package com.simiacryptus.util.text;
 
 import com.simiacryptus.util.binary.Bits;
@@ -12,12 +31,44 @@ import java.util.stream.Stream;
 
 public class CompressionTest {
 
+  static void addSharedDictionaryCompressors(
+                                                Map<String, Compressor> compressors, final CharTrieIndex baseTree, final int dictionary_lookahead, final int dictionary_context, int model_minPathWeight) {
+    CharTrie dictionaryTree = baseTree.copy().index(dictionary_context + dictionary_lookahead, model_minPathWeight);
+    compressors.put("LZ8k", new Compressor() {
+      String dictionary = dictionaryTree.copy().getGenerator().generateDictionary(8 * 1024, dictionary_context, "", dictionary_lookahead, true);
+
+      @Override
+      public byte[] compress(String text) {
+        return CompressionUtil.encodeLZ(text, dictionary);
+      }
+
+      @Override
+      public String uncompress(byte[] data) {
+        return CompressionUtil.decodeLZToString(data, dictionary);
+      }
+    });
+
+    compressors.put("BZ64k", new Compressor() {
+      String dictionary = dictionaryTree.copy().getGenerator().generateDictionary(64 * 1024, dictionary_context, "", dictionary_lookahead, true);
+
+      @Override
+      public byte[] compress(String text) {
+        return CompressionUtil.encodeBZ(text, dictionary);
+      }
+
+      @Override
+      public String uncompress(byte[] data) {
+        return CompressionUtil.decodeBZ(data, dictionary);
+      }
+    });
+  }
+
   @Test
   @Category(TestCategories.UnitTest.class)
   public void testPPMCompression_Basic() throws Exception {
     CharTrieIndex tree = new CharTrieIndex();
     tree.addDocument("ababababab");
-    tree = tree.index(2,0);
+    tree = tree.index(2, 0);
     NodewalkerCodec codec = tree.getCodec();
     codec.setVerbose(System.out);
     String txt = "ab ba";
@@ -36,10 +87,10 @@ public class CompressionTest {
 
     final CharTrieIndex tree = new CharTrieIndex();
     TweetSentiment.load().skip(articleCount).limit(modelCount).map(t -> t.getText())
-            .forEach(txt -> tree.addDocument(txt));
+        .forEach(txt -> tree.addDocument(txt));
     CharTrie modelTree = tree.index(modelDepth, 0);
     NodewalkerCodec codec = modelTree.getCodec();
-    TweetSentiment.load().limit(articleCount).map(t -> t.getText()).forEach(txt->{
+    TweetSentiment.load().limit(articleCount).map(t -> t.getText()).forEach(txt -> {
       try {
         Bits encoded = codec.encodePPM(txt, encodingContext);
         String decoded = codec.decodePPM(encoded.getBytes(), encodingContext);
@@ -75,7 +126,7 @@ public class CompressionTest {
     int encodingContext = 2;
     int modelCount = 10000;
     int testCount = 100;
-    Supplier<Stream<? extends TestDocument>> source = ()->TweetSentiment.load().limit(modelCount + testCount);
+    Supplier<Stream<? extends TestDocument>> source = () -> TweetSentiment.load().limit(modelCount + testCount);
 
     MarkdownPrintStream log = MarkdownPrintStream.get(this).addCopy(System.out);
     Map<String, Compressor> compressors = buildCompressors(source, ppmModelDepth, model_minPathWeight, dictionary_lookahead, dictionary_context, encodingContext, modelCount);
@@ -95,7 +146,7 @@ public class CompressionTest {
     int encodingContext = 3;
     int modelCount = 15000;
     int testCount = 100;
-    Supplier<Stream<? extends TestDocument>> source = ()-> EnglishWords.load().limit(modelCount + testCount);
+    Supplier<Stream<? extends TestDocument>> source = () -> EnglishWords.load().limit(modelCount + testCount);
     MarkdownPrintStream log = MarkdownPrintStream.get(this).addCopy(System.out);
     Map<String, Compressor> compressors = buildCompressors(source, ppmModelDepth, model_minPathWeight, dictionary_lookahead, dictionary_context, encodingContext, modelCount);
     TableOutput output = Compressor.evalCompressor(source.get().skip(modelCount), compressors, true);
@@ -139,36 +190,6 @@ public class CompressionTest {
     addSharedDictionaryCompressors(compressors, baseTree, dictionary_lookahead, dictionary_context, model_minPathWeight);
     compressors.put("PPM" + encodingContext, Compressor.buildPPMCompressor(baseTree, encodingContext));
     return compressors;
-  }
-
-  static void addSharedDictionaryCompressors(
-          Map<String, Compressor> compressors, final CharTrieIndex baseTree, final int dictionary_lookahead, final int dictionary_context, int model_minPathWeight) {
-    CharTrie dictionaryTree = baseTree.copy().index(dictionary_context + dictionary_lookahead, model_minPathWeight);
-    compressors.put("LZ8k", new Compressor() {
-      String dictionary = dictionaryTree.copy().getGenerator().generateDictionary(8*1024, dictionary_context, "", dictionary_lookahead, true);
-      @Override
-      public byte[] compress(String text) {
-        return CompressionUtil.encodeLZ(text, dictionary);
-      }
-
-      @Override
-      public String uncompress(byte[] data) {
-        return CompressionUtil.decodeLZToString(data, dictionary);
-      }
-    });
-
-    compressors.put("BZ64k", new Compressor() {
-      String dictionary = dictionaryTree.copy().getGenerator().generateDictionary(64*1024, dictionary_context, "", dictionary_lookahead, true);
-      @Override
-      public byte[] compress(String text) {
-        return CompressionUtil.encodeBZ(text, dictionary);
-      }
-
-      @Override
-      public String uncompress(byte[] data) {
-        return CompressionUtil.decodeBZ(data, dictionary);
-      }
-    });
   }
 
 }

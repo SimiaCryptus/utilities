@@ -1,3 +1,22 @@
+/*
+ * Copyright (c) 2017 by Andrew Charneski.
+ *
+ * The author licenses this file to you under the
+ * Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance
+ * with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
 package com.simiacryptus.util;
 
 import com.esotericsoftware.kryo.Kryo;
@@ -17,7 +36,19 @@ import java.util.Arrays;
 
 public class IO {
   private final static ObjectMapper objectMapper = new ObjectMapper().enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL);
-
+  private static final ThreadLocal<Kryo> kryo = new ThreadLocal<Kryo>() {
+    @Override
+    protected Kryo initialValue() {
+      return new KryoInstantiator().setRegistrationRequired(false).newKryo();
+    }
+  };
+  private static final ThreadLocal<byte[]> buffer = new ThreadLocal<byte[]>() {
+    @Override
+    protected byte[] initialValue() {
+      return new byte[8 * 1024 * 1024];
+    }
+  };
+  
   public static <T> void writeJson(T obj, File file) {
     StringWriter writer = new StringWriter();
     try {
@@ -27,29 +58,16 @@ public class IO {
       throw new RuntimeException(e);
     }
   }
-
+  
   public static <T> T readJson(File file) {
     try {
-      return objectMapper.readValue(new String(Files.readAllBytes(file.toPath())), new TypeReference<T>() {});
+      return objectMapper.readValue(new String(Files.readAllBytes(file.toPath())), new TypeReference<T>() {
+      });
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
   }
-
-  private static final ThreadLocal<Kryo> kryo = new ThreadLocal<Kryo>() {
-    @Override
-    protected Kryo initialValue() {
-      return new KryoInstantiator().setRegistrationRequired(false).newKryo();
-    }
-  };
-
-  private static final ThreadLocal<byte[]> buffer = new ThreadLocal<byte[]>() {
-    @Override
-    protected byte[] initialValue() {
-      return new byte[8*1024*1024];
-    }
-  };
-
+  
   public static <T> void writeKryo(T obj, File file) {
     try {
       Output output = new Output(buffer.get());
@@ -60,7 +78,7 @@ public class IO {
       throw new RuntimeException(e);
     }
   }
-
+  
   public static <T> T readKryo(File file) {
     try {
       byte[] bytes = CompressionUtil.decodeBZRaw(Files.readAllBytes(file.toPath()));

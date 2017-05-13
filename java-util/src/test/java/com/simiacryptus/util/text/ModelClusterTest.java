@@ -1,3 +1,22 @@
+/*
+ * Copyright (c) 2017 by Andrew Charneski.
+ *
+ * The author licenses this file to you under the
+ * Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance
+ * with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
 package com.simiacryptus.util.text;
 
 import com.simiacryptus.util.test.MarkdownPrintStream;
@@ -22,46 +41,32 @@ public abstract class ModelClusterTest {
   public static final URL outBaseUrl = TrieTest.getUrl("https://simiacryptus.github.io/utilities/java-util/");
 
   protected abstract Stream<? extends TestDocument> source();
+
   public abstract int getModelCount();
-
-  public static class Wikipedia extends ModelClusterTest {
-    int testCount = 1000;
-
-    @Override
-    protected Stream<? extends TestDocument> source() {
-        return WikiArticle.ENGLISH.load().filter(wikiArticle -> {
-        int kb = wikiArticle.getText().length() / 1024;
-        return kb > 50 && kb < 150;
-      }).limit(getModelCount() + testCount);
-    }
-
-    @Override
-    public int getModelCount() {
-      return 20;
-    }
-  }
 
   @Test
   @Category(TestCategories.ResearchCode.class)
   public void clusterSharedDictionariesLZ() throws Exception {
-    try(MarkdownPrintStream log = MarkdownPrintStream.get(this).addCopy(System.out)) {
+    try (MarkdownPrintStream log = MarkdownPrintStream.get(this).addCopy(System.out)) {
 
       int dictionary_context = 7;
       int model_minPathWeight = 3;
       int dictionary_lookahead = 2;
       AtomicInteger index = new AtomicInteger(0);
       Map<String, Compressor> compressors = new LinkedHashMap<>();
-      source().parallel().limit(getModelCount()).forEach(text->{
+      source().parallel().limit(getModelCount()).forEach(text -> {
         CharTrieIndex baseTree = new CharTrieIndex();
         baseTree.addDocument(text.getText());
         CharTrie dictionaryTree = baseTree.copy().index(dictionary_context + dictionary_lookahead, model_minPathWeight);
         int i = index.incrementAndGet();
         compressors.put(String.format("LZ_%s", i), new Compressor() {
-          String dictionary = dictionaryTree.copy().getGenerator().generateDictionary(8*1024, dictionary_context, "", dictionary_lookahead, true);
+          String dictionary = dictionaryTree.copy().getGenerator().generateDictionary(8 * 1024, dictionary_context, "", dictionary_lookahead, true);
+
           @Override
           public byte[] compress(String text) {
             return CompressionUtil.encodeLZ(text, dictionary);
           }
+
           @Override
           public String uncompress(byte[] data) {
             return CompressionUtil.decodeLZToString(data, dictionary);
@@ -70,10 +75,12 @@ public abstract class ModelClusterTest {
 
         compressors.put(String.format("LZ_raw_%s", i), new Compressor() {
           String dictionary = text.getText();
+
           @Override
           public byte[] compress(String text) {
             return CompressionUtil.encodeLZ(text, dictionary);
           }
+
           @Override
           public String uncompress(byte[] data) {
             return CompressionUtil.decodeLZToString(data, dictionary);
@@ -94,7 +101,7 @@ public abstract class ModelClusterTest {
   @Test
   @Category(TestCategories.ResearchCode.class)
   public void calcCompressorPPM() throws Exception {
-    try(MarkdownPrintStream log = MarkdownPrintStream.get(this).addCopy(System.out)){
+    try (MarkdownPrintStream log = MarkdownPrintStream.get(this).addCopy(System.out)) {
       int ppmModelDepth = 6;
       int model_minPathWeight = 3;
       AtomicInteger index = new AtomicInteger(0);
@@ -102,7 +109,7 @@ public abstract class ModelClusterTest {
 
       log.p("Generating Compressor Models");
       Map<String, Compressor> compressors = new LinkedHashMap<>();
-      source().parallel().limit(getModelCount()).forEach(text->{
+      source().parallel().limit(getModelCount()).forEach(text -> {
         CharTrieIndex tree = new CharTrieIndex();
         tree.addDocument(text.getText());
         tree = tree.index(ppmModelDepth, model_minPathWeight);
@@ -126,21 +133,21 @@ public abstract class ModelClusterTest {
   @Ignore
   @Category(TestCategories.ResearchCode.class)
   public void calcEntropyPPM() throws Exception {
-    try(MarkdownPrintStream log = MarkdownPrintStream.get(this).addCopy(System.out)){
+    try (MarkdownPrintStream log = MarkdownPrintStream.get(this).addCopy(System.out)) {
       int ppmModelDepth = 6;
       int model_minPathWeight = 3;
       AtomicInteger index = new AtomicInteger(0);
       int encodingContext = 2;
 
       log.p("Generating Compressor Models");
-      Map<String, Function<TestDocument,Double>> compressors = new LinkedHashMap<>();
-      source().parallel().limit(getModelCount()).forEach(text->{
+      Map<String, Function<TestDocument, Double>> compressors = new LinkedHashMap<>();
+      source().parallel().limit(getModelCount()).forEach(text -> {
         CharTrieIndex tree = new CharTrieIndex();
         tree.addDocument(text.getText());
         tree = tree.index(ppmModelDepth, model_minPathWeight);
         String name = String.format("ENT_%s", index.incrementAndGet());
         TextAnalysis analysis = tree.getAnalyzer();
-        Function<TestDocument,Double> ppmCompressor = t -> analysis.entropy(t.getText());
+        Function<TestDocument, Double> ppmCompressor = t -> analysis.entropy(t.getText());
         synchronized (compressors) {
           compressors.put(name, ppmCompressor);
         }
@@ -152,6 +159,23 @@ public abstract class ModelClusterTest {
       log.p(output.calcNumberStats().toTextTable());
       String outputDirName = String.format("cluster_%s_Entropy/", getClass().getSimpleName());
       output.writeProjectorData(new File(outPath, outputDirName), new URL(outBaseUrl, outputDirName));
+    }
+  }
+
+  public static class Wikipedia extends ModelClusterTest {
+    int testCount = 1000;
+
+    @Override
+    protected Stream<? extends TestDocument> source() {
+      return WikiArticle.ENGLISH.load().filter(wikiArticle -> {
+        int kb = wikiArticle.getText().length() / 1024;
+        return kb > 50 && kb < 150;
+      }).limit(getModelCount() + testCount);
+    }
+
+    @Override
+    public int getModelCount() {
+      return 20;
     }
   }
 

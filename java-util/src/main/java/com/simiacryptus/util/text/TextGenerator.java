@@ -1,3 +1,22 @@
+/*
+ * Copyright (c) 2017 by Andrew Charneski.
+ *
+ * The author licenses this file to you under the
+ * Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance
+ * with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
 package com.simiacryptus.util.text;
 
 import java.util.Comparator;
@@ -50,8 +69,8 @@ public class TextGenerator {
     String str = seed;
     String prefix = "";
     while (str.length() < length) {
-      TrieNode node = prefix.isEmpty()?inner.root():inner.matchPredictor(prefix);
-      if(null == node) {
+      TrieNode node = prefix.isEmpty() ? inner.root() : inner.matchPredictor(prefix);
+      if (null == node) {
         prefix = prefix.substring(1);
       }
       TrieNode nextNode = maxNextNode(node, lookahead);
@@ -60,15 +79,15 @@ public class TextGenerator {
       String next = nextNode.getString(node);
       str += next;
       prefix = str.substring(Math.max(str.length() - context, 0), str.length());
-      if(next.isEmpty()) {
-        if(prefix.isEmpty()) {
+      if (next.isEmpty()) {
+        if (prefix.isEmpty()) {
           break;
         } else {
           prefix = prefix.substring(1);
         }
       }
-      if(nextNode.getChar() == NodewalkerCodec.END_OF_STRING) {
-        if(terminateAtNull) {
+      if (nextNode.getChar() == NodewalkerCodec.END_OF_STRING) {
+        if (terminateAtNull) {
           break;
         } else {
           prefix = "";
@@ -97,9 +116,9 @@ public class TextGenerator {
   }
 
   private TrieNode maxNextNode(TrieNode node, int lookahead) {
-    Stream<TrieNode> childStream = node.getChildren().map(x->x);
+    Stream<TrieNode> childStream = node.getChildren().map(x -> x);
     for (int level = 0; level < lookahead; level++) {
-      childStream = childStream.flatMap(child -> child.hasChildren()?child.getChildren():Stream.of(child));
+      childStream = childStream.flatMap(child -> child.hasChildren() ? child.getChildren() : Stream.of(child));
     }
     TrieNode result = childStream.max(Comparator.comparingLong(x -> x.getCursorCount())).orElse(null);
     if (null == result) {

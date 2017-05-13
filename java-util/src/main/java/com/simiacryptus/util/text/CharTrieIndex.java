@@ -1,3 +1,22 @@
+/*
+ * Copyright (c) 2017 by Andrew Charneski.
+ *
+ * The author licenses this file to you under the
+ * Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance
+ * with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
 package com.simiacryptus.util.text;
 
 import com.simiacryptus.util.data.SerialArrayList;
@@ -27,7 +46,41 @@ public class CharTrieIndex extends CharTrie {
   }
 
   public CharTrieIndex() {
-    this(new SerialArrayList<>(NodeType.INSTANCE, new NodeData(NodewalkerCodec.END_OF_STRING, (short)-1, -1, -1, 0)), new SerialArrayList<>(CursorType.INSTANCE), new ArrayList<>());
+    this(new SerialArrayList<>(NodeType.INSTANCE, new NodeData(NodewalkerCodec.END_OF_STRING, (short) -1, -1, -1, 0)), new SerialArrayList<>(CursorType.INSTANCE), new ArrayList<>());
+  }
+
+  public static CharTrie indexWords(Collection<String> documents, int maxLevels, int minWeight) {
+    return create(documents, maxLevels, minWeight, true);
+  }
+
+  public static CharTrie indexFulltext(Collection<String> documents, int maxLevels, int minWeight) {
+    return create(documents, maxLevels, minWeight, false);
+  }
+
+  private static CharTrie create(Collection<String> documents, int maxLevels, int minWeight, boolean words) {
+    List<List<String>> a = new ArrayList<>();
+    List<String> b = new ArrayList<>();
+    int blockSize = 1024 * 1024;
+    for (String s : documents) {
+      b.add(s);
+      if (b.stream().mapToInt(x -> x.length()).sum() > blockSize) {
+        a.add(b);
+        b = new ArrayList<>();
+      }
+    }
+    a.add(b);
+    return a.parallelStream().map(list -> {
+      CharTrieIndex trie = new CharTrieIndex();
+      list.forEach(s -> {
+        if (words) {
+          trie.addDictionary(s);
+        } else {
+          trie.addDocument(s);
+        }
+      });
+      trie.index(maxLevels, minWeight);
+      return (CharTrie) trie;
+    }).reduce((l, r) -> l.add(r)).get();
   }
 
   @Override
@@ -37,13 +90,13 @@ public class CharTrieIndex extends CharTrie {
 
   @Override
   public long getIndexedSize() {
-    return documents.isEmpty()?super.getIndexedSize():documents.stream().mapToInt(doc -> doc.length()).sum();
+    return documents.isEmpty() ? super.getIndexedSize() : documents.stream().mapToInt(doc -> doc.length()).sum();
   }
 
   /**
    * Removes cursor data, retaining only the tree of tokens and counts.
    * Subsequent calls to methods dealing with cursors will fail.
-   * 
+   *
    * @return this
    */
   public CharTrie truncate() {
@@ -52,7 +105,7 @@ public class CharTrieIndex extends CharTrie {
 
   /**
    * Creates the index tree using the accumulated documents
-   * 
+   *
    * @return this
    */
   public CharTrieIndex index() {
@@ -61,9 +114,8 @@ public class CharTrieIndex extends CharTrie {
 
   /**
    * Creates the index tree using the accumulated documents
-   * 
-   * @param maxLevels
-   *          - Maximum depth of the tree to build
+   *
+   * @param maxLevels - Maximum depth of the tree to build
    * @return this
    */
   public CharTrieIndex index(int maxLevels) {
@@ -72,40 +124,35 @@ public class CharTrieIndex extends CharTrie {
 
   /**
    * Creates the index tree using the accumulated documents
-   * 
-   * @param maxLevels
-   *          - Maximum depth of the tree to build
-   * @param minWeight
-   *          - Minimum number of cursors for a node to be index using,
-   *          exclusive bound
+   *
+   * @param maxLevels - Maximum depth of the tree to build
+   * @param minWeight - Minimum number of cursors for a node to be index using,
+   *                  exclusive bound
    * @return this
    */
   public CharTrieIndex index(int maxLevels, int minWeight) {
-    
+
     AtomicInteger numberSplit = new AtomicInteger(0);
     int depth = -1;
-    do{
+    do {
       numberSplit.set(0);
-      if(0 == ++depth) {
+      if (0 == ++depth) {
         numberSplit.incrementAndGet();
         root().split();
       } else {
-        root().streamDecendents(depth).forEach(node->{
+        root().streamDecendents(depth).forEach(node -> {
           TrieNode godparent = node.godparent();
-          if (node.getDepth() < maxLevels)
-          {
-            if (null==godparent || godparent.getCursorCount() > minWeight)
-            {
-              if (node.getChar() != NodewalkerCodec.END_OF_STRING || node.getDepth() == 0)
-              {
-                ((IndexNode)node).split();
+          if (node.getDepth() < maxLevels) {
+            if (null == godparent || godparent.getCursorCount() > minWeight) {
+              if (node.getChar() != NodewalkerCodec.END_OF_STRING || node.getDepth() == 0) {
+                ((IndexNode) node).split();
                 numberSplit.incrementAndGet();
               }
             }
           }
         });
       }
-    } while(numberSplit.get() > 0);
+    } while (numberSplit.get() > 0);
     return this;
   }
 
@@ -124,7 +171,7 @@ public class CharTrieIndex extends CharTrie {
       documents.add(document);
     }
     cursors.addAll(
-            IntStream.range(0, 1).mapToObj(i -> new CursorData(index, i)).collect(Collectors.toList()));
+        IntStream.range(0, 1).mapToObj(i -> new CursorData(index, i)).collect(Collectors.toList()));
     nodes.update(0, node -> node.setCursorCount(cursors.length()));
     return index;
   }
@@ -144,13 +191,13 @@ public class CharTrieIndex extends CharTrie {
       documents.add(document);
     }
     cursors.addAll(
-            IntStream.range(0, document.length()+1).mapToObj(i -> new CursorData(index, i)).collect(Collectors.toList()));
+        IntStream.range(0, document.length() + 1).mapToObj(i -> new CursorData(index, i)).collect(Collectors.toList()));
     nodes.update(0, node -> node.setCursorCount(cursors.length()));
     return index;
   }
 
   public CharTrie addAlphabet(String document) {
-    document.chars().mapToObj(i->new String(Character.toChars(i))).forEach(s->addDocument(s));
+    document.chars().mapToObj(i -> new String(Character.toChars(i))).forEach(s -> addDocument(s));
     return this;
   }
 
@@ -171,40 +218,6 @@ public class CharTrieIndex extends CharTrie {
   @Override
   public IndexNode traverse(String search) {
     return root().traverse(search);
-  }
-
-  public static CharTrie indexWords(Collection<String> documents, int maxLevels, int minWeight) {
-    return create(documents, maxLevels, minWeight, true);
-  }
-
-  public static CharTrie indexFulltext(Collection<String> documents, int maxLevels, int minWeight) {
-    return create(documents, maxLevels, minWeight, false);
-  }
-
-  private static CharTrie create(Collection<String> documents, int maxLevels, int minWeight, boolean words) {
-    List<List<String>> a = new ArrayList<>();
-    List<String> b = new ArrayList<>();
-    int blockSize = 1024 * 1024;
-    for(String s : documents) {
-      b.add(s);
-      if(b.stream().mapToInt(x->x.length()).sum() > blockSize) {
-        a.add(b);
-        b = new ArrayList<>();
-      }
-    }
-    a.add(b);
-    return a.parallelStream().map(list->{
-      CharTrieIndex trie = new CharTrieIndex();
-      list.forEach(s->{
-        if(words) {
-          trie.addDictionary(s);
-        } else {
-          trie.addDocument(s);
-        }
-      });
-      trie.index(maxLevels, minWeight);
-      return (CharTrie) trie;
-    }).reduce((l,r)->l.add(r)).get();
   }
 
 }

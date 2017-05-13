@@ -1,3 +1,22 @@
+/*
+ * Copyright (c) 2017 by Andrew Charneski.
+ *
+ * The author licenses this file to you under the
+ * Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance
+ * with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
 package com.simiacryptus.util.text;
 
 import com.simiacryptus.util.lang.TimedResult;
@@ -17,12 +36,12 @@ public interface Compressor {
     TableOutput wideTable = new TableOutput();
     TableOutput tallTable = new TableOutput();
     AtomicInteger index = new AtomicInteger(0);
-    data.parallel().forEach(item->{
+    data.parallel().forEach(item -> {
       HashMap<String, Object> rowWide = new LinkedHashMap<>();
       String title;
-      title = item.getTitle().replaceAll("\0","").replaceAll("\n","\\n");
+      title = item.getTitle().replaceAll("\0", "").replaceAll("\n", "\\n");
       rowWide.put("title", title);
-      compressors.entrySet().parallelStream().forEach((e)->{
+      compressors.entrySet().parallelStream().forEach((e) -> {
         try {
           String name = e.getKey();
           Compressor compressor = e.getValue();
@@ -32,13 +51,13 @@ public interface Compressor {
 
           rowWide.put(name + ".uncompressed", item.getText().length());
           rowTall.put("uncompressed", item.getText().length());
-          TimedResult<byte[]> compress = TimedResult.time(()->compressor.compress(item.getText()));
+          TimedResult<byte[]> compress = TimedResult.time(() -> compressor.compress(item.getText()));
           rowWide.put(name + ".compressed", compress.obj.length);
           rowTall.put("compressed", compress.obj.length);
           double ONE_MILLION = 1000000.0;
           rowWide.put(name + ".compressMs", compress.timeNanos / ONE_MILLION);
           rowTall.put("compressMs", compress.timeNanos / ONE_MILLION);
-          TimedResult<String> uncompress = TimedResult.time(()->compressor.uncompress(compress.obj));
+          TimedResult<String> uncompress = TimedResult.time(() -> compressor.uncompress(compress.obj));
           rowWide.put(name + ".uncompressMs", uncompress.timeNanos / ONE_MILLION);
           rowTall.put("uncompressMs", uncompress.timeNanos / ONE_MILLION);
           rowWide.put(name + ".verified", uncompress.obj.equals(item.getText()));
@@ -51,27 +70,29 @@ public interface Compressor {
       });
       wideTable.putRow(rowWide);
     });
-    return wide?wideTable:tallTable;
+    return wide ? wideTable : tallTable;
   }
+
   public static <T> TableOutput evalCompressorCluster(Stream<? extends TestDocument> data, Map<String, Compressor> compressors, boolean wide) {
     Stream<Map.Entry<String, Compressor>> stream = compressors.entrySet().stream();
     Collector<Map.Entry<String, Compressor>, ?, Map<String, Function<TestDocument, Double>>> collector =
-            Collectors.toMap(e -> e.getKey(), e -> {
-              Compressor value = e.getValue();
-              return x->(value.compress(x.getText()).length*1.0/ x.getText().length());
-            });
+        Collectors.toMap(e -> e.getKey(), e -> {
+          Compressor value = e.getValue();
+          return x -> (value.compress(x.getText()).length * 1.0 / x.getText().length());
+        });
     return evalCluster(data, stream.collect(collector), wide);
   }
+
   public static <T> TableOutput evalCluster(Stream<? extends TestDocument> data, Map<String, Function<TestDocument, Double>> compressors, boolean wide) {
     TableOutput wideTable = new TableOutput();
     TableOutput tallTable = new TableOutput();
     AtomicInteger index = new AtomicInteger(0);
-    data.parallel().forEach(item->{
+    data.parallel().forEach(item -> {
       HashMap<String, Object> rowWide = new LinkedHashMap<>();
       String title;
-      title = item.getTitle().replaceAll("\0","").replaceAll("\n","\\n");
+      title = item.getTitle().replaceAll("\0", "").replaceAll("\n", "\\n");
       rowWide.put("title", title);
-      compressors.entrySet().parallelStream().forEach((e)->{
+      compressors.entrySet().parallelStream().forEach((e) -> {
         try {
           String name = e.getKey();
           Function<TestDocument, Double> compressor = e.getValue();
@@ -79,7 +100,7 @@ public interface Compressor {
           rowTall.put("title", title);
           rowTall.put("compressor", name);
 
-          TimedResult<Double> compress = TimedResult.time(()->compressor.apply(item));
+          TimedResult<Double> compress = TimedResult.time(() -> compressor.apply(item));
           rowWide.put(name + ".value", compress.obj);
           rowTall.put("value", compress.obj);
 //          double ONE_MILLION = 1000000.0;
@@ -93,7 +114,7 @@ public interface Compressor {
       });
       wideTable.putRow(rowWide);
     });
-    return wide?wideTable:tallTable;
+    return wide ? wideTable : tallTable;
   }
 
   public static void addGenericCompressors(Map<String, Compressor> compressors) {

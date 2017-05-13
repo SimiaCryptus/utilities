@@ -1,3 +1,22 @@
+/*
+ * Copyright (c) 2017 by Andrew Charneski.
+ *
+ * The author licenses this file to you under the
+ * Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance
+ * with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
 package com.simiacryptus.util.binary;
 
 import java.io.ByteArrayOutputStream;
@@ -6,8 +25,16 @@ import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.function.Consumer;
 
-public class BitOutputStream implements AutoCloseable
-{
+public class BitOutputStream implements AutoCloseable {
+
+  static final int varLongDepths[] = {6, 14, 30, 62};
+  private OutputStream inner;
+  
+  private Bits remainder = Bits.NULL;
+  private int totalBitsWritten = 0;
+  public BitOutputStream(final OutputStream inner) {
+    this.inner = inner;
+  }
 
   public static Bits toBits(Consumer<BitOutputStream> fn) {
     try {
@@ -20,38 +47,23 @@ public class BitOutputStream implements AutoCloseable
       throw new RuntimeException(e);
     }
   }
-  
-  private OutputStream inner;
-  
-  private Bits         remainder       = Bits.NULL;
 
-  static final int     varLongDepths[] = { 6, 14, 30, 62 };
-  private int totalBitsWritten = 0;
-
-  public BitOutputStream(final OutputStream inner)
-  {
-    this.inner = inner;
-  }
-
-  public int getTotalBitsWritten() throws IOException
-  {
+  public int getTotalBitsWritten() throws IOException {
     return totalBitsWritten;
   }
 
-  public synchronized void flush() throws IOException
-  {
+  public synchronized void flush() throws IOException {
     this.inner.write(this.remainder.getBytes());
     this.inner.flush();
     this.remainder = Bits.NULL;
   }
   
-  public synchronized void write(final Bits bits) throws IOException
-  {
+  public synchronized void write(final Bits bits) throws IOException {
     Bits newRemainder = this.remainder.concatenate(bits);
     final int newRemainingBits = newRemainder.bitLength % 8;
     int bitsToWrite = newRemainder.bitLength - newRemainingBits;
-    if(bitsToWrite > 0) {
-      assert(0 == bitsToWrite % 8);
+    if (bitsToWrite > 0) {
+      assert (0 == bitsToWrite % 8);
       final Bits toWrite = newRemainder.range(0, bitsToWrite);
       this.inner.write(toWrite.getBytes());
       newRemainder = newRemainder.range(bitsToWrite);
@@ -60,56 +72,46 @@ public class BitOutputStream implements AutoCloseable
     this.totalBitsWritten += bits.bitLength;
   }
   
-  public void write(final boolean b) throws IOException
-  {
+  public void write(final boolean b) throws IOException {
     this.write(new Bits(b ? 1l : 0l, 1));
   }
   
-  public void write(final double value) throws IOException
-  {
+  public void write(final double value) throws IOException {
     this.write(new Bits(Double.doubleToLongBits(value), 64));
   }
   
-  public <T extends Enum<T>> void write(final Enum<T> value) throws IOException
-  {
+  public <T extends Enum<T>> void write(final Enum<T> value) throws IOException {
     final long ordinal = value.ordinal();
     this.write(new Bits(ordinal, 8));
   }
 
-  public void write(final short value) throws IOException
-  {
+  public void write(final short value) throws IOException {
     this.write(new Bits(value, 16));
   }
 
-  public void write(final char value) throws IOException
-  {
+  public void write(final char value) throws IOException {
     this.write(new Bits(value, 16));
   }
 
-  public void write(final int value) throws IOException
-  {
+  public void write(final int value) throws IOException {
     this.write(new Bits(value, 32));
   }
 
   public Bits writeBoundedLong(final long value, final long max)
-      throws IOException
-  {
+      throws IOException {
     final int bits = 0 >= max ? 0 : (int) (Math
-            .floor(Math.log(max) / Math.log(2))+1);
-    if (0 < bits)
-    {
+                                               .floor(Math.log(max) / Math.log(2)) + 1);
+    if (0 < bits) {
       Bits toWrite = new Bits(value, bits);
       this.write(toWrite);
       return toWrite;
     } else return Bits.NULL;
   }
   
-  public void writeVarLong(final long value) throws IOException
-  {
+  public void writeVarLong(final long value) throws IOException {
     final int bitLength = new Bits(value).bitLength;
     int type = Arrays.binarySearch(varLongDepths, bitLength);
-    if (type < 0)
-    {
+    if (type < 0) {
       type = -type - 1;
     }
     this.write(new Bits(type, 2));
@@ -121,12 +123,11 @@ public class BitOutputStream implements AutoCloseable
   }
 
   public void writeVarShort(final short value, int optimal) throws IOException {
-    if(value < 0) throw new IllegalArgumentException();
-    int[] varShortDepths = new int[]{ optimal, 16};
+    if (value < 0) throw new IllegalArgumentException();
+    int[] varShortDepths = new int[]{optimal, 16};
     final int bitLength = new Bits(value).bitLength;
     int type = Arrays.binarySearch(varShortDepths, bitLength);
-    if (type < 0)
-    {
+    if (type < 0) {
       type = -type - 1;
     }
     this.write(new Bits(type, 1));

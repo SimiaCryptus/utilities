@@ -1,3 +1,22 @@
+/*
+ * Copyright (c) 2017 by Andrew Charneski.
+ *
+ * The author licenses this file to you under the
+ * Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance
+ * with the License.  You may obtain a copy
+ * of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
 package com.simiacryptus.util.binary;
 
 import java.io.ByteArrayInputStream;
@@ -7,16 +26,15 @@ import java.util.Arrays;
 
 public class BitInputStream {
 
-  public static BitInputStream toBitStream(final byte[] data) {
-    return new BitInputStream(new ByteArrayInputStream(data));
-  }
-
   private InputStream inner;
-
   private Bits remainder = new Bits(0);
 
   public BitInputStream(final InputStream inner) {
     this.inner = inner;
+  }
+
+  public static BitInputStream toBitStream(final byte[] data) {
+    return new BitInputStream(new ByteArrayInputStream(data));
   }
 
   public void close() throws IOException {
@@ -39,13 +57,14 @@ public class BitInputStream {
   public void expect(final Bits bits) throws IOException {
     int size = Math.min(availible(), bits.bitLength);
     Bits read = read(size);
-    if(!bits.range(0,size).equals(read)) throw new RuntimeException(String.format("%s is not expected %s", read, bits));
+    if (!bits.range(0, size).equals(read))
+      throw new RuntimeException(String.format("%s is not expected %s", read, bits));
   }
 
   public Bits read(final int bits) throws IOException {
     final int additionalBitsNeeded = bits - this.remainder.bitLength;
     final int additionalBytesNeeded = (int) Math.ceil(additionalBitsNeeded / 8.);
-    if(additionalBytesNeeded > 0) this.readAhead(additionalBytesNeeded);
+    if (additionalBytesNeeded > 0) this.readAhead(additionalBytesNeeded);
     final Bits readBits = this.remainder.range(0, bits);
     this.remainder = this.remainder.range(bits);
     return readBits;
@@ -54,7 +73,7 @@ public class BitInputStream {
   public Bits peek(final int bits) throws IOException {
     final int additionalBitsNeeded = bits - this.remainder.bitLength;
     final int additionalBytesNeeded = (int) Math.ceil(additionalBitsNeeded / 8.);
-    if(additionalBytesNeeded > 0) this.readAhead(additionalBytesNeeded);
+    if (additionalBytesNeeded > 0) this.readAhead(additionalBytesNeeded);
     return this.remainder.range(0, Math.min(bits, this.remainder.bitLength));
   }
 
@@ -63,11 +82,11 @@ public class BitInputStream {
   }
 
   public Bits readAhead(final int bytes) throws IOException {
-    assert(0 < bytes);
+    assert (0 < bytes);
     if (0 < bytes) {
       final byte[] buffer = new byte[bytes];
       int bytesRead = this.inner.read(buffer);
-      if(bytesRead > 0) {
+      if (bytesRead > 0) {
         this.remainder = this.remainder.concatenate(new Bits(Arrays.copyOf(buffer, bytesRead)));
       }
     }
@@ -81,14 +100,13 @@ public class BitInputStream {
   /**
    * Reads a single positive bounded integral value (up to 64-bit, including 0,
    * excluding max)
-   * 
-   * @param max
-   *          Maximum value (exclusive)
+   *
+   * @param max Maximum value (exclusive)
    * @return A long within the range [0, max)
    * @throws IOException
    */
   public long readBoundedLong(final long max) throws IOException {
-    final int bits = 0 >= max ? 0 : (int) (Math.floor(Math.log(max) / Math.log(2))+1);
+    final int bits = 0 >= max ? 0 : (int) (Math.floor(Math.log(max) / Math.log(2)) + 1);
     return 0 < bits ? this.read(bits).toLong() : 0;
   }
 
@@ -98,23 +116,24 @@ public class BitInputStream {
   }
 
   public long peekLongCoord(long max) throws IOException {
-    if(1 >= max) return 0;
+    if (1 >= max) return 0;
     int bits = 1 + (int) Math.ceil(Math.log(max) / Math.log(2));
     Bits peek = this.peek(bits);
     double divisor = 1 << peek.bitLength;
     long value = (int) (peek.toLong() * ((double) max) / divisor);
-    assert(0 <= value);
-    assert(max >= value);
+    assert (0 <= value);
+    assert (max >= value);
     return value;
   }
+
   public int peekIntCoord(int max) throws IOException {
-    if(1 >= max) return 0;
+    if (1 >= max) return 0;
     int bits = 1 + (int) Math.ceil(Math.log(max) / Math.log(2));
     Bits peek = this.peek(bits);
     double divisor = 1 << peek.bitLength;
     int value = (int) (peek.toLong() * ((double) max) / divisor);
-    assert(0 <= value);
-    assert(max >= value);
+    assert (0 <= value);
+    assert (max >= value);
     return value;
   }
 
@@ -123,12 +142,12 @@ public class BitInputStream {
   }
 
   public short readVarShort(int optimal) throws IOException {
-      int[] varShortDepths = new int[]{optimal, 16};
-      final int type = (int) this.read(1).toLong();
-      return (short) this.read(varShortDepths[type]).toLong();
-    }
+    int[] varShortDepths = new int[]{optimal, 16};
+    final int type = (int) this.read(1).toLong();
+    return (short) this.read(varShortDepths[type]).toLong();
+  }
 
   public char readChar() throws IOException {
-    return (char)read(16).toLong();
+    return (char) read(16).toLong();
   }
 }
