@@ -20,10 +20,7 @@
 package com.simiacryptus.util.text;
 
 import com.simiacryptus.util.binary.Bits;
-import com.simiacryptus.util.test.MarkdownPrintStream;
-import com.simiacryptus.util.test.TestCategories;
-import com.simiacryptus.util.test.TweetSentiment;
-import com.simiacryptus.util.test.WikiArticle;
+import com.simiacryptus.util.test.*;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -105,7 +102,7 @@ public class TrieClassificationBlog {
     }
   }
 
-  private void evaluateLanguage(MarkdownPrintStream log, String sourceLanguage, WikiArticle.Loader sourceData, TableOutput table) {
+  private void evaluateLanguage(MarkdownPrintStream log, String sourceLanguage, WikiArticle.WikiDataLoader sourceData, TableOutput table) {
     int testingSize = 100;
     int minArticleSize = 4 * 1024;
     log.h3(sourceLanguage);

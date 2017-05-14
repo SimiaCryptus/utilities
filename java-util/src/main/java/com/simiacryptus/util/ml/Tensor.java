@@ -51,6 +51,7 @@ public class Tensor {
   protected final int[] dims;
   protected final int[] skips;
   private volatile double[] data;
+  
   protected Tensor() {
     super();
     this.data = null;
@@ -72,9 +73,8 @@ public class Tensor {
         this.skips[i] = this.skips[i - 1] * dims[i - 1];
       }
     }
-    assert null == data || Tensor.dim(dims) == data.length;
-    assert null == data || 0 < data.length;
     this.data = data;// Arrays.copyOf(data, data.length);
+    assert(null == data || Tensor.dim(dims) == data.length);
   }
   
   public Tensor(double[] ds) {
@@ -110,7 +110,11 @@ public class Tensor {
         return data;
       }
     }
-    return new double[length];
+    try {
+      return new double[length];
+    } catch (OutOfMemoryError e) {
+      throw new RuntimeException("Could not allocate " + length + " bytes",e);
+    }
   }
   
   public static Tensor fromRGB(BufferedImage img) {
@@ -204,7 +208,8 @@ public class Tensor {
   }
   
   public int dim() {
-    return getData().length;
+    if(null != data) return data.length;
+    else return Tensor.dim(dims);
   }
   
   @Override
@@ -256,6 +261,7 @@ public class Tensor {
         }
       }
     }
+    assert(dim()==this.data.length);
     return this.data;
   }
   
