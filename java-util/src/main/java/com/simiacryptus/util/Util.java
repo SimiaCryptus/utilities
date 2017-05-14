@@ -19,14 +19,24 @@
 
 package com.simiacryptus.util;
 
-import com.simiacryptus.util.test.BinaryChunkIterator;
+import com.simiacryptus.util.io.BinaryChunkIterator;
 import com.simiacryptus.util.test.LabeledObject;
+import com.simiacryptus.util.io.TeeInputStream;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 
 import javax.imageio.ImageIO;
+import javax.net.ssl.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.net.URI;
+import java.net.URL;
+import java.net.URLConnection;
+import java.nio.file.Path;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.X509Certificate;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalUnit;
 import java.util.*;
@@ -164,6 +174,83 @@ public class Util {
         return ChronoUnit.MILLIS;
       default:
         throw new IllegalArgumentException(units.toString());
+    }
+  }
+  
+  public static BufferedImage resize(BufferedImage image) {
+    int width = image.getWidth();
+    if (width < 800) return image;
+    int height = image.getHeight() * width / image.getWidth();
+    BufferedImage rerender = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+    Graphics gfx = rerender.getGraphics();
+    RenderingHints hints = new RenderingHints(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+    ((Graphics2D) gfx).setRenderingHints(hints);
+    gfx.drawImage(image, 0, 0, rerender.getWidth(), rerender.getHeight(), null);
+    return rerender;
+  }
+  
+  public static String pathTo(File from, File to) {
+    Path fromUrl = from.toPath();
+    Path toUrl = to.toPath();
+    return fromUrl.relativize(toUrl).toString().replaceAll("\\\\", "/");
+  }
+  
+  public static String mkString(String separator, String... strs) {
+    return Arrays.asList(strs).stream().collect(Collectors.joining(separator));
+  }
+  
+  public static void layout(Component c) {
+    c.doLayout();
+    if (c instanceof Container) {
+      Arrays.stream(((Container) c).getComponents()).forEach(Util::layout);
+    }
+  }
+  
+  public static BufferedImage toImage(Component component) {
+    layout(component);
+    BufferedImage img = new BufferedImage(component.getWidth(), component.getHeight(), BufferedImage.TYPE_INT_ARGB_PRE);
+    Graphics2D g = img.createGraphics();
+    g.setColor(component.getForeground());
+    g.setFont(component.getFont());
+    component.print(g);
+    return img;
+  }
+  
+  public static InputStream cache(URI url) throws IOException, NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
+    return cache(url.toString(), new File(url.getPath()).getName());
+  }
+  
+  public static InputStream cache(String url, String file) throws IOException, NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
+    if (new File(file).exists()) {
+      return new FileInputStream(file);
+    } else {
+      TrustManager[] trustManagers = new TrustManager[]{
+          new X509TrustManager() {
+            public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+              return new X509Certificate[0];
+            }
+            
+            public void checkClientTrusted(
+                                              X509Certificate[] certs, String authType) {
+            }
+            
+            public void checkServerTrusted(
+                                              X509Certificate[] certs, String authType) {
+            }
+          }
+      };
+      SSLContext ctx = SSLContext.getInstance("TLS");
+      ctx.init(null, trustManagers, null);
+      SSLSocketFactory sslFactory = ctx.getSocketFactory();
+      URLConnection urlConnection = new URL(url).openConnection();
+      if (urlConnection instanceof javax.net.ssl.HttpsURLConnection) {
+        HttpsURLConnection conn = (HttpsURLConnection) urlConnection;
+        conn.setSSLSocketFactory(sslFactory);
+        conn.setRequestMethod("GET");
+      }
+      InputStream inputStream = urlConnection.getInputStream();
+      FileOutputStream cache = new FileOutputStream(file);
+      return new TeeInputStream(inputStream, cache);
     }
   }
 }

@@ -20,6 +20,8 @@
 package com.simiacryptus.util.text;
 
 import com.simiacryptus.util.binary.Bits;
+import com.simiacryptus.util.io.MarkdownPrintStream;
+import com.simiacryptus.util.io.NotebookOutput;
 import com.simiacryptus.util.lang.TimedResult;
 import com.simiacryptus.util.test.*;
 import guru.nidi.graphviz.attribute.RankDir;
@@ -38,7 +40,6 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 import static guru.nidi.graphviz.model.Factory.graph;
 import static guru.nidi.graphviz.model.Factory.node;
@@ -57,11 +58,11 @@ public class TrieDemo {
   @Test
   @Category(TestCategories.Report.class)
   public void demoSearch() throws IOException {
-    try (MarkdownPrintStream log = MarkdownPrintStream.get(this).addCopy(System.out)) {
+    try (NotebookOutput log = MarkdownPrintStream.get(this).addCopy(System.out)) {
 
       log.p("This will demonstrate how to use the CharTrieIndex class for searching indexed documents\n");
 
-      log.p("First, we load some data into an index:");
+      log.p("First, we cache some data into an index:");
       CharTrieIndex trie = log.code(() -> {
         return new CharTrieIndex();
       });
@@ -91,11 +92,11 @@ public class TrieDemo {
   @Test
   @Category(TestCategories.Report.class)
   public void demoCharTree() throws IOException {
-    try (MarkdownPrintStream log = MarkdownPrintStream.get(this).addCopy(System.out)) {
+    try (NotebookOutput log = MarkdownPrintStream.get(this).addCopy(System.out)) {
 
       log.p("This will demonstrate how to use the CharTrieIndex class for PPM and shared dictionary compression\n");
 
-      log.p("First, we load some data into an index:");
+      log.p("First, we cache some data into an index:");
       CharTrie trie = log.code(() -> {
         CharTrieIndex charTrieIndex = new CharTrieIndex();
         WikiArticle.ENGLISH.load().limit(100).forEach(article -> {
@@ -155,7 +156,7 @@ public class TrieDemo {
   @Test
   @Category(TestCategories.ResearchCode.class)
   public void demoTweetGeneration() throws IOException {
-    try (MarkdownPrintStream log = MarkdownPrintStream.get(this).addCopy(System.out)) {
+    try (NotebookOutput log = MarkdownPrintStream.get(this).addCopy(System.out)) {
       int testingSize = 100;
       int trainingSize = 50000;
       int minWeight = 0;
@@ -164,7 +165,7 @@ public class TrieDemo {
       int lookahead = 1;
       int dictionarySampleSize = 4 * 1024;
       int context = 5;
-      log.p("First, we load positive and negative sentiment tweets into two seperate models");
+      log.p("First, we cache positive and negative sentiment tweets into two seperate models");
       List<TweetSentiment> tweetsPositive = log.code(() -> {
         ArrayList<TweetSentiment> list = new ArrayList<>(TweetSentiment.load()
                                                              .filter(x -> x.category == 1).limit(testingSize + trainingSize).collect(Collectors.toList()));
@@ -254,7 +255,7 @@ public class TrieDemo {
   @Test
   @Category(TestCategories.ResearchCode.class)
   public void demoReversal() throws IOException {
-    try (MarkdownPrintStream log = MarkdownPrintStream.get(this).addCopy(System.out)) {
+    try (NotebookOutput log = MarkdownPrintStream.get(this).addCopy(System.out)) {
       int testingSize = 100;
       int trainingSize = 50000;
       int minWeight = 0;
@@ -263,7 +264,7 @@ public class TrieDemo {
       int lookahead = 1;
       int dictionarySampleSize = 4 * 1024;
       int context = 5;
-      log.p("First, we load text into a model");
+      log.p("First, we cache text into a model");
       List<TweetSentiment> tweetsPositive = log.code(() -> {
         ArrayList<TweetSentiment> list = new ArrayList<>(TweetSentiment.load()
                                                              .filter(x -> x.category == 1).limit(testingSize + trainingSize).collect(Collectors.toList()));
@@ -296,11 +297,11 @@ public class TrieDemo {
   @Test
   @Category(TestCategories.ResearchCode.class)
   public void demoCommonWords() throws IOException {
-    try (MarkdownPrintStream log = MarkdownPrintStream.get(this).addCopy(System.out)) {
+    try (NotebookOutput log = MarkdownPrintStream.get(this).addCopy(System.out)) {
       List<String> trainingData = WikiArticle.ENGLISH.load().map(x -> x.getText()).limit(200).collect(Collectors.toList());
       int minWeight = 5;
       int maxLevels = 200;
-      log.p("First, we load text into a model");
+      log.p("First, we cache text into a model");
       CharTrie triePositive = log.code(() -> {
         CharTrie charTrie = CharTrieIndex.indexFulltext(trainingData, maxLevels, minWeight).truncate();
         print(charTrie);
@@ -328,11 +329,11 @@ public class TrieDemo {
   @Test
   @Category(TestCategories.ResearchCode.class)
   public void demoMarkovGraph() throws IOException {
-    try (MarkdownPrintStream log = MarkdownPrintStream.get(this).addCopy(System.out)) {
+    try (NotebookOutput log = MarkdownPrintStream.get(this).addCopy(System.out)) {
       List<String> trainingData = Arrays.asList("a cat in the hat that can hat the cat");
       int minWeight = 1;
       int maxLevels = Integer.MAX_VALUE;
-      log.p("First, we load text into a model");
+      log.p("First, we cache text into a model");
       CharTrie trie = log.code(() -> {
         CharTrie charTrie = CharTrieIndex.indexFulltext(trainingData, maxLevels, minWeight).truncate();
         print(charTrie);
@@ -367,13 +368,13 @@ public class TrieDemo {
   @Test
   @Category(TestCategories.ResearchCode.class)
   public void demoTweetClassification() throws IOException {
-    try (MarkdownPrintStream log = MarkdownPrintStream.get(this).addCopy(System.out)) {
+    try (NotebookOutput log = MarkdownPrintStream.get(this).addCopy(System.out)) {
       int testingSize = 1000;
       int trainingSize = 500000;
       int minWeight = 1;
       int groups = trainingSize / 50000;
       int maxLevels = 7;
-      log.p("First, we load positive and negative sentiment tweets into two seperate models");
+      log.p("First, we cache positive and negative sentiment tweets into two seperate models");
       List<TweetSentiment> tweetsPositive = log.code(() -> {
         ArrayList<TweetSentiment> list = new ArrayList<>(TweetSentiment.load()
                                                              .filter(x -> x.category == 1).limit(testingSize + trainingSize).collect(Collectors.toList()));
@@ -462,10 +463,10 @@ public class TrieDemo {
   @Test
   @Category(TestCategories.ResearchCode.class)
   public void demoTweetClassificationTree() throws IOException {
-    try (MarkdownPrintStream log = MarkdownPrintStream.get(this).addCopy(System.out)) {
+    try (NotebookOutput log = MarkdownPrintStream.get(this).addCopy(System.out)) {
       int testingSize = 10000;
       int trainingSize = 5000;
-      log.p("First, we load positive and negative sentiment tweets into two seperate models");
+      log.p("First, we cache positive and negative sentiment tweets into two seperate models");
       List<TweetSentiment> tweetsPositive = log.code(() -> {
         ArrayList<TweetSentiment> list = new ArrayList<>(TweetSentiment.load()
                                                              .filter(x -> x.category == 1).limit(testingSize + trainingSize).collect(Collectors.toList()));
@@ -504,13 +505,13 @@ public class TrieDemo {
   @Test
   @Category(TestCategories.Report.class)
   public void demoLanguageClassification() throws IOException {
-    try (MarkdownPrintStream log = MarkdownPrintStream.get(this).addCopy(System.out)) {
+    try (NotebookOutput log = MarkdownPrintStream.get(this).addCopy(System.out)) {
       int testingSize = 100;
       int trainingSize = 5;
       int minWeight = 1;
       int maxLevels = 5;
       int minArticleSize = 4 * 1024;
-      log.p("First, we load positive and negative sentiment tweets into two seperate models");
+      log.p("First, we cache positive and negative sentiment tweets into two seperate models");
       List<WikiArticle> english = log.code(() -> {
         return new ArrayList<>(WikiArticle.ENGLISH.load().filter(x -> x.getText().length() > minArticleSize)
                                    .limit(testingSize + trainingSize).collect(Collectors.toList()));
@@ -592,7 +593,7 @@ public class TrieDemo {
   @Test
   @Category(TestCategories.Report.class)
   public void demoCompression() throws IOException {
-    try (MarkdownPrintStream log = MarkdownPrintStream.get(this).addCopy(System.out)) {
+    try (NotebookOutput log = MarkdownPrintStream.get(this).addCopy(System.out)) {
       HashSet<String> articles = new HashSet<String>(Arrays.asList("A"));
 
       log.p("This will demonstrate how to serialize a CharTrie class in compressed format\n");
@@ -663,7 +664,7 @@ public class TrieDemo {
   @Test
   @Category(TestCategories.Report.class)
   public void scratch() throws IOException {
-    try (MarkdownPrintStream log = MarkdownPrintStream.get(this).addCopy(System.out)) {
+    try (NotebookOutput log = MarkdownPrintStream.get(this).addCopy(System.out)) {
       log.code(() -> {
         Assert.assertEquals("testing", TextAnalysis.combine("test", "sting", 2));
         Assert.assertEquals(null, TextAnalysis.combine("test", "sting", 3));
@@ -682,11 +683,11 @@ public class TrieDemo {
   @Test
   @Category(TestCategories.Report.class)
   public void demoWikiSummary() throws IOException {
-    try (MarkdownPrintStream log = MarkdownPrintStream.get(this).addCopy(System.out)) {
+    try (NotebookOutput log = MarkdownPrintStream.get(this).addCopy(System.out)) {
       HashSet<String> articles = new HashSet<>();
       Arrays.asList("Alabama", "Alchemy", "Algeria", "Altruism", "Abraham Lincoln", "ASCII", "Apollo", "Alaska").forEach(articles::add);
       log.p("This will demonstrate how to serialize a CharTrie class in compressed format\n");
-      log.h3("First, we load training and testing data:");
+      log.h3("First, we cache training and testing data:");
       List<WikiArticle> articleList = log.code(() -> {
         return WikiArticle.ENGLISH.load().limit(1000)
                    .filter(x -> articles.contains(x.getTitle())).limit(articles.size())
@@ -728,11 +729,11 @@ public class TrieDemo {
   @Test
   @Category(TestCategories.Report.class)
   public void demoWordlist() throws IOException {
-    try (MarkdownPrintStream log = MarkdownPrintStream.get(this).addCopy(System.out)) {
+    try (NotebookOutput log = MarkdownPrintStream.get(this).addCopy(System.out)) {
       HashSet<String> articles = new HashSet<>();
       Arrays.asList("Alabama", "Alchemy", "Algeria", "Altruism", "Abraham Lincoln", "ASCII", "Apollo", "Alaska").forEach(articles::add);
       log.p("This will demonstrate how to serialize a CharTrie class in compressed format\n");
-      log.h3("First, we load training and testing data:");
+      log.h3("First, we cache training and testing data:");
       List<WikiArticle> articleList = log.code(() -> {
         return WikiArticle.ENGLISH.load().limit(1000)
                    .filter(x -> articles.contains(x.getTitle())).limit(articles.size())
@@ -742,7 +743,7 @@ public class TrieDemo {
         return EnglishWords.load().collect(Collectors.toList());
       });
 //            List<WikiArticle> trainingList = log.code(() -> {
-//                return WikiArticle.ENGLISH.load()
+//                return WikiArticle.ENGLISH.cache()
 //                        .filter(x -> x.getText().length() > 4 * 1024).filter(x -> !articles.contains(x.getTitle()))
 //                        .limit(1000).collect(Collectors.toList());
 //            });
@@ -773,9 +774,9 @@ public class TrieDemo {
   @Test
   @Category(TestCategories.Report.class)
   public void demoWikiSpelling() throws IOException {
-    try (MarkdownPrintStream log = MarkdownPrintStream.get(this).addCopy(System.out)) {
+    try (NotebookOutput log = MarkdownPrintStream.get(this).addCopy(System.out)) {
       log.p("This will demonstrate how to serialize a CharTrie class in compressed format\n");
-      log.h3("First, we load training and testing data:");
+      log.h3("First, we cache training and testing data:");
 
       List<Misspelling> trainingList = log.code(() -> {
         return Misspelling.BIRKBECK.load().collect(Collectors.toList());
@@ -800,11 +801,11 @@ public class TrieDemo {
   @Test
   @Category(TestCategories.Report.class)
   public void demoSerialization() throws IOException {
-    try (MarkdownPrintStream log = MarkdownPrintStream.get(this).addCopy(System.out)) {
+    try (NotebookOutput log = MarkdownPrintStream.get(this).addCopy(System.out)) {
 
       log.p("This will demonstrate how to serialize a CharTrie class in compressed format\n");
 
-      log.p("First, we load some data into an index:");
+      log.p("First, we cache some data into an index:");
       CharTrieIndex index = log.code(() -> {
         CharTrieIndex charTrieIndex = new CharTrieIndex();
         WikiArticle.ENGLISH.load().limit(100).forEach(article -> {

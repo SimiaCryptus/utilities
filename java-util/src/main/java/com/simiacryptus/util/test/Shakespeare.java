@@ -19,6 +19,8 @@
 
 package com.simiacryptus.util.test;
 
+import com.simiacryptus.util.Util;
+import com.simiacryptus.util.io.AsyncListIterator;
 import org.apache.commons.compress.utils.IOUtils;
 
 import java.io.IOException;
@@ -69,7 +71,7 @@ public class Shakespeare extends TestDocument {
   
   private static void read() {
     try {
-      InputStream in = Spool.load(url, file);
+      InputStream in = Util.cache(url, file);
       String txt = new String(IOUtils.toByteArray(in), "UTF-8").replaceAll("\r", "");
       for (String paragraph : txt.split("\n\\s*\n")) {
         queue.add(new Shakespeare(paragraph));

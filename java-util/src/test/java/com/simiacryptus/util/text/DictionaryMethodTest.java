@@ -19,6 +19,8 @@
 
 package com.simiacryptus.util.text;
 
+import com.simiacryptus.util.io.MarkdownPrintStream;
+import com.simiacryptus.util.io.NotebookOutput;
 import com.simiacryptus.util.test.*;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -33,7 +35,7 @@ public class DictionaryMethodTest {
   @Test
   @Category(TestCategories.Report.class)
   public void dictionariesTweets() throws Exception {
-    try (MarkdownPrintStream log = MarkdownPrintStream.get(this).addCopy(System.out)) {
+    try (NotebookOutput log = MarkdownPrintStream.get(this).addCopy(System.out)) {
       int modelCount = 10000;
       int testCount = 100;
       log.p("This notebook uses a variety of methods to generate compression dictionaries for a database of Tweets\n");
@@ -44,7 +46,7 @@ public class DictionaryMethodTest {
   @Test
   @Category(TestCategories.Report.class)
   public void dictionariesShakespeare() throws Exception {
-    try (MarkdownPrintStream log = MarkdownPrintStream.get(this).addCopy(System.out)) {
+    try (NotebookOutput log = MarkdownPrintStream.get(this).addCopy(System.out)) {
       int modelCount = 100;
       int testCount = 100;
       log.p("This notebook uses a variety of methods to generate compression dictionaries for a database of Shakespeare text\n");
@@ -55,7 +57,7 @@ public class DictionaryMethodTest {
   @Test
   @Category(TestCategories.Report.class)
   public void dictionariesWiki() throws Exception {
-    try (MarkdownPrintStream log = MarkdownPrintStream.get(this).addCopy(System.out)) {
+    try (NotebookOutput log = MarkdownPrintStream.get(this).addCopy(System.out)) {
       int modelCount = 100;
       int testCount = 100;
       log.p("This notebook uses a variety of methods to generate compression dictionaries for a database of Wikipedia articles\n");
@@ -63,7 +65,7 @@ public class DictionaryMethodTest {
     }
   }
 
-  private void test(MarkdownPrintStream log, Supplier<Stream<? extends TestDocument>> source, int modelCount) {
+  private void test(NotebookOutput log, Supplier<Stream<? extends TestDocument>> source, int modelCount) {
     CharTrieIndex baseTree = new CharTrieIndex();
     source.get().limit(modelCount).forEach(txt -> baseTree.addDocument(txt.getText()));
     Map<String, Compressor> compressors = new LinkedHashMap<>();
@@ -78,7 +80,7 @@ public class DictionaryMethodTest {
     log.p(output.calcNumberStats().toTextTable());
   }
 
-  private void addWordCountCompressor(MarkdownPrintStream log, Map<String, Compressor> compressors, List<? extends TestDocument> content) {
+  private void addWordCountCompressor(NotebookOutput log, Map<String, Compressor> compressors, List<? extends TestDocument> content) {
     Map<String, Long> wordCounts = content.stream().flatMap(c -> Arrays.stream(c.getText().replaceAll("[^\\w\\s]", "").split(" +")))
                                        .map(s -> s.trim()).filter(s -> !s.isEmpty()).collect(Collectors.groupingBy(x -> x, Collectors.counting()));
     String dictionary = wordCounts.entrySet().stream()
@@ -101,7 +103,7 @@ public class DictionaryMethodTest {
     });
   }
 
-  private void addCompressors(MarkdownPrintStream log, Map<String, Compressor> compressors, CharTrieIndex baseTree, final int dictionary_context, final int dictionary_lookahead, int model_minPathWeight) {
+  private void addCompressors(NotebookOutput log, Map<String, Compressor> compressors, CharTrieIndex baseTree, final int dictionary_context, final int dictionary_lookahead, int model_minPathWeight) {
     CharTrie dictionaryTree = baseTree.copy().index(dictionary_context + dictionary_lookahead, model_minPathWeight);
     String genDictionary = dictionaryTree.copy().getGenerator().generateDictionary(8 * 1024, dictionary_context, "", dictionary_lookahead, true);
     String keyDictionary = String.format("LZ8k_%s_%s_%s_generateDictionary", dictionary_context, dictionary_lookahead, model_minPathWeight);

@@ -19,6 +19,9 @@
 
 package com.simiacryptus.util.test;
 
+import com.simiacryptus.util.Util;
+import com.simiacryptus.util.io.AsyncListIterator;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -73,7 +76,7 @@ public class TweetSentiment extends TestDocument {
   
   private static void read() {
     try {
-      InputStream load = Spool.load(url, file);
+      InputStream load = Util.cache(url, file);
       try (final ZipInputStream in = new ZipInputStream(load)) {
         ZipEntry entry = in.getNextEntry();
         try (final BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {

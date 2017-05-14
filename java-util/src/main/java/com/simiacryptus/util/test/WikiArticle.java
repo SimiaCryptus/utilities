@@ -19,6 +19,8 @@
 
 package com.simiacryptus.util.test;
 
+import com.simiacryptus.util.Util;
+import com.simiacryptus.util.io.DataLoader;
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -52,7 +54,7 @@ public class WikiArticle extends TestDocument {
     @Override
     protected void read() {
       try {
-        try (final InputStream in = new BZip2CompressorInputStream(Spool.load(url, file), true)) {
+        try (final InputStream in = new BZip2CompressorInputStream(Util.cache(url, file), true)) {
           final SAXParserFactory spf = SAXParserFactory.newInstance();
           spf.setNamespaceAware(false);
           final SAXParser saxParser = spf.newSAXParser();

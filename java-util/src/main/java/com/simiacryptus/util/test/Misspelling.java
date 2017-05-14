@@ -19,6 +19,8 @@
 
 package com.simiacryptus.util.test;
 
+import com.simiacryptus.util.Util;
+import com.simiacryptus.util.io.AsyncListIterator;
 import org.apache.commons.compress.utils.IOUtils;
 
 import java.io.InputStream;
@@ -80,7 +82,7 @@ public class Misspelling extends TestDocument {
     
     private void read() {
       try {
-        try (final InputStream in = Spool.load(url, file)) {
+        try (final InputStream in = Util.cache(url, file)) {
           String txt = new String(IOUtils.toByteArray(in), "UTF-8").replaceAll("\r", "");
           List<String> list = Arrays.asList(txt.split("\n"));
           String activeItem = "";

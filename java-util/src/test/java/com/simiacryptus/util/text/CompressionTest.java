@@ -20,6 +20,8 @@
 package com.simiacryptus.util.text;
 
 import com.simiacryptus.util.binary.Bits;
+import com.simiacryptus.util.io.MarkdownPrintStream;
+import com.simiacryptus.util.io.NotebookOutput;
 import com.simiacryptus.util.test.*;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -128,12 +130,12 @@ public class CompressionTest {
     int testCount = 100;
     Supplier<Stream<? extends TestDocument>> source = () -> TweetSentiment.load().limit(modelCount + testCount);
 
-    MarkdownPrintStream log = MarkdownPrintStream.get(this).addCopy(System.out);
-    Map<String, Compressor> compressors = buildCompressors(source, ppmModelDepth, model_minPathWeight, dictionary_lookahead, dictionary_context, encodingContext, modelCount);
-    TableOutput output = Compressor.evalCompressor(source.get().skip(modelCount), compressors, true);
-    //log.p(output.toTextTable());
-    log.p(output.calcNumberStats().toTextTable());
-    log.close();
+    try(NotebookOutput log = MarkdownPrintStream.get(this).addCopy(System.out)) {
+      Map<String, Compressor> compressors = buildCompressors(source, ppmModelDepth, model_minPathWeight, dictionary_lookahead, dictionary_context, encodingContext, modelCount);
+      TableOutput output = Compressor.evalCompressor(source.get().skip(modelCount), compressors, true);
+      //log.p(output.toTextTable());
+      log.p(output.calcNumberStats().toTextTable());
+    }
   }
 
   @Test
@@ -147,7 +149,7 @@ public class CompressionTest {
     int modelCount = 15000;
     int testCount = 100;
     Supplier<Stream<? extends TestDocument>> source = () -> EnglishWords.load().limit(modelCount + testCount);
-    MarkdownPrintStream log = MarkdownPrintStream.get(this).addCopy(System.out);
+    NotebookOutput log = MarkdownPrintStream.get(this).addCopy(System.out);
     Map<String, Compressor> compressors = buildCompressors(source, ppmModelDepth, model_minPathWeight, dictionary_lookahead, dictionary_context, encodingContext, modelCount);
     TableOutput output = Compressor.evalCompressor(source.get().skip(modelCount), compressors, true);
     //log.p(output.toTextTable());
@@ -167,7 +169,7 @@ public class CompressionTest {
     int testCount = 100;
     Supplier<Stream<? extends TestDocument>> source = () -> WikiArticle.ENGLISH.load().filter(x -> x.getText().length() > 8 * 1024).limit(modelCount + testCount);
 
-    MarkdownPrintStream log = MarkdownPrintStream.get(this).addCopy(System.out);
+    NotebookOutput log = MarkdownPrintStream.get(this).addCopy(System.out);
     Map<String, Compressor> compressors = buildCompressors(source, ppmModelDepth, model_minPathWeight, dictionary_lookahead, dictionary_context, encodingContext, modelCount);
     TableOutput output = Compressor.evalCompressor(source.get().skip(modelCount), compressors, true);
     //log.p(output.toTextTable());

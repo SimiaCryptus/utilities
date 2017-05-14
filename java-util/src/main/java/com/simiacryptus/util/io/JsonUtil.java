@@ -17,8 +17,9 @@
  * under the License.
  */
 
-package com.simiacryptus.util.lang;
+package com.simiacryptus.util.io;
 
+import com.simiacryptus.util.lang.JsonFormattable;
 import org.json.JSONArray;
 import org.json.JSONException;
 

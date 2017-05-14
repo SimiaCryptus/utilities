@@ -17,20 +17,11 @@
  * under the License.
  */
 
-package com.simiacryptus.util.test;
+package com.simiacryptus.util.io;
 
-import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
+import com.simiacryptus.util.io.AsyncListIterator;
 
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 

@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package com.simiacryptus.util.test;
+package com.simiacryptus.util.io;
 
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -38,7 +38,7 @@ public final class BinaryChunkIterator implements Iterator<byte[]> {
     this.recordSize = recordSize;
   }
   
-  public static byte[] read(final DataInputStream i, final int s) throws IOException {
+  private static byte[] read(final DataInputStream i, final int s) throws IOException {
     final byte[] b = new byte[s];
     int pos = 0;
     while (b.length > pos) {

@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package com.simiacryptus.util.test;
+package com.simiacryptus.util.io;
 
 import java.util.Iterator;
 import java.util.List;

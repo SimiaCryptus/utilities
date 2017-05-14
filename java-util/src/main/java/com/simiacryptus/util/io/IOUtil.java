@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package com.simiacryptus.util;
+package com.simiacryptus.util.io;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
@@ -27,14 +27,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.simiacryptus.util.text.CompressionUtil;
 import com.twitter.chill.KryoInstantiator;
 import de.javakaffee.kryoserializers.KryoReflectionFactorySupport;
+import org.apache.commons.io.IOUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.StringWriter;
 import java.nio.file.Files;
 import java.util.Arrays;
 
-public class IO {
+public class IOUtil {
   private final static ObjectMapper objectMapper = new ObjectMapper().enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL);
   private static final ThreadLocal<Kryo> kryo = new ThreadLocal<Kryo>() {
     @Override
@@ -68,12 +70,12 @@ public class IO {
     }
   }
   
-  public static <T> void writeKryo(T obj, File file) {
+  public static <T> void writeKryo(T obj, OutputStream file) {
     try {
       Output output = new Output(buffer.get());
       new KryoReflectionFactorySupport().writeClassAndObject(output, obj);
       output.close();
-      Files.write(file.toPath(), CompressionUtil.encodeBZ(Arrays.copyOf(output.getBuffer(), output.position())));
+      IOUtils.write(CompressionUtil.encodeBZ(Arrays.copyOf(output.getBuffer(), output.position())), file);
     } catch (IOException e) {
       throw new RuntimeException(e);
     }

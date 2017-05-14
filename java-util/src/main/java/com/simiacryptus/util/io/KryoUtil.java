@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package com.simiacryptus.util.lang;
+package com.simiacryptus.util.io;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Serializer;

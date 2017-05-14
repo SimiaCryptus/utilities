@@ -19,6 +19,9 @@
 
 package com.simiacryptus.util.test;
 
+import com.simiacryptus.util.Util;
+import com.simiacryptus.util.io.BinaryChunkIterator;
+import com.simiacryptus.util.io.DataLoader;
 import com.simiacryptus.util.ml.Tensor;
 
 import java.io.DataInputStream;
@@ -43,7 +46,7 @@ public class MNIST {
   private static Stream<byte[]> binaryStream(final String name, final int skip, final int recordSize) throws IOException {
     InputStream stream = null;
     try {
-      stream = Spool.load(source.resolve(name));
+      stream = Util.cache(source.resolve(name));
     } catch (NoSuchAlgorithmException | KeyStoreException | KeyManagementException e) {
       throw new RuntimeException(e);
     }
