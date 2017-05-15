@@ -20,7 +20,7 @@
 package com.simiacryptus.util.text;
 
 import com.simiacryptus.util.binary.Bits;
-import com.simiacryptus.util.io.MarkdownPrintStream;
+import com.simiacryptus.util.io.MarkdownNotebookOutput;
 import com.simiacryptus.util.io.NotebookOutput;
 import com.simiacryptus.util.lang.TimedResult;
 import com.simiacryptus.util.test.*;
@@ -58,7 +58,7 @@ public class TrieDemo {
   @Test
   @Category(TestCategories.Report.class)
   public void demoSearch() throws IOException {
-    try (NotebookOutput log = MarkdownPrintStream.get(this).addCopy(System.out)) {
+    try (NotebookOutput log = MarkdownNotebookOutput.get(this).addCopy(System.out)) {
 
       log.p("This will demonstrate how to use the CharTrieIndex class for searching indexed documents\n");
 
@@ -67,7 +67,7 @@ public class TrieDemo {
         return new CharTrieIndex();
       });
       Map<Integer, String> documents = log.code(() -> {
-        return WikiArticle.ENGLISH.load().limit(100).collect(Collectors.toMap(
+        return WikiArticle.ENGLISH.stream().limit(100).collect(Collectors.toMap(
             article -> trie.addDocument(article.getText()),
             article -> article.getTitle()
         ));
@@ -92,14 +92,14 @@ public class TrieDemo {
   @Test
   @Category(TestCategories.Report.class)
   public void demoCharTree() throws IOException {
-    try (NotebookOutput log = MarkdownPrintStream.get(this).addCopy(System.out)) {
+    try (NotebookOutput log = MarkdownNotebookOutput.get(this).addCopy(System.out)) {
 
       log.p("This will demonstrate how to use the CharTrieIndex class for PPM and shared dictionary compression\n");
 
       log.p("First, we cache some data into an index:");
       CharTrie trie = log.code(() -> {
         CharTrieIndex charTrieIndex = new CharTrieIndex();
-        WikiArticle.ENGLISH.load().limit(100).forEach(article -> {
+        WikiArticle.ENGLISH.stream().limit(100).forEach(article -> {
           charTrieIndex.addDocument(article.getText());
         });
         charTrieIndex.index(5, 1);
@@ -112,7 +112,7 @@ public class TrieDemo {
 
       log.p("\n\nThen, we use it to encode strings:");
       WikiArticle wikiArticle = log.code(() -> {
-        return WikiArticle.ENGLISH.load().skip(100)
+        return WikiArticle.ENGLISH.stream().skip(100)
                    .filter(article -> article.getText().length() > 1024 && article.getText().length() < 4096)
                    .findFirst().get();
       });
@@ -156,7 +156,7 @@ public class TrieDemo {
   @Test
   @Category(TestCategories.ResearchCode.class)
   public void demoTweetGeneration() throws IOException {
-    try (NotebookOutput log = MarkdownPrintStream.get(this).addCopy(System.out)) {
+    try (NotebookOutput log = MarkdownNotebookOutput.get(this).addCopy(System.out)) {
       int testingSize = 100;
       int trainingSize = 50000;
       int minWeight = 0;
@@ -255,7 +255,7 @@ public class TrieDemo {
   @Test
   @Category(TestCategories.ResearchCode.class)
   public void demoReversal() throws IOException {
-    try (NotebookOutput log = MarkdownPrintStream.get(this).addCopy(System.out)) {
+    try (NotebookOutput log = MarkdownNotebookOutput.get(this).addCopy(System.out)) {
       int testingSize = 100;
       int trainingSize = 50000;
       int minWeight = 0;
@@ -297,8 +297,8 @@ public class TrieDemo {
   @Test
   @Category(TestCategories.ResearchCode.class)
   public void demoCommonWords() throws IOException {
-    try (NotebookOutput log = MarkdownPrintStream.get(this).addCopy(System.out)) {
-      List<String> trainingData = WikiArticle.ENGLISH.load().map(x -> x.getText()).limit(200).collect(Collectors.toList());
+    try (NotebookOutput log = MarkdownNotebookOutput.get(this).addCopy(System.out)) {
+      List<String> trainingData = WikiArticle.ENGLISH.stream().map(x -> x.getText()).limit(200).collect(Collectors.toList());
       int minWeight = 5;
       int maxLevels = 200;
       log.p("First, we cache text into a model");
@@ -329,7 +329,7 @@ public class TrieDemo {
   @Test
   @Category(TestCategories.ResearchCode.class)
   public void demoMarkovGraph() throws IOException {
-    try (NotebookOutput log = MarkdownPrintStream.get(this).addCopy(System.out)) {
+    try (NotebookOutput log = MarkdownNotebookOutput.get(this).addCopy(System.out)) {
       List<String> trainingData = Arrays.asList("a cat in the hat that can hat the cat");
       int minWeight = 1;
       int maxLevels = Integer.MAX_VALUE;
@@ -368,7 +368,7 @@ public class TrieDemo {
   @Test
   @Category(TestCategories.ResearchCode.class)
   public void demoTweetClassification() throws IOException {
-    try (NotebookOutput log = MarkdownPrintStream.get(this).addCopy(System.out)) {
+    try (NotebookOutput log = MarkdownNotebookOutput.get(this).addCopy(System.out)) {
       int testingSize = 1000;
       int trainingSize = 500000;
       int minWeight = 1;
@@ -463,7 +463,7 @@ public class TrieDemo {
   @Test
   @Category(TestCategories.ResearchCode.class)
   public void demoTweetClassificationTree() throws IOException {
-    try (NotebookOutput log = MarkdownPrintStream.get(this).addCopy(System.out)) {
+    try (NotebookOutput log = MarkdownNotebookOutput.get(this).addCopy(System.out)) {
       int testingSize = 10000;
       int trainingSize = 5000;
       log.p("First, we cache positive and negative sentiment tweets into two seperate models");
@@ -505,7 +505,7 @@ public class TrieDemo {
   @Test
   @Category(TestCategories.Report.class)
   public void demoLanguageClassification() throws IOException {
-    try (NotebookOutput log = MarkdownPrintStream.get(this).addCopy(System.out)) {
+    try (NotebookOutput log = MarkdownNotebookOutput.get(this).addCopy(System.out)) {
       int testingSize = 100;
       int trainingSize = 5;
       int minWeight = 1;
@@ -513,11 +513,11 @@ public class TrieDemo {
       int minArticleSize = 4 * 1024;
       log.p("First, we cache positive and negative sentiment tweets into two seperate models");
       List<WikiArticle> english = log.code(() -> {
-        return new ArrayList<>(WikiArticle.ENGLISH.load().filter(x -> x.getText().length() > minArticleSize)
+        return new ArrayList<>(WikiArticle.ENGLISH.stream().filter(x -> x.getText().length() > minArticleSize)
                                    .limit(testingSize + trainingSize).collect(Collectors.toList()));
       });
       List<WikiArticle> french = log.code(() -> {
-        return new ArrayList<>(WikiArticle.FRENCH.load().filter(x -> x.getText().length() > minArticleSize)
+        return new ArrayList<>(WikiArticle.FRENCH.stream().filter(x -> x.getText().length() > minArticleSize)
                                    .limit(testingSize + trainingSize).collect(Collectors.toList()));
       });
       CharTrie trieEnglish = log.code(() -> {
@@ -593,13 +593,13 @@ public class TrieDemo {
   @Test
   @Category(TestCategories.Report.class)
   public void demoCompression() throws IOException {
-    try (NotebookOutput log = MarkdownPrintStream.get(this).addCopy(System.out)) {
+    try (NotebookOutput log = MarkdownNotebookOutput.get(this).addCopy(System.out)) {
       HashSet<String> articles = new HashSet<String>(Arrays.asList("A"));
 
       log.p("This will demonstrate how to serialize a CharTrie class in compressed format\n");
 
       log.p("First, we decompose the text into an n-gram node:");
-      List<WikiArticle> articleList = WikiArticle.ENGLISH.load()
+      List<WikiArticle> articleList = WikiArticle.ENGLISH.stream()
                                           .limit(1000).filter(x -> articles.contains(x.getTitle())).limit(articles.size())
                                           .collect(Collectors.toList());
       CharTrieIndex index = log.code(() -> {
@@ -664,7 +664,7 @@ public class TrieDemo {
   @Test
   @Category(TestCategories.Report.class)
   public void scratch() throws IOException {
-    try (NotebookOutput log = MarkdownPrintStream.get(this).addCopy(System.out)) {
+    try (NotebookOutput log = MarkdownNotebookOutput.get(this).addCopy(System.out)) {
       log.code(() -> {
         Assert.assertEquals("testing", TextAnalysis.combine("test", "sting", 2));
         Assert.assertEquals(null, TextAnalysis.combine("test", "sting", 3));
@@ -683,18 +683,18 @@ public class TrieDemo {
   @Test
   @Category(TestCategories.Report.class)
   public void demoWikiSummary() throws IOException {
-    try (NotebookOutput log = MarkdownPrintStream.get(this).addCopy(System.out)) {
+    try (NotebookOutput log = MarkdownNotebookOutput.get(this).addCopy(System.out)) {
       HashSet<String> articles = new HashSet<>();
       Arrays.asList("Alabama", "Alchemy", "Algeria", "Altruism", "Abraham Lincoln", "ASCII", "Apollo", "Alaska").forEach(articles::add);
       log.p("This will demonstrate how to serialize a CharTrie class in compressed format\n");
       log.h3("First, we cache training and testing data:");
       List<WikiArticle> articleList = log.code(() -> {
-        return WikiArticle.ENGLISH.load().limit(1000)
+        return WikiArticle.ENGLISH.stream().limit(1000)
                    .filter(x -> articles.contains(x.getTitle())).limit(articles.size())
                    .collect(Collectors.toList());
       });
       List<WikiArticle> trainingList = log.code(() -> {
-        return WikiArticle.ENGLISH.load()
+        return WikiArticle.ENGLISH.stream()
                    .filter(x -> x.getText().length() > 4 * 1024).filter(x -> !articles.contains(x.getTitle()))
                    .limit(1000).collect(Collectors.toList());
       });
@@ -729,13 +729,13 @@ public class TrieDemo {
   @Test
   @Category(TestCategories.Report.class)
   public void demoWordlist() throws IOException {
-    try (NotebookOutput log = MarkdownPrintStream.get(this).addCopy(System.out)) {
+    try (NotebookOutput log = MarkdownNotebookOutput.get(this).addCopy(System.out)) {
       HashSet<String> articles = new HashSet<>();
       Arrays.asList("Alabama", "Alchemy", "Algeria", "Altruism", "Abraham Lincoln", "ASCII", "Apollo", "Alaska").forEach(articles::add);
       log.p("This will demonstrate how to serialize a CharTrie class in compressed format\n");
       log.h3("First, we cache training and testing data:");
       List<WikiArticle> articleList = log.code(() -> {
-        return WikiArticle.ENGLISH.load().limit(1000)
+        return WikiArticle.ENGLISH.stream().limit(1000)
                    .filter(x -> articles.contains(x.getTitle())).limit(articles.size())
                    .collect(Collectors.toList());
       });
@@ -774,7 +774,7 @@ public class TrieDemo {
   @Test
   @Category(TestCategories.Report.class)
   public void demoWikiSpelling() throws IOException {
-    try (NotebookOutput log = MarkdownPrintStream.get(this).addCopy(System.out)) {
+    try (NotebookOutput log = MarkdownNotebookOutput.get(this).addCopy(System.out)) {
       log.p("This will demonstrate how to serialize a CharTrie class in compressed format\n");
       log.h3("First, we cache training and testing data:");
 
@@ -801,14 +801,14 @@ public class TrieDemo {
   @Test
   @Category(TestCategories.Report.class)
   public void demoSerialization() throws IOException {
-    try (NotebookOutput log = MarkdownPrintStream.get(this).addCopy(System.out)) {
+    try (NotebookOutput log = MarkdownNotebookOutput.get(this).addCopy(System.out)) {
 
       log.p("This will demonstrate how to serialize a CharTrie class in compressed format\n");
 
       log.p("First, we cache some data into an index:");
       CharTrieIndex index = log.code(() -> {
         CharTrieIndex charTrieIndex = new CharTrieIndex();
-        WikiArticle.ENGLISH.load().limit(100).forEach(article -> {
+        WikiArticle.ENGLISH.stream().limit(100).forEach(article -> {
           charTrieIndex.addDocument(article.getText());
         });
         System.out.println(String.format("Indexing %s bytes of documents",
@@ -838,7 +838,7 @@ public class TrieDemo {
       log.p("Then, we encode the data used to create the dictionary:");
       log.code(() -> {
         NodewalkerCodec codec = tree.getCodec();
-        int totalSize = WikiArticle.ENGLISH.load().limit(100).map(article -> {
+        int totalSize = WikiArticle.ENGLISH.stream().limit(100).map(article -> {
           TimedResult<Bits> compressed = TimedResult.time(() -> codec.encodePPM(article.getText(), 4));
           System.out.println(String.format("Serialized %s: %s chars -> %s bytes (%s%%) in %s ms",
               article.getTitle(), article.getText().length(), compressed.obj.bitLength / 8.0,
@@ -854,7 +854,7 @@ public class TrieDemo {
       log.p("For reference, we encode some sample articles that are NOT in the dictionary:");
       log.code(() -> {
         NodewalkerCodec codec = tree.getCodec();
-        WikiArticle.ENGLISH.load().skip(100).limit(10).forEach(article -> {
+        WikiArticle.ENGLISH.stream().skip(100).limit(10).forEach(article -> {
           TimedResult<Bits> compressed = TimedResult.time(() -> codec.encodePPM(article.getText(), 4));
           System.out.println(String.format("Serialized %s: %s chars -> %s bytes (%s%%) in %s ms",
               article.getTitle(), article.getText().length(), compressed.obj.bitLength / 8.0,

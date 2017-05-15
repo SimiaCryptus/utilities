@@ -19,7 +19,7 @@
 
 package com.simiacryptus.util.text;
 
-import com.simiacryptus.util.io.MarkdownPrintStream;
+import com.simiacryptus.util.io.MarkdownNotebookOutput;
 import com.simiacryptus.util.io.NotebookOutput;
 import com.simiacryptus.util.test.*;
 import org.junit.Test;
@@ -42,7 +42,7 @@ public class TermMetaTest {
   @Test
   @Category(TestCategories.Report.class)
   public void calcCompressorPPM() throws Exception {
-    NotebookOutput log = MarkdownPrintStream.get(this).addCopy(System.out);
+    NotebookOutput log = MarkdownNotebookOutput.get(this).addCopy(System.out);
     CharTrieIndex baseTree = new CharTrieIndex();
     log.p("Preparing %s documents", modelCount);
     source().limit(modelCount).forEach(txt -> {

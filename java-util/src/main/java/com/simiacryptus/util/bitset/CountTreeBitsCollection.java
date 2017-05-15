@@ -103,7 +103,7 @@ public class CountTreeBitsCollection extends
     if (0 < branchCounts.zeroCount) {
       this.read(in, code.concatenate(Bits.ZERO), branchCounts.zeroCount);
     }
-    // Get one-suffixed branch
+    // Get one-suffixed primary
     if (branchCounts.oneCount > 0) {
       this.read(in, code.concatenate(Bits.ONE), branchCounts.oneCount);
     }
@@ -135,7 +135,7 @@ public class CountTreeBitsCollection extends
     }
     maximum -= branchCounts.terminals;
 
-    // Get zero-suffixed branch
+    // Get zero-suffixed primary
     if (maximum > 0) {
       assert Thread.currentThread().getStackTrace().length < 100;
       branchCounts.zeroCount = this.readZeroBranchSize(in, maximum, code);

@@ -139,6 +139,39 @@ public class TableOutput {
     
   }
   
+  public String toHtmlTable() {
+    try (ByteArrayOutputStream buffer = new ByteArrayOutputStream()) {
+      try (PrintStream printStream = new PrintStream(buffer)) {
+        String formatString = schema.entrySet().stream()
+                                  .map(e -> {
+                                    switch (e.getValue().getSimpleName()) {
+                                      case "String":
+                                        return "%-" + rows.stream().mapToInt(x -> x.getOrDefault(e.getKey(), "").toString().length()).max().getAsInt() + "s";
+                                      case "Integer":
+                                        return "%6d";
+                                      case "Double":
+                                        return "%.4f";
+                                      default:
+                                        return "%s";
+                                    }
+                                  }).map(s->"<td>"+s+"</td>").collect(Collectors.joining(""));
+        printStream.print("<table border=1>");
+        printStream.print("<tr>");
+        printStream.println(schema.entrySet().stream().map(x -> x.getKey()).map(s->"<th>"+s+"</th>").collect(Collectors.joining("")).trim());
+        printStream.print("</tr>");
+        for (Map<String, Object> row : rows) {
+          printStream.print("<tr>");
+          printStream.println(String.format(formatString, schema.entrySet().stream().map(e -> row.get(e.getKey())).toArray()));
+          printStream.print("</tr>");
+        }
+        printStream.print("</table>");
+      }
+      return buffer.toString();
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
+  
   public String toTextTable() {
     try (ByteArrayOutputStream buffer = new ByteArrayOutputStream()) {
       try (PrintStream printStream = new PrintStream(buffer)) {

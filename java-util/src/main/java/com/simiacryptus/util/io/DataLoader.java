@@ -27,8 +27,8 @@ import java.util.stream.StreamSupport;
 
 
 public abstract class DataLoader<T> {
-  protected final List<T> queue = Collections.synchronizedList(new ArrayList<>());
-  protected volatile Thread thread;
+  private final List<T> queue = Collections.synchronizedList(new ArrayList<>());
+  private volatile Thread thread;
   
   public void clear() throws InterruptedException {
     if (thread != null) {
@@ -43,11 +43,11 @@ public abstract class DataLoader<T> {
     }
   }
   
-  public Stream<T> load() {
+  public Stream<T> stream() {
     if (thread == null) {
       synchronized (this) {
         if (thread == null) {
-          thread = new Thread(this::read);
+          thread = new Thread(()->read(queue));
           thread.setDaemon(true);
           thread.start();
         }
@@ -57,6 +57,6 @@ public abstract class DataLoader<T> {
     return StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator, Spliterator.DISTINCT), false).filter(x -> x != null);
   }
   
-  protected abstract void read();
+  protected abstract void read(List<T> queue);
   
 }

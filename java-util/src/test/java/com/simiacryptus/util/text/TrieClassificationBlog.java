@@ -20,7 +20,7 @@
 package com.simiacryptus.util.text;
 
 import com.simiacryptus.util.binary.Bits;
-import com.simiacryptus.util.io.MarkdownPrintStream;
+import com.simiacryptus.util.io.MarkdownNotebookOutput;
 import com.simiacryptus.util.io.NotebookOutput;
 import com.simiacryptus.util.test.*;
 import org.junit.Test;
@@ -42,7 +42,7 @@ public class TrieClassificationBlog {
   @Test
   @Category(TestCategories.Report.class)
   public void language_detection_ppm() throws IOException {
-    try (NotebookOutput log = MarkdownPrintStream.get(this).addCopy(System.out)) {
+    try (NotebookOutput log = MarkdownNotebookOutput.get(this).addCopy(System.out)) {
       log.h1("Language Detection via PPM Compression");
       int testingSize = 100;
       int trainingSize = 100;
@@ -51,11 +51,11 @@ public class TrieClassificationBlog {
       int minArticleSize = 4 * 1024;
       log.p("First, we cache English and French wikipedia articles into two collections");
       List<WikiArticle> english = log.code(() -> {
-        return new ArrayList<>(WikiArticle.ENGLISH.load().filter(x -> x.getText().length() > minArticleSize)
+        return new ArrayList<>(WikiArticle.ENGLISH.stream().filter(x -> x.getText().length() > minArticleSize)
                                    .limit(testingSize + trainingSize).collect(Collectors.toList()));
       });
       List<WikiArticle> french = log.code(() -> {
-        return new ArrayList<>(WikiArticle.FRENCH.load().filter(x -> x.getText().length() > minArticleSize)
+        return new ArrayList<>(WikiArticle.FRENCH.stream().filter(x -> x.getText().length() > minArticleSize)
                                    .limit(testingSize + trainingSize).collect(Collectors.toList()));
       });
       log.p("Then, we process each into separate language models");
@@ -93,7 +93,7 @@ public class TrieClassificationBlog {
   @Test
   @Category(TestCategories.Report.class)
   public void prebuilt_language_models() throws IOException {
-    try (NotebookOutput log = MarkdownPrintStream.get(this).addCopy(System.out)) {
+    try (NotebookOutput log = MarkdownNotebookOutput.get(this).addCopy(System.out)) {
       log.h1("Language Detection using prebuilt models");
       TableOutput table = new TableOutput();
       evaluateLanguage(log, "English", WikiArticle.ENGLISH, table);
@@ -110,7 +110,7 @@ public class TrieClassificationBlog {
     log.h3(sourceLanguage);
     log.p("Loading %s articles of %s to test language classification...", testingSize, sourceLanguage);
     log.code(() -> {
-      sourceData.load()
+      sourceData.stream()
           .map(x -> x.getText()).filter(x -> x.length() > minArticleSize).limit(testingSize)
           .collect(Collectors.toList()).parallelStream()
           .map(x -> LanguageModel.match(x)).collect(Collectors.groupingBy(x -> x, Collectors.counting()))
@@ -128,7 +128,7 @@ public class TrieClassificationBlog {
   @Test
   @Category(TestCategories.Report.class)
   public void sentiment_analysis_ppm() throws IOException {
-    try (NotebookOutput log = MarkdownPrintStream.get(this).addCopy(System.out)) {
+    try (NotebookOutput log = MarkdownNotebookOutput.get(this).addCopy(System.out)) {
       log.h1("Sentiment Analysis via PPM Compression");
       int testingSize = 10000;
       int trainingSize = 100000;
@@ -188,7 +188,7 @@ public class TrieClassificationBlog {
   @Test
   @Category(TestCategories.Report.class)
   public void sentiment_analysis_decision_tree() throws IOException {
-    try (NotebookOutput log = MarkdownPrintStream.get(this).addCopy(System.out)) {
+    try (NotebookOutput log = MarkdownNotebookOutput.get(this).addCopy(System.out)) {
       log.h1("Sentiment Analysis using a Decision Tree");
       int testingSize = 1000;
       int trainingSize = 50000;

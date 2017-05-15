@@ -19,7 +19,7 @@
 
 package com.simiacryptus.util.text;
 
-import com.simiacryptus.util.io.MarkdownPrintStream;
+import com.simiacryptus.util.io.MarkdownNotebookOutput;
 import com.simiacryptus.util.io.NotebookOutput;
 import com.simiacryptus.util.test.*;
 import org.junit.Test;
@@ -44,7 +44,7 @@ public abstract class ModelMetaTest {
   @Test
   @Category(TestCategories.ResearchCode.class)
   public void calcSharedDictionariesLZ() throws Exception {
-    try (NotebookOutput log = MarkdownPrintStream.get(this).addCopy(System.out)) {
+    try (NotebookOutput log = MarkdownNotebookOutput.get(this).addCopy(System.out)) {
       CharTrieIndex baseTree = new CharTrieIndex();
       log.p("Preparing %s documents", getModelCount());
       source().limit(getModelCount()).forEach(txt -> {
@@ -84,7 +84,7 @@ public abstract class ModelMetaTest {
   @Test
   @Category(TestCategories.Report.class)
   public void calcSharedDictionariesBZ() throws Exception {
-    try (NotebookOutput log = MarkdownPrintStream.get(this).addCopy(System.out)) {
+    try (NotebookOutput log = MarkdownNotebookOutput.get(this).addCopy(System.out)) {
       CharTrieIndex baseTree = new CharTrieIndex();
       log.p("Preparing %s documents", getModelCount());
       source().limit(getModelCount()).forEach(txt -> {
@@ -123,7 +123,7 @@ public abstract class ModelMetaTest {
   @Test
   @Category(TestCategories.Report.class)
   public void calcCompressorPPM() throws Exception {
-    try (NotebookOutput log = MarkdownPrintStream.get(this).addCopy(System.out);) {
+    try (NotebookOutput log = MarkdownNotebookOutput.get(this).addCopy(System.out);) {
       CharTrieIndex baseTree = new CharTrieIndex();
       log.p("Preparing %s documents", getModelCount());
       source().limit(getModelCount()).forEach(txt -> {
@@ -169,7 +169,7 @@ public abstract class ModelMetaTest {
 
     @Override
     protected Stream<? extends TestDocument> source() {
-      return WikiArticle.ENGLISH.load().limit(getModelCount() + testCount);
+      return WikiArticle.ENGLISH.stream().limit(getModelCount() + testCount);
     }
 
     @Override

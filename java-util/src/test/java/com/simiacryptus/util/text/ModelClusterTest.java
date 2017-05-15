@@ -19,7 +19,7 @@
 
 package com.simiacryptus.util.text;
 
-import com.simiacryptus.util.io.MarkdownPrintStream;
+import com.simiacryptus.util.io.MarkdownNotebookOutput;
 import com.simiacryptus.util.io.NotebookOutput;
 import com.simiacryptus.util.test.*;
 import org.junit.Ignore;
@@ -46,7 +46,7 @@ public abstract class ModelClusterTest {
   @Test
   @Category(TestCategories.ResearchCode.class)
   public void clusterSharedDictionariesLZ() throws Exception {
-    try (NotebookOutput log = MarkdownPrintStream.get(this).addCopy(System.out)) {
+    try (NotebookOutput log = MarkdownNotebookOutput.get(this).addCopy(System.out)) {
 
       int dictionary_context = 7;
       int model_minPathWeight = 3;
@@ -100,7 +100,7 @@ public abstract class ModelClusterTest {
   @Test
   @Category(TestCategories.ResearchCode.class)
   public void calcCompressorPPM() throws Exception {
-    try (NotebookOutput log = MarkdownPrintStream.get(this).addCopy(System.out)) {
+    try (NotebookOutput log = MarkdownNotebookOutput.get(this).addCopy(System.out)) {
       int ppmModelDepth = 6;
       int model_minPathWeight = 3;
       AtomicInteger index = new AtomicInteger(0);
@@ -132,7 +132,7 @@ public abstract class ModelClusterTest {
   @Ignore
   @Category(TestCategories.ResearchCode.class)
   public void calcEntropyPPM() throws Exception {
-    try (NotebookOutput log = MarkdownPrintStream.get(this).addCopy(System.out)) {
+    try (NotebookOutput log = MarkdownNotebookOutput.get(this).addCopy(System.out)) {
       int ppmModelDepth = 6;
       int model_minPathWeight = 3;
       AtomicInteger index = new AtomicInteger(0);
@@ -166,7 +166,7 @@ public abstract class ModelClusterTest {
 
     @Override
     protected Stream<? extends TestDocument> source() {
-      return WikiArticle.ENGLISH.load().filter(wikiArticle -> {
+      return WikiArticle.ENGLISH.stream().filter(wikiArticle -> {
         int kb = wikiArticle.getText().length() / 1024;
         return kb > 50 && kb < 150;
       }).limit(getModelCount() + testCount);

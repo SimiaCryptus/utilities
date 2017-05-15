@@ -19,7 +19,7 @@
 
 package com.simiacryptus.util.text;
 
-import com.simiacryptus.util.io.MarkdownPrintStream;
+import com.simiacryptus.util.io.MarkdownNotebookOutput;
 import com.simiacryptus.util.io.NotebookOutput;
 import com.simiacryptus.util.test.TestCategories;
 import com.simiacryptus.util.test.WikiArticle;
@@ -48,10 +48,10 @@ public class LanguageModelBuilder {
   @Test
   @Category(TestCategories.Report.class)
   public void buildLanguageModels() throws IOException {
-    try (NotebookOutput log = MarkdownPrintStream.get(this).addCopy(System.out)) {
-      process(log, "English", WikiArticle.ENGLISH.load());
-      process(log, "French", WikiArticle.FRENCH.load());
-      process(log, "German", WikiArticle.GERMAN.load());
+    try (NotebookOutput log = MarkdownNotebookOutput.get(this).addCopy(System.out)) {
+      process(log, "English", WikiArticle.ENGLISH.stream());
+      process(log, "French", WikiArticle.FRENCH.stream());
+      process(log, "German", WikiArticle.GERMAN.stream());
     }
   }
 

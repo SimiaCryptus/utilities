@@ -19,7 +19,7 @@
 
 package com.simiacryptus.util.text;
 
-import com.simiacryptus.util.io.MarkdownPrintStream;
+import com.simiacryptus.util.io.MarkdownNotebookOutput;
 import com.simiacryptus.util.io.NotebookOutput;
 import com.simiacryptus.util.test.*;
 import org.junit.Test;
@@ -35,7 +35,7 @@ public class DictionaryMethodTest {
   @Test
   @Category(TestCategories.Report.class)
   public void dictionariesTweets() throws Exception {
-    try (NotebookOutput log = MarkdownPrintStream.get(this).addCopy(System.out)) {
+    try (NotebookOutput log = MarkdownNotebookOutput.get(this).addCopy(System.out)) {
       int modelCount = 10000;
       int testCount = 100;
       log.p("This notebook uses a variety of methods to generate compression dictionaries for a database of Tweets\n");
@@ -46,7 +46,7 @@ public class DictionaryMethodTest {
   @Test
   @Category(TestCategories.Report.class)
   public void dictionariesShakespeare() throws Exception {
-    try (NotebookOutput log = MarkdownPrintStream.get(this).addCopy(System.out)) {
+    try (NotebookOutput log = MarkdownNotebookOutput.get(this).addCopy(System.out)) {
       int modelCount = 100;
       int testCount = 100;
       log.p("This notebook uses a variety of methods to generate compression dictionaries for a database of Shakespeare text\n");
@@ -57,11 +57,11 @@ public class DictionaryMethodTest {
   @Test
   @Category(TestCategories.Report.class)
   public void dictionariesWiki() throws Exception {
-    try (NotebookOutput log = MarkdownPrintStream.get(this).addCopy(System.out)) {
+    try (NotebookOutput log = MarkdownNotebookOutput.get(this).addCopy(System.out)) {
       int modelCount = 100;
       int testCount = 100;
       log.p("This notebook uses a variety of methods to generate compression dictionaries for a database of Wikipedia articles\n");
-      test(log, () -> WikiArticle.ENGLISH.load().limit(modelCount + testCount), modelCount);
+      test(log, () -> WikiArticle.ENGLISH.stream().limit(modelCount + testCount), modelCount);
     }
   }
 

@@ -31,10 +31,7 @@ import java.net.URI;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.Spliterator;
-import java.util.Spliterators;
+import java.util.*;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import java.util.zip.GZIPInputStream;
@@ -62,7 +59,7 @@ public class MNIST {
   
   public static final DataLoader training = new DataLoader<LabeledObject<Tensor>>() {
     @Override
-    protected void read() {
+    protected void read(List<LabeledObject<Tensor>> queue) {
       try {
         final Stream<Tensor> imgStream = binaryStream("train-images-idx3-ubyte.gz", 16, 28 * 28).map(b -> {
           return fillImage(b, new Tensor(28, 28, 1));
@@ -92,7 +89,7 @@ public class MNIST {
   
   public static final DataLoader validation = new DataLoader<LabeledObject<Tensor>>() {
     @Override
-    protected void read() {
+    protected void read(List<LabeledObject<Tensor>> queue) {
       try {
         final Stream<Tensor> imgStream = binaryStream("t10k-images-idx3-ubyte.gz", 16, 28 * 28).map(b -> {
           return fillImage(b, new Tensor(28, 28, 1));
@@ -121,7 +118,7 @@ public class MNIST {
   };
   
   public static Stream<LabeledObject<Tensor>> trainingDataStream() throws IOException {
-    return training.load();
+    return training.stream();
   }
   
   private static Tensor fillImage(final byte[] b, final Tensor tensor) {
@@ -142,7 +139,7 @@ public class MNIST {
   }
   
   public static Stream<LabeledObject<Tensor>> validationDataStream() throws IOException {
-    return validation.load();
+    return validation.stream();
   }
   
 }

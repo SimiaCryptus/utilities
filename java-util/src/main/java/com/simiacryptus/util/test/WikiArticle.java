@@ -31,6 +31,7 @@ import javax.xml.parsers.SAXParserFactory;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -52,7 +53,7 @@ public class WikiArticle extends TestDocument {
     }
     
     @Override
-    protected void read() {
+    protected void read(List<WikiArticle> queue) {
       try {
         try (final InputStream in = new BZip2CompressorInputStream(Util.cache(url, file), true)) {
           final SAXParserFactory spf = SAXParserFactory.newInstance();
