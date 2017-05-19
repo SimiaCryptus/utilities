@@ -113,7 +113,7 @@ public class HtmlNotebookOutput implements NotebookOutput {
           return new TimedResult(e, 0);
         }
       });
-      out("Code from %s:%s executed in %.2f seconds: <br/>",
+      out("<p>Code from %s:%s executed in %.2f seconds: <br/>",
           callingFrame.getFileName(), callingFrame.getLineNumber(), result.obj.seconds());
       out("<pre>");
       out(sourceCode);
@@ -168,6 +168,7 @@ public class HtmlNotebookOutput implements NotebookOutput {
           throw new RuntimeException((Throwable) result.obj.obj);
         }
       }
+      out("</p>");
       return (T) eval;
     } catch (IOException e) {
       throw new RuntimeException(e);

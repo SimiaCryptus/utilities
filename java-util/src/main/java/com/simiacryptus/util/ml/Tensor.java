@@ -94,7 +94,7 @@ public class Tensor {
     if (data.length < 256) return;
     BlockingQueue<double[]> bin = recycling.get(data.length);
     if (null == bin) {
-      System.err.println("New Recycle Bin: " + data.length);
+      //System.err.println("New Recycle Bin: " + data.length);
       bin = new ArrayBlockingQueue<double[]>(1000);
       recycling.put(data.length, bin);
     }
