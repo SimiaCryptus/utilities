@@ -58,17 +58,21 @@ public class CodeUtil {
   }
   
   public static String getInnerText(StackTraceElement callingFrame) throws IOException {
-    File file = findFile(callingFrame);
-    assert (null != file);
-    int start = callingFrame.getLineNumber() - 1;
-    List<String> allLines = Files.readAllLines(file.toPath());
-    String txt = allLines.get(start);
-    String indent = getIndent(txt);
-    ArrayList<String> lines = new ArrayList<>();
-    for (int i = start + 1; i < allLines.size() && (getIndent(allLines.get(i)).length() > indent.length() || allLines.get(i).trim().isEmpty()); i++) {
-      String line = allLines.get(i);
-      lines.add(line.substring(Math.min(indent.length(), line.length())));
+    try {
+      File file = findFile(callingFrame);
+      assert (null != file);
+      int start = callingFrame.getLineNumber() - 1;
+      List<String> allLines = Files.readAllLines(file.toPath());
+      String txt = allLines.get(start);
+      String indent = getIndent(txt);
+      ArrayList<String> lines = new ArrayList<>();
+      for (int i = start + 1; i < allLines.size() && (getIndent(allLines.get(i)).length() > indent.length() || allLines.get(i).trim().isEmpty()); i++) {
+        String line = allLines.get(i);
+        lines.add(line.substring(Math.min(indent.length(), line.length())));
+      }
+      return lines.stream().collect(Collectors.joining("\n"));
+    } catch (Throwable e) {
+      return "";
     }
-    return lines.stream().collect(Collectors.joining("\n"));
   }
 }
