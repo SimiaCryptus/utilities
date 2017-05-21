@@ -17,30 +17,26 @@
  * under the License.
  */
 
-package com.simiacryptus.util.test;
+package com.simiacryptus.util.lang;
 
-import java.util.function.Function;
+import java.lang.ref.WeakReference;
+import java.util.function.Supplier;
 
-public class LabeledObject<T> {
-  public final T data;
-  public final String label;
+public class SupplierWeakCache<T> implements Supplier<T> {
+  private final Supplier<T> fn;
+  private WeakReference<T> ptr;
   
-  public LabeledObject(final T img, final String name) {
-    super();
-    this.data = img;
-    this.label = name;
+  public SupplierWeakCache(Supplier<T> fn) {
+    this.fn = fn;
+    this.ptr = null;
   }
   
-  public <U> LabeledObject<U> map(final Function<T, U> f) {
-    return new LabeledObject<U>(f.apply(this.data), this.label);
-  }
-  
-  @Override
-  public String toString() {
-    final StringBuffer sb = new StringBuffer("LabeledObject{");
-    sb.append("data=").append(data);
-    sb.append(", label='").append(label).append('\'');
-    sb.append('}');
-    return sb.toString();
+  public T get() {
+    T x = null == ptr ? null : ptr.get();
+    if (null == x) {
+      x = fn.get();
+      ptr = new WeakReference<T>(x);
+    }
+    return x;
   }
 }

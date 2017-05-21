@@ -20,6 +20,7 @@
 package com.simiacryptus.util.ml;
 
 import java.awt.image.BufferedImage;
+import java.io.Serializable;
 import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
@@ -32,7 +33,7 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-public class Tensor {
+public class Tensor implements Serializable {
   
   private static ConcurrentHashMap<Integer, BlockingQueue<double[]>> recycling = new ConcurrentHashMap<>();
   
@@ -456,5 +457,9 @@ public class Tensor {
     for (int i = 0; i < data.length; i++) {
       data[i] = v;
     }
+  }
+  
+  public int size() {
+    return null==data?Tensor.dim(this.dims):data.length;
   }
 }

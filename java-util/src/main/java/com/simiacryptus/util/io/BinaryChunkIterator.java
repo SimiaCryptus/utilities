@@ -70,8 +70,8 @@ public final class BinaryChunkIterator implements Iterator<byte[]> {
   public boolean hasNext() {
     try {
       return 0 < this.in.available();
-    } catch (final IOException e) {
-      throw new RuntimeException(e);
+    } catch (final Throwable e) {
+      return false;
     }
   }
   

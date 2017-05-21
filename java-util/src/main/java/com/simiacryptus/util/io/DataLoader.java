@@ -59,4 +59,12 @@ public abstract class DataLoader<T> {
   
   protected abstract void read(List<T> queue);
   
+  public void stop() {
+    if(thread != null) thread.interrupt();
+    try {
+      thread.join();
+    } catch (InterruptedException e) {
+      Thread.currentThread().interrupt();
+    }
+  }
 }

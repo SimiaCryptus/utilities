@@ -19,6 +19,9 @@
 
 package com.simiacryptus.util;
 
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.simiacryptus.util.io.BinaryChunkIterator;
 import com.simiacryptus.util.test.LabeledObject;
 import com.simiacryptus.util.io.TeeInputStream;
@@ -43,6 +46,7 @@ import java.util.*;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.function.DoubleSupplier;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -254,4 +258,14 @@ public class Util {
     }
   }
   
+  @SuppressWarnings("deprecation")
+  public static <F, T> Function<F, T> cache(final Function<F, T> inner) {
+    final LoadingCache<F, T> cache = CacheBuilder.newBuilder().build(new CacheLoader<F, T>() {
+      @Override
+      public T load(final F key) throws Exception {
+        return inner.apply(key);
+      }
+    });
+    return cache::apply;
+  }
 }

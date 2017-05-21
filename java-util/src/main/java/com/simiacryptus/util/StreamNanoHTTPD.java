@@ -22,6 +22,7 @@ package com.simiacryptus.util;
 import com.simiacryptus.util.io.AsyncOutputStream;
 import com.simiacryptus.util.io.TeeOutputStream;
 import fi.iki.elonen.NanoHTTPD;
+import scala.Boolean;
 
 import java.awt.*;
 import java.io.*;
@@ -31,6 +32,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Semaphore;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -43,27 +45,36 @@ public class StreamNanoHTTPD extends NanoHTTPD {
   private final ExecutorService pool = Executors.newCachedThreadPool();
   
   
-  public void addHandler(String path, String mimeType, Consumer<OutputStream> logic) {
-    addHandler2(path, simpleHandler(pool, mimeType, logic));
+  public void addHandler(String path, String mimeType, Consumer<OutputStream> logic, boolean async) {
+    addHandler2(path, simpleHandler(pool, mimeType, logic, async));
   }
   
   public Function<IHTTPSession, Response> addHandler2(String path, Function<IHTTPSession, Response> value) {
     return customHandlers.put(path, value);
   }
   
-  public static Function<IHTTPSession, Response> simpleHandler(ExecutorService pool, String mimeType, Consumer<OutputStream> logic) {
+  public static Function<IHTTPSession, Response> simpleHandler(ExecutorService pool, String mimeType, Consumer<OutputStream> logic, boolean async) {
     return session -> {
       PipedInputStream snk = new PipedInputStream();
+      Semaphore onComplete = new Semaphore(0);
       pool.submit(()->{
         try {
-          PipedOutputStream out = new PipedOutputStream(snk);
-          logic.accept(out);
-          out.close();
+          try(OutputStream out = new BufferedOutputStream(new PipedOutputStream(snk))) {
+            logic.accept(out);
+          }
         } catch (IOException e) {
+          e.printStackTrace();
           throw new RuntimeException(e);
+        } finally {
+          onComplete.release();
         }
       });
-      return NanoHTTPD.newChunkedResponse(Response.Status.OK, mimeType, snk);
+      if(!async) try {
+        onComplete.acquire();
+      } catch (InterruptedException e) {
+        throw new RuntimeException(e);
+      }
+      return NanoHTTPD.newChunkedResponse(Response.Status.OK, mimeType, new BufferedInputStream(snk));
     };
   }
   
