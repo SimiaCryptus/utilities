@@ -19,10 +19,8 @@
 
 package com.simiacryptus.util;
 
-import com.simiacryptus.util.io.AsyncOutputStream;
 import com.simiacryptus.util.io.TeeOutputStream;
 import fi.iki.elonen.NanoHTTPD;
-import scala.Boolean;
 
 import java.awt.*;
 import java.io.*;
@@ -46,10 +44,10 @@ public class StreamNanoHTTPD extends NanoHTTPD {
   
   
   public void addHandler(String path, String mimeType, Consumer<OutputStream> logic, boolean async) {
-    addHandler2(path, simpleHandler(pool, mimeType, logic, async));
+    addSessionHandler(path, simpleHandler(pool, mimeType, logic, async));
   }
   
-  public Function<IHTTPSession, Response> addHandler2(String path, Function<IHTTPSession, Response> value) {
+  public Function<IHTTPSession, Response> addSessionHandler(String path, Function<IHTTPSession, Response> value) {
     return customHandlers.put(path, value);
   }
   
