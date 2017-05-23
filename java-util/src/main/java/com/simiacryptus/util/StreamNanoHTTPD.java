@@ -56,15 +56,15 @@ public class StreamNanoHTTPD extends NanoHTTPD {
       PipedInputStream snk = new PipedInputStream();
       Semaphore onComplete = new Semaphore(0);
       pool.submit(()->{
-        try {
-          try(OutputStream out = new BufferedOutputStream(new PipedOutputStream(snk))) {
+        try(OutputStream out = new BufferedOutputStream(new PipedOutputStream(snk))) {
+          try {
             logic.accept(out);
+          } finally {
+            onComplete.release();
           }
         } catch (IOException e) {
           e.printStackTrace();
           throw new RuntimeException(e);
-        } finally {
-          onComplete.release();
         }
       });
       if(!async) try {
