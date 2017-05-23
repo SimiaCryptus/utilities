@@ -19,6 +19,7 @@
 
 package com.simiacryptus.util;
 
+import com.simiacryptus.util.io.AsyncOutputStream;
 import com.simiacryptus.util.io.TeeOutputStream;
 import fi.iki.elonen.NanoHTTPD;
 
@@ -56,7 +57,7 @@ public class StreamNanoHTTPD extends NanoHTTPD {
       PipedInputStream snk = new PipedInputStream();
       Semaphore onComplete = new Semaphore(0);
       pool.submit(()->{
-        try(OutputStream out = new BufferedOutputStream(new PipedOutputStream(snk))) {
+        try(OutputStream out = new AsyncOutputStream(new BufferedOutputStream(new PipedOutputStream(snk)))) {
           try {
             logic.accept(out);
           } finally {
