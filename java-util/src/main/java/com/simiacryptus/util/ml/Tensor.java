@@ -92,7 +92,7 @@ public class Tensor implements Serializable {
   
   public static void recycle(double[] data) {
     if(null == data) return;
-    if (data.length > 1024 * 1024) return;
+    //if(null != data) return;
     if (data.length < 256) return;
     BlockingQueue<double[]> bin = recycling.get(data.length);
     if (null == bin) {
