@@ -59,9 +59,14 @@ public class ArrayUtil {
   public static double dot(double[] a, double[] b) {
     return sum(op(a, b, (x,y) -> x * y));
   }
-  
-  private static double sum(double[] op) {
+  public static double magnitude(double[] a) {
+    return Math.sqrt(dot(a,a));
+  }
+  public static double sum(double[] op) {
     return Arrays.stream(op).sum();
+  }
+  public static double mean(double[] op) {
+    return sum(op)/op.length;
   }
   
   public static double[] multiply(double[] a, double b) {

@@ -44,20 +44,38 @@ public class StreamNanoHTTPD extends NanoHTTPD {
   private final ExecutorService pool = Executors.newCachedThreadPool();
   
   
-  public void addHandler(String path, String mimeType, Consumer<OutputStream> logic, boolean async) {
-    addSessionHandler(path, simpleHandler(pool, mimeType, logic, async));
+  public void addSyncHandler(String path, String mimeType, Consumer<OutputStream> logic, boolean async) {
+    addSessionHandler(path, syncHandler(pool, mimeType, logic, async));
+  }
+  
+  public void addAsyncHandler(String path, String mimeType, Consumer<OutputStream> logic, boolean async) {
+    addSessionHandler(path, asyncHandler(pool, mimeType, logic, async));
   }
   
   public Function<IHTTPSession, Response> addSessionHandler(String path, Function<IHTTPSession, Response> value) {
     return customHandlers.put(path, value);
   }
   
-  public static Function<IHTTPSession, Response> simpleHandler(ExecutorService pool, String mimeType, Consumer<OutputStream> logic, boolean async) {
+  public static Function<IHTTPSession, Response> syncHandler(ExecutorService pool, String mimeType, Consumer<OutputStream> logic, boolean async) {
+    return session -> {
+      try(ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+        logic.accept(out);
+        out.flush();
+        byte[] bytes = out.toByteArray();
+        return NanoHTTPD.newFixedLengthResponse(Response.Status.OK, mimeType, new ByteArrayInputStream(bytes), bytes.length);
+      } catch (IOException e) {
+        e.printStackTrace();
+        throw new RuntimeException(e);
+      }
+    };
+  }
+  
+  public static Function<IHTTPSession, Response> asyncHandler(ExecutorService pool, String mimeType, Consumer<OutputStream> logic, boolean async) {
     return session -> {
       PipedInputStream snk = new PipedInputStream();
       Semaphore onComplete = new Semaphore(0);
       pool.submit(()->{
-        try(OutputStream out = new AsyncOutputStream(new BufferedOutputStream(new PipedOutputStream(snk)))) {
+        try(OutputStream out = new BufferedOutputStream(new AsyncOutputStream(new PipedOutputStream(snk)))) {
           try {
             logic.accept(out);
           } finally {
@@ -100,7 +118,7 @@ public class StreamNanoHTTPD extends NanoHTTPD {
   }
   
   public StreamNanoHTTPD init() throws IOException {
-    StreamNanoHTTPD.this.start();
+    StreamNanoHTTPD.this.start(30000);
     new Thread(() -> {
       try {
         Thread.sleep(100);
@@ -134,7 +152,7 @@ public class StreamNanoHTTPD extends NanoHTTPD {
         return customHandlers.get(requestPath).apply(session);
       } else if(file.exists()) {
         try {
-          return NanoHTTPD.newChunkedResponse(Response.Status.OK, null, new FileInputStream(file));
+          return NanoHTTPD.newFixedLengthResponse(Response.Status.OK, null, new FileInputStream(file),file.length());
         } catch (FileNotFoundException e) {
           throw new RuntimeException(e);
         }

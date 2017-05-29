@@ -19,6 +19,9 @@
 
 package com.simiacryptus.util;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -36,6 +39,10 @@ public class ScalarStatistics implements MonitoredItem {
   double min = Double.POSITIVE_INFINITY;
   double max = -Double.POSITIVE_INFINITY;
   
+  public void add(double... values) {
+    Arrays.stream(values).parallel().forEach(this::add);
+  }
+  
   public void add(double v) {
     sum0 += 1;
     sum1 += v;
@@ -52,7 +59,6 @@ public class ScalarStatistics implements MonitoredItem {
       }
       sumLog += Math.log(Math.abs(v)) / Math.log(10);
     }
-  
   }
   
   @Override
@@ -63,11 +69,23 @@ public class ScalarStatistics implements MonitoredItem {
     map.put("positive", positives);
     map.put("min", min);
     map.put("max", max);
-    map.put("mean", sum1 / sum0);
-    map.put("stdDev", Math.sqrt(Math.abs(Math.pow(sum1 / sum0, 2) - sum2 / sum0)));
-    map.put("meanExponent", sumLog / (sum0 - zeros));
+    map.put("mean", getMean());
+    map.put("stdDev", getStdDev());
+    map.put("meanExponent", getMeanPower());
     map.put("zeros", zeros);
     return map;
+  }
+  
+  public double getMeanPower() {
+    return sumLog / (sum0 - zeros);
+  }
+  
+  public double getStdDev() {
+    return Math.sqrt(Math.abs(Math.pow(getMean(), 2) - sum2 / sum0));
+  }
+  
+  public double getMean() {
+    return sum1 / sum0;
   }
   
   public void clear() {
@@ -86,5 +104,35 @@ public class ScalarStatistics implements MonitoredItem {
     ScalarStatistics statistics = new ScalarStatistics();
     Arrays.stream(data).forEach(statistics::add);
     return statistics;
+  }
+  
+  public double getCount() {
+    return sum0;
+  }
+  
+  public JsonObject getJson() {
+    JsonObject json = new JsonObject();
+    json.addProperty("min",min);
+    json.addProperty("max",max);
+    json.addProperty("negatives",negatives);
+    json.addProperty("positives",positives);
+    json.addProperty("zeros",zeros);
+    json.addProperty("sum0",sum0);
+    json.addProperty("sum1",sum1);
+    json.addProperty("sum2",sum2);
+    json.addProperty("sumLog",sumLog);
+    return json;
+  }
+  
+  public void readJson(JsonObject json) {
+    this.min = json.get("min").getAsDouble();
+    this.max = json.get("max").getAsDouble();
+    this.negatives = json.get("negatives").getAsInt();
+    this.positives = json.get("positives").getAsInt();
+    this.zeros = json.get("zeros").getAsInt();
+    this.sum0 = json.get("sum0").getAsDouble();
+    this.sum1 = json.get("sum1").getAsDouble();
+    this.sum2 = json.get("sum2").getAsDouble();
+    this.sumLog = json.get("sumLog").getAsDouble();
   }
 }

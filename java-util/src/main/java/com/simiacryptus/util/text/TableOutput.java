@@ -26,11 +26,12 @@ import java.net.URL;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class TableOutput {
   
-  Map<String, Class<?>> schema = new LinkedHashMap<>();
-  List<Map<String, Object>> rows = new ArrayList<>();
+  public final Map<String, Class<?>> schema = new LinkedHashMap<>();
+  public final List<Map<String, Object>> rows = new ArrayList<>();
   
   public static TableOutput create(Map<String, Object>... rows) {
     TableOutput table = new TableOutput();
@@ -136,17 +137,22 @@ public class TableOutput {
         }
       }
     }
-    
+  
   }
   
   public String toHtmlTable() {
+    return toHtmlTable(false);
+  }
+  
+  public String toHtmlTable(boolean sortCols) {
     try (ByteArrayOutputStream buffer = new ByteArrayOutputStream()) {
       try (PrintStream printStream = new PrintStream(buffer)) {
-        String formatString = schema.entrySet().stream()
-                                  .map(e -> {
-                                    switch (e.getValue().getSimpleName()) {
+        Collection<String> keys = sortCols?new TreeSet(schema.keySet()):schema.keySet();
+        String formatString = keys.stream()
+                                  .map(k -> {
+                                    switch (schema.get(k).getSimpleName()) {
                                       case "String":
-                                        return "%-" + rows.stream().mapToInt(x -> x.getOrDefault(e.getKey(), "").toString().length()).max().getAsInt() + "s";
+                                        return "%-" + rows.stream().mapToInt(x -> x.getOrDefault(k, "").toString().length()).max().getAsInt() + "s";
                                       case "Integer":
                                         return "%6d";
                                       case "Double":
@@ -157,11 +163,11 @@ public class TableOutput {
                                   }).map(s->"<td>"+s+"</td>").collect(Collectors.joining(""));
         printStream.print("<table border=1>");
         printStream.print("<tr>");
-        printStream.println(schema.entrySet().stream().map(x -> x.getKey()).map(s->"<th>"+s+"</th>").collect(Collectors.joining("")).trim());
+        printStream.println(keys.stream().map(s->"<th>"+s+"</th>").collect(Collectors.joining("")).trim());
         printStream.print("</tr>");
         for (Map<String, Object> row : rows) {
           printStream.print("<tr>");
-          printStream.println(String.format(formatString, schema.entrySet().stream().map(e -> row.get(e.getKey())).toArray()));
+          printStream.println(String.format(formatString, keys.stream().map(k -> row.get(k)).toArray()));
           printStream.print("</tr>");
         }
         printStream.print("</table>");

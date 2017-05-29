@@ -19,18 +19,33 @@
 
 package com.simiacryptus.util.io;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonPrimitive;
 import com.simiacryptus.util.lang.JsonFormattable;
 import org.json.JSONArray;
 import org.json.JSONException;
 
-public class JsonUtil {
+import java.util.stream.IntStream;
 
-  public static JSONArray toJsonArray(Iterable<? extends JsonFormattable> objs) throws JSONException {
-    JSONArray json = new JSONArray();
-    for (JsonFormattable o : objs) {
-      json.put(o.toJson());
-    }
-    return json;
+public class JsonUtil {
+  
+  public static JsonArray getJson(int[] kernelDims) {
+    JsonArray array = new JsonArray();
+    for(int k : kernelDims) array.add(new JsonPrimitive(k));
+    return array;
   }
   
+  public static int[] getIntArray(JsonArray array) {
+    return IntStream.range(0, array.size()).map(i->array.get(i).getAsInt()).toArray();
+  }
+  
+  public static JsonArray getJson(double[] kernelDims) {
+    JsonArray array = new JsonArray();
+    for(double k : kernelDims) array.add(new JsonPrimitive(k));
+    return array;
+  }
+  
+  public static double[] getDoubleArray(JsonArray array) {
+    return IntStream.range(0, array.size()).mapToDouble(i->array.get(i).getAsDouble()).toArray();
+  }
 }

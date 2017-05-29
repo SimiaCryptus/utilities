@@ -19,6 +19,10 @@
 
 package com.simiacryptus.util.ml;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.simiacryptus.util.io.JsonUtil;
+
 import java.awt.image.BufferedImage;
 import java.io.Serializable;
 import java.util.*;
@@ -43,7 +47,6 @@ public class Tensor implements Serializable {
       public void run() {
         recycling.forEach((k, v) -> {
           v.drainTo(new ArrayList<>(), 100);
-          System.gc();
         });
       }
     }, 0, 10, TimeUnit.SECONDS);
@@ -66,16 +69,21 @@ public class Tensor implements Serializable {
   
   public Tensor(final int[] dims, final double[] data) {
     this.dims = Arrays.copyOf(dims, dims.length);
-    this.skips = new int[dims.length];
-    for (int i = 0; i < this.skips.length; i++) {
-      if (i == 0) {
-        this.skips[i] = 1;
-      } else {
-        this.skips[i] = this.skips[i - 1] * dims[i - 1];
-      }
-    }
+    this.skips = getSkips(dims);
     this.data = data;// Arrays.copyOf(data, data.length);
     assert(null == data || Tensor.dim(dims) == data.length);
+  }
+  
+  private static int[] getSkips(int[] dims) {
+    int[] skips = new int[dims.length];
+    for (int i = 0; i < skips.length; i++) {
+      if (i == 0) {
+        skips[i] = 1;
+      } else {
+        skips[i] = skips[i - 1] * dims[i - 1];
+      }
+    }
+    return skips;
   }
   
   public Tensor(double[] ds) {
@@ -243,6 +251,10 @@ public class Tensor implements Serializable {
   public double get(final Coordinate coords) {
     final double v = getData()[coords.index];
     return v;
+  }
+  
+  public double get(final int index) {
+    return getData()[index];
   }
   
   public double get(final int... coords) {
@@ -462,5 +474,18 @@ public class Tensor implements Serializable {
   
   public int size() {
     return null==data?Tensor.dim(this.dims):data.length;
+  }
+  
+  public JsonElement getJson() {
+    JsonObject json = new JsonObject();
+    json.add("dims", JsonUtil.getJson(dims));
+    if(data != null) json.add("data", JsonUtil.getJson(data));
+    return json;
+  }
+  
+  public static Tensor fromJson(JsonObject json) {
+    int[] dims = JsonUtil.getIntArray(json.getAsJsonArray("dims"));
+    double[] data = json.has("data") ? JsonUtil.getDoubleArray(json.getAsJsonArray("data")) : null;
+    return new Tensor(dims, data);
   }
 }
