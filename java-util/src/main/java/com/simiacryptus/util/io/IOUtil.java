@@ -76,6 +76,16 @@ public class IOUtil {
       new KryoReflectionFactorySupport().writeClassAndObject(output, obj);
       output.close();
       IOUtils.write(CompressionUtil.encodeBZ(Arrays.copyOf(output.getBuffer(), output.position())), file);
+      file.close();
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
+  
+  public static void writeString(String obj, OutputStream file) {
+    try {
+      IOUtils.write(obj.getBytes("UTF-8"), file);
+      file.close();
     } catch (IOException e) {
       throw new RuntimeException(e);
     }

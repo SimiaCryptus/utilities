@@ -330,6 +330,10 @@ public class Tensor implements Serializable {
     return new Tensor(this.dims, coordStream(false).mapToDouble(i -> f.applyAsDouble(get(i), i)).toArray());
   }
   
+  public Tensor mapParallel(final ToDoubleBiFunction<Double, Coordinate> f) {
+    return new Tensor(this.dims, coordStream(true).mapToDouble(i -> f.applyAsDouble(get(i), i)).toArray());
+  }
+  
   public Tensor minus(final Tensor right) {
     assert Arrays.equals(getDims(), right.getDims());
     final Tensor copy = new Tensor(getDims());
@@ -487,5 +491,19 @@ public class Tensor implements Serializable {
     int[] dims = JsonUtil.getIntArray(json.getAsJsonArray("dims"));
     double[] data = json.has("data") ? JsonUtil.getDoubleArray(json.getAsJsonArray("data")) : null;
     return new Tensor(dims, data);
+  }
+  
+  public static Tensor add(Tensor left, Tensor right) {
+    assert Arrays.equals(left.getDims(), right.getDims());
+    Tensor result = new Tensor(left.getDims());
+    double[] resultData = result.getData();
+    double[] leftData = left.getData();
+    double[] rightData = right.getData();
+    for(int i=0;i<resultData.length;i++) {
+      double l = leftData[i];
+      double r = rightData[i];
+      resultData[i] = l + r;
+    }
+    return result;
   }
 }

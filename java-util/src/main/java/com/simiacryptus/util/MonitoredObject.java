@@ -20,6 +20,7 @@
 package com.simiacryptus.util;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -34,6 +35,19 @@ public class MonitoredObject implements MonitoredItem {
   
   public MonitoredObject addField(String key, Supplier<Object> item) {
     items.put(key, item);
+    return this;
+  }
+  
+  public MonitoredObject clearConstants() {
+    HashSet<String> keys = new HashSet<>(items.keySet());
+    for(String k : keys) {
+      Object v = items.get(k);
+      if(v instanceof MonitoredObject) {
+        ((MonitoredObject)v).clearConstants();
+      } else if(!(v instanceof Supplier) && !(v instanceof MonitoredItem)) {
+        items.remove(k);
+      }
+    }
     return this;
   }
   

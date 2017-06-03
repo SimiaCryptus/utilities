@@ -57,7 +57,7 @@ public class ScalarStatistics implements MonitoredItem {
       } else {
         positives++;
       }
-      sumLog += Math.log(Math.abs(v)) / Math.log(10);
+      sumLog += Math.log10(Math.abs(v));
     }
   }
   
