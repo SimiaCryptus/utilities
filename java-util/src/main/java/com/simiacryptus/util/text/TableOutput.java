@@ -178,6 +178,34 @@ public class TableOutput {
     }
   }
   
+  public String toCSV(boolean sortCols) {
+    try (ByteArrayOutputStream buffer = new ByteArrayOutputStream()) {
+      try (PrintStream printStream = new PrintStream(buffer)) {
+        Collection<String> keys = sortCols?new TreeSet(schema.keySet()):schema.keySet();
+        String formatString = keys.stream()
+                                  .map(k -> {
+                                    switch (schema.get(k).getSimpleName()) {
+                                      case "String":
+                                        return "%-" + rows.stream().mapToInt(x -> x.getOrDefault(k, "").toString().length()).max().getAsInt() + "s";
+                                      case "Integer":
+                                        return "%6d";
+                                      case "Double":
+                                        return "%.4f";
+                                      default:
+                                        return "%s";
+                                    }
+                                  }).collect(Collectors.joining(","));
+        printStream.println(keys.stream().collect(Collectors.joining(",")).trim());
+        for (Map<String, Object> row : rows) {
+          printStream.println(String.format(formatString, keys.stream().map(k -> row.get(k)).toArray()));
+        }
+      }
+      return buffer.toString();
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
+  
   public String toTextTable() {
     try (ByteArrayOutputStream buffer = new ByteArrayOutputStream()) {
       try (PrintStream printStream = new PrintStream(buffer)) {
