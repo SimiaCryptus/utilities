@@ -125,6 +125,7 @@ public class ScalarStatistics implements MonitoredItem {
   }
   
   public void readJson(JsonObject json) {
+    if(null == json) return;
     this.min = json.get("min").getAsDouble();
     this.max = json.get("max").getAsDouble();
     this.negatives = json.get("negatives").getAsInt();
