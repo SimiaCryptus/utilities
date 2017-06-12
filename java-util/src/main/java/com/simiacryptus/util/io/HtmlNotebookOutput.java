@@ -41,7 +41,8 @@ public class HtmlNotebookOutput implements NotebookOutput {
   private final List<PrintStream> outs = new ArrayList<>();
   public final File workingDir;
   private final OutputStream primaryOut;
-  private String sourceRoot = "https://github.com/SimiaCryptus/utilities/tree/master/src/";
+  public static String DEFAULT_ROOT = "https://github.com/SimiaCryptus/utilities/tree/master/";
+  private String sourceRoot = DEFAULT_ROOT;
   
   public static HtmlNotebookOutput create(File parentDirectory) throws FileNotFoundException {
     FileOutputStream out = new FileOutputStream(new File(parentDirectory, "index.html"));

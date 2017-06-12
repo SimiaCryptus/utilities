@@ -30,10 +30,10 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class CodeUtil {
+  public static File projectRoot = new File(System.getProperty("codeRoot","."));
   private static List<File> codeRoots = Arrays.asList(
       "src/main/java", "src/test/java", "src/main/scala", "src/test/scala"
-  ).stream().map(x -> new File(x)).collect(Collectors.toList());
-  public static File projectRoot = new File(".");
+  ).stream().map(x -> new File(projectRoot, x)).collect(Collectors.toList());
   
   
   public static File findFile(StackTraceElement callingFrame) {
@@ -56,7 +56,7 @@ public class CodeUtil {
       File file = new File(root, path);
       if (file.exists()) return file;
     }
-    throw new RuntimeException(String.format("Not Found: %s; Current Directory = %s", path, new File(".").getAbsolutePath()));
+    throw new RuntimeException(String.format("Not Found: %s; Project Root = %s", path, projectRoot.getAbsolutePath()));
   }
   
   public static String getInnerText(StackTraceElement callingFrame) throws IOException {
