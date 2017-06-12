@@ -29,7 +29,9 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.net.URI;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Supplier;
@@ -39,6 +41,7 @@ public class HtmlNotebookOutput implements NotebookOutput {
   private final List<PrintStream> outs = new ArrayList<>();
   public final File workingDir;
   private final OutputStream primaryOut;
+  private String sourceRoot = "https://github.com/SimiaCryptus/utilities/tree/master/src/";
   
   public static HtmlNotebookOutput create(File parentDirectory) throws FileNotFoundException {
     FileOutputStream out = new FileOutputStream(new File(parentDirectory, "index.html"));
@@ -54,7 +57,13 @@ public class HtmlNotebookOutput implements NotebookOutput {
     this.primaryOut = out;
     outs.add(new PrintStream(out));
     this.workingDir = parentDirectory;
-    out("<html><head></head><body>");
+    out("<html><head><style>\n" +
+            "pre {\n" +
+            "    background-color: lightyellow;\n" +
+            "    margin-left: 20pt;\n" +
+            "    font-family: monospace;\n" +
+            "}\n" +
+            "</style></head><body>");
   }
   
   
@@ -113,8 +122,10 @@ public class HtmlNotebookOutput implements NotebookOutput {
           return new TimedResult(e, 0);
         }
       });
-      out("<p>Code from %s:%s executed in %.2f seconds: <br/>",
-          callingFrame.getFileName(), callingFrame.getLineNumber(), result.obj.seconds());
+      URI resolved = URI.create(sourceRoot).resolve(Util.pathTo(CodeUtil.projectRoot, CodeUtil.findFile(callingFrame)));
+  
+      out("<p>Code from <a href='%s#L%s'>%s:%s</a> executed in %.2f seconds: <br/>",
+          resolved, callingFrame.getLineNumber(), callingFrame.getFileName(), callingFrame.getLineNumber(), result.obj.seconds());
       out("<pre>");
       out(sourceCode);
       out("</pre>");
@@ -180,12 +191,19 @@ public class HtmlNotebookOutput implements NotebookOutput {
     ByteArrayOutputStream out = new ByteArrayOutputStream();
     String thisImage = UUID.randomUUID().toString().substring(0,8);
     File file = new File(getResourceDir(), "img" + thisImage + ".png");
-    BufferedImage stdImage = Util.resize(rawImage);
-    if (stdImage != rawImage) {
-      ImageIO.write(rawImage, "png", new File(getResourceDir(), "raw" + thisImage + ".png"));
+    if(rawImage.getHeight() * rawImage.getWidth() < 64*64) {
+      ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+      ImageIO.write(rawImage, "png", buffer);
+      String pngSrc = Base64.getEncoder().encodeToString(buffer.toByteArray());
+      return "<img src='data:image/png;base64," + pngSrc + "' alt='" + caption + "'/>";
+    } else {
+      BufferedImage stdImage = Util.resize(rawImage);
+      if (stdImage != rawImage) {
+        ImageIO.write(rawImage, "png", new File(getResourceDir(), "raw" + thisImage + ".png"));
+      }
+      ImageIO.write(stdImage, "png", file);
+      return "<img src='etc/" + file.getName() + "' alt='" + caption + "'/>";
     }
-    ImageIO.write(stdImage, "png", file);
-    return "<img src='etc/" + file.getName() + "' alt='" + caption + "'/>";
   }
   
   public File getResourceDir() {
@@ -198,5 +216,14 @@ public class HtmlNotebookOutput implements NotebookOutput {
   public void close() throws IOException {
     out("</body></html>");
     if(null != primaryOut) primaryOut.close();
+  }
+  
+  public String getSourceRoot() {
+    return sourceRoot;
+  }
+  
+  public HtmlNotebookOutput setSourceRoot(String sourceRoot) {
+    this.sourceRoot = sourceRoot;
+    return this;
   }
 }

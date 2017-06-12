@@ -33,6 +33,7 @@ public class CodeUtil {
   private static List<File> codeRoots = Arrays.asList(
       "src/main/java", "src/test/java", "src/main/scala", "src/test/scala"
   ).stream().map(x -> new File(x)).collect(Collectors.toList());
+  public static File projectRoot = new File(".");
   
   
   public static File findFile(StackTraceElement callingFrame) {
