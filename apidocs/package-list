@@ -1,8 +1,12 @@
+com.simiacryptus.lang
+com.simiacryptus.util
 com.simiacryptus.util.binary
 com.simiacryptus.util.bitset
 com.simiacryptus.util.codes
 com.simiacryptus.util.collections
 com.simiacryptus.util.data
+com.simiacryptus.util.io
 com.simiacryptus.util.lang
+com.simiacryptus.util.ml
 com.simiacryptus.util.test
 com.simiacryptus.util.text
