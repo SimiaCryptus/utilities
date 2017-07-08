@@ -46,7 +46,7 @@ public class Tensor implements Serializable {
       @Override
       public void run() {
         recycling.forEach((k, v) -> {
-          v.drainTo(new ArrayList<>(), 100);
+          v.clear();
         });
       }
     }, 0, 10, TimeUnit.SECONDS);
@@ -105,7 +105,7 @@ public class Tensor implements Serializable {
     BlockingQueue<double[]> bin = recycling.get(data.length);
     if (null == bin) {
       //System.err.println("New Recycle Bin: " + data.length);
-      bin = new ArrayBlockingQueue<double[]>(100);
+      bin = new ArrayBlockingQueue<double[]>((int) (1e9/data.length));
       recycling.put(data.length, bin);
     }
     bin.offer(data);
