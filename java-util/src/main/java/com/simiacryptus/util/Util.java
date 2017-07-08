@@ -212,13 +212,17 @@ public class Util {
   }
   
   public static BufferedImage toImage(Component component) {
-    layout(component);
-    BufferedImage img = new BufferedImage(component.getWidth(), component.getHeight(), BufferedImage.TYPE_INT_ARGB_PRE);
-    Graphics2D g = img.createGraphics();
-    g.setColor(component.getForeground());
-    g.setFont(component.getFont());
-    component.print(g);
-    return img;
+    try {
+      layout(component);
+      BufferedImage img = new BufferedImage(component.getWidth(), component.getHeight(), BufferedImage.TYPE_INT_ARGB_PRE);
+      Graphics2D g = img.createGraphics();
+      g.setColor(component.getForeground());
+      g.setFont(component.getFont());
+      component.print(g);
+      return img;
+    } catch (Exception e) {
+      return null;
+    }
   }
   
   public static InputStream cache(URI url) throws IOException, NoSuchAlgorithmException, KeyStoreException, KeyManagementException {

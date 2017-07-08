@@ -123,10 +123,14 @@ public class HtmlNotebookOutput implements NotebookOutput {
           return new TimedResult(e, 0);
         }
       });
-      URI resolved = URI.create(sourceRoot).resolve(Util.pathTo(CodeUtil.projectRoot, CodeUtil.findFile(callingFrame)));
-  
-      out("<p>Code from <a href='%s#L%s'>%s:%s</a> executed in %.2f seconds: <br/>",
-          resolved, callingFrame.getLineNumber(), callingFrame.getFileName(), callingFrame.getLineNumber(), result.obj.seconds());
+      try {
+        URI resolved = URI.create(sourceRoot).resolve(Util.pathTo(CodeUtil.projectRoot, CodeUtil.findFile(callingFrame)));
+        out("<p>Code from <a href='%s#L%s'>%s:%s</a> executed in %.2f seconds: <br/>",
+            resolved, callingFrame.getLineNumber(), callingFrame.getFileName(), callingFrame.getLineNumber(), result.obj.seconds());
+      } catch (Exception e) {
+        out("<p>Code from %s:%s executed in %.2f seconds: <br/>",
+            callingFrame.getFileName(), callingFrame.getLineNumber(), result.obj.seconds());
+      }
       out("<pre>");
       out(sourceCode);
       out("</pre>");
@@ -189,6 +193,7 @@ public class HtmlNotebookOutput implements NotebookOutput {
   
   @Override
   public String image(BufferedImage rawImage, String caption) throws IOException {
+    if(null == rawImage) return "";
     ByteArrayOutputStream out = new ByteArrayOutputStream();
     String thisImage = UUID.randomUUID().toString().substring(0,8);
     File file = new File(getResourceDir(), "img" + thisImage + ".png");

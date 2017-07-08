@@ -76,17 +76,19 @@ public class ImageTiles {
   
   public static List<Tensor> toTiles(BufferedImage image, int tileWidth, int tileHeight, int minSpacingWidth, int minSpacingHeight, int maxTileCols, int maxTileRows) {
     List<Tensor> queue = new ArrayList<>();
-    int xMax = image.getWidth() - tileWidth;
-    int yMax = image.getHeight() - tileHeight;
-    int cols = Math.min(maxTileCols, xMax / minSpacingWidth);
-    int rows = Math.min(maxTileRows, yMax / minSpacingHeight);
-    if(cols < 1) return queue;
-    if(rows < 1) return queue;
-    int xStep = xMax / cols;
-    int yStep = yMax / rows;
-    for(int x=0;x<xMax;x+=xStep){
-      for(int y=0;y<yMax;y+=yStep){
-        queue.add(ImageTiles.read(image, tileWidth, tileHeight, x, y));
+    if(null != image) {
+      int xMax = image.getWidth() - tileWidth;
+      int yMax = image.getHeight() - tileHeight;
+      int cols = Math.min(maxTileCols, xMax / minSpacingWidth);
+      int rows = Math.min(maxTileRows, yMax / minSpacingHeight);
+      if(cols < 1) return queue;
+      if(rows < 1) return queue;
+      int xStep = xMax / cols;
+      int yStep = yMax / rows;
+      for(int x=0;x<xMax;x+=xStep){
+        for(int y=0;y<yMax;y+=yStep){
+          queue.add(ImageTiles.read(image, tileWidth, tileHeight, x, y));
+        }
       }
     }
     return queue;

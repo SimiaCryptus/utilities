@@ -506,4 +506,18 @@ public class Tensor implements Serializable {
     }
     return result;
   }
+  
+  public static Tensor product(Tensor left, Tensor right) {
+    assert Arrays.equals(left.getDims(), right.getDims());
+    Tensor result = new Tensor(left.getDims());
+    double[] resultData = result.getData();
+    double[] leftData = left.getData();
+    double[] rightData = right.getData();
+    for(int i=0;i<resultData.length;i++) {
+      double l = leftData[i];
+      double r = rightData[i];
+      resultData[i] = l * r;
+    }
+    return result;
+  }
 }
