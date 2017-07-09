@@ -29,21 +29,55 @@ import java.util.Map;
 public class ScalarStatistics implements MonitoredItem {
   
   private final static double zeroTol = 1e-20;
-  int zeros = 0;
-  int negatives = 0;
-  int positives = 0;
-  double sum0 = 0;
-  double sum1 = 0;
-  double sum2 = 0;
-  double sumLog = 0;
-  double min = Double.POSITIVE_INFINITY;
-  double max = -Double.POSITIVE_INFINITY;
+  private volatile int zeros = 0;
+  private volatile int negatives = 0;
+  private volatile int positives = 0;
+  private volatile double sum0 = 0;
+  private volatile double sum1 = 0;
+  private volatile double sum2 = 0;
+  private volatile double sumLog = 0;
+  private volatile double min = Double.POSITIVE_INFINITY;
+  private volatile double max = -Double.POSITIVE_INFINITY;
   
   public void add(double... values) {
-    Arrays.stream(values).parallel().forEach(this::add);
+    double v1 = 0;
+    double v2 = 0;
+    double vmax = max;
+    double vmin = max;
+    int z = 0;
+    double vlog = 0;
+    int n = 0;
+    int p = 0;
+    for(double v : values) {
+      v1 += v;
+      v2 += v * v;
+      vmin = Math.min(min, v);
+      vmax = Math.max(max, v);
+      if (Math.abs(v) < zeroTol) {
+        z++;
+      } else {
+        if (v < 0) {
+          n++;
+        } else {
+          p++;
+        }
+        vlog += Math.log10(Math.abs(v));
+      }
+    }
+    synchronized (this) {
+      sum0 += 1;
+      sum1 += v1;
+      sum2 += v2;
+      min = Math.min(min, vmin);
+      max = Math.max(max, vmax);
+      negatives += n;
+      positives += p;
+      sumLog += vlog;
+      zeros += z;
+    }
   }
   
-  public void add(double v) {
+  public synchronized final void add(double v) {
     sum0 += 1;
     sum1 += v;
     sum2 += v * v;
