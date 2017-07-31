@@ -19,6 +19,7 @@
 
 package com.simiacryptus.util.data;
 
+import java.util.Arrays;
 import java.util.DoubleSummaryStatistics;
 import java.util.stream.Collector;
 
@@ -45,7 +46,12 @@ public class DoubleStatistics extends DoubleSummaryStatistics {
   private double sumOfSquare = 0.0d;
   private double sumOfSquareCompensation; // Low order bits of sum
   private double simpleSumOfSquare; // Used to compute right sum for non-finite inputs
-
+  
+  public DoubleStatistics accept(double[] value) {
+    Arrays.stream(value).forEach(this::accept);
+    return this;
+  }
+  
   @Override
   public void accept(double value) {
     super.accept(value);

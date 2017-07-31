@@ -37,7 +37,12 @@ public class TableOutput {
     TableOutput table = new TableOutput();
     Arrays.stream(rows).forEach(table::putRow);
     return table;
-    
+  
+  }
+  
+  public void clear() {
+    schema.clear();
+    rows.clear();
   }
   
   public void putRow(Map<String, Object> properties) {

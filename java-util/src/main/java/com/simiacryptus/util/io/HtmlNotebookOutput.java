@@ -114,7 +114,8 @@ public class HtmlNotebookOutput implements NotebookOutput {
   @Override
   public <T> T code(Supplier<T> fn, int maxLog, int framesNo) {
     try {
-      StackTraceElement callingFrame = Thread.currentThread().getStackTrace()[framesNo];
+      StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+      StackTraceElement callingFrame = stackTrace[framesNo];
       String sourceCode = CodeUtil.getInnerText(callingFrame);
       SysOutInterceptor.LoggedResult<TimedResult<Object>> result = SysOutInterceptor.withOutput(() -> {
         try {
@@ -197,10 +198,10 @@ public class HtmlNotebookOutput implements NotebookOutput {
     ByteArrayOutputStream out = new ByteArrayOutputStream();
     String thisImage = UUID.randomUUID().toString().substring(0,8);
     File file = new File(getResourceDir(), "img" + thisImage + ".png");
-    if(rawImage.getHeight() * rawImage.getWidth() < 64*64) {
-      ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-      ImageIO.write(rawImage, "png", buffer);
-      String pngSrc = Base64.getEncoder().encodeToString(buffer.toByteArray());
+    ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+    ImageIO.write(rawImage, "png", buffer);
+    String pngSrc = Base64.getEncoder().encodeToString(buffer.toByteArray());
+    if(pngSrc.length() < 4*1024) {
       return "<img src='data:image/png;base64," + pngSrc + "' alt='" + caption + "'/>";
     } else {
       BufferedImage stdImage = Util.resize(rawImage);

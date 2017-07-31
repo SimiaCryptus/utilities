@@ -36,6 +36,7 @@ public class JsonUtil {
   }
   
   public static int[] getIntArray(JsonArray array) {
+    if(null == array) return null;
     return IntStream.range(0, array.size()).map(i->array.get(i).getAsInt()).toArray();
   }
   
