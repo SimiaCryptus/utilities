@@ -19,16 +19,27 @@
 
 package com.simiacryptus.util.lang;
 
+/**
+ * The type Not implemented exception.
+ */
 @SuppressWarnings("serial")
 public class NotImplementedException extends RuntimeException {
 
-  // Show a warning whenever this is referenced - We shoud implement it!
+  /**
+   * Instantiates a new Not implemented exception.
+   */
+// Show a warning whenever this is referenced - We shoud implement it!
   @Deprecated
   public NotImplementedException() {
     super();
   }
 
-  // Show a warning whenever this is referenced - We shoud implement it!
+  /**
+   * Instantiates a new Not implemented exception.
+   *
+   * @param arg0 the arg 0
+   */
+// Show a warning whenever this is referenced - We shoud implement it!
   @Deprecated
   public NotImplementedException(final String arg0) {
     super(arg0);

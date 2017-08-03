@@ -21,32 +21,56 @@ package com.simiacryptus.util.io;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonPrimitive;
-import com.simiacryptus.util.lang.JsonFormattable;
-import org.json.JSONArray;
-import org.json.JSONException;
 
 import java.util.stream.IntStream;
 
+/**
+ * The type Json util.
+ */
 public class JsonUtil {
-  
+
+  /**
+   * Gets json.
+   *
+   * @param kernelDims the kernel dims
+   * @return the json
+   */
   public static JsonArray getJson(int[] kernelDims) {
     JsonArray array = new JsonArray();
-    for(int k : kernelDims) array.add(new JsonPrimitive(k));
+    for (int k : kernelDims) array.add(new JsonPrimitive(k));
     return array;
   }
-  
+
+  /**
+   * Get int array int [ ].
+   *
+   * @param array the array
+   * @return the int [ ]
+   */
   public static int[] getIntArray(JsonArray array) {
-    if(null == array) return null;
-    return IntStream.range(0, array.size()).map(i->array.get(i).getAsInt()).toArray();
+    if (null == array) return null;
+    return IntStream.range(0, array.size()).map(i -> array.get(i).getAsInt()).toArray();
   }
-  
+
+  /**
+   * Gets json.
+   *
+   * @param kernelDims the kernel dims
+   * @return the json
+   */
   public static JsonArray getJson(double[] kernelDims) {
     JsonArray array = new JsonArray();
-    for(double k : kernelDims) array.add(new JsonPrimitive(k));
+    for (double k : kernelDims) array.add(new JsonPrimitive(k));
     return array;
   }
-  
+
+  /**
+   * Get double array double [ ].
+   *
+   * @param array the array
+   * @return the double [ ]
+   */
   public static double[] getDoubleArray(JsonArray array) {
-    return IntStream.range(0, array.size()).mapToDouble(i->array.get(i).getAsDouble()).toArray();
+    return IntStream.range(0, array.size()).mapToDouble(i -> array.get(i).getAsDouble()).toArray();
   }
 }

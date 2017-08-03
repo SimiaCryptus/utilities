@@ -27,11 +27,34 @@ import java.io.IOException;
 import java.util.*;
 import java.util.Map.Entry;
 
+/**
+ * The type Hamming code.
+ *
+ * @param <T> the type parameter
+ */
 public class HammingCode<T extends Comparable<T>> {
+  /**
+   * The Forward index.
+   */
   protected final TreeMap<Bits, T> forwardIndex = new TreeMap<Bits, T>();
+  /**
+   * The Reverse index.
+   */
   protected final HashMap<T, Bits> reverseIndex = new HashMap<T, Bits>();
+  /**
+   * The Weights.
+   */
   protected final HashMap<T, Integer> weights = new HashMap<T, Integer>();
+  /**
+   * The Total weight.
+   */
   protected final long totalWeight;
+
+  /**
+   * Instantiates a new Hamming code.
+   *
+   * @param symbols the symbols
+   */
   public HammingCode(final Collection<HammingSymbol<T>> symbols) {
     if (0 < symbols.size()) {
       final TreeSet<SubCode<T>> assemblySet = new TreeSet<SubCode<T>>();
@@ -48,19 +71,26 @@ public class HammingCode<T extends Comparable<T>> {
       this.forwardIndex.putAll(root.codes);
       this.reverseIndex.putAll(root.index);
       totalWeight = root.count;
-    } else {
+    }
+    else {
       totalWeight = 0;
     }
     assert this.verifyIndexes();
     assert this.forwardIndex.size() == symbols.size();
   }
 
+  /**
+   * Is prefix free code boolean.
+   *
+   * @param keySet the key set
+   * @return the boolean
+   */
   public static boolean isPrefixFreeCode(final Set<Bits> keySet) {
     final TreeSet<Bits> check = new TreeSet<Bits>();
     for (final Bits code : keySet) {
       final Bits ceiling = check.ceiling(code);
       if (null != ceiling
-              && (ceiling.startsWith(code) || code.startsWith(ceiling))) {
+            && (ceiling.startsWith(code) || code.startsWith(ceiling))) {
         return false;
       }
       final Bits floor = check.floor(code);
@@ -72,10 +102,22 @@ public class HammingCode<T extends Comparable<T>> {
     return true;
   }
 
+  /**
+   * Code size int.
+   *
+   * @return the int
+   */
   public int codeSize() {
     return this.forwardIndex.size();
   }
-  
+
+  /**
+   * Decode t.
+   *
+   * @param in the in
+   * @return the t
+   * @throws IOException the io exception
+   */
   public T decode(final BitInputStream in) throws IOException {
     Bits remainder = in.readAhead(0);
     Entry<Bits, T> entry = this.forwardIndex.floorEntry(remainder);
@@ -86,7 +128,13 @@ public class HammingCode<T extends Comparable<T>> {
     in.read(entry.getKey().bitLength);
     return entry.getValue();
   }
-  
+
+  /**
+   * Decode entry.
+   *
+   * @param data the data
+   * @return the entry
+   */
   public Entry<Bits, T> decode(final Bits data) {
     if (null == data) {
       throw new IllegalArgumentException();
@@ -99,38 +147,79 @@ public class HammingCode<T extends Comparable<T>> {
     // assert(null != entry || verifyIndexes());
     return entry;
   }
-  
+
+  /**
+   * Encode bits.
+   *
+   * @param key the key
+   * @return the bits
+   */
   public Bits encode(final T key) {
     final Bits bits = this.reverseIndex.get(key);
     assert null != bits || this.verifyIndexes();
     return bits;
   }
-  
+
+  /**
+   * Gets codes.
+   *
+   * @param fromKey the from key
+   * @return the codes
+   */
   public SortedMap<Bits, T> getCodes(final Bits fromKey) {
     final Bits next = fromKey.next();
     final SortedMap<Bits, T> subMap = null == next ? this.forwardIndex
-                                                         .tailMap(fromKey) : this.forwardIndex.subMap(fromKey, next);
+                                                       .tailMap(fromKey) : this.forwardIndex.subMap(fromKey, next);
     return subMap;
   }
-  
+
+  /**
+   * Gets set encoder.
+   *
+   * @return the set encoder
+   */
   public CountTreeBitsCollection getSetEncoder() {
     return new HammingCodeCollection();
   }
-  
+
+  /**
+   * Gets set encoder.
+   *
+   * @param data the data
+   * @return the set encoder
+   * @throws IOException the io exception
+   */
   public CountTreeBitsCollection getSetEncoder(final BitInputStream data)
-      throws IOException {
+    throws IOException {
     return new HammingCodeCollection(data);
   }
-  
+
+  /**
+   * Gets set encoder.
+   *
+   * @param data the data
+   * @return the set encoder
+   * @throws IOException the io exception
+   */
   public CountTreeBitsCollection getSetEncoder(final byte[] data)
-      throws IOException {
+    throws IOException {
     return new HammingCodeCollection(data);
   }
-  
+
+  /**
+   * Gets weights.
+   *
+   * @return the weights
+   */
   public Map<T, Integer> getWeights() {
     return Collections.unmodifiableMap(this.weights);
   }
-  
+
+  /**
+   * Verify indexes boolean.
+   *
+   * @return the boolean
+   */
   public boolean verifyIndexes() {
     if (!isPrefixFreeCode(this.forwardIndex.keySet())) {
       return false;
@@ -156,18 +245,38 @@ public class HammingCode<T extends Comparable<T>> {
     }
     return true;
   }
-  
+
+  /**
+   * Total weight int.
+   *
+   * @return the int
+   */
   public int totalWeight() {
     // TODO Auto-generated method stub
     return 0;
   }
   
   private static class SubCode<X extends Comparable<X>> implements
-      Comparable<SubCode<X>> {
+    Comparable<SubCode<X>> {
+    /**
+     * The Count.
+     */
     final long count;
+    /**
+     * The Codes.
+     */
     final TreeMap<Bits, X> codes;
+    /**
+     * The Index.
+     */
     final TreeMap<X, Bits> index;
 
+    /**
+     * Instantiates a new Sub code.
+     *
+     * @param count the count
+     * @param item  the item
+     */
     public SubCode(final long count, final X item) {
       super();
       this.count = count;
@@ -177,6 +286,12 @@ public class HammingCode<T extends Comparable<T>> {
       this.index.put(item, Bits.NULL);
     }
 
+    /**
+     * Instantiates a new Sub code.
+     *
+     * @param zero the zero
+     * @param one  the one
+     */
     public SubCode(final SubCode<X> zero, final SubCode<X> one) {
       super();
       this.count = zero.count + one.count;
@@ -214,15 +329,33 @@ public class HammingCode<T extends Comparable<T>> {
     }
   }
 
+  /**
+   * The type Hamming code collection.
+   */
   public class HammingCodeCollection extends CountTreeBitsCollection {
+    /**
+     * Instantiates a new Hamming code collection.
+     */
     public HammingCodeCollection() {
       super();
     }
 
+    /**
+     * Instantiates a new Hamming code collection.
+     *
+     * @param data the data
+     * @throws IOException the io exception
+     */
     public HammingCodeCollection(final BitInputStream data) throws IOException {
       super(data);
     }
 
+    /**
+     * Instantiates a new Hamming code collection.
+     *
+     * @param data the data
+     * @throws IOException the io exception
+     */
     public HammingCodeCollection(final byte[] data) throws IOException {
       super(data);
     }

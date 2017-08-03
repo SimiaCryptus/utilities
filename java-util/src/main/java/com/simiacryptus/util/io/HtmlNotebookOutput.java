@@ -36,14 +36,30 @@ import java.util.List;
 import java.util.UUID;
 import java.util.function.Supplier;
 
+/**
+ * The type Html notebook output.
+ */
 public class HtmlNotebookOutput implements NotebookOutput {
   
   private final List<PrintStream> outs = new ArrayList<>();
+  /**
+   * The Working dir.
+   */
   public final File workingDir;
   private final OutputStream primaryOut;
+  /**
+   * The constant DEFAULT_ROOT.
+   */
   public static String DEFAULT_ROOT = "https://github.com/SimiaCryptus/utilities/tree/master/";
   private String sourceRoot = DEFAULT_ROOT;
   
+  /**
+   * Create html notebook output.
+   *
+   * @param parentDirectory the parent directory
+   * @return the html notebook output
+   * @throws FileNotFoundException the file not found exception
+   */
   public static HtmlNotebookOutput create(File parentDirectory) throws FileNotFoundException {
     FileOutputStream out = new FileOutputStream(new File(parentDirectory, "index.html"));
     return new HtmlNotebookOutput(parentDirectory, out) {
@@ -53,18 +69,25 @@ public class HtmlNotebookOutput implements NotebookOutput {
       }
     };
   }
-
+  
+  /**
+   * Instantiates a new Html notebook output.
+   *
+   * @param parentDirectory the parent directory
+   * @param out             the out
+   * @throws FileNotFoundException the file not found exception
+   */
   public HtmlNotebookOutput(File parentDirectory, OutputStream out) throws FileNotFoundException {
     this.primaryOut = out;
     outs.add(new PrintStream(out));
     this.workingDir = parentDirectory;
     out("<html><head><style>\n" +
-            "pre {\n" +
-            "    background-color: lightyellow;\n" +
-            "    margin-left: 20pt;\n" +
-            "    font-family: monospace;\n" +
-            "}\n" +
-            "</style></head><body>");
+          "pre {\n" +
+          "    background-color: lightyellow;\n" +
+          "    margin-left: 20pt;\n" +
+          "    font-family: monospace;\n" +
+          "}\n" +
+          "</style></head><body>");
   }
   
   
@@ -77,6 +100,12 @@ public class HtmlNotebookOutput implements NotebookOutput {
     }
   }
   
+  /**
+   * Add copy notebook output.
+   *
+   * @param out the out
+   * @return the notebook output
+   */
   public NotebookOutput addCopy(PrintStream out) {
     outs.add(out);
     return this;
@@ -85,7 +114,7 @@ public class HtmlNotebookOutput implements NotebookOutput {
   @Override
   public void out(String fmt, Object... args) {
     String msg = 0 == args.length ? fmt : String.format(fmt, args);
-    outs.forEach(out->{
+    outs.forEach(out -> {
       out.println(msg);
       out.flush();
     });
@@ -127,10 +156,10 @@ public class HtmlNotebookOutput implements NotebookOutput {
       try {
         URI resolved = URI.create(sourceRoot).resolve(Util.pathTo(CodeUtil.projectRoot, CodeUtil.findFile(callingFrame)));
         out("<p>Code from <a href='%s#L%s'>%s:%s</a> executed in %.2f seconds: <br/>",
-            resolved, callingFrame.getLineNumber(), callingFrame.getFileName(), callingFrame.getLineNumber(), result.obj.seconds());
+          resolved, callingFrame.getLineNumber(), callingFrame.getFileName(), callingFrame.getLineNumber(), result.obj.seconds());
       } catch (Exception e) {
         out("<p>Code from %s:%s executed in %.2f seconds: <br/>",
-            callingFrame.getFileName(), callingFrame.getLineNumber(), result.obj.seconds());
+          callingFrame.getFileName(), callingFrame.getLineNumber(), result.obj.seconds());
       }
       out("<pre>");
       out(sourceCode);
@@ -142,7 +171,8 @@ public class HtmlNotebookOutput implements NotebookOutput {
         String logSrc = result.log;
         if (logSrc.length() > maxLog * 2) {
           logSrc = logSrc.substring(0, maxLog) + String.format("\n...skipping %s bytes...\n", logSrc.length() - 2 * maxLog) + logSrc.substring(logSrc.length() - maxLog);
-        } else if (logSrc.length() > 0) {
+        }
+        else if (logSrc.length() > 0) {
           logSrc = logSrc;
         }
         out(logSrc);
@@ -151,7 +181,7 @@ public class HtmlNotebookOutput implements NotebookOutput {
       out("");
       
       Object eval = result.obj.obj;
-      if(null != eval) {
+      if (null != eval) {
         out("Returns: <br/>");
         String str;
         boolean escape;
@@ -160,16 +190,20 @@ public class HtmlNotebookOutput implements NotebookOutput {
           ((Throwable) eval).printStackTrace(new PrintStream(out));
           str = new String(out.toByteArray(), "UTF-8");
           escape = true;//
-        } else if (eval instanceof Component) {
+        }
+        else if (eval instanceof Component) {
           str = image(Util.toImage((Component) eval), "Result");
           escape = false;
-        } else if (eval instanceof BufferedImage) {
+        }
+        else if (eval instanceof BufferedImage) {
           str = image((BufferedImage) eval, "Result");
           escape = false;
-        } else if (eval instanceof TableOutput) {
+        }
+        else if (eval instanceof TableOutput) {
           str = ((TableOutput) eval).toHtmlTable();
           escape = false;
-        } else {
+        }
+        else {
           str = eval.toString();
           escape = true;
         }
@@ -194,16 +228,17 @@ public class HtmlNotebookOutput implements NotebookOutput {
   
   @Override
   public String image(BufferedImage rawImage, String caption) throws IOException {
-    if(null == rawImage) return "";
+    if (null == rawImage) return "";
     ByteArrayOutputStream out = new ByteArrayOutputStream();
-    String thisImage = UUID.randomUUID().toString().substring(0,8);
+    String thisImage = UUID.randomUUID().toString().substring(0, 8);
     File file = new File(getResourceDir(), "img" + thisImage + ".png");
     ByteArrayOutputStream buffer = new ByteArrayOutputStream();
     ImageIO.write(rawImage, "png", buffer);
     String pngSrc = Base64.getEncoder().encodeToString(buffer.toByteArray());
-    if(pngSrc.length() < 4*1024) {
+    if (pngSrc.length() < 4 * 1024) {
       return "<img src='data:image/png;base64," + pngSrc + "' alt='" + caption + "'/>";
-    } else {
+    }
+    else {
       BufferedImage stdImage = Util.resize(rawImage);
       if (stdImage != rawImage) {
         ImageIO.write(rawImage, "png", new File(getResourceDir(), "raw" + thisImage + ".png"));
@@ -213,6 +248,11 @@ public class HtmlNotebookOutput implements NotebookOutput {
     }
   }
   
+  /**
+   * Gets resource dir.
+   *
+   * @return the resource dir
+   */
   public File getResourceDir() {
     File etc = new File(this.workingDir, "etc");
     etc.mkdirs();
@@ -222,13 +262,24 @@ public class HtmlNotebookOutput implements NotebookOutput {
   @Override
   public void close() throws IOException {
     out("</body></html>");
-    if(null != primaryOut) primaryOut.close();
+    if (null != primaryOut) primaryOut.close();
   }
   
+  /**
+   * Gets source root.
+   *
+   * @return the source root
+   */
   public String getSourceRoot() {
     return sourceRoot;
   }
   
+  /**
+   * Sets source root.
+   *
+   * @param sourceRoot the source root
+   * @return the source root
+   */
   public HtmlNotebookOutput setSourceRoot(String sourceRoot) {
     this.sourceRoot = sourceRoot;
     return this;

@@ -24,8 +24,14 @@ import com.simiacryptus.util.data.SerialType;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
+/**
+ * The type Node type.
+ */
 class NodeType implements SerialType<NodeData> {
 
+  /**
+   * The Instance.
+   */
   static NodeType INSTANCE = new NodeType();
 
   @Override

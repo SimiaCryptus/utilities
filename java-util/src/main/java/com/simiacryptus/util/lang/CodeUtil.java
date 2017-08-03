@@ -29,28 +29,59 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+/**
+ * The type Code util.
+ */
 public class CodeUtil {
-  public static File projectRoot = new File(System.getProperty("codeRoot","."));
+  /**
+   * The constant projectRoot.
+   */
+  public static File projectRoot = new File(System.getProperty("codeRoot", "."));
   private static List<File> codeRoots = Arrays.asList(
-      "src/main/java", "src/test/java", "src/main/scala", "src/test/scala"
+    "src/main/java", "src/test/java", "src/main/scala", "src/test/scala"
   ).stream().map(x -> new File(projectRoot, x)).collect(Collectors.toList());
-  
-  
+
+
+  /**
+   * Find file file.
+   *
+   * @param callingFrame the calling frame
+   * @return the file
+   */
   public static File findFile(StackTraceElement callingFrame) {
     return findFile(callingFrame.getClassName(), callingFrame.getFileName());
   }
-  
+
+  /**
+   * Find file file.
+   *
+   * @param className the class name
+   * @param fileName  the file name
+   * @return the file
+   */
   public static File findFile(String className, String fileName) {
     String[] packagePath = className.split("\\.");
     String path = Arrays.stream(packagePath).limit(packagePath.length - 1).collect(Collectors.joining(File.separator)) + File.separator + fileName;
     return findFile(path);
   }
-  
+
+  /**
+   * Gets indent.
+   *
+   * @param txt the txt
+   * @return the indent
+   */
   public static String getIndent(String txt) {
     Matcher matcher = Pattern.compile("^\\s+").matcher(txt);
     return matcher.find() ? matcher.group(0) : "";
   }
-  
+
+  /**
+   * Find file file.
+   *
+   * @param path the path
+   * @return the file
+   */
   public static File findFile(String path) {
     for (File root : codeRoots) {
       File file = new File(root, path);
@@ -58,7 +89,14 @@ public class CodeUtil {
     }
     throw new RuntimeException(String.format("Not Found: %s; Project Root = %s", path, projectRoot.getAbsolutePath()));
   }
-  
+
+  /**
+   * Gets inner text.
+   *
+   * @param callingFrame the calling frame
+   * @return the inner text
+   * @throws IOException the io exception
+   */
   public static String getInnerText(StackTraceElement callingFrame) throws IOException {
     try {
       File file = findFile(callingFrame);

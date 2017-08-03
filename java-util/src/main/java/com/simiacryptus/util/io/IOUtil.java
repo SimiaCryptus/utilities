@@ -36,6 +36,9 @@ import java.io.StringWriter;
 import java.nio.file.Files;
 import java.util.Arrays;
 
+/**
+ * The type Io util.
+ */
 public class IOUtil {
   private final static ObjectMapper objectMapper = new ObjectMapper().enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL);
   private static final ThreadLocal<Kryo> kryo = new ThreadLocal<Kryo>() {
@@ -51,6 +54,13 @@ public class IOUtil {
     }
   };
   
+  /**
+   * Write json.
+   *
+   * @param <T>  the type parameter
+   * @param obj  the obj
+   * @param file the file
+   */
   public static <T> void writeJson(T obj, File file) {
     StringWriter writer = new StringWriter();
     try {
@@ -61,6 +71,13 @@ public class IOUtil {
     }
   }
   
+  /**
+   * Read json t.
+   *
+   * @param <T>  the type parameter
+   * @param file the file
+   * @return the t
+   */
   public static <T> T readJson(File file) {
     try {
       return objectMapper.readValue(new String(Files.readAllBytes(file.toPath())), new TypeReference<T>() {
@@ -70,6 +87,13 @@ public class IOUtil {
     }
   }
   
+  /**
+   * Write kryo.
+   *
+   * @param <T>  the type parameter
+   * @param obj  the obj
+   * @param file the file
+   */
   public static <T> void writeKryo(T obj, OutputStream file) {
     try {
       Output output = new Output(buffer.get());
@@ -82,6 +106,12 @@ public class IOUtil {
     }
   }
   
+  /**
+   * Write string.
+   *
+   * @param obj  the obj
+   * @param file the file
+   */
   public static void writeString(String obj, OutputStream file) {
     try {
       IOUtils.write(obj.getBytes("UTF-8"), file);
@@ -91,6 +121,13 @@ public class IOUtil {
     }
   }
   
+  /**
+   * Read kryo t.
+   *
+   * @param <T>  the type parameter
+   * @param file the file
+   * @return the t
+   */
   public static <T> T readKryo(File file) {
     try {
       byte[] bytes = CompressionUtil.decodeBZRaw(Files.readAllBytes(file.toPath()));

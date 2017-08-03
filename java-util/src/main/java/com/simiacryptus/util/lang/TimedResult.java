@@ -21,21 +21,50 @@ package com.simiacryptus.util.lang;
 
 import java.util.function.Supplier;
 
+/**
+ * The type Timed result.
+ *
+ * @param <T> the type parameter
+ */
 public class TimedResult<T> {
+  /**
+   * The Obj.
+   */
   public final T obj;
+  /**
+   * The Time nanos.
+   */
   public final long timeNanos;
-  
+
+  /**
+   * Instantiates a new Timed result.
+   *
+   * @param obj       the obj
+   * @param timeNanos the time nanos
+   */
   public TimedResult(T obj, long timeNanos) {
     this.obj = obj;
     this.timeNanos = timeNanos;
   }
-  
+
+  /**
+   * Time timed result.
+   *
+   * @param <T> the type parameter
+   * @param fn  the fn
+   * @return the timed result
+   */
   public static <T> TimedResult<T> time(Supplier<T> fn) {
     long start = System.nanoTime();
     T result = fn.get();
     return new TimedResult(result, System.nanoTime() - start);
   }
-  
+
+  /**
+   * Seconds double.
+   *
+   * @return the double
+   */
   public double seconds() {
     return timeNanos / 1000000000.0;
   }

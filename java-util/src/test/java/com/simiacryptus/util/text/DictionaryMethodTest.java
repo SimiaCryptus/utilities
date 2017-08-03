@@ -30,8 +30,16 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * The type Dictionary method test.
+ */
 public class DictionaryMethodTest {
 
+  /**
+   * Dictionaries tweets.
+   *
+   * @throws Exception the exception
+   */
   @Test
   @Category(TestCategories.Report.class)
   public void dictionariesTweets() throws Exception {
@@ -43,6 +51,11 @@ public class DictionaryMethodTest {
     }
   }
 
+  /**
+   * Dictionaries shakespeare.
+   *
+   * @throws Exception the exception
+   */
   @Test
   @Category(TestCategories.Report.class)
   public void dictionariesShakespeare() throws Exception {
@@ -54,6 +67,11 @@ public class DictionaryMethodTest {
     }
   }
 
+  /**
+   * Dictionaries wiki.
+   *
+   * @throws Exception the exception
+   */
   @Test
   @Category(TestCategories.Report.class)
   public void dictionariesWiki() throws Exception {
@@ -82,11 +100,11 @@ public class DictionaryMethodTest {
 
   private void addWordCountCompressor(NotebookOutput log, Map<String, Compressor> compressors, List<? extends TestDocument> content) {
     Map<String, Long> wordCounts = content.stream().flatMap(c -> Arrays.stream(c.getText().replaceAll("[^\\w\\s]", "").split(" +")))
-                                       .map(s -> s.trim()).filter(s -> !s.isEmpty()).collect(Collectors.groupingBy(x -> x, Collectors.counting()));
+                                     .map(s -> s.trim()).filter(s -> !s.isEmpty()).collect(Collectors.groupingBy(x -> x, Collectors.counting()));
     String dictionary = wordCounts.entrySet().stream()
-                            .sorted(Comparator.<Map.Entry<String, Long>>comparingLong(e -> -e.getValue())
-                                        .thenComparing(Comparator.<Map.Entry<String, Long>>comparingLong(e -> -e.getKey().length())))
-                            .map(x -> x.getKey()).reduce((a, b) -> a + " " + b).get().substring(0, 8 * 1024);
+                          .sorted(Comparator.<Map.Entry<String, Long>>comparingLong(e -> -e.getValue())
+                                    .thenComparing(Comparator.<Map.Entry<String, Long>>comparingLong(e -> -e.getKey().length())))
+                          .map(x -> x.getKey()).reduce((a, b) -> a + " " + b).get().substring(0, 8 * 1024);
     String key = "LZ8k_commonWords";
     int dictSampleSize = 512;
     log.p("Common Words Dictionary %s: %s...\n", key, dictionary.length() > dictSampleSize ? (dictionary.substring(0, dictSampleSize) + "...") : dictionary);

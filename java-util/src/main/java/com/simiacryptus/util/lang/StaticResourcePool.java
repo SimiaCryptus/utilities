@@ -19,58 +19,50 @@
 
 package com.simiacryptus.util.lang;
 
+import java.util.List;
+import java.util.function.Function;
+
 /**
- * The type Resource pool.
+ * The type Static resource pool.
  *
  * @param <T> the type parameter
  */
-public abstract class ResourcePool<T> {
+public class StaticResourcePool<T> {
   
-  private final java.util.HashSet<T> all;
+  private final java.util.List<T> all;
   private final java.util.concurrent.LinkedBlockingQueue<T> pool = new java.util.concurrent.LinkedBlockingQueue<>();
   private final int maxItems;
   
   /**
-   * Instantiates a new Resource pool.
+   * Instantiates a new Static resource pool.
    *
-   * @param maxItems the max items
+   * @param items the items
    */
-  public ResourcePool(int maxItems) {
+  public StaticResourcePool(List<T> items) {
     super();
-    this.maxItems = maxItems;
-    this.all = new java.util.HashSet<>(this.maxItems);
+    this.maxItems = items.size();
+    this.all = items;
+    pool.addAll(all);
   }
   
   /**
-   * Create t.
+   * With u.
    *
-   * @return the t
+   * @param <U> the type parameter
+   * @param f   the f
+   * @return the u
    */
-  public abstract T create();
-  
-  /**
-   * With.
-   *
-   * @param f the f
-   */
-  public void with(final java.util.function.Consumer<T> f) {
+  public <U> U with(final Function<T, U> f) {
     T poll = this.pool.poll();
-    if (null == poll) {
-      synchronized (this.all) {
-        if (this.all.size() < this.maxItems) {
-          poll = create();
-          this.all.add(poll);
-        }
-      }
-    }
     if (null == poll) {
       try {
         poll = this.pool.take();
       } catch (final InterruptedException e) {
-        throw new java.lang.RuntimeException(e);
+        throw new RuntimeException(e);
       }
     }
-    f.accept(poll);
+    U result = f.apply(poll);
     this.pool.add(poll);
+    return result;
   }
 }

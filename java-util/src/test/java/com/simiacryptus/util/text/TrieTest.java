@@ -37,10 +37,25 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+/**
+ * The type Trie test.
+ */
 public class TrieTest {
+  /**
+   * The constant outPath.
+   */
   public static final File outPath = new File("src/site/resources/");
+  /**
+   * The constant outBaseUrl.
+   */
   public static final URL outBaseUrl = getUrl("https://simiacryptus.github.io/utilities/java-util/");
 
+  /**
+   * Gets url.
+   *
+   * @param url the url
+   * @return the url
+   */
   public static URL getUrl(String url) {
     try {
       return new URL(url);
@@ -56,8 +71,8 @@ public class TrieTest {
     tree.index(maxLevels, minWeight);
     long elapsed = System.currentTimeMillis() - startTime;
     System.out.println(
-        String.format("%s\t%s\t%s KB\t%s sec\t%s KB\t%s KB", maxLevels, minWeight, tree.getIndexedSize() / 1024,
-            elapsed / 1000., tree.getMemorySize() / 1024, tree.truncate().getMemorySize() / 1024));
+      String.format("%s\t%s\t%s KB\t%s sec\t%s KB\t%s KB", maxLevels, minWeight, tree.getIndexedSize() / 1024,
+        elapsed / 1000., tree.getMemorySize() / 1024, tree.truncate().getMemorySize() / 1024));
   }
 
   static private Map<String, Object> evaluateDictionary(List<String> sentances, String dictionary, Map<String, Object> map) {
@@ -74,6 +89,11 @@ public class TrieTest {
     return map;
   }
 
+  /**
+   * Test functionality.
+   *
+   * @throws IOException the io exception
+   */
   @Test
   @Category(TestCategories.UnitTest.class)
   public void testFunctionality() throws IOException {
@@ -97,6 +117,11 @@ public class TrieTest {
     Assert.assertEquals(1, tree.traverse("a quick").getCursorCount());
   }
 
+  /**
+   * Test performance.
+   *
+   * @throws IOException the io exception
+   */
   @Test
   @Category(TestCategories.UnitTest.class)
   public void testPerformance() throws IOException {
@@ -108,6 +133,11 @@ public class TrieTest {
     System.out.println(String.format("tree.truncate.getMemorySize = %s", tree.truncate().getMemorySize()));
   }
 
+  /**
+   * Test performance matrix.
+   *
+   * @throws IOException the io exception
+   */
   @Test
   @Category(TestCategories.UnitTest.class)
   public void testPerformanceMatrix() throws IOException {
@@ -115,13 +145,18 @@ public class TrieTest {
       for (int maxLevels = 1; maxLevels < 64; maxLevels = Math.max((int) (maxLevels * 4), maxLevels + 1)) {
         for (int minWeight = 1; minWeight < 64; minWeight *= 4) {
           testRow(maxLevels, minWeight,
-              IntStream.range(0, count).parallel().mapToObj(i -> UUID.randomUUID().toString()));
+            IntStream.range(0, count).parallel().mapToObj(i -> UUID.randomUUID().toString()));
         }
       }
     }
 
   }
 
+  /**
+   * Test dictionary generation meta parameters.
+   *
+   * @throws IOException the io exception
+   */
   @Test
   @Ignore
   @Category(TestCategories.ResearchCode.class)
@@ -132,19 +167,19 @@ public class TrieTest {
       content = scanner.useDelimiter("\\Z").next().replaceAll("[ \n\r\t]+", " ");
     }
     List<String> sentances = Arrays.stream(content.split("\\.+")).map(line -> line.trim() + ".")
-                                 .filter(line -> line.length() > 12).collect(Collectors.toList());
+                               .filter(line -> line.length() > 12).collect(Collectors.toList());
 
     int size = 32 * 1024;
     int sampleLength = 80;
 
     Map<String, Long> wordCounts = Arrays.stream(content.replaceAll("[^\\w\\s]", "").split(" +")).map(s -> s.trim())
-                                       .filter(s -> !s.isEmpty()).collect(Collectors.groupingBy(x -> x, Collectors.counting()));
+                                     .filter(s -> !s.isEmpty()).collect(Collectors.groupingBy(x -> x, Collectors.counting()));
 
     {
       String commonTerms = wordCounts.entrySet().stream()
-                               .sorted(Comparator.<Map.Entry<String, Long>>comparingLong(e -> -e.getValue())
-                                           .thenComparing(Comparator.<Map.Entry<String, Long>>comparingLong(e -> -e.getKey().length())))
-                               .map(x -> x.getKey()).reduce((a, b) -> a + " " + b).get().substring(0, size);
+                             .sorted(Comparator.<Map.Entry<String, Long>>comparingLong(e -> -e.getValue())
+                                       .thenComparing(Comparator.<Map.Entry<String, Long>>comparingLong(e -> -e.getKey().length())))
+                             .map(x -> x.getKey()).reduce((a, b) -> a + " " + b).get().substring(0, size);
       Map<String, Object> map = new LinkedHashMap<>();
       map.put("type", "CommonTerm");
       evaluateDictionary(sentances, commonTerms, map);
@@ -158,10 +193,10 @@ public class TrieTest {
     for (int encodingPenalty = -4; encodingPenalty < 4; encodingPenalty++) {
       int _encodingPenalty = encodingPenalty;
       String meritTerms = wordCounts.entrySet().stream()
-                              .sorted(Comparator.<Map.Entry<String, Long>>comparingLong(
-                                  e -> -e.getValue() * (e.getKey().length() - _encodingPenalty))
-                                          .thenComparing(Comparator.<Map.Entry<String, Long>>comparingLong(e -> -e.getKey().length())))
-                              .map(x -> x.getKey()).reduce((a, b) -> a + " " + b).get().substring(0, size);
+                            .sorted(Comparator.<Map.Entry<String, Long>>comparingLong(
+                              e -> -e.getValue() * (e.getKey().length() - _encodingPenalty))
+                                      .thenComparing(Comparator.<Map.Entry<String, Long>>comparingLong(e -> -e.getKey().length())))
+                            .map(x -> x.getKey()).reduce((a, b) -> a + " " + b).get().substring(0, size);
       Map<String, Object> map = new LinkedHashMap<>();
       map.put("type", "MeritTerm");
       map.put("encodingPenalty", encodingPenalty);
@@ -175,9 +210,9 @@ public class TrieTest {
 
     {
       String uncommonTerms = wordCounts.entrySet().stream()
-                                 .sorted(Comparator.<Map.Entry<String, Long>>comparingLong(e -> e.getValue())
-                                             .thenComparing(Comparator.<Map.Entry<String, Long>>comparingLong(e -> e.getKey().length())))
-                                 .map(x -> x.getKey()).reduce((a, b) -> a + " " + b).get().substring(0, size);
+                               .sorted(Comparator.<Map.Entry<String, Long>>comparingLong(e -> e.getValue())
+                                         .thenComparing(Comparator.<Map.Entry<String, Long>>comparingLong(e -> e.getKey().length())))
+                               .map(x -> x.getKey()).reduce((a, b) -> a + " " + b).get().substring(0, size);
       Map<String, Object> map = new LinkedHashMap<>();
       map.put("type", "UncommonTerm,");
       evaluateDictionary(sentances, uncommonTerms, map);
@@ -255,6 +290,11 @@ public class TrieTest {
     output = new TableOutput();
   }
 
+  /**
+   * Test model metric.
+   *
+   * @throws IOException the io exception
+   */
   @Test
   @Ignore
   @Category(TestCategories.ResearchCode.class)
@@ -262,11 +302,11 @@ public class TrieTest {
     Map<String, String> content = new HashMap<>();
     for (String name : Arrays.asList("earthtomoon.txt", "20000leagues.txt", "macbeth.txt", "randj.txt")) {
       content.put(name, new Scanner(getClass().getClassLoader().getResourceAsStream(name)).useDelimiter("\\Z").next()
-                            .replaceAll("[ \n\r\t]+", " "));
+                          .replaceAll("[ \n\r\t]+", " "));
     }
 
     String characterSet = content.values().stream().flatMapToInt(s -> s.chars()).distinct()
-                              .mapToObj(c -> new String(Character.toChars(c))).sorted().collect(Collectors.joining(""));
+                            .mapToObj(c -> new String(Character.toChars(c))).sorted().collect(Collectors.joining(""));
     System.out.println("Character Set:" + characterSet);
     int maxLevels = 5;
     int minWeight = 1;
@@ -284,7 +324,7 @@ public class TrieTest {
       trees.put(e.getKey(), tree);
       dictionaries.put(e.getKey(), tree.copy().getGenerator().generateDictionary(16 * 1024, 5, "", 1, true));
       System.out.println(
-          String.format("Indexing %s; \ntree.getIndexedSize = %s KB", e.getKey(), tree.getIndexedSize() / 1024));
+        String.format("Indexing %s; \ntree.getIndexedSize = %s KB", e.getKey(), tree.getIndexedSize() / 1024));
       System.out.println(String.format("tree.getMemorySize = %s KB", tree.getMemorySize() / 1024));
     }
     long elapsed = System.currentTimeMillis() - startTime;
@@ -307,6 +347,11 @@ public class TrieTest {
 
   }
 
+  /**
+   * Calc wiki coords.
+   *
+   * @throws Exception the exception
+   */
   @Test
   @Ignore
   @Category(TestCategories.ResearchCode.class)
@@ -322,54 +367,59 @@ public class TrieTest {
     double selectivity = 0.1;
 
     Map<String, String> articles = WikiArticle.ENGLISH.stream().filter(x -> x.getText().length() > minArticleLength)
-                                       .filter(x -> selectivity > Math.random()).limit(Math.max(articleCount, dictionaryCount))
-                                       .collect(Collectors.toMap(d -> d.getTitle(), d -> d.getText()));
+                                     .filter(x -> selectivity > Math.random()).limit(Math.max(articleCount, dictionaryCount))
+                                     .collect(Collectors.toMap(d -> d.getTitle(), d -> d.getText()));
 
     String characterSet = articles.values().stream().flatMapToInt(s -> s.chars()).distinct()
-                              .mapToObj(c -> new String(Character.toChars(c))).sorted().collect(Collectors.joining(""));
+                            .mapToObj(c -> new String(Character.toChars(c))).sorted().collect(Collectors.joining(""));
     System.out.println("Character Set:" + characterSet);
 
     Stream<Map.Entry<String, String>> stream = articles.entrySet().stream().limit(dictionaryCount);
     Map<String, CharTrie> models = stream
-                                       .collect(Collectors.toMap((Map.Entry<String, String> d) -> d.getKey(), (Map.Entry<String, String> d) -> {
-                                         String article = d.getValue();
-                                         String title = d.getKey();
-                                         CharTrieIndex tree = new CharTrieIndex();
-                                         tree.addDocument(characterSet);
-                                         tree.addDocument(article);
-                                         tree.index(maxLevels, minWeight).truncate();
-                                         System.out.println(
-                                             String.format("Indexing %s; \ntree.getIndexedSize = %s KB", title, tree.getIndexedSize() / 1024));
-                                         System.out.println(String.format("tree.getMemorySize = %s KB", tree.getMemorySize() / 1024));
-                                         return tree;
-                                       }));
+                                     .collect(Collectors.toMap((Map.Entry<String, String> d) -> d.getKey(), (Map.Entry<String, String> d) -> {
+                                       String article = d.getValue();
+                                       String title = d.getKey();
+                                       CharTrieIndex tree = new CharTrieIndex();
+                                       tree.addDocument(characterSet);
+                                       tree.addDocument(article);
+                                       tree.index(maxLevels, minWeight).truncate();
+                                       System.out.println(
+                                         String.format("Indexing %s; \ntree.getIndexedSize = %s KB", title, tree.getIndexedSize() / 1024));
+                                       System.out.println(String.format("tree.getMemorySize = %s KB", tree.getMemorySize() / 1024));
+                                       return tree;
+                                     }));
     Map<String, String> dictionaries = models.entrySet().stream()
-                                           .collect(Collectors.toMap((Map.Entry<String, CharTrie> d) -> d.getKey(), (Map.Entry<String, CharTrie> d) -> {
-                                             return d.getValue().copy().getGenerator().generateDictionary(dictionaryLength, 5, "", 1, true);
-                                           }));
+                                         .collect(Collectors.toMap((Map.Entry<String, CharTrie> d) -> d.getKey(), (Map.Entry<String, CharTrie> d) -> {
+                                           return d.getValue().copy().getGenerator().generateDictionary(dictionaryLength, 5, "", 1, true);
+                                         }));
 
     TableOutput output = new TableOutput();
     articles.entrySet().stream().limit(articleCount).collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue()))
-        .forEach((dataTitle, article) -> {
-          HashMap<String, Object> map = new LinkedHashMap<>();
-          map.put("dataTitle", dataTitle);
-          dictionaries.forEach((modelTitle, dictionary) -> {
-            int sumA = IntStream.range(0, article.length() / chunkSize)
-                           .mapToObj(i -> article.substring(i * chunkSize, Math.min(article.length(), (i + 1) * chunkSize)))
-                           .mapToInt(chunk -> CompressionUtil.encodeLZ(chunk, "").length).sum();
-            int sumB = IntStream.range(0, article.length() / chunkSize)
-                           .mapToObj(i -> article.substring(i * chunkSize, Math.min(article.length(), (i + 1) * chunkSize)))
-                           .mapToInt(chunk -> CompressionUtil.encodeLZ(chunk, dictionary).length).sum();
-            double bytes = (sumA - sumB) * 1.0 / sumA;
-            map.put(modelTitle.replaceAll("[^01-9a-zA-Z]", "_"), bytes);
-          });
-          output.putRow(map);
+      .forEach((dataTitle, article) -> {
+        HashMap<String, Object> map = new LinkedHashMap<>();
+        map.put("dataTitle", dataTitle);
+        dictionaries.forEach((modelTitle, dictionary) -> {
+          int sumA = IntStream.range(0, article.length() / chunkSize)
+                       .mapToObj(i -> article.substring(i * chunkSize, Math.min(article.length(), (i + 1) * chunkSize)))
+                       .mapToInt(chunk -> CompressionUtil.encodeLZ(chunk, "").length).sum();
+          int sumB = IntStream.range(0, article.length() / chunkSize)
+                       .mapToObj(i -> article.substring(i * chunkSize, Math.min(article.length(), (i + 1) * chunkSize)))
+                       .mapToInt(chunk -> CompressionUtil.encodeLZ(chunk, dictionary).length).sum();
+          double bytes = (sumA - sumB) * 1.0 / sumA;
+          map.put(modelTitle.replaceAll("[^01-9a-zA-Z]", "_"), bytes);
         });
+        output.putRow(map);
+      });
     System.out.println(output.toTextTable());
     String outputDirName = "wikiTopics/";
     output.writeProjectorData(new File(outPath, outputDirName), new URL(outBaseUrl, outputDirName));
   }
 
+  /**
+   * Calc tweet vectors.
+   *
+   * @throws Exception the exception
+   */
   @Test
   @Ignore
   @Category(TestCategories.ResearchCode.class)
@@ -385,28 +435,28 @@ public class TrieTest {
     double selectivity = 0.1;
 
     List<String> articles = TweetSentiment.load().filter(x -> x.getText().length() > minArticleLength)
-                                .filter(x -> selectivity > Math.random()).limit(Math.max(articleCount, dictionaryCount)).map(t -> t.getText())
-                                .collect(Collectors.toList());
+                              .filter(x -> selectivity > Math.random()).limit(Math.max(articleCount, dictionaryCount)).map(t -> t.getText())
+                              .collect(Collectors.toList());
 
     String characterSet = articles.stream().flatMapToInt(s -> s.chars()).distinct()
-                              .mapToObj(c -> new String(Character.toChars(c))).sorted().collect(Collectors.joining(""));
+                            .mapToObj(c -> new String(Character.toChars(c))).sorted().collect(Collectors.joining(""));
     System.out.println("Character Set:" + characterSet);
 
     Map<String, CharTrie> models = articles.stream().limit(dictionaryCount)
-                                       .collect(Collectors.toMap((String d) -> d, (String text) -> {
-                                         CharTrieIndex tree = new CharTrieIndex();
-                                         tree.addDocument(characterSet);
-                                         tree.addDocument(text);
-                                         tree.index(maxLevels, minWeight).truncate();
-                                         System.out
-                                             .println(String.format("Indexing %s; \ntree.getIndexedSize = %s KB", text, tree.getIndexedSize() / 1024));
-                                         System.out.println(String.format("tree.getMemorySize = %s KB", tree.getMemorySize() / 1024));
-                                         return tree;
-                                       }));
+                                     .collect(Collectors.toMap((String d) -> d, (String text) -> {
+                                       CharTrieIndex tree = new CharTrieIndex();
+                                       tree.addDocument(characterSet);
+                                       tree.addDocument(text);
+                                       tree.index(maxLevels, minWeight).truncate();
+                                       System.out
+                                         .println(String.format("Indexing %s; \ntree.getIndexedSize = %s KB", text, tree.getIndexedSize() / 1024));
+                                       System.out.println(String.format("tree.getMemorySize = %s KB", tree.getMemorySize() / 1024));
+                                       return tree;
+                                     }));
     Map<String, String> dictionaries = models.entrySet().stream()
-                                           .collect(Collectors.toMap((Map.Entry<String, CharTrie> d) -> d.getKey(), (Map.Entry<String, CharTrie> d) -> {
-                                             return d.getValue().copy().getGenerator().generateDictionary(dictionaryLength, 5, "", 1, true);
-                                           }));
+                                         .collect(Collectors.toMap((Map.Entry<String, CharTrie> d) -> d.getKey(), (Map.Entry<String, CharTrie> d) -> {
+                                           return d.getValue().copy().getGenerator().generateDictionary(dictionaryLength, 5, "", 1, true);
+                                         }));
 
     TableOutput output = new TableOutput();
     articles.stream().limit(articleCount).collect(Collectors.toList()).forEach((text) -> {
@@ -414,11 +464,11 @@ public class TrieTest {
       map.put("text", text);
       dictionaries.forEach((modelTitle, dictionary) -> {
         int sumA = IntStream.range(0, text.length() / chunkSize)
-                       .mapToObj(i -> text.substring(i * chunkSize, Math.min(text.length(), (i + 1) * chunkSize)))
-                       .mapToInt(chunk -> CompressionUtil.encodeLZ(chunk, "").length).sum();
+                     .mapToObj(i -> text.substring(i * chunkSize, Math.min(text.length(), (i + 1) * chunkSize)))
+                     .mapToInt(chunk -> CompressionUtil.encodeLZ(chunk, "").length).sum();
         int sumB = IntStream.range(0, text.length() / chunkSize)
-                       .mapToObj(i -> text.substring(i * chunkSize, Math.min(text.length(), (i + 1) * chunkSize)))
-                       .mapToInt(chunk -> CompressionUtil.encodeLZ(chunk, dictionary).length).sum();
+                     .mapToObj(i -> text.substring(i * chunkSize, Math.min(text.length(), (i + 1) * chunkSize)))
+                     .mapToInt(chunk -> CompressionUtil.encodeLZ(chunk, dictionary).length).sum();
         double bytes = (sumA - sumB) * 1.0 / sumA;
         map.put(Integer.toHexString(modelTitle.hashCode()), bytes);
       });
@@ -429,6 +479,11 @@ public class TrieTest {
     output.writeProjectorData(new File(outPath, outputDirName), new URL(outBaseUrl, outputDirName));
   }
 
+  /**
+   * Test tweet generation.
+   *
+   * @throws Exception the exception
+   */
   @Test
   @Ignore
   @Category(TestCategories.ResearchCode.class)
@@ -442,17 +497,17 @@ public class TrieTest {
 
     CharTrieIndex tree_good = new CharTrieIndex();
     TweetSentiment.load().filter(x -> x.category == 1).limit(modelCount).map(t -> t.getText())
-        .forEach(txt -> tree_good.addDocument(">>>" + txt));
+      .forEach(txt -> tree_good.addDocument(">>>" + txt));
     System.out.println(String.format("Indexing %s positive tweets; \ntree.getIndexedSize = %s KB", modelCount,
-        tree_good.getIndexedSize() / 1024));
+      tree_good.getIndexedSize() / 1024));
     tree_good.index(maxLevels, minWeight).truncate();
     System.out.println(String.format("tree.getMemorySize = %s KB", tree_good.getMemorySize() / 1024));
 
     CharTrieIndex tree_bad = new CharTrieIndex();
     TweetSentiment.load().filter(x -> x.category == 0).limit(modelCount).map(t -> t.getText())
-        .forEach(txt -> tree_bad.addDocument(">>>" + txt));
+      .forEach(txt -> tree_bad.addDocument(">>>" + txt));
     System.out.println(String.format("Indexing %s negative tweets; \ntree.getIndexedSize = %s KB", modelCount,
-        tree_bad.getIndexedSize() / 1024));
+      tree_bad.getIndexedSize() / 1024));
     tree_bad.index(maxLevels, minWeight).truncate();
     System.out.println(String.format("tree.getMemorySize = %s KB", tree_bad.getMemorySize() / 1024));
 
@@ -470,21 +525,26 @@ public class TrieTest {
     System.out.println(output.toTextTable());
   }
 
+  /**
+   * Calc sentence coords.
+   *
+   * @throws IOException the io exception
+   */
   @Test
   @Ignore
   public void calcSentenceCoords() throws IOException {
     Map<String, String> content = new HashMap<>();
     for (String name : Arrays.asList("earthtomoon.txt", "20000leagues.txt", "macbeth.txt", "randj.txt")) {
       content.put(name, new Scanner(getClass().getClassLoader().getResourceAsStream(name)).useDelimiter("\\Z").next()
-                            .replaceAll("[ \n\r\t]+", " "));
+                          .replaceAll("[ \n\r\t]+", " "));
     }
     String allContent = content.values().stream().collect(Collectors.joining("\n"));
     List<String> sentances = Arrays.stream(allContent.split("\\.+")).map(line -> line.trim() + ".")
-                                 .filter(line -> line.length() > 12).collect(Collectors.toList());
+                               .filter(line -> line.length() > 12).collect(Collectors.toList());
     Collections.shuffle(sentances);
 
     String characterSet = content.values().stream().flatMapToInt(s -> s.chars()).distinct()
-                              .mapToObj(c -> new String(Character.toChars(c))).sorted().collect(Collectors.joining(""));
+                            .mapToObj(c -> new String(Character.toChars(c))).sorted().collect(Collectors.joining(""));
     System.out.println("Character Set:" + characterSet);
 
     int maxLevels = 7;
@@ -502,7 +562,7 @@ public class TrieTest {
       trees.put(e.getKey(), tree);
       dictionaries.put(e.getKey(), tree.copy().getGenerator().generateDictionary(16 * 1024, 5, "", 1, true));
       System.out.println(
-          String.format("Indexing %s; \ntree.getIndexedSize = %s KB", e.getKey(), tree.getIndexedSize() / 1024));
+        String.format("Indexing %s; \ntree.getIndexedSize = %s KB", e.getKey(), tree.getIndexedSize() / 1024));
       System.out.println(String.format("tree.getMemorySize = %s KB", tree.getMemorySize() / 1024));
     }
     long elapsed = System.currentTimeMillis() - startTime;

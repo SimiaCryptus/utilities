@@ -21,7 +21,9 @@ package com.simiacryptus.util.text;
 
 import com.simiacryptus.util.io.MarkdownNotebookOutput;
 import com.simiacryptus.util.io.NotebookOutput;
-import com.simiacryptus.util.test.*;
+import com.simiacryptus.util.test.EnglishWords;
+import com.simiacryptus.util.test.TestCategories;
+import com.simiacryptus.util.test.TestDocument;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -30,15 +32,34 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Stream;
 
+/**
+ * The type Term meta test.
+ */
 public class TermMetaTest {
+  /**
+   * The Test count.
+   */
   int testCount = 1000;
+  /**
+   * The Model count.
+   */
   int modelCount = 15000;
-
+  
+  /**
+   * Source stream.
+   *
+   * @return the stream
+   */
   protected Stream<? extends TestDocument> source() {
     return EnglishWords.load().limit(modelCount + testCount);
   }
-
-
+  
+  
+  /**
+   * Calc compressor ppm.
+   *
+   * @throws Exception the exception
+   */
   @Test
   @Category(TestCategories.Report.class)
   public void calcCompressorPPM() throws Exception {
@@ -50,9 +71,9 @@ public class TermMetaTest {
       baseTree.addDocument(txt.getText());
     });
     log.p("Indexing %s KB of documents", baseTree.getIndexedSize() / 1024);
-
+    
     Map<String, Compressor> compressors = new LinkedHashMap<>();
-
+    
     int model_minPathWeight = 1;
     for (int ppmModelDepth : Arrays.asList(8, 9, 10, 11, 12)) {
       for (int encodingContext : Arrays.asList(0, 1, 2, 3, 4, 5)) {
@@ -61,7 +82,7 @@ public class TermMetaTest {
         compressors.put(name, Compressor.buildPPMCompressor(ppmTree, encodingContext));
       }
     }
-
+    
     TableOutput output = Compressor.evalCompressor(source().skip(modelCount), compressors, true);
     //log.p(output.toTextTable());
     log.p(output.calcNumberStats().toTextTable());

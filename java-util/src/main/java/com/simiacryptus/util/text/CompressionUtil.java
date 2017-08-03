@@ -33,9 +33,22 @@ import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
 
+/**
+ * The type Compression util.
+ */
 public class CompressionUtil {
+  /**
+   * The constant random.
+   */
   public static final Random random = new Random();
-
+  
+  /**
+   * Encode lz byte [ ].
+   *
+   * @param data       the data
+   * @param dictionary the dictionary
+   * @return the byte [ ]
+   */
   public static byte[] encodeLZ(String data, String dictionary) {
     byte[] asBytes = new byte[0];
     try {
@@ -45,11 +58,24 @@ public class CompressionUtil {
     }
     return encodeLZ(asBytes, dictionary);
   }
-
+  
+  /**
+   * Encode lz byte [ ].
+   *
+   * @param bytes the bytes
+   * @return the byte [ ]
+   */
   public static byte[] encodeLZ(byte[] bytes) {
     return encodeLZ(bytes, "");
   }
-
+  
+  /**
+   * Encode lz byte [ ].
+   *
+   * @param bytes      the bytes
+   * @param dictionary the dictionary
+   * @return the byte [ ]
+   */
   public static byte[] encodeLZ(byte[] bytes, String dictionary) {
     byte[] output = new byte[(int) (bytes.length * 1.05 + 32)];
     Deflater compresser = new Deflater();
@@ -67,7 +93,14 @@ public class CompressionUtil {
     compresser.end();
     return Arrays.copyOf(output, compressedDataLength);
   }
-
+  
+  /**
+   * Decode lz byte [ ].
+   *
+   * @param data       the data
+   * @param dictionary the dictionary
+   * @return the byte [ ]
+   */
   public static byte[] decodeLZ(byte[] data, String dictionary) {
     try {
       Inflater decompresser = new Inflater();
@@ -89,11 +122,24 @@ public class CompressionUtil {
       throw new RuntimeException(e);
     }
   }
-
+  
+  /**
+   * Encode lz byte [ ].
+   *
+   * @param data the data
+   * @return the byte [ ]
+   */
   public static byte[] encodeLZ(String data) {
     return encodeLZ(data, "");
   }
-
+  
+  /**
+   * Decode lz to string string.
+   *
+   * @param data       the data
+   * @param dictionary the dictionary
+   * @return the string
+   */
   public static String decodeLZToString(byte[] data, String dictionary) {
     try {
       return new String(decodeLZ(data), "UTF-8");
@@ -101,7 +147,13 @@ public class CompressionUtil {
       throw new RuntimeException(e);
     }
   }
-
+  
+  /**
+   * Decode lz to string string.
+   *
+   * @param data the data
+   * @return the string
+   */
   public static String decodeLZToString(byte[] data) {
     try {
       return new String(decodeLZ(data), "UTF-8");
@@ -109,11 +161,23 @@ public class CompressionUtil {
       throw new RuntimeException(e);
     }
   }
-
+  
+  /**
+   * Decode lz byte [ ].
+   *
+   * @param data the data
+   * @return the byte [ ]
+   */
   public static byte[] decodeLZ(byte[] data) {
     return decodeLZ(data, "");
   }
-
+  
+  /**
+   * Decode bz string.
+   *
+   * @param data the data
+   * @return the string
+   */
   public static String decodeBZ(byte[] data) {
     try {
       return new String(decodeBZRaw(data), "UTF-8");
@@ -121,7 +185,13 @@ public class CompressionUtil {
       throw new RuntimeException(e);
     }
   }
-
+  
+  /**
+   * Decode bz raw byte [ ].
+   *
+   * @param data the data
+   * @return the byte [ ]
+   */
   public static byte[] decodeBZRaw(byte[] data) {
     try {
       ByteArrayInputStream output = new ByteArrayInputStream(data);
@@ -131,7 +201,13 @@ public class CompressionUtil {
       throw new RuntimeException(e);
     }
   }
-
+  
+  /**
+   * Encode bz byte [ ].
+   *
+   * @param data the data
+   * @return the byte [ ]
+   */
   public static byte[] encodeBZ(String data) {
     try {
       byte[] bytes = encodeBZ(data.getBytes("UTF-8"));
@@ -141,7 +217,13 @@ public class CompressionUtil {
       throw new RuntimeException(e);
     }
   }
-
+  
+  /**
+   * Encode bz byte [ ].
+   *
+   * @param data the data
+   * @return the byte [ ]
+   */
   public static byte[] encodeBZ(byte[] data) {
     try {
       int blockSize = 4;
@@ -155,7 +237,14 @@ public class CompressionUtil {
       throw new RuntimeException(e);
     }
   }
-
+  
+  /**
+   * Decode bz string.
+   *
+   * @param data       the data
+   * @param dictionary the dictionary
+   * @return the string
+   */
   public static String decodeBZ(byte[] data, String dictionary) {
     try {
       byte[] dictBytes = dictionary.getBytes("UTF-8");
@@ -166,7 +255,14 @@ public class CompressionUtil {
       throw new RuntimeException(e);
     }
   }
-
+  
+  /**
+   * Encode bz byte [ ].
+   *
+   * @param data       the data
+   * @param dictionary the dictionary
+   * @return the byte [ ]
+   */
   public static byte[] encodeBZ(String data, String dictionary) {
     try {
       byte[] bytes = encodeBZ(data.getBytes("UTF-8"), dictionary);
@@ -176,13 +272,20 @@ public class CompressionUtil {
       throw new RuntimeException(e);
     }
   }
-
+  
+  /**
+   * Encode bz byte [ ].
+   *
+   * @param asBytes    the as bytes
+   * @param dictionary the dictionary
+   * @return the byte [ ]
+   */
   public static byte[] encodeBZ(byte[] asBytes, String dictionary) {
     try {
       byte[] dictBytes = dictionary.getBytes("UTF-8");
       VCDiffEncoder<OutputStream> encoder = VCDiffEncoderBuilder.builder()
-                                                .withDictionary(dictBytes)
-                                                .buildSimple();
+                                              .withDictionary(dictBytes)
+                                              .buildSimple();
       ByteArrayOutputStream buffer = new ByteArrayOutputStream();
       encoder.encode(asBytes, buffer);
       return encodeBZ(buffer.toByteArray());
@@ -190,7 +293,13 @@ public class CompressionUtil {
       throw new RuntimeException(e);
     }
   }
-
+  
+  /**
+   * Display str string.
+   *
+   * @param str the str
+   * @return the string
+   */
   public static String displayStr(String str) {
     return str.replaceAll("\\\\", "\\\\").replaceAll("\n", "\\n").replaceAll("\0", "\\\\0");
   }

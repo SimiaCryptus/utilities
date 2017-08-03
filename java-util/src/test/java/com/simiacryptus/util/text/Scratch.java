@@ -27,7 +27,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
+/**
+ * The type Scratch.
+ */
 public class Scratch {
+  /**
+   * Solve zero apfloat.
+   *
+   * @param fn  the fn
+   * @param min the min
+   * @param max the max
+   * @return the apfloat
+   */
   public static Apfloat solveZero(final Function<Apfloat, Apfloat> fn, Apfloat min, Apfloat max) {
     Apfloat zero = new Apfloat(0);
     Apfloat minVal = fn.apply(min);
@@ -38,7 +49,8 @@ public class Scratch {
       if (currentVal.compareTo(zero) == 0) break;
       if (minVal.compareTo(zero) == currentVal.compareTo(zero)) {
         min = current;
-      } else {
+      }
+      else {
         max = current;
       }
       current = minVal.add(maxVal).divide(new Apint(2));
@@ -47,15 +59,36 @@ public class Scratch {
     return current;
   }
 
+  /**
+   * The type Position.
+   */
   public static class Position {
+    /**
+     * The Space.
+     */
     Apfloat[] space;
+    /**
+     * The Time.
+     */
     Apfloat time;
 
+    /**
+     * Instantiates a new Position.
+     *
+     * @param time  the time
+     * @param space the space
+     */
     public Position(Apfloat time, Apfloat... space) {
       this.space = space;
       this.time = time;
     }
 
+    /**
+     * Distance apfloat.
+     *
+     * @param to the to
+     * @return the apfloat
+     */
     public Apfloat distance(Position to) {
       assert to.space.length == space.length;
       Apfloat total = ApfloatMath.pow(to.time.subtract(time), 2).negate();
@@ -65,6 +98,12 @@ public class Scratch {
       return total;
     }
 
+    /**
+     * Add position.
+     *
+     * @param to the to
+     * @return the position
+     */
     public Position add(Position to) {
       assert to.space.length == space.length;
 
@@ -75,6 +114,12 @@ public class Scratch {
       return new Position(to.time.add(time), newSpace);
     }
 
+    /**
+     * Multiply position.
+     *
+     * @param factor the factor
+     * @return the position
+     */
     public Position multiply(Apfloat factor) {
       Apfloat[] newSpace = new Apfloat[space.length];
       for (int i = 0; i < space.length; i++) {
@@ -84,9 +129,21 @@ public class Scratch {
     }
   }
 
+  /**
+   * The type World line.
+   */
   public static class WorldLine {
+    /**
+     * The Positions.
+     */
     List<Position> positions = new ArrayList<>();
 
+    /**
+     * Position at index position.
+     *
+     * @param index the index
+     * @return the position
+     */
     public Position positionAtIndex(Apfloat index) {
       Apint intPart = index.truncate();
       Apfloat aFrac = index.frac();
@@ -96,6 +153,12 @@ public class Scratch {
       return a.multiply(aFrac).add(b.multiply(bFrac));
     }
 
+    /**
+     * Connected point position.
+     *
+     * @param to the to
+     * @return the position
+     */
     public Position connectedPoint(Position to) {
       return positionAtIndex(solveZero(i -> {
         return positionAtIndex(i).distance(to);

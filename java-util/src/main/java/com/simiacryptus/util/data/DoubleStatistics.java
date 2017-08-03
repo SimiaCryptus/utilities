@@ -29,24 +29,36 @@ import java.util.stream.Collector;
  */
 public class DoubleStatistics extends DoubleSummaryStatistics {
 
+  /**
+   * The Collector.
+   */
   public static Collector<Double, DoubleStatistics, DoubleStatistics> COLLECTOR = Collector.<Double, DoubleStatistics, DoubleStatistics>of(
-      DoubleStatistics::new,
-      DoubleStatistics::accept,
-      DoubleStatistics::combine,
-      d -> d
+    DoubleStatistics::new,
+    DoubleStatistics::accept,
+    DoubleStatistics::combine,
+    d -> d
   );
 
+  /**
+   * The Numbers.
+   */
   public static Collector<Number, DoubleStatistics, DoubleStatistics> NUMBERS = Collector.<Number, DoubleStatistics, DoubleStatistics>of(
-      DoubleStatistics::new,
-      (a, n) -> a.accept(n.doubleValue()),
-      DoubleStatistics::combine,
-      d -> d
+    DoubleStatistics::new,
+    (a, n) -> a.accept(n.doubleValue()),
+    DoubleStatistics::combine,
+    d -> d
   );
 
   private double sumOfSquare = 0.0d;
   private double sumOfSquareCompensation; // Low order bits of sum
   private double simpleSumOfSquare; // Used to compute right sum for non-finite inputs
-  
+
+  /**
+   * Accept double statistics.
+   *
+   * @param value the value
+   * @return the double statistics
+   */
   public DoubleStatistics accept(double[] value) {
     Arrays.stream(value).forEach(this::accept);
     return this;
@@ -60,6 +72,12 @@ public class DoubleStatistics extends DoubleSummaryStatistics {
     sumOfSquareWithCompensation(squareValue);
   }
 
+  /**
+   * Combine double statistics.
+   *
+   * @param other the other
+   * @return the double statistics
+   */
   public DoubleStatistics combine(DoubleStatistics other) {
     super.combine(other);
     simpleSumOfSquare += other.simpleSumOfSquare;
@@ -75,6 +93,11 @@ public class DoubleStatistics extends DoubleSummaryStatistics {
     sumOfSquare = velvel;
   }
 
+  /**
+   * Gets sum of square.
+   *
+   * @return the sum of square
+   */
   public double getSumOfSquare() {
     double tmp = sumOfSquare + sumOfSquareCompensation;
     if (Double.isNaN(tmp) && Double.isInfinite(simpleSumOfSquare)) {
@@ -83,6 +106,11 @@ public class DoubleStatistics extends DoubleSummaryStatistics {
     return tmp;
   }
 
+  /**
+   * Gets standard deviation.
+   *
+   * @return the standard deviation
+   */
   public final double getStandardDeviation() {
     return getCount() > 0 ? Math.sqrt((getSumOfSquare() / getCount()) - Math.pow(getAverage(), 2)) : 0.0d;
   }

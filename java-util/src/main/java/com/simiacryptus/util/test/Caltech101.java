@@ -22,7 +22,6 @@ package com.simiacryptus.util.test;
 import com.simiacryptus.util.Util;
 import com.simiacryptus.util.io.DataLoader;
 import com.simiacryptus.util.lang.SupplierWeakCache;
-import com.simiacryptus.util.ml.Tensor;
 import org.apache.commons.io.IOUtils;
 
 import javax.imageio.ImageIO;
@@ -39,6 +38,9 @@ import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+/**
+ * The type Caltech 101.
+ */
 public class Caltech101 {
   
   private final static URI source = URI.create("https://s3-us-west-2.amazonaws.com/simiacryptus/");
@@ -57,18 +59,18 @@ public class Caltech101 {
         boolean continueLoop = true;
         ZipInputStream tar = new ZipInputStream(stream);
         while (continueLoop) {
-          if(Thread.interrupted()) break;
+          if (Thread.interrupted()) break;
           ZipEntry entry = tar.getNextEntry();
-          if(null==entry) {
+          if (null == entry) {
             System.err.println("Null Entry");
             break;
           }
-          if(0==entry.getSize()) continue;
+          if (0 == entry.getSize()) continue;
           String category = entry.getName().split("/")[1];
           //System.err.println(String.format("%s -> %s (%s)", entry.getName(), category, entry.getSize()));
           byte[] data = IOUtils.toByteArray(tar, entry.getSize());
-          if(!entry.getName().toLowerCase().endsWith(".jpg")) continue;
-          queue.add(new LabeledObject<>(new SupplierWeakCache<BufferedImage>(()->{
+          if (!entry.getName().toLowerCase().endsWith(".jpg")) continue;
+          queue.add(new LabeledObject<>(new SupplierWeakCache<BufferedImage>(() -> {
             try {
               return ImageIO.read(new ByteArrayInputStream(data));
             } catch (IOException e) {
@@ -82,12 +84,21 @@ public class Caltech101 {
       }
     }
   };
-  
+
+  /**
+   * Training data stream stream.
+   *
+   * @return the stream
+   * @throws IOException the io exception
+   */
   public static Stream<LabeledObject<SupplierWeakCache<BufferedImage>>> trainingDataStream() throws IOException {
     return training.stream();
   }
-  
-  public static void  halt() {
+
+  /**
+   * Halt.
+   */
+  public static void halt() {
     training.stop();
   }
   

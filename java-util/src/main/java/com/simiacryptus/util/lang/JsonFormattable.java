@@ -22,8 +22,17 @@ package com.simiacryptus.util.lang;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+/**
+ * The interface Json formattable.
+ */
 public interface JsonFormattable {
-  
+
+  /**
+   * To json json object.
+   *
+   * @return the json object
+   * @throws JSONException the json exception
+   */
   public abstract JSONObject toJson() throws JSONException;
   
 }

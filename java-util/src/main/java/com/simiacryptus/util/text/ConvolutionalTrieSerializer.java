@@ -32,9 +32,18 @@ import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
+/**
+ * The type Convolutional trie serializer.
+ */
 public class ConvolutionalTrieSerializer {
   private PrintStream verbose = null;
-
+  
+  /**
+   * Serialize byte [ ].
+   *
+   * @param charTrie the char trie
+   * @return the byte [ ]
+   */
   public byte[] serialize(CharTrie charTrie) {
     ByteArrayOutputStream buffer = new ByteArrayOutputStream();
     try {
@@ -48,7 +57,7 @@ public class ConvolutionalTrieSerializer {
     }
     return buffer.toByteArray();
   }
-
+  
   private int serialize(TrieNode root, BitOutputStream out, int level) {
     AtomicInteger nodesWritten = new AtomicInteger(0);
     if (0 == level) {
@@ -69,7 +78,8 @@ public class ConvolutionalTrieSerializer {
           throw new RuntimeException(e);
         }
       });
-    } else {
+    }
+    else {
       HashMap<String, Integer> godchildCounters = new HashMap<>();
       root.streamDecendents(level).forEach(node -> {
         AtomicLong nodeCounter = new AtomicLong();
@@ -81,8 +91,9 @@ public class ConvolutionalTrieSerializer {
         } catch (IOException e) {
           throw new RuntimeException(e);
         }
-        if (null != verbose)
+        if (null != verbose) {
           verbose.println(String.format("Recursing %s with godparent %s and %s of %s potential children %s", node.getDebugString(), godparent.getDebugString(), children.size(), godchildren.size(), godchildren.keySet()));
+        }
         godchildren.forEach((token, godchild) -> {
           int godchildAdj = godchildCounters.getOrDefault(godchild.getDebugString(), 0);
           TrieNode child = children.get(token);
@@ -90,25 +101,30 @@ public class ConvolutionalTrieSerializer {
             long upperBound = getUpperBound(node, nodeCounter, godchild, godchildAdj);
             if (upperBound > 0) {
               if (null == child) {
-                if (null != verbose)
+                if (null != verbose) {
                   verbose.println(String.format("Write ZERO token %s", node.getDebugString() + godchild.getDebugToken()));
+                }
                 out.write(Bits.ZERO);
-              } else {
+              }
+              else {
                 out.write(Bits.ONE);
                 long childCount = child.getCursorCount();
                 assert (childCount <= upperBound);
                 assert (childCount > 0);
                 Bits bits = out.writeBoundedLong(childCount, upperBound);
-                if (null != verbose)
+                if (null != verbose) {
                   verbose.println(String.format("Write token %s = %s/%s -> %s", node.getDebugString() + godchild.getDebugToken(), childCount, upperBound, bits));
+                }
                 nodesWritten.incrementAndGet();
                 nodeCounter.addAndGet(childCount);
                 godchildCounters.put(godchild.getDebugString(), (int) (godchildAdj + childCount));
                 //godchild.decrementCursorCount(childCount);
               }
-            } else {
-              if (null != verbose)
+            }
+            else {
+              if (null != verbose) {
                 verbose.println(String.format("Implicit ZERO token %s", node.getDebugString() + godchild.getDebugToken()));
+              }
             }
           } catch (IOException e) {
             throw new RuntimeException(e);
@@ -117,9 +133,15 @@ public class ConvolutionalTrieSerializer {
       });
     }
     return nodesWritten.get();
-
+    
   }
-
+  
+  /**
+   * Deserialize char trie.
+   *
+   * @param bytes the bytes
+   * @return the char trie
+   */
   public CharTrie deserialize(byte[] bytes) {
     CharTrie trie = new CharTrie();
     BitInputStream in = new BitInputStream(new ByteArrayInputStream(bytes));
@@ -129,7 +151,7 @@ public class ConvolutionalTrieSerializer {
     trie.recomputeCursorDetails();
     return trie;
   }
-
+  
   private long deserialize(TrieNode root, BitInputStream in, int level) {
     AtomicLong nodesRead = new AtomicLong(0);
     if (0 == level) {
@@ -147,7 +169,8 @@ public class ConvolutionalTrieSerializer {
       } catch (IOException e) {
         throw new RuntimeException(e);
       }
-    } else {
+    }
+    else {
       HashMap<String, Integer> godchildCounters = new HashMap<>();
       root.streamDecendents(level).forEach(node -> {
         AtomicLong nodeCounter = new AtomicLong();
@@ -161,29 +184,35 @@ public class ConvolutionalTrieSerializer {
         } catch (IOException e) {
           throw new RuntimeException(e);
         }
-        if (null != verbose)
+        if (null != verbose) {
           verbose.println(String.format("Recursing %s with godparent %s and %s of %s potential children %s", node.getDebugString(), godparent.getDebugString(), numberOfChildren, godchildren.size(), godchildren.keySet()));
+        }
         godchildren.forEach((token, godchild) -> {
           try {
             int godchildAdj = godchildCounters.getOrDefault(godchild.getDebugString(), 0);
             long upperBound = getUpperBound(node, nodeCounter, godchild, godchildAdj);
             if (upperBound > 0) {
               if (!in.readBool()) {
-                if (null != verbose)
+                if (null != verbose) {
                   verbose.println(String.format("Read ZERO token %s, input buffer = %s", node.getDebugString() + godchild.getDebugToken(), in.peek(24)));
-              } else {
+                }
+              }
+              else {
                 long childCount = in.readBoundedLong(upperBound);
-                if (null != verbose)
+                if (null != verbose) {
                   verbose.println(String.format("Read token %s = %s/%s, input buffer = %s", node.getDebugString() + godchild.getDebugToken(), childCount, upperBound, in.peek(24)));
+                }
                 assert (childCount >= 0);
                 children.put(token, childCount);
                 nodesRead.incrementAndGet();
                 nodeCounter.addAndGet((int) childCount);
                 godchildCounters.put(godchild.getDebugString(), (int) (godchildAdj + childCount));
               }
-            } else {
-              if (null != verbose)
+            }
+            else {
+              if (null != verbose) {
                 verbose.println(String.format("Implicit ZERO token %s, input buffer = %s", node.getDebugString() + godchild.getDebugToken(), in.peek(24)));
+              }
             }
           } catch (IOException e) {
             throw new RuntimeException(e);
@@ -192,20 +221,40 @@ public class ConvolutionalTrieSerializer {
         node.writeChildren(children);
       });
     }
-
+    
     return nodesRead.get();
   }
-
+  
+  /**
+   * Gets upper bound.
+   *
+   * @param currentParent      the current parent
+   * @param currentChildren    the current children
+   * @param godchildNode       the godchild node
+   * @param godchildAdjustment the godchild adjustment
+   * @return the upper bound
+   */
   protected long getUpperBound(TrieNode currentParent, AtomicLong currentChildren, TrieNode godchildNode, int godchildAdjustment) {
     return Math.min(
-        currentParent.getCursorCount() - currentChildren.get(),
-        godchildNode.getCursorCount() - godchildAdjustment);
+      currentParent.getCursorCount() - currentChildren.get(),
+      godchildNode.getCursorCount() - godchildAdjustment);
   }
-
+  
+  /**
+   * Gets verbose.
+   *
+   * @return the verbose
+   */
   public PrintStream getVerbose() {
     return verbose;
   }
-
+  
+  /**
+   * Sets verbose.
+   *
+   * @param verbose the verbose
+   * @return the verbose
+   */
   public ConvolutionalTrieSerializer setVerbose(PrintStream verbose) {
     this.verbose = verbose;
     return this;

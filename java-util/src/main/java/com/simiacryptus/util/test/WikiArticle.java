@@ -36,13 +36,34 @@ import java.util.Map;
 import java.util.Stack;
 import java.util.concurrent.atomic.AtomicInteger;
 
+/**
+ * The type Wiki article.
+ */
 public class WikiArticle extends TestDocument {
   
+  /**
+   * The type Wiki data loader.
+   */
   public static class WikiDataLoader extends DataLoader<WikiArticle> {
+    /**
+     * The Url.
+     */
     protected final String url;
+    /**
+     * The File.
+     */
     protected final String file;
+    /**
+     * The Article limit.
+     */
     protected final int articleLimit;
-
+    
+    /**
+     * Instantiates a new Wiki data loader.
+     *
+     * @param uri          the uri
+     * @param articleLimit the article limit
+     */
     public WikiDataLoader(URI uri, int articleLimit) {
       super();
       this.url = uri.toString();
@@ -64,57 +85,63 @@ public class WikiArticle extends TestDocument {
             Stack<Map<String, AtomicInteger>> indexes = new Stack<Map<String, AtomicInteger>>();
             StringBuilder nodeString = new StringBuilder();
             private String title;
-          
+            
             @Override
             public void characters(final char[] ch, final int start,
                                    final int length) throws SAXException {
-              if (Thread.currentThread().isInterrupted())
+              if (Thread.currentThread().isInterrupted()) {
                 throw new RuntimeException(new InterruptedException());
+              }
               this.nodeString.append(ch, start, length);
               super.characters(ch, start, length);
             }
-          
+            
             @Override
             public void endDocument() throws SAXException {
               super.endDocument();
             }
-          
+            
             @Override
             public void endElement(final String uri, final String localName,
                                    final String qName) throws SAXException {
-              if (Thread.currentThread().isInterrupted())
+              if (Thread.currentThread().isInterrupted()) {
                 throw new RuntimeException(new InterruptedException());
+              }
               final String pop = this.prefix.pop();
               this.indexes.pop();
-            
+              
               final int length = this.nodeString.length();
               String text = this.nodeString.toString().trim();
               this.nodeString = new StringBuilder();
-            
+              
               if ("page".equals(qName)) {
                 this.title = null;
-              } else if ("title".equals(qName)) {
+              }
+              else if ("title".equals(qName)) {
                 this.title = text;
-              } else if ("text".equals(qName)) {
+              }
+              else if ("text".equals(qName)) {
                 //System.p.println(String.format("Read #%s - %s", queue.size(), this.title));
                 queue.add(new WikiArticle(this.title, text));
-                if (queue.size() > articleLimit)
+                if (queue.size() > articleLimit) {
                   throw new RuntimeException(new InterruptedException());
+                }
               }
               super.endElement(uri, localName, qName);
             }
-          
+            
             @Override
             public void startDocument() throws SAXException {
               super.startDocument();
             }
-          
+            
             @Override
             public void startElement(final String uri, final String localName,
                                      final String qName, final Attributes attributes)
-                throws SAXException {
-              if (Thread.currentThread().isInterrupted())
+              throws SAXException {
+              if (Thread.currentThread().isInterrupted()) {
                 throw new RuntimeException(new InterruptedException());
+              }
               int idx;
               if (0 < this.indexes.size()) {
                 final Map<String, AtomicInteger> index = this.indexes.peek();
@@ -124,7 +151,8 @@ public class WikiArticle extends TestDocument {
                   index.put(qName, cnt);
                 }
                 idx = cnt.incrementAndGet();
-              } else {
+              }
+              else {
                 idx = 0;
               }
               String path = 0 == this.prefix.size() ? qName : this.prefix.peek() + "/" + qName;
@@ -135,7 +163,7 @@ public class WikiArticle extends TestDocument {
               this.indexes.push(new HashMap<String, AtomicInteger>());
               super.startElement(uri, localName, qName, attributes);
             }
-          
+            
           }, null);
         }
       } catch (final RuntimeException e) {
@@ -148,13 +176,28 @@ public class WikiArticle extends TestDocument {
     }
   }
   
+  /**
+   * The constant ENGLISH.
+   */
   public static WikiDataLoader ENGLISH = new WikiDataLoader(URI.create(
-      "https://dumps.wikimedia.org/enwiki/latest/enwiki-latest-pages-articles.xml.bz2"), 10000);
+    "https://dumps.wikimedia.org/enwiki/latest/enwiki-latest-pages-articles.xml.bz2"), 10000);
+  /**
+   * The constant GERMAN.
+   */
   public static WikiDataLoader GERMAN = new WikiDataLoader(URI.create(
-      "https://dumps.wikimedia.org/dewiki/latest/dewiki-latest-pages-articles.xml.bz2"), 10000);
+    "https://dumps.wikimedia.org/dewiki/latest/dewiki-latest-pages-articles.xml.bz2"), 10000);
+  /**
+   * The constant FRENCH.
+   */
   public static WikiDataLoader FRENCH = new WikiDataLoader(URI.create(
-      "https://dumps.wikimedia.org/frwiki/latest/frwiki-latest-pages-articles.xml.bz2"), 10000);
+    "https://dumps.wikimedia.org/frwiki/latest/frwiki-latest-pages-articles.xml.bz2"), 10000);
   
+  /**
+   * Instantiates a new Wiki article.
+   *
+   * @param title the title
+   * @param text  the text
+   */
   public WikiArticle(String title, String text) {
     super(title, text);
   }

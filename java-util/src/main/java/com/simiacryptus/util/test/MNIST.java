@@ -36,6 +36,9 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import java.util.zip.GZIPInputStream;
 
+/**
+ * The type Mnist.
+ */
 public class MNIST {
   
   private final static URI source = URI.create("http://yann.lecun.com/exdb/mnist/");
@@ -56,7 +59,10 @@ public class MNIST {
   private static <T> Stream<T> toIterator(final Iterator<T> iterator) {
     return StreamSupport.stream(Spliterators.spliterator(iterator, 1, Spliterator.ORDERED), false);
   }
-  
+
+  /**
+   * The constant training.
+   */
   public static final DataLoader training = new DataLoader<LabeledObject<Tensor>>() {
     @Override
     protected void read(List<LabeledObject<Tensor>> queue) {
@@ -80,13 +86,16 @@ public class MNIST {
             return new LabeledObject<Tensor>(this.imgItr.next(), Arrays.toString(this.labelItr.next()));
           }
         }, 100);
-        merged.forEach(x->queue.add(x));
+        merged.forEach(x -> queue.add(x));
       } catch (IOException e) {
         throw new RuntimeException(e);
       }
     }
   };
-  
+
+  /**
+   * The constant validation.
+   */
   public static final DataLoader validation = new DataLoader<LabeledObject<Tensor>>() {
     @Override
     protected void read(List<LabeledObject<Tensor>> queue) {
@@ -110,13 +119,19 @@ public class MNIST {
             return new LabeledObject<Tensor>(this.imgItr.next(), Arrays.toString(this.labelItr.next()));
           }
         }, 100);
-        merged.forEach(x->queue.add(x));
+        merged.forEach(x -> queue.add(x));
       } catch (IOException e) {
         throw new RuntimeException(e);
       }
     }
   };
-  
+
+  /**
+   * Training data stream stream.
+   *
+   * @return the stream
+   * @throws IOException the io exception
+   */
   public static Stream<LabeledObject<Tensor>> trainingDataStream() throws IOException {
     return training.stream();
   }
@@ -137,7 +152,13 @@ public class MNIST {
   private static <T> Stream<T> toStream(final Iterator<T> iterator, final int size, final boolean parallel) {
     return StreamSupport.stream(Spliterators.spliterator(iterator, size, Spliterator.ORDERED), parallel);
   }
-  
+
+  /**
+   * Validation data stream stream.
+   *
+   * @return the stream
+   * @throws IOException the io exception
+   */
   public static Stream<LabeledObject<Tensor>> validationDataStream() throws IOException {
     return validation.stream();
   }

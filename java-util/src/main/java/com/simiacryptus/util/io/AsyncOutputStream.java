@@ -24,18 +24,26 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Arrays;
 
+/**
+ * The type Async output stream.
+ */
 public class AsyncOutputStream extends FilterOutputStream {
   
   private final FairAsyncWorkQueue queue = new FairAsyncWorkQueue();
-  
+
+  /**
+   * Instantiates a new Async output stream.
+   *
+   * @param stream the stream
+   */
   public AsyncOutputStream(OutputStream stream) {
     super(stream);
   }
   
   @Override
   public synchronized void write(byte[] b, int off, int len) throws IOException {
-    byte[] _b = Arrays.copyOfRange(b, off, Math.min(b.length, off+len));
-    queue.submit(()->{
+    byte[] _b = Arrays.copyOfRange(b, off, Math.min(b.length, off + len));
+    queue.submit(() -> {
       try {
         out.write(_b);
       } catch (IOException e) {
@@ -46,7 +54,7 @@ public class AsyncOutputStream extends FilterOutputStream {
   
   @Override
   public synchronized void flush() throws IOException {
-    queue.submit(()->{
+    queue.submit(() -> {
       try {
         out.flush();
       } catch (IOException e) {
@@ -57,7 +65,7 @@ public class AsyncOutputStream extends FilterOutputStream {
   
   @Override
   public synchronized void close() throws IOException {
-    queue.submit(()->{
+    queue.submit(() -> {
       try {
         out.close();
       } catch (IOException e) {
@@ -68,7 +76,7 @@ public class AsyncOutputStream extends FilterOutputStream {
   
   @Override
   public synchronized void write(int b) throws IOException {
-    queue.submit(()->{
+    queue.submit(() -> {
       try {
         out.write(b);
       } catch (IOException e) {

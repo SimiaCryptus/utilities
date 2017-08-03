@@ -21,16 +21,38 @@ package com.simiacryptus.util.ml;
 
 import java.util.Arrays;
 
+/**
+ * The type Coordinate.
+ */
 public class Coordinate {
+  /**
+   * The Coords.
+   */
   public final int[] coords;
+  /**
+   * The Index.
+   */
   public final int index;
   
+  /**
+   * Instantiates a new Coordinate.
+   *
+   * @param index  the index
+   * @param coords the coords
+   */
   public Coordinate(final int index, final int[] coords) {
     super();
     this.index = index;
     this.coords = coords;
   }
   
+  /**
+   * Add int [ ].
+   *
+   * @param a the a
+   * @param b the b
+   * @return the int [ ]
+   */
   public static int[] add(final int[] a, final int[] b) {
     final int[] r = new int[Math.max(a.length, b.length)];
     for (int i = 0; i < r.length; i++) {
@@ -41,15 +63,19 @@ public class Coordinate {
   
   @Override
   public boolean equals(final Object obj) {
-    if (this == obj)
+    if (this == obj) {
       return true;
-    if (obj == null)
+    }
+    if (obj == null) {
       return false;
-    if (getClass() != obj.getClass())
+    }
+    if (getClass() != obj.getClass()) {
       return false;
+    }
     final Coordinate other = (Coordinate) obj;
-    if (!Arrays.equals(this.coords, other.coords))
+    if (!Arrays.equals(this.coords, other.coords)) {
       return false;
+    }
     return true;
   }
   

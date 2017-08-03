@@ -19,8 +19,8 @@
 
 package com.simiacryptus.util.io;
 
-import com.simiacryptus.util.lang.CodeUtil;
 import com.simiacryptus.util.Util;
+import com.simiacryptus.util.lang.CodeUtil;
 import com.simiacryptus.util.lang.TimedResult;
 import com.simiacryptus.util.test.SysOutInterceptor;
 import com.simiacryptus.util.text.TableOutput;
@@ -33,6 +33,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
+/**
+ * The type Markdown notebook output.
+ */
 public class MarkdownNotebookOutput implements NotebookOutput {
   
   private final List<PrintStream> outs = new ArrayList<>();
@@ -41,6 +44,13 @@ public class MarkdownNotebookOutput implements NotebookOutput {
   private final OutputStream primaryOut;
   private int imageNumber = 0;
   
+  /**
+   * Instantiates a new Markdown notebook output.
+   *
+   * @param fileName the file name
+   * @param name     the name
+   * @throws FileNotFoundException the file not found exception
+   */
   public MarkdownNotebookOutput(File fileName, String name) throws FileNotFoundException {
     this.name = name;
     this.primaryOut = new FileOutputStream(fileName);
@@ -48,6 +58,12 @@ public class MarkdownNotebookOutput implements NotebookOutput {
     this.fileName = fileName;
   }
   
+  /**
+   * Get markdown notebook output.
+   *
+   * @param source the source
+   * @return the markdown notebook output
+   */
   public static MarkdownNotebookOutput get(Object source) {
     try {
       StackTraceElement callingFrame = Thread.currentThread().getStackTrace()[2];
@@ -71,6 +87,12 @@ public class MarkdownNotebookOutput implements NotebookOutput {
     }
   }
   
+  /**
+   * Add copy notebook output.
+   *
+   * @param out the out
+   * @return the notebook output
+   */
   public NotebookOutput addCopy(PrintStream out) {
     outs.add(out);
     return this;
@@ -79,7 +101,7 @@ public class MarkdownNotebookOutput implements NotebookOutput {
   @Override
   public void out(String fmt, Object... args) {
     String msg = 0 == args.length ? fmt : String.format(fmt, args);
-    outs.forEach(out->out.println(msg));
+    outs.forEach(out -> out.println(msg));
   }
   
   @Override
@@ -115,8 +137,8 @@ public class MarkdownNotebookOutput implements NotebookOutput {
         }
       });
       out("Code from [%s:%s](%s#L%s) executed in %.2f seconds: ",
-          callingFrame.getFileName(), callingFrame.getLineNumber(),
-          Util.pathTo(fileName.getParentFile(), CodeUtil.findFile(callingFrame)), callingFrame.getLineNumber(), result.obj.seconds());
+        callingFrame.getFileName(), callingFrame.getLineNumber(),
+        Util.pathTo(fileName.getParentFile(), CodeUtil.findFile(callingFrame)), callingFrame.getLineNumber(), result.obj.seconds());
       out("```java");
       out("  " + sourceCode.replaceAll("\n", "\n  "));
       out("```");
@@ -127,7 +149,8 @@ public class MarkdownNotebookOutput implements NotebookOutput {
         String logSrc = result.log;
         if (logSrc.length() > maxLog * 2) {
           logSrc = logSrc.substring(0, maxLog) + String.format("\n...skipping %s bytes...\n", logSrc.length() - 2 * maxLog) + logSrc.substring(logSrc.length() - maxLog);
-        } else if (logSrc.length() > 0) {
+        }
+        else if (logSrc.length() > 0) {
           logSrc = logSrc;
         }
         logSrc = logSrc.replaceAll("\n", "\n    ");
@@ -137,7 +160,7 @@ public class MarkdownNotebookOutput implements NotebookOutput {
       out("");
       
       Object eval = result.obj.obj;
-      if(null != eval) {
+      if (null != eval) {
         out("Returns: \n");
         String str;
         boolean escape;
@@ -146,16 +169,20 @@ public class MarkdownNotebookOutput implements NotebookOutput {
           ((Throwable) eval).printStackTrace(new PrintStream(out));
           str = new String(out.toByteArray(), "UTF-8");
           escape = true;//
-        } else if (eval instanceof Component) {
+        }
+        else if (eval instanceof Component) {
           str = image(Util.toImage((Component) eval), "Result");
           escape = false;
-        } else if (eval instanceof BufferedImage) {
+        }
+        else if (eval instanceof BufferedImage) {
           str = image((BufferedImage) eval, "Result");
           escape = false;
-        } else if (eval instanceof TableOutput) {
+        }
+        else if (eval instanceof TableOutput) {
           str = ((TableOutput) eval).toTextTable();
           escape = false;
-        } else {
+        }
+        else {
           str = eval.toString();
           escape = true;
         }
@@ -190,6 +217,11 @@ public class MarkdownNotebookOutput implements NotebookOutput {
     return "![" + caption + "](etc/" + file.getName() + ")";
   }
   
+  /**
+   * Gets resource dir.
+   *
+   * @return the resource dir
+   */
   public File getResourceDir() {
     File etc = new File(this.fileName.getParentFile(), "etc");
     etc.mkdirs();
@@ -198,7 +230,7 @@ public class MarkdownNotebookOutput implements NotebookOutput {
   
   @Override
   public void close() throws IOException {
-    if(null != primaryOut) primaryOut.close();
+    if (null != primaryOut) primaryOut.close();
   }
   
 }

@@ -32,6 +32,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * The type Language model builder.
+ */
 public class LanguageModelBuilder {
 
   private int trainingSize = 1000;
@@ -45,6 +48,11 @@ public class LanguageModelBuilder {
     System.out.println("Total Index Memory Size (KB): " + trie.getMemorySize() / 1024);
   }
 
+  /**
+   * Build language models.
+   *
+   * @throws IOException the io exception
+   */
   @Test
   @Category(TestCategories.Report.class)
   public void buildLanguageModels() throws IOException {
@@ -60,13 +68,13 @@ public class LanguageModelBuilder {
     log.h2(languageName);
     CharTrie trie = log.code(() -> {
       List<String> data = load.map(x -> x.getText()).filter(x -> x.length() > minArticleSize)
-                              .skip(100)
-                              .map(str -> str.replaceAll("\\{\\{.*\\}\\}", ""))
-                              .map(str -> str.replaceAll("\\[\\[.*\\]\\]", ""))
-                              .map(str -> str.replaceAll("\\[[^\\]]*\\]", ""))
-                              .map(str -> str.replaceAll("\\{[^\\}]*\\}", ""))
-                              .map(str -> str.replaceAll("\\<[^\\>]*\\>", ""))
-                              .limit(trainingSize).collect(Collectors.toList());
+                            .skip(100)
+                            .map(str -> str.replaceAll("\\{\\{.*\\}\\}", ""))
+                            .map(str -> str.replaceAll("\\[\\[.*\\]\\]", ""))
+                            .map(str -> str.replaceAll("\\[[^\\]]*\\]", ""))
+                            .map(str -> str.replaceAll("\\{[^\\}]*\\}", ""))
+                            .map(str -> str.replaceAll("\\<[^\\>]*\\>", ""))
+                            .limit(trainingSize).collect(Collectors.toList());
       CharTrie charTrie = CharTrieIndex.indexFulltext(data, maxLevels, minWeight);
       print(charTrie);
       return charTrie;

@@ -22,10 +22,20 @@ package com.simiacryptus.util.lang;
 import java.lang.ref.WeakReference;
 import java.util.function.Supplier;
 
+/**
+ * The type Supplier weak cache.
+ *
+ * @param <T> the type parameter
+ */
 public class SupplierWeakCache<T> implements Supplier<T> {
   private final Supplier<T> fn;
   private WeakReference<T> ptr;
-  
+
+  /**
+   * Instantiates a new Supplier weak cache.
+   *
+   * @param fn the fn
+   */
   public SupplierWeakCache(Supplier<T> fn) {
     this.fn = fn;
     this.ptr = null;

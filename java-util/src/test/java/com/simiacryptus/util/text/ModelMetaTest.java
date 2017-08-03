@@ -21,7 +21,10 @@ package com.simiacryptus.util.text;
 
 import com.simiacryptus.util.io.MarkdownNotebookOutput;
 import com.simiacryptus.util.io.NotebookOutput;
-import com.simiacryptus.util.test.*;
+import com.simiacryptus.util.test.TestCategories;
+import com.simiacryptus.util.test.TestDocument;
+import com.simiacryptus.util.test.TweetSentiment;
+import com.simiacryptus.util.test.WikiArticle;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -32,15 +35,39 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Stream;
 
+/**
+ * The type Model meta test.
+ */
 public abstract class ModelMetaTest {
 
+  /**
+   * The constant outPath.
+   */
   public static final File outPath = new File("src/site/resources/");
+  /**
+   * The constant outBaseUrl.
+   */
   public static final URL outBaseUrl = TrieTest.getUrl("https://simiacryptus.github.io/utilities/java-util/");
 
+  /**
+   * Source stream.
+   *
+   * @return the stream
+   */
   protected abstract Stream<? extends TestDocument> source();
 
+  /**
+   * Gets model count.
+   *
+   * @return the model count
+   */
   public abstract int getModelCount();
 
+  /**
+   * Calc shared dictionaries lz.
+   *
+   * @throws Exception the exception
+   */
   @Test
   @Category(TestCategories.ResearchCode.class)
   public void calcSharedDictionariesLZ() throws Exception {
@@ -81,6 +108,11 @@ public abstract class ModelMetaTest {
     }
   }
 
+  /**
+   * Calc shared dictionaries bz.
+   *
+   * @throws Exception the exception
+   */
   @Test
   @Category(TestCategories.Report.class)
   public void calcSharedDictionariesBZ() throws Exception {
@@ -120,6 +152,11 @@ public abstract class ModelMetaTest {
     }
   }
 
+  /**
+   * Calc compressor ppm.
+   *
+   * @throws Exception the exception
+   */
   @Test
   @Category(TestCategories.Report.class)
   public void calcCompressorPPM() throws Exception {
@@ -149,7 +186,13 @@ public abstract class ModelMetaTest {
     }
   }
 
+  /**
+   * The type Tweets.
+   */
   public static class Tweets extends ModelMetaTest {
+    /**
+     * The Test count.
+     */
     int testCount = 100;
 
     @Override
@@ -164,7 +207,13 @@ public abstract class ModelMetaTest {
 
   }
 
+  /**
+   * The type Wikipedia.
+   */
   public static class Wikipedia extends ModelMetaTest {
+    /**
+     * The Test count.
+     */
     int testCount = 100;
 
     @Override

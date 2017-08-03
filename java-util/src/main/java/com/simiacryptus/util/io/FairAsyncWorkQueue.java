@@ -24,6 +24,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+/**
+ * The type Fair async work queue.
+ */
 public class FairAsyncWorkQueue implements Runnable {
   private final ExecutorService pool = Executors.newCachedThreadPool();
   private final LinkedBlockingDeque<Runnable> queue = new LinkedBlockingDeque<Runnable>();
@@ -34,15 +37,24 @@ public class FairAsyncWorkQueue implements Runnable {
       try {
         while (true) {
           Runnable poll = queue.poll();
-          if (null != poll) poll.run();
-          else break;
+          if (null != poll) {
+            poll.run();
+          }
+          else {
+            break;
+          }
         }
       } finally {
         isRunning.set(false);
       }
     }
   }
-  
+
+  /**
+   * Submit.
+   *
+   * @param task the task
+   */
   public void submit(Runnable task) {
     queue.add(task);
     pool.submit(this);

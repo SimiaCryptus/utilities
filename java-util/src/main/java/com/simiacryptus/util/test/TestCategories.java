@@ -19,14 +19,26 @@
 
 package com.simiacryptus.util.test;
 
+/**
+ * The type Test categories.
+ */
 public class TestCategories {
   
+  /**
+   * The type Unit test.
+   */
   public static class UnitTest {
   }
   
+  /**
+   * The type Research code.
+   */
   public static class ResearchCode {
   }
   
+  /**
+   * The type Report.
+   */
   public static class Report {
   }
 }

@@ -27,11 +27,20 @@ import java.util.Spliterators;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+/**
+ * The type Binary chunk iterator.
+ */
 public final class BinaryChunkIterator implements Iterator<byte[]> {
   
   private DataInputStream in;
   private int recordSize;
-  
+
+  /**
+   * Instantiates a new Binary chunk iterator.
+   *
+   * @param in         the in
+   * @param recordSize the record size
+   */
   public BinaryChunkIterator(final DataInputStream in, final int recordSize) {
     super();
     this.in = in;
@@ -43,25 +52,57 @@ public final class BinaryChunkIterator implements Iterator<byte[]> {
     int pos = 0;
     while (b.length > pos) {
       final int read = i.read(b, pos, b.length - pos);
-      if (0 == read)
+      if (0 == read) {
         throw new RuntimeException();
+      }
       pos += read;
     }
     return b;
   }
-  
+
+  /**
+   * To iterator stream.
+   *
+   * @param <T>      the type parameter
+   * @param iterator the iterator
+   * @return the stream
+   */
   public static <T> Stream<T> toIterator(final Iterator<T> iterator) {
     return StreamSupport.stream(Spliterators.spliterator(iterator, 1, Spliterator.ORDERED), false);
   }
-  
+
+  /**
+   * To stream stream.
+   *
+   * @param <T>      the type parameter
+   * @param iterator the iterator
+   * @return the stream
+   */
   public static <T> Stream<T> toStream(final Iterator<T> iterator) {
     return toStream(iterator, 0);
   }
-  
+
+  /**
+   * To stream stream.
+   *
+   * @param <T>      the type parameter
+   * @param iterator the iterator
+   * @param size     the size
+   * @return the stream
+   */
   public static <T> Stream<T> toStream(final Iterator<T> iterator, final int size) {
     return toStream(iterator, size, false);
   }
-  
+
+  /**
+   * To stream stream.
+   *
+   * @param <T>      the type parameter
+   * @param iterator the iterator
+   * @param size     the size
+   * @param parallel the parallel
+   * @return the stream
+   */
   public static <T> Stream<T> toStream(final Iterator<T> iterator, final int size, final boolean parallel) {
     return StreamSupport.stream(Spliterators.spliterator(iterator, size, Spliterator.ORDERED), parallel);
   }
@@ -84,7 +125,12 @@ public final class BinaryChunkIterator implements Iterator<byte[]> {
       throw new RuntimeException(e);
     }
   }
-  
+
+  /**
+   * To stream stream.
+   *
+   * @return the stream
+   */
   public Stream<byte[]> toStream() {
     return toStream(this);
   }

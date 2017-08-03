@@ -21,6 +21,14 @@ package com.simiacryptus.util;
 
 import java.util.Map;
 
+/**
+ * The interface Monitored item.
+ */
 public interface MonitoredItem {
+  /**
+   * Gets metrics.
+   *
+   * @return the metrics
+   */
   Map<String, Object> getMetrics();
 }

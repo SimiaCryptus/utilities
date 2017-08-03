@@ -19,17 +19,25 @@
 
 package com.simiacryptus.util.io;
 
-import com.simiacryptus.util.io.AsyncListIterator;
-
 import java.util.*;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 
+/**
+ * The type Data loader.
+ *
+ * @param <T> the type parameter
+ */
 public abstract class DataLoader<T> {
   private final List<T> queue = Collections.synchronizedList(new ArrayList<>());
   private volatile Thread thread;
   
+  /**
+   * Clear.
+   *
+   * @throws InterruptedException the interrupted exception
+   */
   public void clear() throws InterruptedException {
     if (thread != null) {
       synchronized (this) {
@@ -43,11 +51,16 @@ public abstract class DataLoader<T> {
     }
   }
   
+  /**
+   * Stream stream.
+   *
+   * @return the stream
+   */
   public Stream<T> stream() {
     if (thread == null) {
       synchronized (this) {
         if (thread == null) {
-          thread = new Thread(()->read(queue));
+          thread = new Thread(() -> read(queue));
           thread.setDaemon(true);
           thread.start();
         }
@@ -57,10 +70,18 @@ public abstract class DataLoader<T> {
     return StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator, Spliterator.DISTINCT), false).filter(x -> x != null);
   }
   
+  /**
+   * Read.
+   *
+   * @param queue the queue
+   */
   protected abstract void read(List<T> queue);
   
+  /**
+   * Stop.
+   */
   public void stop() {
-    if(thread != null) thread.interrupt();
+    if (thread != null) thread.interrupt();
     try {
       thread.join();
     } catch (InterruptedException e) {

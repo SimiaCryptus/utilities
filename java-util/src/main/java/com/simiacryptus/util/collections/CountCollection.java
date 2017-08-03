@@ -28,23 +28,56 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicInteger;
 
+/**
+ * The type Count collection.
+ *
+ * @param <T> the type parameter
+ * @param <C> the type parameter
+ */
 public class CountCollection<T, C extends Map<T, AtomicInteger>> {
   
+  /**
+   * The Map.
+   */
   protected final C map;
   
+  /**
+   * Instantiates a new Count collection.
+   *
+   * @param collection the collection
+   */
   public CountCollection(final C collection) {
     super();
     this.map = collection;
   }
   
+  /**
+   * Add int.
+   *
+   * @param bits the bits
+   * @return the int
+   */
   public int add(final T bits) {
     return this.getCounter(bits).incrementAndGet();
   }
   
+  /**
+   * Add int.
+   *
+   * @param bits  the bits
+   * @param count the count
+   * @return the int
+   */
   public int add(final T bits, final int count) {
     return this.getCounter(bits).addAndGet(count);
   }
   
+  /**
+   * Count int.
+   *
+   * @param key the key
+   * @return the int
+   */
   protected int count(final T key) {
     final AtomicInteger counter = this.map.get(key);
     if (null == counter) {
@@ -62,6 +95,11 @@ public class CountCollection<T, C extends Map<T, AtomicInteger>> {
     return counter;
   }
   
+  /**
+   * Gets list.
+   *
+   * @return the list
+   */
   public List<T> getList() {
     final ArrayList<T> list = new ArrayList<T>();
     for (final Entry<T, AtomicInteger> e : this.map.entrySet()) {
@@ -72,14 +110,19 @@ public class CountCollection<T, C extends Map<T, AtomicInteger>> {
     return list;
   }
   
+  /**
+   * Gets map.
+   *
+   * @return the map
+   */
   public Map<T, Integer> getMap() {
     return Maps.transformEntries(this.map,
-        new EntryTransformer<T, AtomicInteger, Integer>() {
-          @Override
-          public Integer transformEntry(final T key, final AtomicInteger value) {
-            return value.get();
-          }
-        });
+      new EntryTransformer<T, AtomicInteger, Integer>() {
+        @Override
+        public Integer transformEntry(final T key, final AtomicInteger value) {
+          return value.get();
+        }
+      });
   }
   
 }

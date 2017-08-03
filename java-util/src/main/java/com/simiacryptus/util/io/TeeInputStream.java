@@ -19,23 +19,26 @@
 
 package com.simiacryptus.util.io;
 
-import javax.net.ssl.*;
-import java.io.*;
-import java.net.URI;
-import java.net.URL;
-import java.net.URLConnection;
-import java.security.KeyManagementException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.X509Certificate;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 
+/**
+ * The type Tee input stream.
+ */
 public class TeeInputStream extends InputStream {
   
   private final InputStream inputStream;
   private final OutputStream cache;
-  
-  
+
+
+  /**
+   * Instantiates a new Tee input stream.
+   *
+   * @param inputStream the input stream
+   * @param cache       the cache
+   */
   public TeeInputStream(InputStream inputStream, OutputStream cache) {
     this.inputStream = inputStream;
     this.cache = cache;

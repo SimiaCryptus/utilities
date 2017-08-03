@@ -21,15 +21,34 @@ package com.simiacryptus.util;
 
 import java.util.Arrays;
 
+/**
+ * The type Int array.
+ */
 public class IntArray {
-  
+
+  /**
+   * The Data.
+   */
   public final int[] data;
-  
+
+  /**
+   * Instantiates a new Int array.
+   *
+   * @param data the data
+   */
   public IntArray(int[] data) {
     this.data = data;
   }
-  
-  public int get(int i) { return data[i]; }
+
+  /**
+   * Get int.
+   *
+   * @param i the
+   * @return the int
+   */
+  public int get(int i) {
+    return data[i];
+  }
   
   @Override
   public boolean equals(Object o) {
@@ -37,7 +56,7 @@ public class IntArray {
     if (o == null || getClass() != o.getClass()) return false;
     
     IntArray intArray = (IntArray) o;
-  
+
     return Arrays.equals(data, intArray.data);
   }
   
@@ -45,7 +64,12 @@ public class IntArray {
   public int hashCode() {
     return Arrays.hashCode(data);
   }
-  
+
+  /**
+   * Size int.
+   *
+   * @return the int
+   */
   public int size() {
     return data.length;
   }

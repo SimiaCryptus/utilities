@@ -45,8 +45,17 @@ import static guru.nidi.graphviz.model.Factory.graph;
 import static guru.nidi.graphviz.model.Factory.node;
 import static guru.nidi.graphviz.model.Link.to;
 
+/**
+ * The type Trie demo.
+ */
 public class TrieDemo {
-
+  
+  /**
+   * Gets url.
+   *
+   * @param url the url
+   * @return the url
+   */
   public static URL getUrl(String url) {
     try {
       return new URL(url);
@@ -54,22 +63,27 @@ public class TrieDemo {
       throw new RuntimeException(e);
     }
   }
-
+  
+  /**
+   * Demo search.
+   *
+   * @throws IOException the io exception
+   */
   @Test
   @Category(TestCategories.Report.class)
   public void demoSearch() throws IOException {
     try (NotebookOutput log = MarkdownNotebookOutput.get(this).addCopy(System.out)) {
-
+      
       log.p("This will demonstrate how to use the CharTrieIndex class for searching indexed documents\n");
-
+      
       log.p("First, we cache some data into an index:");
       CharTrieIndex trie = log.code(() -> {
         return new CharTrieIndex();
       });
       Map<Integer, String> documents = log.code(() -> {
         return WikiArticle.ENGLISH.stream().limit(100).collect(Collectors.toMap(
-            article -> trie.addDocument(article.getText()),
-            article -> article.getTitle()
+          article -> trie.addDocument(article.getText()),
+          article -> article.getTitle()
         ));
       });
       log.p("And then compute the index node:");
@@ -85,17 +99,22 @@ public class TrieDemo {
           return documents.get(cursor.getDocumentId());
         }).collect(Collectors.groupingBy(x -> x, Collectors.counting()));
       });
-
+      
     }
   }
-
+  
+  /**
+   * Demo char tree.
+   *
+   * @throws IOException the io exception
+   */
   @Test
   @Category(TestCategories.Report.class)
   public void demoCharTree() throws IOException {
     try (NotebookOutput log = MarkdownNotebookOutput.get(this).addCopy(System.out)) {
-
+      
       log.p("This will demonstrate how to use the CharTrieIndex class for PPM and shared dictionary compression\n");
-
+      
       log.p("First, we cache some data into an index:");
       CharTrie trie = log.code(() -> {
         CharTrieIndex charTrieIndex = new CharTrieIndex();
@@ -109,12 +128,12 @@ public class TrieDemo {
       NodewalkerCodec codec = log.code(() -> {
         return trie.getCodec();
       });
-
+      
       log.p("\n\nThen, we use it to encode strings:");
       WikiArticle wikiArticle = log.code(() -> {
         return WikiArticle.ENGLISH.stream().skip(100)
-                   .filter(article -> article.getText().length() > 1024 && article.getText().length() < 4096)
-                   .findFirst().get();
+                 .filter(article -> article.getText().length() > 1024 && article.getText().length() < 4096)
+                 .findFirst().get();
       });
       {
         String compressed = log.code(() -> {
@@ -122,15 +141,15 @@ public class TrieDemo {
           System.out.print("Bit Length: " + bits.bitLength);
           return bits.toBase64String();
         });
-
+        
         log.p("\n\nAnd decompress to verify:");
         String uncompressed = log.code(() -> {
           byte[] bytes = Base64.getDecoder().decode(compressed);
           return codec.decodePPM(bytes, 2);
         });
       }
-
-
+      
+      
       log.p("\n\nFor faster compression, we can define a dictionary for use with Deflate:");
       String dictionary = log.code(() -> {
         return trie.getGenerator().generateDictionary(8 * 1024, 3, "", 1, true);
@@ -142,17 +161,22 @@ public class TrieDemo {
           System.out.print("Compressed Bytes: " + bits.length);
           return Base64.getEncoder().encodeToString(bits);
         });
-
+        
         log.p("\n\nAnd decompress to verify:");
         String uncompressed = log.code(() -> {
           byte[] bytes = Base64.getDecoder().decode(compressed);
           return CompressionUtil.decodeLZToString(bytes, dictionary);
         });
       }
-
+      
     }
   }
-
+  
+  /**
+   * Demo tweet generation.
+   *
+   * @throws IOException the io exception
+   */
   @Test
   @Category(TestCategories.ResearchCode.class)
   public void demoTweetGeneration() throws IOException {
@@ -168,37 +192,37 @@ public class TrieDemo {
       log.p("First, we cache positive and negative sentiment tweets into two seperate models");
       List<TweetSentiment> tweetsPositive = log.code(() -> {
         ArrayList<TweetSentiment> list = new ArrayList<>(TweetSentiment.load()
-                                                             .filter(x -> x.category == 1).limit(testingSize + trainingSize).collect(Collectors.toList()));
+                                                           .filter(x -> x.category == 1).limit(testingSize + trainingSize).collect(Collectors.toList()));
         Collections.shuffle(list);
         return list;
       });
       List<TweetSentiment> tweetsNegative = log.code(() -> {
         ArrayList<TweetSentiment> list = new ArrayList<>(TweetSentiment.load()
-                                                             .filter(x -> x.category == 0).limit(testingSize + trainingSize).collect(Collectors.toList()));
+                                                           .filter(x -> x.category == 0).limit(testingSize + trainingSize).collect(Collectors.toList()));
         Collections.shuffle(list);
         return list;
       });
       CharTrie triePositive = log.code(() -> {
         CharTrie charTrie = tweetsPositive.stream().skip(testingSize).limit(trainingSize)
-                                .collect(Collectors.groupingByConcurrent(x -> new Random().nextInt(groups), Collectors.toList())).entrySet().stream()
-                                .parallel().map(e -> {
-              CharTrieIndex charTrieIndex = new CharTrieIndex();
-              e.getValue().forEach(article -> charTrieIndex.addDocument(article.getText()));
-              charTrieIndex.index(maxLevels, minWeight);
-              return charTrieIndex.truncate();
-            }).reduce(CharTrie::add).get();
+                              .collect(Collectors.groupingByConcurrent(x -> new Random().nextInt(groups), Collectors.toList())).entrySet().stream()
+                              .parallel().map(e -> {
+            CharTrieIndex charTrieIndex = new CharTrieIndex();
+            e.getValue().forEach(article -> charTrieIndex.addDocument(article.getText()));
+            charTrieIndex.index(maxLevels, minWeight);
+            return charTrieIndex.truncate();
+          }).reduce(CharTrie::add).get();
         print(charTrie);
         return charTrie;
       });
       CharTrie trieNegative = log.code(() -> {
         CharTrie charTrie = tweetsNegative.stream().skip(testingSize).limit(trainingSize)
-                                .collect(Collectors.groupingByConcurrent(x -> new Random().nextInt(groups), Collectors.toList())).entrySet().stream()
-                                .parallel().map(e -> {
-              CharTrieIndex charTrieIndex = new CharTrieIndex();
-              e.getValue().forEach(article -> charTrieIndex.addDocument(article.getText()));
-              charTrieIndex.index(maxLevels, minWeight);
-              return charTrieIndex.truncate();
-            }).reduce(CharTrie::add).get();
+                              .collect(Collectors.groupingByConcurrent(x -> new Random().nextInt(groups), Collectors.toList())).entrySet().stream()
+                              .parallel().map(e -> {
+            CharTrieIndex charTrieIndex = new CharTrieIndex();
+            e.getValue().forEach(article -> charTrieIndex.addDocument(article.getText()));
+            charTrieIndex.index(maxLevels, minWeight);
+            return charTrieIndex.truncate();
+          }).reduce(CharTrie::add).get();
         print(charTrie);
         return charTrie;
       });
@@ -251,7 +275,12 @@ public class TrieDemo {
       });
     }
   }
-
+  
+  /**
+   * Demo reversal.
+   *
+   * @throws IOException the io exception
+   */
   @Test
   @Category(TestCategories.ResearchCode.class)
   public void demoReversal() throws IOException {
@@ -267,19 +296,19 @@ public class TrieDemo {
       log.p("First, we cache text into a model");
       List<TweetSentiment> tweetsPositive = log.code(() -> {
         ArrayList<TweetSentiment> list = new ArrayList<>(TweetSentiment.load()
-                                                             .filter(x -> x.category == 1).limit(testingSize + trainingSize).collect(Collectors.toList()));
+                                                           .filter(x -> x.category == 1).limit(testingSize + trainingSize).collect(Collectors.toList()));
         Collections.shuffle(list);
         return list;
       });
       CharTrie triePositive = log.code(() -> {
         CharTrie charTrie = tweetsPositive.stream().skip(testingSize).limit(trainingSize)
-                                .collect(Collectors.groupingByConcurrent(x -> new Random().nextInt(groups), Collectors.toList())).entrySet().stream()
-                                .parallel().map(e -> {
-              CharTrieIndex charTrieIndex = new CharTrieIndex();
-              e.getValue().forEach(article -> charTrieIndex.addDocument(article.getText()));
-              charTrieIndex.index(maxLevels, minWeight);
-              return charTrieIndex.truncate();
-            }).reduce(CharTrie::add).get();
+                              .collect(Collectors.groupingByConcurrent(x -> new Random().nextInt(groups), Collectors.toList())).entrySet().stream()
+                              .parallel().map(e -> {
+            CharTrieIndex charTrieIndex = new CharTrieIndex();
+            e.getValue().forEach(article -> charTrieIndex.addDocument(article.getText()));
+            charTrieIndex.index(maxLevels, minWeight);
+            return charTrieIndex.truncate();
+          }).reduce(CharTrie::add).get();
         print(charTrie);
         return charTrie;
       });
@@ -293,7 +322,12 @@ public class TrieDemo {
       });
     }
   }
-
+  
+  /**
+   * Demo common words.
+   *
+   * @throws IOException the io exception
+   */
   @Test
   @Category(TestCategories.ResearchCode.class)
   public void demoCommonWords() throws IOException {
@@ -325,7 +359,12 @@ public class TrieDemo {
       }
     }
   }
-
+  
+  /**
+   * Demo markov graph.
+   *
+   * @throws IOException the io exception
+   */
   @Test
   @Category(TestCategories.ResearchCode.class)
   public void demoMarkovGraph() throws IOException {
@@ -349,22 +388,28 @@ public class TrieDemo {
       });
     }
   }
-
+  
   private Node buildNode(TrieNode root, int levels) {
     LinkTarget[] links;
     if (root.getDepth() > levels) {
       links = new LinkTarget[]{};
-    } else {
+    }
+    else {
       links = root.getChildren().filter(n -> n.getChar() != Character.MIN_VALUE).map(child -> {
         Node childNode = buildNode(child, levels); //node(child.getDebugString()).with(Label.of(child.getString()));
         Link linkNode = to(childNode).with(Label.of(Integer.toString((int) child.getCursorCount())));
         return linkNode;
-
+        
       }).toArray(i -> new LinkTarget[i]);
     }
     return node(root.getDebugString()).with(Label.of('"' + root.getString() + '"')).link(links);
   }
-
+  
+  /**
+   * Demo tweet classification.
+   *
+   * @throws IOException the io exception
+   */
   @Test
   @Category(TestCategories.ResearchCode.class)
   public void demoTweetClassification() throws IOException {
@@ -377,37 +422,37 @@ public class TrieDemo {
       log.p("First, we cache positive and negative sentiment tweets into two seperate models");
       List<TweetSentiment> tweetsPositive = log.code(() -> {
         ArrayList<TweetSentiment> list = new ArrayList<>(TweetSentiment.load()
-                                                             .filter(x -> x.category == 1).limit(testingSize + trainingSize).collect(Collectors.toList()));
+                                                           .filter(x -> x.category == 1).limit(testingSize + trainingSize).collect(Collectors.toList()));
         Collections.shuffle(list);
         return list;
       });
       List<TweetSentiment> tweetsNegative = log.code(() -> {
         ArrayList<TweetSentiment> list = new ArrayList<>(TweetSentiment.load()
-                                                             .filter(x -> x.category == 0).limit(testingSize + trainingSize).collect(Collectors.toList()));
+                                                           .filter(x -> x.category == 0).limit(testingSize + trainingSize).collect(Collectors.toList()));
         Collections.shuffle(list);
         return list;
       });
       CharTrie triePositive = log.code(() -> {
         CharTrie charTrie = tweetsPositive.stream().skip(testingSize).limit(trainingSize)
-                                .collect(Collectors.groupingByConcurrent(x -> new Random().nextInt(groups), Collectors.toList())).entrySet().stream()
-                                .parallel().map(e -> {
-              CharTrieIndex charTrieIndex = new CharTrieIndex();
-              e.getValue().forEach(article -> charTrieIndex.addDocument(article.getText()));
-              charTrieIndex.index(maxLevels, minWeight);
-              return charTrieIndex.truncate();
-            }).reduce(CharTrie::add).get();
+                              .collect(Collectors.groupingByConcurrent(x -> new Random().nextInt(groups), Collectors.toList())).entrySet().stream()
+                              .parallel().map(e -> {
+            CharTrieIndex charTrieIndex = new CharTrieIndex();
+            e.getValue().forEach(article -> charTrieIndex.addDocument(article.getText()));
+            charTrieIndex.index(maxLevels, minWeight);
+            return charTrieIndex.truncate();
+          }).reduce(CharTrie::add).get();
         print(charTrie);
         return charTrie;
       });
       CharTrie trieNegative = log.code(() -> {
         CharTrie charTrie = tweetsNegative.stream().skip(testingSize).limit(trainingSize)
-                                .collect(Collectors.groupingByConcurrent(x -> new Random().nextInt(groups), Collectors.toList())).entrySet().stream()
-                                .parallel().map(e -> {
-              CharTrieIndex charTrieIndex = new CharTrieIndex();
-              e.getValue().forEach(article -> charTrieIndex.addDocument(article.getText()));
-              charTrieIndex.index(maxLevels, minWeight);
-              return charTrieIndex.truncate();
-            }).reduce(CharTrie::add).get();
+                              .collect(Collectors.groupingByConcurrent(x -> new Random().nextInt(groups), Collectors.toList())).entrySet().stream()
+                              .parallel().map(e -> {
+            CharTrieIndex charTrieIndex = new CharTrieIndex();
+            e.getValue().forEach(article -> charTrieIndex.addDocument(article.getText()));
+            charTrieIndex.index(maxLevels, minWeight);
+            return charTrieIndex.truncate();
+          }).reduce(CharTrie::add).get();
         print(charTrie);
         return charTrie;
       });
@@ -459,7 +504,12 @@ public class TrieDemo {
       });
     }
   }
-
+  
+  /**
+   * Demo tweet classification tree.
+   *
+   * @throws IOException the io exception
+   */
   @Test
   @Category(TestCategories.ResearchCode.class)
   public void demoTweetClassificationTree() throws IOException {
@@ -469,13 +519,13 @@ public class TrieDemo {
       log.p("First, we cache positive and negative sentiment tweets into two seperate models");
       List<TweetSentiment> tweetsPositive = log.code(() -> {
         ArrayList<TweetSentiment> list = new ArrayList<>(TweetSentiment.load()
-                                                             .filter(x -> x.category == 1).limit(testingSize + trainingSize).collect(Collectors.toList()));
+                                                           .filter(x -> x.category == 1).limit(testingSize + trainingSize).collect(Collectors.toList()));
         Collections.shuffle(list);
         return list;
       });
       List<TweetSentiment> tweetsNegative = log.code(() -> {
         ArrayList<TweetSentiment> list = new ArrayList<>(TweetSentiment.load()
-                                                             .filter(x -> x.category == 0).limit(testingSize + trainingSize).collect(Collectors.toList()));
+                                                           .filter(x -> x.category == 0).limit(testingSize + trainingSize).collect(Collectors.toList()));
         Collections.shuffle(list);
         return list;
       });
@@ -501,7 +551,12 @@ public class TrieDemo {
       });
     }
   }
-
+  
+  /**
+   * Demo language classification.
+   *
+   * @throws IOException the io exception
+   */
   @Test
   @Category(TestCategories.Report.class)
   public void demoLanguageClassification() throws IOException {
@@ -514,21 +569,21 @@ public class TrieDemo {
       log.p("First, we cache positive and negative sentiment tweets into two seperate models");
       List<WikiArticle> english = log.code(() -> {
         return new ArrayList<>(WikiArticle.ENGLISH.stream().filter(x -> x.getText().length() > minArticleSize)
-                                   .limit(testingSize + trainingSize).collect(Collectors.toList()));
+                                 .limit(testingSize + trainingSize).collect(Collectors.toList()));
       });
       List<WikiArticle> french = log.code(() -> {
         return new ArrayList<>(WikiArticle.FRENCH.stream().filter(x -> x.getText().length() > minArticleSize)
-                                   .limit(testingSize + trainingSize).collect(Collectors.toList()));
+                                 .limit(testingSize + trainingSize).collect(Collectors.toList()));
       });
       CharTrie trieEnglish = log.code(() -> {
         CharTrie charTrie = CharTrieIndex.indexFulltext(english.subList(0, trainingSize)
-                                                            .stream().map(x -> x.getText()).collect(Collectors.toList()), maxLevels, minWeight);
+                                                          .stream().map(x -> x.getText()).collect(Collectors.toList()), maxLevels, minWeight);
         print(charTrie);
         return charTrie;
       });
       CharTrie trieFrench = log.code(() -> {
         CharTrie charTrie = CharTrieIndex.indexFulltext(french.subList(testingSize, french.size())
-                                                            .stream().map(x -> x.getText()).collect(Collectors.toList()), maxLevels, minWeight);
+                                                          .stream().map(x -> x.getText()).collect(Collectors.toList()), maxLevels, minWeight);
         print(charTrie);
         return charTrie;
       });
@@ -583,25 +638,30 @@ public class TrieDemo {
       });
     }
   }
-
+  
   private void print(CharTrie trie) {
     System.out.println("Total Indexed Document (KB): " + trie.getIndexedSize() / 1024);
     System.out.println("Total Node Count: " + trie.getNodeCount());
     System.out.println("Total Index Memory Size (KB): " + trie.getMemorySize() / 1024);
   }
-
+  
+  /**
+   * Demo compression.
+   *
+   * @throws IOException the io exception
+   */
   @Test
   @Category(TestCategories.Report.class)
   public void demoCompression() throws IOException {
     try (NotebookOutput log = MarkdownNotebookOutput.get(this).addCopy(System.out)) {
       HashSet<String> articles = new HashSet<String>(Arrays.asList("A"));
-
+      
       log.p("This will demonstrate how to serialize a CharTrie class in compressed format\n");
-
+      
       log.p("First, we decompose the text into an n-gram node:");
       List<WikiArticle> articleList = WikiArticle.ENGLISH.stream()
-                                          .limit(1000).filter(x -> articles.contains(x.getTitle())).limit(articles.size())
-                                          .collect(Collectors.toList());
+                                        .limit(1000).filter(x -> articles.contains(x.getTitle())).limit(articles.size())
+                                        .collect(Collectors.toList());
       CharTrieIndex index = log.code(() -> {
         CharTrieIndex trie = new CharTrieIndex();
         articleList.forEach(article -> {
@@ -609,7 +669,7 @@ public class TrieDemo {
           trie.addDocument(article.getText());
         });
         System.out.println(String.format("Indexing %s bytes of documents",
-            trie.getIndexedSize()));
+          trie.getIndexedSize()));
         trie.index(5, 1);
         return trie;
       });
@@ -619,7 +679,7 @@ public class TrieDemo {
         print(trie);
         byte[] bytes = new ConvolutionalTrieSerializer().serialize(trie.copy());
         System.out.println(String.format("%s in ram, %s bytes in serialized form, %s%% compression",
-            trie.getMemorySize(), bytes.length, 100 - (bytes.length * 100.0 / trie.getMemorySize())));
+          trie.getMemorySize(), bytes.length, 100 - (bytes.length * 100.0 / trie.getMemorySize())));
         return bytes;
       });
       log.p("Then, we encode the data used to create the dictionary:");
@@ -631,25 +691,25 @@ public class TrieDemo {
           TimedResult<Bits> compressed = TimedResult.time(() -> codec.encodePPM(text, Integer.MAX_VALUE));
           TimedResult<String> decompressed = TimedResult.time(() -> codec.decodePPM(compressed.obj.getBytes(), Integer.MAX_VALUE));
           System.out.println(String.format("Serialized %s: %s chars -> %s bytes (%s%%) in %s sec; %s",
-              title, article.getText().length(), compressed.obj.bitLength / 8.0,
-              compressed.obj.bitLength * 100.0 / (8.0 * article.getText().length()),
-              compressed.timeNanos / 1000000000.0, text.equals(decompressed.obj) ? "Verified" : "Failed Validation"));
+            title, article.getText().length(), compressed.obj.bitLength / 8.0,
+            compressed.obj.bitLength * 100.0 / (8.0 * article.getText().length()),
+            compressed.timeNanos / 1000000000.0, text.equals(decompressed.obj) ? "Verified" : "Failed Validation"));
           return compressed.obj.getBytes();
         }).collect(Collectors.toList());
       });
       int totalSize = compressedArticles.stream().mapToInt(x -> x.length).sum();
       log.p("Compressed %s bytes of documents -> %s (%s dictionary + %s ppm)",
-          index.getIndexedSize(), (totalSize + serializedTrie.length),
-          serializedTrie.length, totalSize);
-
+        index.getIndexedSize(), (totalSize + serializedTrie.length),
+        serializedTrie.length, totalSize);
+      
       log.p("And decompress to verfy data:");
       log.code(() -> {
         NodewalkerCodec codec = new NodewalkerCodec(trie);
         compressedArticles.forEach(article -> {
           TimedResult<String> decompressed = TimedResult.time(() -> codec.decodePPM(article, Integer.MAX_VALUE));
           System.out.println(String.format("Deserialized %s bytes -> %s chars in %s sec",
-              article.length, decompressed.obj.length(),
-              decompressed.timeNanos / 1000000000.0));
+            article.length, decompressed.obj.length(),
+            decompressed.timeNanos / 1000000000.0));
         });
       });
       log.p("\n\nAnd verify tree structure:");
@@ -660,7 +720,12 @@ public class TrieDemo {
       });
     }
   }
-
+  
+  /**
+   * Scratch.
+   *
+   * @throws IOException the io exception
+   */
   @Test
   @Category(TestCategories.Report.class)
   public void scratch() throws IOException {
@@ -679,7 +744,12 @@ public class TrieDemo {
       });
     }
   }
-
+  
+  /**
+   * Demo wiki summary.
+   *
+   * @throws IOException the io exception
+   */
   @Test
   @Category(TestCategories.Report.class)
   public void demoWikiSummary() throws IOException {
@@ -690,13 +760,13 @@ public class TrieDemo {
       log.h3("First, we cache training and testing data:");
       List<WikiArticle> articleList = log.code(() -> {
         return WikiArticle.ENGLISH.stream().limit(1000)
-                   .filter(x -> articles.contains(x.getTitle())).limit(articles.size())
-                   .collect(Collectors.toList());
+                 .filter(x -> articles.contains(x.getTitle())).limit(articles.size())
+                 .collect(Collectors.toList());
       });
       List<WikiArticle> trainingList = log.code(() -> {
         return WikiArticle.ENGLISH.stream()
-                   .filter(x -> x.getText().length() > 4 * 1024).filter(x -> !articles.contains(x.getTitle()))
-                   .limit(1000).collect(Collectors.toList());
+                 .filter(x -> x.getText().length() > 4 * 1024).filter(x -> !articles.contains(x.getTitle()))
+                 .limit(1000).collect(Collectors.toList());
       });
       log.h3("Then, we decompose the text into an n-gram node:");
       int depth = 7;
@@ -715,17 +785,22 @@ public class TrieDemo {
         log.h3("Keywords");
         log.code(() -> {
           return articleTrie.getAnalyzer().setVerbose(System.out).keywords(testArticle.getText())
-                     .stream().map(s -> '"' + s + '"').collect(Collectors.joining(", "));
+                   .stream().map(s -> '"' + s + '"').collect(Collectors.joining(", "));
         });
         log.h3("Tokenization");
         log.code(() -> {
           return articleTrie.getAnalyzer().setVerbose(System.out).splitChars(testArticle.getText())
-                     .stream().map(s -> '"' + s + '"').collect(Collectors.joining(", "));
+                   .stream().map(s -> '"' + s + '"').collect(Collectors.joining(", "));
         });
       });
     }
   }
-
+  
+  /**
+   * Demo wordlist.
+   *
+   * @throws IOException the io exception
+   */
   @Test
   @Category(TestCategories.Report.class)
   public void demoWordlist() throws IOException {
@@ -736,8 +811,8 @@ public class TrieDemo {
       log.h3("First, we cache training and testing data:");
       List<WikiArticle> articleList = log.code(() -> {
         return WikiArticle.ENGLISH.stream().limit(1000)
-                   .filter(x -> articles.contains(x.getTitle())).limit(articles.size())
-                   .collect(Collectors.toList());
+                 .filter(x -> articles.contains(x.getTitle())).limit(articles.size())
+                 .collect(Collectors.toList());
       });
       List<EnglishWords> trainingList = log.code(() -> {
         return EnglishWords.load().collect(Collectors.toList());
@@ -751,7 +826,7 @@ public class TrieDemo {
       int depth = 7;
       CharTrie referenceTrie = log.code(() -> {
         CharTrie trie = CharTrieIndex.indexWords(trainingList.stream().map(x -> x.getText())
-                                                     .collect(Collectors.toList()), depth, 0);
+                                                   .collect(Collectors.toList()), depth, 0);
         print(trie);
         return trie;
       });
@@ -764,20 +839,25 @@ public class TrieDemo {
         log.h3("Keywords");
         log.code(() -> {
           return tokens.stream().collect(Collectors.groupingBy(x -> x, Collectors.counting())).entrySet().stream()
-                     .sorted(Comparator.comparing(x -> -x.getValue()))
-                     .map(e -> String.format("%s=%s", e.getKey(), e.getValue())).collect(Collectors.joining(", "));
+                   .sorted(Comparator.comparing(x -> -x.getValue()))
+                   .map(e -> String.format("%s=%s", e.getKey(), e.getValue())).collect(Collectors.joining(", "));
         });
       });
     }
   }
-
+  
+  /**
+   * Demo wiki spelling.
+   *
+   * @throws IOException the io exception
+   */
   @Test
   @Category(TestCategories.Report.class)
   public void demoWikiSpelling() throws IOException {
     try (NotebookOutput log = MarkdownNotebookOutput.get(this).addCopy(System.out)) {
       log.p("This will demonstrate how to serialize a CharTrie class in compressed format\n");
       log.h3("First, we cache training and testing data:");
-
+      
       List<Misspelling> trainingList = log.code(() -> {
         return Misspelling.BIRKBECK.load().collect(Collectors.toList());
       });
@@ -797,14 +877,19 @@ public class TrieDemo {
       });
     }
   }
-
+  
+  /**
+   * Demo serialization.
+   *
+   * @throws IOException the io exception
+   */
   @Test
   @Category(TestCategories.Report.class)
   public void demoSerialization() throws IOException {
     try (NotebookOutput log = MarkdownNotebookOutput.get(this).addCopy(System.out)) {
-
+      
       log.p("This will demonstrate how to serialize a CharTrie class in compressed format\n");
-
+      
       log.p("First, we cache some data into an index:");
       CharTrieIndex index = log.code(() -> {
         CharTrieIndex charTrieIndex = new CharTrieIndex();
@@ -812,20 +897,20 @@ public class TrieDemo {
           charTrieIndex.addDocument(article.getText());
         });
         System.out.println(String.format("Indexing %s bytes of documents",
-            charTrieIndex.getIndexedSize()));
+          charTrieIndex.getIndexedSize()));
         charTrieIndex.index(6, 1);
         return charTrieIndex;
       });
       CharTrie tree = index.truncate();
-
+      
       log.p("\n\nThen, we compress the tree:");
       String serialized = log.code(() -> {
         byte[] bytes = CompressionUtil.encodeLZ(new ConvolutionalTrieSerializer().serialize(tree.copy()));
         System.out.println(String.format("%s in ram, %s bytes in serialized form, %s%% compression",
-            tree.getMemorySize(), bytes.length, 100 - (bytes.length * 100.0 / tree.getMemorySize())));
+          tree.getMemorySize(), bytes.length, 100 - (bytes.length * 100.0 / tree.getMemorySize())));
         return Base64.getEncoder().encodeToString(bytes);
       });
-
+      
       log.p("\n\nAnd decompress to verify:");
       int dictionaryLength = log.code(() -> {
         byte[] bytes = CompressionUtil.decodeLZ(Base64.getDecoder().decode(serialized));
@@ -834,37 +919,37 @@ public class TrieDemo {
         System.out.println(String.format("Tree Verified: %s", verified));
         return bytes.length;
       });
-
+      
       log.p("Then, we encode the data used to create the dictionary:");
       log.code(() -> {
         NodewalkerCodec codec = tree.getCodec();
         int totalSize = WikiArticle.ENGLISH.stream().limit(100).map(article -> {
           TimedResult<Bits> compressed = TimedResult.time(() -> codec.encodePPM(article.getText(), 4));
           System.out.println(String.format("Serialized %s: %s chars -> %s bytes (%s%%) in %s ms",
-              article.getTitle(), article.getText().length(), compressed.obj.bitLength / 8.0,
-              compressed.obj.bitLength * 100.0 / (8.0 * article.getText().length()),
-              compressed.timeNanos / 1000000.0));
+            article.getTitle(), article.getText().length(), compressed.obj.bitLength / 8.0,
+            compressed.obj.bitLength * 100.0 / (8.0 * article.getText().length()),
+            compressed.timeNanos / 1000000.0));
           return compressed.obj.getBytes();
         }).mapToInt(bytes -> bytes.length).sum();
         return String.format("Compressed %s KB of documents -> %s KB (%s dictionary + %s ppm)",
-            index.getIndexedSize() / 1024, (totalSize + dictionaryLength) / 1024,
-            dictionaryLength / 1024, totalSize / 1024);
+          index.getIndexedSize() / 1024, (totalSize + dictionaryLength) / 1024,
+          dictionaryLength / 1024, totalSize / 1024);
       });
-
+      
       log.p("For reference, we encode some sample articles that are NOT in the dictionary:");
       log.code(() -> {
         NodewalkerCodec codec = tree.getCodec();
         WikiArticle.ENGLISH.stream().skip(100).limit(10).forEach(article -> {
           TimedResult<Bits> compressed = TimedResult.time(() -> codec.encodePPM(article.getText(), 4));
           System.out.println(String.format("Serialized %s: %s chars -> %s bytes (%s%%) in %s ms",
-              article.getTitle(), article.getText().length(), compressed.obj.bitLength / 8.0,
-              compressed.obj.bitLength * 100.0 / (8.0 * article.getText().length()),
-              compressed.timeNanos / 1000000.0));
+            article.getTitle(), article.getText().length(), compressed.obj.bitLength / 8.0,
+            compressed.obj.bitLength * 100.0 / (8.0 * article.getText().length()),
+            compressed.timeNanos / 1000000.0));
         });
       });
-
+      
     }
   }
-
-
+  
+  
 }

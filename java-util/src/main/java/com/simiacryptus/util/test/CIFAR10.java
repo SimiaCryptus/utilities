@@ -25,7 +25,6 @@ import com.simiacryptus.util.io.DataLoader;
 import com.simiacryptus.util.ml.Tensor;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.input.BoundedInputStream;
 
 import java.awt.image.BufferedImage;
@@ -37,11 +36,13 @@ import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Stream;
 import java.util.zip.GZIPInputStream;
 
+/**
+ * The type Cifar 10.
+ */
 public class CIFAR10 {
   
   private final static URI source = URI.create("https://www.cs.toronto.edu/~kriz/");
@@ -60,12 +61,12 @@ public class CIFAR10 {
         GZIPInputStream inflatedInput = new GZIPInputStream(stream);
         TarArchiveInputStream tar = new TarArchiveInputStream(inflatedInput);
         while (0 < inflatedInput.available()) {
-          if(Thread.interrupted()) break;
+          if (Thread.interrupted()) break;
           TarArchiveEntry nextTarEntry = tar.getNextTarEntry();
-          if(null==nextTarEntry) break;
+          if (null == nextTarEntry) break;
           BinaryChunkIterator iterator = new BinaryChunkIterator(new DataInputStream(new BoundedInputStream(tar, nextTarEntry.getSize())), recordSize);
-          for(byte[] chunk : (Iterable<byte[]>) () -> iterator) {
-            queue.add(toImage(chunk).map(img->Tensor.fromRGB(img)));
+          for (byte[] chunk : (Iterable<byte[]>) () -> iterator) {
+            queue.add(toImage(chunk).map(img -> Tensor.fromRGB(img)));
           }
         }
         System.err.println("Done loading");
@@ -75,12 +76,21 @@ public class CIFAR10 {
       }
     }
   };
-  
+
+  /**
+   * Training data stream stream.
+   *
+   * @return the stream
+   * @throws IOException the io exception
+   */
   public static Stream<LabeledObject<Tensor>> trainingDataStream() throws IOException {
     return training.stream();
   }
-  
-  public static void  halt() {
+
+  /**
+   * Halt.
+   */
+  public static void halt() {
     training.stop();
   }
   

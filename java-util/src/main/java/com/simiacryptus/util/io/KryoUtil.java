@@ -28,6 +28,9 @@ import de.javakaffee.kryoserializers.KryoReflectionFactorySupport;
 import java.util.EnumMap;
 import java.util.EnumSet;
 
+/**
+ * The type Kryo util.
+ */
 public class KryoUtil {
 
   private static final ThreadLocal<Kryo> threadKryo = new ThreadLocal<Kryo>() {
@@ -38,10 +41,12 @@ public class KryoUtil {
 
         @Override
         public Serializer<?> getDefaultSerializer(@SuppressWarnings("rawtypes") final Class clazz) {
-          if (EnumSet.class.isAssignableFrom(clazz))
+          if (EnumSet.class.isAssignableFrom(clazz)) {
             return new EnumSetSerializer();
-          if (EnumMap.class.isAssignableFrom(clazz))
+          }
+          if (EnumMap.class.isAssignableFrom(clazz)) {
             return new EnumMapSerializer();
+          }
           return super.getDefaultSerializer(clazz);
         }
 
@@ -51,6 +56,11 @@ public class KryoUtil {
 
   };
 
+  /**
+   * Kryo kryo.
+   *
+   * @return the kryo
+   */
   public static Kryo kryo() {
     return threadKryo.get();
   }

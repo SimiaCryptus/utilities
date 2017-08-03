@@ -19,13 +19,15 @@
 
 package com.simiacryptus.util;
 
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * The type Scalar statistics.
+ */
 public class ScalarStatistics implements MonitoredItem {
   
   private final static double zeroTol = 1e-20;
@@ -39,6 +41,11 @@ public class ScalarStatistics implements MonitoredItem {
   private volatile double min = Double.POSITIVE_INFINITY;
   private volatile double max = -Double.POSITIVE_INFINITY;
   
+  /**
+   * Add.
+   *
+   * @param values the values
+   */
   public void add(double... values) {
     double v1 = 0;
     double v2 = 0;
@@ -48,17 +55,19 @@ public class ScalarStatistics implements MonitoredItem {
     double vlog = 0;
     int n = 0;
     int p = 0;
-    for(double v : values) {
+    for (double v : values) {
       v1 += v;
       v2 += v * v;
       vmin = Math.min(min, v);
       vmax = Math.max(max, v);
       if (Math.abs(v) < zeroTol) {
         z++;
-      } else {
+      }
+      else {
         if (v < 0) {
           n++;
-        } else {
+        }
+        else {
           p++;
         }
         vlog += Math.log10(Math.abs(v));
@@ -77,6 +86,11 @@ public class ScalarStatistics implements MonitoredItem {
     }
   }
   
+  /**
+   * Add.
+   *
+   * @param v the v
+   */
   public synchronized final void add(double v) {
     sum0 += 1;
     sum1 += v;
@@ -85,10 +99,12 @@ public class ScalarStatistics implements MonitoredItem {
     max = Math.max(max, v);
     if (Math.abs(v) < zeroTol) {
       zeros++;
-    } else {
+    }
+    else {
       if (v < 0) {
         negatives++;
-      } else {
+      }
+      else {
         positives++;
       }
       sumLog += Math.log10(Math.abs(v));
@@ -110,18 +126,36 @@ public class ScalarStatistics implements MonitoredItem {
     return map;
   }
   
+  /**
+   * Gets mean power.
+   *
+   * @return the mean power
+   */
   public double getMeanPower() {
     return sumLog / (sum0 - zeros);
   }
   
+  /**
+   * Gets std dev.
+   *
+   * @return the std dev
+   */
   public double getStdDev() {
     return Math.sqrt(Math.abs(Math.pow(getMean(), 2) - sum2 / sum0));
   }
   
+  /**
+   * Gets mean.
+   *
+   * @return the mean
+   */
   public double getMean() {
     return sum1 / sum0;
   }
   
+  /**
+   * Clear.
+   */
   public void clear() {
     min = Double.POSITIVE_INFINITY;
     max = -Double.POSITIVE_INFINITY;
@@ -134,32 +168,53 @@ public class ScalarStatistics implements MonitoredItem {
     sumLog = 0;
   }
   
+  /**
+   * Stats scalar statistics.
+   *
+   * @param data the data
+   * @return the scalar statistics
+   */
   public static ScalarStatistics stats(double[] data) {
     ScalarStatistics statistics = new ScalarStatistics();
     Arrays.stream(data).forEach(statistics::add);
     return statistics;
   }
   
+  /**
+   * Gets count.
+   *
+   * @return the count
+   */
   public double getCount() {
     return sum0;
   }
   
+  /**
+   * Gets json.
+   *
+   * @return the json
+   */
   public JsonObject getJson() {
     JsonObject json = new JsonObject();
-    json.addProperty("min",min);
-    json.addProperty("max",max);
-    json.addProperty("negatives",negatives);
-    json.addProperty("positives",positives);
-    json.addProperty("zeros",zeros);
-    json.addProperty("sum0",sum0);
-    json.addProperty("sum1",sum1);
-    json.addProperty("sum2",sum2);
-    json.addProperty("sumLog",sumLog);
+    json.addProperty("min", min);
+    json.addProperty("max", max);
+    json.addProperty("negatives", negatives);
+    json.addProperty("positives", positives);
+    json.addProperty("zeros", zeros);
+    json.addProperty("sum0", sum0);
+    json.addProperty("sum1", sum1);
+    json.addProperty("sum2", sum2);
+    json.addProperty("sumLog", sumLog);
     return json;
   }
   
+  /**
+   * Read json.
+   *
+   * @param json the json
+   */
   public void readJson(JsonObject json) {
-    if(null == json) return;
+    if (null == json) return;
     this.min = json.get("min").getAsDouble();
     this.max = json.get("max").getAsDouble();
     this.negatives = json.get("negatives").getAsInt();

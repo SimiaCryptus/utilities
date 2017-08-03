@@ -23,8 +23,14 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.function.Supplier;
 
+/**
+ * The type Sys out interceptor.
+ */
 public class SysOutInterceptor extends PrintStream {
-  
+
+  /**
+   * The constant INSTANCE.
+   */
   public static final SysOutInterceptor INSTANCE = init();
   private ThreadLocal<PrintStream> threadHandler = new ThreadLocal<PrintStream>() {
     @Override
@@ -32,11 +38,23 @@ public class SysOutInterceptor extends PrintStream {
       return (PrintStream) out;
     }
   };
-  
+
+  /**
+   * Instantiates a new Sys out interceptor.
+   *
+   * @param out the out
+   */
   public SysOutInterceptor(PrintStream out) {
     super(out);
   }
-  
+
+  /**
+   * With output logged result.
+   *
+   * @param <T> the type parameter
+   * @param fn  the fn
+   * @return the logged result
+   */
   public static <T> LoggedResult<T> withOutput(Supplier<T> fn) {
     //init();
     try {
@@ -52,7 +70,13 @@ public class SysOutInterceptor extends PrintStream {
       INSTANCE.threadHandler.remove();
     }
   }
-  
+
+  /**
+   * With output logged result.
+   *
+   * @param fn the fn
+   * @return the logged result
+   */
   public static LoggedResult<Void> withOutput(Runnable fn) {
     try {
       ByteArrayOutputStream buff = new ByteArrayOutputStream();
@@ -86,11 +110,28 @@ public class SysOutInterceptor extends PrintStream {
   public void println(String x) {
     threadHandler.get().println(x);
   }
-  
+
+  /**
+   * The type Logged result.
+   *
+   * @param <T> the type parameter
+   */
   public static class LoggedResult<T> {
+    /**
+     * The Obj.
+     */
     public final T obj;
+    /**
+     * The Log.
+     */
     public final String log;
-    
+
+    /**
+     * Instantiates a new Logged result.
+     *
+     * @param obj the obj
+     * @param log the log
+     */
     public LoggedResult(T obj, String log) {
       this.obj = obj;
       this.log = log;
