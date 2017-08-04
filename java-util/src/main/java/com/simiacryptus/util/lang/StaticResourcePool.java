@@ -61,8 +61,10 @@ public class StaticResourcePool<T> {
         throw new RuntimeException(e);
       }
     }
-    U result = f.apply(poll);
-    this.pool.add(poll);
-    return result;
+    try {
+      return f.apply(poll);
+    } finally {
+      this.pool.add(poll);
+    }
   }
 }

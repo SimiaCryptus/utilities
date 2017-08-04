@@ -186,7 +186,12 @@ public class Tensor implements Serializable {
     try {
       return new double[length];
     } catch (OutOfMemoryError e) {
-      throw new RuntimeException("Could not allocate " + length + " bytes", e);
+      try {
+        System.gc();
+        return new double[length];
+      } catch (OutOfMemoryError e2) {
+        throw new RuntimeException("Could not allocate " + length + " bytes", e2);
+      }
     }
   }
   
