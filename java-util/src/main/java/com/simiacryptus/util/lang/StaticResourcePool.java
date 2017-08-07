@@ -20,6 +20,7 @@
 package com.simiacryptus.util.lang;
 
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
@@ -52,7 +53,7 @@ public class StaticResourcePool<T> {
    * @param f   the f
    * @return the u
    */
-  public <U> U with(final Function<T, U> f) {
+  public <U> U map(final Function<T, U> f) {
     T poll = this.pool.poll();
     if (null == poll) {
       try {
@@ -67,4 +68,28 @@ public class StaticResourcePool<T> {
       this.pool.add(poll);
     }
   }
+  
+  /**
+   * With u.
+   *
+   * @param f   the f
+   * @return the u
+   */
+  public void foreach(final Consumer<T> f) {
+    T poll = this.pool.poll();
+    if (null == poll) {
+      try {
+        poll = this.pool.take();
+      } catch (final InterruptedException e) {
+        throw new RuntimeException(e);
+      }
+    }
+    try {
+      f.accept(poll);
+    } finally {
+      this.pool.add(poll);
+    }
+  }
+  
+  public int size() { return all.size(); }
 }

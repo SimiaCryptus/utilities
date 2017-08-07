@@ -190,7 +190,7 @@ public class ArrayUtil {
    * @return the double
    */
   public static double sum(List<double[]> a) {
-    return a.stream().mapToDouble(x -> Arrays.stream(x).sum()).sum();
+    return a.stream().parallel().mapToDouble(x -> Arrays.stream(x).sum()).sum();
   }
 
   /**

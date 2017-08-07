@@ -129,7 +129,7 @@ public class CharTrieIndex extends CharTrie {
   
   /**
    * Removes cursor data, retaining only the tree of tokens and counts.
-   * Subsequent calls to methods dealing with cursors will fail.
+   * Subsequent calls to methods dealing map cursors will fail.
    *
    * @return this
    */

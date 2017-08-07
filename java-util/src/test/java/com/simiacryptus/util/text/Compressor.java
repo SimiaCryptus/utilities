@@ -75,7 +75,7 @@ public interface Compressor {
           rowWide.put(name + ".verified", uncompress.obj.equals(item.getText()));
           rowTall.put("verified", uncompress.obj.equals(item.getText()));
           tallTable.putRow(rowTall);
-          //System.p.println(String.format("Evaluated #%s: %s with %s - %s chars -> %s bytes in %s sec", index.incrementAndGet(), name, title, item.text.length(), compress.obj.length, compress.timeNanos / 1000000000.0));
+          //System.p.println(String.format("Evaluated #%s: %s map %s - %s chars -> %s bytes in %s sec", index.incrementAndGet(), name, title, item.text.length(), compress.obj.length, compress.timeNanos / 1000000000.0));
         } catch (Exception ex) {
           ex.printStackTrace();
         }
@@ -137,7 +137,7 @@ public interface Compressor {
 //          rowWide.put(name + ".compressMs", compress.timeNanos / ONE_MILLION);
 //          rowTall.put("compressMs", compress.timeNanos / ONE_MILLION);
           tallTable.putRow(rowTall);
-          System.out.println(String.format("Evaluated #%s: %s with %s - %s chars -> %s in %s sec", index.incrementAndGet(), name, title, item.getText().length(), compress.obj, compress.timeNanos / 1000000000.0));
+          System.out.println(String.format("Evaluated #%s: %s map %s - %s chars -> %s in %s sec", index.incrementAndGet(), name, title, item.getText().length(), compress.obj, compress.timeNanos / 1000000000.0));
         } catch (Exception ex) {
           ex.printStackTrace();
         }

@@ -856,4 +856,9 @@ public class Tensor implements Serializable {
     }
     return buffer;
   }
+  
+  public Tensor add(Tensor tensor) {
+    assert (Arrays.equals(getDimensions(), tensor.getDimensions()));
+    return mapParallel((v,c)->v+tensor.get(c));
+  }
 }

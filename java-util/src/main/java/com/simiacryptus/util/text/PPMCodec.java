@@ -93,7 +93,7 @@ public class PPMCodec {
         Bits bits = interval.toBits();
         if (verbose) {
           System.out.println(String.format(
-            "Using prefix \"%s\", seek to %s pos, path \"%s\" with %s -> %s, input buffer = %s",
+            "Using prefix \"%s\", seek to %s pos, path \"%s\" map %s -> %s, input buffer = %s",
             fromNode.getDebugString(), seek, toNode.getDebugString(fromNode), interval, bits, in.peek(24)));
         }
         in.expect(bits);
@@ -154,7 +154,7 @@ public class PPMCodec {
    */
   public Bits encodePPM(String text, int context) {
     final String original = text;
-    //if(verbose) System.p.println(String.format("Encoding %s with %s chars of context", text, context));
+    //if(verbose) System.p.println(String.format("Encoding %s map %s chars of context", text, context));
     if (!text.endsWith("\u0000")) text += END_OF_STRING;
     ByteArrayOutputStream buffer = new ByteArrayOutputStream();
     BitOutputStream out = new BitOutputStream(buffer);

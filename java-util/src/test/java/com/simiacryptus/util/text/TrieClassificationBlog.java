@@ -81,7 +81,7 @@ public class TrieClassificationBlog {
         print(charTrie);
         return charTrie;
       });
-      log.p("The models can be used to perform PPM-based classification with excellent results:");
+      log.p("The models can be used to perform PPM-based classification map excellent results:");
       log.code(() -> {
         NodewalkerCodec codecA = trieEnglish.getCodec();
         NodewalkerCodec codecB = trieFrench.getCodec();
@@ -199,7 +199,7 @@ public class TrieClassificationBlog {
           int prediction = (encodeNeg.bitLength > encodePos.bitLength) ? 1 : 0;
           return prediction == tweet.category ? 1 : 0;
         }).average().getAsDouble();
-        return String.format("Accuracy = %.3f%% with positive sentiment, %.3f%% with negative sentiment",
+        return String.format("Accuracy = %.3f%% map positive sentiment, %.3f%% map negative sentiment",
           positiveAccuracy, negativeAccuracy);
       });
     }

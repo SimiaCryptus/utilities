@@ -92,7 +92,7 @@ public class ConvolutionalTrieSerializer {
           throw new RuntimeException(e);
         }
         if (null != verbose) {
-          verbose.println(String.format("Recursing %s with godparent %s and %s of %s potential children %s", node.getDebugString(), godparent.getDebugString(), children.size(), godchildren.size(), godchildren.keySet()));
+          verbose.println(String.format("Recursing %s map godparent %s and %s of %s potential children %s", node.getDebugString(), godparent.getDebugString(), children.size(), godchildren.size(), godchildren.keySet()));
         }
         godchildren.forEach((token, godchild) -> {
           int godchildAdj = godchildCounters.getOrDefault(godchild.getDebugString(), 0);
@@ -185,7 +185,7 @@ public class ConvolutionalTrieSerializer {
           throw new RuntimeException(e);
         }
         if (null != verbose) {
-          verbose.println(String.format("Recursing %s with godparent %s and %s of %s potential children %s", node.getDebugString(), godparent.getDebugString(), numberOfChildren, godchildren.size(), godchildren.keySet()));
+          verbose.println(String.format("Recursing %s map godparent %s and %s of %s potential children %s", node.getDebugString(), godparent.getDebugString(), numberOfChildren, godchildren.size(), godchildren.keySet()));
         }
         godchildren.forEach((token, godchild) -> {
           try {

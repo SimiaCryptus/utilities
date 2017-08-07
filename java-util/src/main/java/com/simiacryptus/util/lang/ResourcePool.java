@@ -26,6 +26,7 @@ package com.simiacryptus.util.lang;
  */
 public abstract class ResourcePool<T> {
   
+  private final ThreadLocal<T> currentValue = new ThreadLocal<>();
   private final java.util.HashSet<T> all;
   private final java.util.concurrent.LinkedBlockingQueue<T> pool = new java.util.concurrent.LinkedBlockingQueue<>();
   private final int maxItems;
@@ -54,23 +55,35 @@ public abstract class ResourcePool<T> {
    * @param f the f
    */
   public void with(final java.util.function.Consumer<T> f) {
-    T poll = this.pool.poll();
-    if (null == poll) {
-      synchronized (this.all) {
-        if (this.all.size() < this.maxItems) {
-          poll = create();
-          this.all.add(poll);
+    T prior = currentValue.get();
+    if (null != prior) {
+      f.accept(prior);
+    } else {
+      T poll = this.pool.poll();
+      if (null == poll) {
+        synchronized (this.all) {
+          if (this.all.size() < this.maxItems) {
+            poll = create();
+            this.all.add(poll);
+          }
         }
       }
-    }
-    if (null == poll) {
+      if (null == poll) {
+        try {
+          poll = this.pool.take();
+        } catch (final InterruptedException e) {
+          throw new java.lang.RuntimeException(e);
+        }
+      }
       try {
-        poll = this.pool.take();
-      } catch (final InterruptedException e) {
-        throw new java.lang.RuntimeException(e);
+        currentValue.set(poll);
+        f.accept(poll);
+      } finally {
+        this.pool.add(poll);
+        currentValue.set(null);
       }
     }
-    f.accept(poll);
-    this.pool.add(poll);
   }
+  
+  public int size() { return all.size(); }
 }

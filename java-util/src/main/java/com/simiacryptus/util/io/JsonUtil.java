@@ -19,9 +19,13 @@
 
 package com.simiacryptus.util.io;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonPrimitive;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.stream.IntStream;
 
 /**
@@ -41,6 +45,12 @@ public class JsonUtil {
     return array;
   }
 
+  public static void writeJson(OutputStream out, Object obj) throws IOException {
+    ObjectMapper mapper = new ObjectMapper().enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL);
+    ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+    mapper.writeValue(buffer, obj);
+    out.write(buffer.toByteArray());
+  }
   /**
    * Get int array int [ ].
    *
