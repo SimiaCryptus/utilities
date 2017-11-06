@@ -37,7 +37,7 @@ Logging:
 
 Returns: 
 ```
-    com.simiacryptus.util.text.CharTrieIndex@ac8dd40f
+    com.simiacryptus.text.CharTrieIndex@ac8dd40f
 ```
 Code from [TrieDemo.java:428](../../src/test/java/com/simiacryptus/util/text/TrieDemo.java#L428) executed in 2.17 seconds: 
 ```java
@@ -56,7 +56,7 @@ Logging:
 
 Returns: 
 ```
-    com.simiacryptus.util.text.CharTrieIndex@cc5e9842
+    com.simiacryptus.text.CharTrieIndex@cc5e9842
 ```
 Each model can be used out-of-the-box to perform classification:
 
@@ -90,7 +90,7 @@ Code from [TrieDemo.java:451](../../src/test/java/com/simiacryptus/util/text/Tri
 
 Returns: 
 ```
-    com.simiacryptus.util.text.CharTrieIndex@d70882b5
+    com.simiacryptus.text.CharTrieIndex@d70882b5
 ```
 Code from [TrieDemo.java:454](../../src/test/java/com/simiacryptus/util/text/TrieDemo.java#L454) executed in 0.72 seconds: 
 ```java
@@ -99,7 +99,7 @@ Code from [TrieDemo.java:454](../../src/test/java/com/simiacryptus/util/text/Tri
 
 Returns: 
 ```
-    com.simiacryptus.util.text.CharTrieIndex@571f3471
+    com.simiacryptus.text.CharTrieIndex@571f3471
 ```
 Code from [TrieDemo.java:457](../../src/test/java/com/simiacryptus/util/text/TrieDemo.java#L457) executed in 1.36 seconds: 
 ```java
@@ -108,7 +108,7 @@ Code from [TrieDemo.java:457](../../src/test/java/com/simiacryptus/util/text/Tri
 
 Returns: 
 ```
-    com.simiacryptus.util.text.CharTrieIndex@d8c9382b
+    com.simiacryptus.text.CharTrieIndex@d8c9382b
 ```
 For fun:
 

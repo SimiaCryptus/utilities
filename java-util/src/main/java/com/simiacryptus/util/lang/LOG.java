@@ -29,7 +29,7 @@ import java.util.Arrays;
 public class LOG {
 
   private static final long startTime = System.nanoTime();
-
+  
   /**
    * D.
    *
@@ -40,7 +40,7 @@ public class LOG {
     LOG.preprocessArgs(args);
     LOG.log(Severity.Debug, msg, args);
   }
-
+  
   /**
    * D.
    *
@@ -106,7 +106,7 @@ public class LOG {
     }
     return "[" + sb.toString() + "]";
   }
-
+  
   /**
    * To string string.
    *
@@ -124,7 +124,7 @@ public class LOG {
     final String exception = out.toString();
     return exception;
   }
-
+  
   /**
    * The enum Severity.
    */

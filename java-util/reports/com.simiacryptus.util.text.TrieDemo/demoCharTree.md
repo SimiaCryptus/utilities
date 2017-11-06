@@ -14,7 +14,7 @@ Code from [TrieDemo.java:71](../../src/test/java/com/simiacryptus/util/text/Trie
 ```
 Returns: 
 ```
-    com.simiacryptus.util.text.CharTrieIndex@8e8e68b3
+    com.simiacryptus.text.CharTrieIndex@8e8e68b3
 ```
 
 And then derive a PPM codec:
@@ -25,7 +25,7 @@ Code from [TrieDemo.java:80](../../src/test/java/com/simiacryptus/util/text/Trie
 ```
 Returns: 
 ```
-    com.simiacryptus.util.text.NodewalkerCodec@1ef7fe8e
+    com.simiacryptus.text.NodewalkerCodec@1ef7fe8e
 ```
 
 

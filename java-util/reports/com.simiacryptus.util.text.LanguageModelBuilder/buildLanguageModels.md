@@ -27,7 +27,7 @@ Logging:
 
 Returns: 
 ```
-    com.simiacryptus.util.text.CharTrieIndex@ada7a287
+    com.simiacryptus.text.CharTrieIndex@ada7a287
 ```
 Code from [LanguageModelBuilder.java:48](../../src/test/java/com/simiacryptus/util/text/LanguageModelBuilder.java#L48) executed in 9.59 seconds: 
 ```java
@@ -74,7 +74,7 @@ Logging:
 
 Returns: 
 ```
-    com.simiacryptus.util.text.CharTrieIndex@3a00020b
+    com.simiacryptus.text.CharTrieIndex@3a00020b
 ```
 Code from [LanguageModelBuilder.java:48](../../src/test/java/com/simiacryptus/util/text/LanguageModelBuilder.java#L48) executed in 8.48 seconds: 
 ```java
@@ -121,7 +121,7 @@ Logging:
 
 Returns: 
 ```
-    com.simiacryptus.util.text.CharTrieIndex@9a113bed
+    com.simiacryptus.text.CharTrieIndex@9a113bed
 ```
 Code from [LanguageModelBuilder.java:48](../../src/test/java/com/simiacryptus/util/text/LanguageModelBuilder.java#L48) executed in 8.71 seconds: 
 ```java

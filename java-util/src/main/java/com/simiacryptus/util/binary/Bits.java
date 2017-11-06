@@ -470,7 +470,7 @@ public class Bits implements Comparable<Bits> {
    * Returns the next binary string which is of the same length but incremented by one.
    * Returns null on overflow
    *
-   * @return bits
+   * @return bits bits
    */
   public Bits next() {
     if (!this.toBitString().contains("0")) {
@@ -519,7 +519,7 @@ public class Bits implements Comparable<Bits> {
   }
   
   /**
-   * Starts map boolean.
+   * Starts run boolean.
    *
    * @param key the key
    * @return the boolean

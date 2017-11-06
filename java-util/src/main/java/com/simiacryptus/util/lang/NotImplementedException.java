@@ -24,7 +24,7 @@ package com.simiacryptus.util.lang;
  */
 @SuppressWarnings("serial")
 public class NotImplementedException extends RuntimeException {
-
+  
   /**
    * Instantiates a new Not implemented exception.
    */
@@ -33,7 +33,7 @@ public class NotImplementedException extends RuntimeException {
   public NotImplementedException() {
     super();
   }
-
+  
   /**
    * Instantiates a new Not implemented exception.
    *

@@ -20,6 +20,7 @@
 package com.simiacryptus.util.io;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonPrimitive;
 
@@ -32,7 +33,7 @@ import java.util.stream.IntStream;
  * The type Json util.
  */
 public class JsonUtil {
-
+  
   /**
    * Gets json.
    *
@@ -44,13 +45,22 @@ public class JsonUtil {
     for (int k : kernelDims) array.add(new JsonPrimitive(k));
     return array;
   }
-
+  
+  /**
+   * Write json.
+   *
+   * @param out the out
+   * @param obj the obj
+   * @throws IOException the io exception
+   */
   public static void writeJson(OutputStream out, Object obj) throws IOException {
-    ObjectMapper mapper = new ObjectMapper().enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL);
+    ObjectMapper mapper = new ObjectMapper().enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL)
+                            .enable(SerializationFeature.INDENT_OUTPUT);
     ByteArrayOutputStream buffer = new ByteArrayOutputStream();
     mapper.writeValue(buffer, obj);
     out.write(buffer.toByteArray());
   }
+  
   /**
    * Get int array int [ ].
    *
@@ -61,7 +71,7 @@ public class JsonUtil {
     if (null == array) return null;
     return IntStream.range(0, array.size()).map(i -> array.get(i).getAsInt()).toArray();
   }
-
+  
   /**
    * Gets json.
    *
@@ -73,7 +83,7 @@ public class JsonUtil {
     for (double k : kernelDims) array.add(new JsonPrimitive(k));
     return array;
   }
-
+  
   /**
    * Get double array double [ ].
    *

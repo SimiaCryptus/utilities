@@ -19,8 +19,6 @@
 
 package com.simiacryptus.util.lang;
 
-import java.util.function.Supplier;
-
 /**
  * The type Timed result.
  *
@@ -35,7 +33,7 @@ public class TimedResult<T> {
    * The Time nanos.
    */
   public final long timeNanos;
-
+  
   /**
    * Instantiates a new Timed result.
    *
@@ -46,7 +44,7 @@ public class TimedResult<T> {
     this.obj = obj;
     this.timeNanos = timeNanos;
   }
-
+  
   /**
    * Time timed result.
    *
@@ -54,12 +52,17 @@ public class TimedResult<T> {
    * @param fn  the fn
    * @return the timed result
    */
-  public static <T> TimedResult<T> time(Supplier<T> fn) {
+  public static <T> TimedResult<T> time(UncheckedSupplier<T> fn) {
     long start = System.nanoTime();
-    T result = fn.get();
+    T result = null;
+    try {
+      result = fn.get();
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    }
     return new TimedResult(result, System.nanoTime() - start);
   }
-
+  
   /**
    * Seconds double.
    *

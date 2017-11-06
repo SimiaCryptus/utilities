@@ -19,6 +19,9 @@
 
 package com.simiacryptus.util;
 
+/**
+ * The type Fast random.
+ */
 public class FastRandom {
   private static volatile double randomA = seed();
   
@@ -28,6 +31,11 @@ public class FastRandom {
   
   private static volatile long mask = 0xABADC0DE;
   
+  /**
+   * Random double.
+   *
+   * @return the double
+   */
   public static double random() {
     int i=0;
     while(true) {

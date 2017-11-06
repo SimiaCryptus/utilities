@@ -22,8 +22,10 @@ package com.simiacryptus.util.io;
 import com.simiacryptus.util.Util;
 import com.simiacryptus.util.lang.CodeUtil;
 import com.simiacryptus.util.lang.TimedResult;
+import com.simiacryptus.util.lang.UncheckedSupplier;
 import com.simiacryptus.util.test.SysOutInterceptor;
-import com.simiacryptus.util.text.TableOutput;
+import com.simiacryptus.text.TableOutput;
+import org.apache.commons.io.IOUtils;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -31,7 +33,6 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Supplier;
 
 /**
  * The type Markdown notebook output.
@@ -125,7 +126,7 @@ public class MarkdownNotebookOutput implements NotebookOutput {
   }
   
   @Override
-  public <T> T code(Supplier<T> fn, int maxLog, int framesNo) {
+  public <T> T code(UncheckedSupplier<T> fn, int maxLog, int framesNo) {
     try {
       StackTraceElement callingFrame = Thread.currentThread().getStackTrace()[framesNo];
       String sourceCode = CodeUtil.getInnerText(callingFrame);
@@ -146,15 +147,7 @@ public class MarkdownNotebookOutput implements NotebookOutput {
       if (!result.log.isEmpty()) {
         out("Logging: ");
         out("```");
-        String logSrc = result.log;
-        if (logSrc.length() > maxLog * 2) {
-          logSrc = logSrc.substring(0, maxLog) + String.format("\n...skipping %s bytes...\n", logSrc.length() - 2 * maxLog) + logSrc.substring(logSrc.length() - maxLog);
-        }
-        else if (logSrc.length() > 0) {
-          logSrc = logSrc;
-        }
-        logSrc = logSrc.replaceAll("\n", "\n    ");
-        out("    " + logSrc);
+        out("    " + summarize(result.log, maxLog).replaceAll("\n", "\n    ").replaceAll("    ~", ""));
         out("```");
       }
       out("");
@@ -187,11 +180,7 @@ public class MarkdownNotebookOutput implements NotebookOutput {
           escape = true;
         }
         if (escape) out("```");
-        String valTxt = escape ? str.replaceAll("\n", "\n    ") : str;
-        if (escape && valTxt.length() > maxLog) {
-          valTxt = valTxt.substring(0, maxLog) + String.format("... and %s more bytes", valTxt.length() - maxLog);
-        }
-        out(escape ? ("    " + valTxt) : valTxt);
+        out(escape ? ("    " + summarize(str,maxLog).replaceAll("\n", "\n    ").replaceAll("    ~", "")) : str);
         if (escape) out("```");
         out("\n\n");
         if (eval instanceof Throwable) {
@@ -204,14 +193,45 @@ public class MarkdownNotebookOutput implements NotebookOutput {
     }
   }
   
+  int excerptNumber = 0;
+  public String summarize(String logSrc, int maxLog) {
+    if (logSrc.length() > maxLog * 2) {
+      String prefix = logSrc.substring(0, maxLog);
+      logSrc = prefix + String.format(
+        (prefix.endsWith("\n")?"":"\n") + "~```\n~..." + file(logSrc, "skipping %s bytes") + "...\n~```\n",
+        logSrc.length() - 2 * maxLog) + logSrc.substring(logSrc.length() - maxLog);
+    }
+    else if (logSrc.length() > 0) {
+      logSrc = logSrc;
+    }
+    return logSrc;
+  }
+  
+  @Override
+  public String file(String data, String caption) {
+    return file(data, ++excerptNumber + ".txt", caption);
+  }
+  
+  @Override
+  public String file(String data, String fileName, String caption) {
+    try {
+      IOUtils.write(data , new FileOutputStream(new File(getResourceDir(), fileName)));
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+    return "["+caption+"](etc/" + fileName + ")";
+  }
+  
   @Override
   public String image(BufferedImage rawImage, String caption) throws IOException {
     ByteArrayOutputStream out = new ByteArrayOutputStream();
     int thisImage = ++imageNumber;
-    File file = new File(getResourceDir(), this.name + "." + thisImage + ".png");
+    String fileName = this.name + "." + thisImage + ".png";
+    File file = new File(getResourceDir(), fileName);
     BufferedImage stdImage = Util.resize(rawImage);
     if (stdImage != rawImage) {
-      ImageIO.write(rawImage, "png", new File(getResourceDir(), this.name + "_raw." + thisImage + ".png"));
+      String rawName = this.name + "_raw." + thisImage + ".png";
+      ImageIO.write(rawImage, "png", new File(getResourceDir(), rawName));
     }
     ImageIO.write(stdImage, "png", file);
     return "![" + caption + "](etc/" + file.getName() + ")";

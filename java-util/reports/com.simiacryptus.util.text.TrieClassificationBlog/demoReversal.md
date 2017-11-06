@@ -35,7 +35,7 @@ Logging:
 
 Returns: 
 ```
-    com.simiacryptus.util.text.CharTrie@b984b4e
+    com.simiacryptus.text.CharTrie@b984b4e
 ```
 This source model produces representative texts:
 
@@ -58,11 +58,11 @@ Code from [TrieClassificationBlog.java:64](../../src/test/java/com/simiacryptus/
 Returns: 
 ```
     java.lang.NullPointerException
-    	at com.simiacryptus.util.text.TrieNode.getRawString(TrieNode.java:95)
-    	at com.simiacryptus.util.text.CharTrie.reverseSubtree(CharTrie.java:78)
-    	at com.simiacryptus.util.text.CharTrie.reverse(CharTrie.java:73)
-    	at com.simiacryptus.util.text.TrieClassificationBlog.lambda$demoReversal$7(TrieClassificationBlog.java:65)
-    	at com.simiacryptus.util.text.TrieClassificationBlog$$Lambda$75/116211441.get(Unknown Source)
+    	at com.simiacryptus.text.TrieNode.getRawString(TrieNode.java:95)
+    	at com.simiacryptus.text.CharTrie.reverseSubtree(CharTrie.java:78)
+    	at com.simiacryptus.text.CharTrie.reverse(CharTrie.java:73)
+    	at com.simiacryptus.text.TrieClassificationBlog.lambda$demoReversal$7(TrieClassificationBlog.java:65)
+    	at com.simiacryptus.text.TrieClassificationBlog$$Lambda$75/116211441.get(Unknown Source)
     	at com.simiacryptus.util.test.MarkdownPrintStream.lambda$null$1(MarkdownPrintStream.java:83)
     	at com.simiacryptus.util.test.MarkdownPrintStream$$Lambda$13/1313953385.get(Unknown Source)
     	at com.simiacryptus.util.lang.TimedResult.time(TimedResult.java:16)
@@ -71,7 +71,7 @@ Returns:
     	at com.simiacryptus.util.test.SysOutInterceptor.withOutput(SysOutInterceptor.java:26)
     	at com.simiacryptus.util.test.MarkdownPrintStream.code(MarkdownPrintStream.java:81)
     	at com.simiacryptus.util.test.MarkdownPrintStream.code(MarkdownPrintStream.java:74)
-    	at com.simiacryptus.util.text.TrieClassificationBlog.demoReversal(TrieClassificationBlog.java:64)
+    	at com.simiacryptus.text.TrieClassificationBlog.demoReversal(TrieClassificationBlog.java:64)
     	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
     	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
     	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)

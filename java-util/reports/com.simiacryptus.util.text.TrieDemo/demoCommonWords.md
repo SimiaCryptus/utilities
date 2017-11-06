@@ -16,7 +16,7 @@ Logging:
 
 Returns: 
 ```
-    com.simiacryptus.util.text.CharTrie@40a9eb8c
+    com.simiacryptus.text.CharTrie@40a9eb8c
 ```
 We can then search for high-entropy keywords with encoding penalty 0:
 

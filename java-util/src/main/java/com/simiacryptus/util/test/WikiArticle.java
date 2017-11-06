@@ -57,7 +57,7 @@ public class WikiArticle extends TestDocument {
      * The Article limit.
      */
     protected final int articleLimit;
-    
+  
     /**
      * Instantiates a new Wiki data loader.
      *

@@ -15,7 +15,7 @@ Code from [TrieDemo.java:141](../../src/test/java/com/simiacryptus/util/text/Tri
 ```
 Returns: 
 ```
-    com.simiacryptus.util.text.CharTrieIndex@a7e6560e
+    com.simiacryptus.text.CharTrieIndex@a7e6560e
 ```
 Logging: 
 ```
@@ -40,7 +40,7 @@ Code from [TrieDemo.java:153](../../src/test/java/com/simiacryptus/util/text/Tri
 ```
 Returns: 
 ```
-    com.simiacryptus.util.text.CharTrieIndex@ac772606
+    com.simiacryptus.text.CharTrieIndex@ac772606
 ```
 Logging: 
 ```
@@ -91,7 +91,7 @@ Code from [TrieDemo.java:177](../../src/test/java/com/simiacryptus/util/text/Tri
 ```
 Returns: 
 ```
-    com.simiacryptus.util.text.CharTrieIndex@34be1119
+    com.simiacryptus.text.CharTrieIndex@34be1119
 ```
 Logging: 
 ```

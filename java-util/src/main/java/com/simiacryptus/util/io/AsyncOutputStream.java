@@ -30,7 +30,7 @@ import java.util.Arrays;
 public class AsyncOutputStream extends FilterOutputStream {
   
   private final FairAsyncWorkQueue queue = new FairAsyncWorkQueue();
-
+  
   /**
    * Instantiates a new Async output stream.
    *

@@ -39,7 +39,7 @@ Code from [TrieDemo.java:244](../../src/test/java/com/simiacryptus/util/text/Tri
 ```
 Returns: 
 ```
-    com.simiacryptus.util.text.CharTrieIndex@3cb6bc18
+    com.simiacryptus.text.CharTrieIndex@3cb6bc18
 ```
 Logging: 
 ```
@@ -64,7 +64,7 @@ Code from [TrieDemo.java:256](../../src/test/java/com/simiacryptus/util/text/Tri
 ```
 Returns: 
 ```
-    com.simiacryptus.util.text.CharTrieIndex@294182e4
+    com.simiacryptus.text.CharTrieIndex@294182e4
 ```
 Logging: 
 ```
@@ -107,7 +107,7 @@ Code from [TrieDemo.java:287](../../src/test/java/com/simiacryptus/util/text/Tri
 ```
 Returns: 
 ```
-    com.simiacryptus.util.text.CharTrieIndex@bc4bddfe
+    com.simiacryptus.text.CharTrieIndex@bc4bddfe
 ```
 
 Code from [TrieDemo.java:290](../../src/test/java/com/simiacryptus/util/text/TrieDemo.java#L290) executed in 40.67 seconds: 
@@ -116,7 +116,7 @@ Code from [TrieDemo.java:290](../../src/test/java/com/simiacryptus/util/text/Tri
 ```
 Returns: 
 ```
-    com.simiacryptus.util.text.CharTrieIndex@1774e60a
+    com.simiacryptus.text.CharTrieIndex@1774e60a
 ```
 
 Code from [TrieDemo.java:293](../../src/test/java/com/simiacryptus/util/text/TrieDemo.java#L293) executed in 44.92 seconds: 
@@ -125,7 +125,7 @@ Code from [TrieDemo.java:293](../../src/test/java/com/simiacryptus/util/text/Tri
 ```
 Returns: 
 ```
-    com.simiacryptus.util.text.CharTrieIndex@ce176ee
+    com.simiacryptus.text.CharTrieIndex@ce176ee
 ```
 
 These composite tries can also be used to perform classification:

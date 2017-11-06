@@ -19,15 +19,16 @@
 
 package com.simiacryptus.util.test;
 
+import com.simiacryptus.util.lang.UncheckedSupplier;
+
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.util.function.Supplier;
 
 /**
  * The type Sys out interceptor.
  */
 public class SysOutInterceptor extends PrintStream {
-
+  
   /**
    * The constant INSTANCE.
    */
@@ -38,7 +39,13 @@ public class SysOutInterceptor extends PrintStream {
       return (PrintStream) out;
     }
   };
-
+  private ThreadLocal<Boolean> isMonitoring = new ThreadLocal<Boolean>() {
+    @Override
+    protected Boolean initialValue() {
+      return false;
+    }
+  };
+  
   /**
    * Instantiates a new Sys out interceptor.
    *
@@ -47,7 +54,7 @@ public class SysOutInterceptor extends PrintStream {
   public SysOutInterceptor(PrintStream out) {
     super(out);
   }
-
+  
   /**
    * With output logged result.
    *
@@ -55,13 +62,14 @@ public class SysOutInterceptor extends PrintStream {
    * @param fn  the fn
    * @return the logged result
    */
-  public static <T> LoggedResult<T> withOutput(Supplier<T> fn) {
+  public static <T> LoggedResult<T> withOutput(UncheckedSupplier<T> fn) {
     //init();
     try {
       ByteArrayOutputStream buff = new ByteArrayOutputStream();
       try (PrintStream ps = new PrintStream(buff)) {
         INSTANCE.threadHandler.set(ps);
         T result = fn.get();
+        ps.close();
         return new LoggedResult<T>(result, buff.toString());
       }
     } catch (Exception e) {
@@ -70,7 +78,7 @@ public class SysOutInterceptor extends PrintStream {
       INSTANCE.threadHandler.remove();
     }
   }
-
+  
   /**
    * With output logged result.
    *
@@ -81,7 +89,9 @@ public class SysOutInterceptor extends PrintStream {
     try {
       ByteArrayOutputStream buff = new ByteArrayOutputStream();
       try (PrintStream ps = new PrintStream(buff)) {
+        if(INSTANCE.isMonitoring.get()) throw new IllegalStateException();
         INSTANCE.threadHandler.set(ps);
+        INSTANCE.isMonitoring.set(true);
         fn.run();
         return new LoggedResult<Void>(null, buff.toString());
       }
@@ -89,6 +99,7 @@ public class SysOutInterceptor extends PrintStream {
       throw new RuntimeException(e);
     } finally {
       INSTANCE.threadHandler.remove();
+      INSTANCE.isMonitoring.remove();
     }
   }
   
@@ -110,7 +121,7 @@ public class SysOutInterceptor extends PrintStream {
   public void println(String x) {
     threadHandler.get().println(x);
   }
-
+  
   /**
    * The type Logged result.
    *
@@ -125,7 +136,7 @@ public class SysOutInterceptor extends PrintStream {
      * The Log.
      */
     public final String log;
-
+  
     /**
      * Instantiates a new Logged result.
      *

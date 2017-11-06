@@ -40,7 +40,7 @@ Logging:
 
 Returns: 
 ```
-    com.simiacryptus.util.text.CharTrieIndex@678d4f40
+    com.simiacryptus.text.CharTrieIndex@678d4f40
 ```
 Code from [TrieClassificationBlog.java:45](../../src/test/java/com/simiacryptus/util/text/TrieClassificationBlog.java#L45) executed in 32.38 seconds: 
 ```java
@@ -59,7 +59,7 @@ Logging:
 
 Returns: 
 ```
-    com.simiacryptus.util.text.CharTrieIndex@ed7265d8
+    com.simiacryptus.text.CharTrieIndex@ed7265d8
 ```
 The models can be used to perform PPM-based classification with excellent results:
 

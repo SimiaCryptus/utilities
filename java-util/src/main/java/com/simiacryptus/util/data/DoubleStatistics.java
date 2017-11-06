@@ -28,7 +28,7 @@ import java.util.stream.Collector;
  * Author: Tunaki
  */
 public class DoubleStatistics extends DoubleSummaryStatistics {
-
+  
   /**
    * The Collector.
    */
@@ -38,7 +38,7 @@ public class DoubleStatistics extends DoubleSummaryStatistics {
     DoubleStatistics::combine,
     d -> d
   );
-
+  
   /**
    * The Numbers.
    */
@@ -52,7 +52,7 @@ public class DoubleStatistics extends DoubleSummaryStatistics {
   private double sumOfSquare = 0.0d;
   private double sumOfSquareCompensation; // Low order bits of sum
   private double simpleSumOfSquare; // Used to compute right sum for non-finite inputs
-
+  
   /**
    * Accept double statistics.
    *
@@ -71,7 +71,7 @@ public class DoubleStatistics extends DoubleSummaryStatistics {
     simpleSumOfSquare += squareValue;
     sumOfSquareWithCompensation(squareValue);
   }
-
+  
   /**
    * Combine double statistics.
    *
@@ -92,7 +92,7 @@ public class DoubleStatistics extends DoubleSummaryStatistics {
     sumOfSquareCompensation = (velvel - sumOfSquare) - tmp;
     sumOfSquare = velvel;
   }
-
+  
   /**
    * Gets sum of square.
    *
@@ -105,7 +105,7 @@ public class DoubleStatistics extends DoubleSummaryStatistics {
     }
     return tmp;
   }
-
+  
   /**
    * Gets standard deviation.
    *

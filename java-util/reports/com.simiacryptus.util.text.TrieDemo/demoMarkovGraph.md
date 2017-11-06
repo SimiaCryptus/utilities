@@ -16,7 +16,7 @@ Logging:
 
 Returns: 
 ```
-    com.simiacryptus.util.text.CharTrie@e6cb1e26
+    com.simiacryptus.text.CharTrie@e6cb1e26
 ```
 The graph:
 

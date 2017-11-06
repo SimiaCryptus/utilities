@@ -33,7 +33,7 @@ Code from [TrieDemo.java:381](../../src/test/java/com/simiacryptus/util/text/Tri
 ```
 Returns: 
 ```
-    com.simiacryptus.util.text.ClassificationTree$$Lambda$102/766572210@12f40c25
+    com.simiacryptus.text.ClassificationTree$$Lambda$102/766572210@12f40c25
 ```
 Logging: 
 ```

@@ -34,7 +34,7 @@ public final class BinaryChunkIterator implements Iterator<byte[]> {
   
   private DataInputStream in;
   private int recordSize;
-
+  
   /**
    * Instantiates a new Binary chunk iterator.
    *
@@ -59,7 +59,7 @@ public final class BinaryChunkIterator implements Iterator<byte[]> {
     }
     return b;
   }
-
+  
   /**
    * To iterator stream.
    *
@@ -70,7 +70,7 @@ public final class BinaryChunkIterator implements Iterator<byte[]> {
   public static <T> Stream<T> toIterator(final Iterator<T> iterator) {
     return StreamSupport.stream(Spliterators.spliterator(iterator, 1, Spliterator.ORDERED), false);
   }
-
+  
   /**
    * To stream stream.
    *
@@ -81,7 +81,7 @@ public final class BinaryChunkIterator implements Iterator<byte[]> {
   public static <T> Stream<T> toStream(final Iterator<T> iterator) {
     return toStream(iterator, 0);
   }
-
+  
   /**
    * To stream stream.
    *
@@ -93,7 +93,7 @@ public final class BinaryChunkIterator implements Iterator<byte[]> {
   public static <T> Stream<T> toStream(final Iterator<T> iterator, final int size) {
     return toStream(iterator, size, false);
   }
-
+  
   /**
    * To stream stream.
    *
@@ -125,7 +125,7 @@ public final class BinaryChunkIterator implements Iterator<byte[]> {
       throw new RuntimeException(e);
     }
   }
-
+  
   /**
    * To stream stream.
    *

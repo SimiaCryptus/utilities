@@ -22,8 +22,10 @@ package com.simiacryptus.util.io;
 import com.simiacryptus.util.Util;
 import com.simiacryptus.util.lang.CodeUtil;
 import com.simiacryptus.util.lang.TimedResult;
+import com.simiacryptus.util.lang.UncheckedSupplier;
 import com.simiacryptus.util.test.SysOutInterceptor;
-import com.simiacryptus.util.text.TableOutput;
+import com.simiacryptus.text.TableOutput;
+import org.apache.commons.io.IOUtils;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -34,7 +36,6 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.UUID;
-import java.util.function.Supplier;
 
 /**
  * The type Html notebook output.
@@ -51,7 +52,7 @@ public class HtmlNotebookOutput implements NotebookOutput {
    * The constant DEFAULT_ROOT.
    */
   public static String DEFAULT_ROOT = "https://github.com/SimiaCryptus/utilities/tree/master/";
-  private String sourceRoot = DEFAULT_ROOT;
+  public String sourceRoot = DEFAULT_ROOT;
   
   /**
    * Create html notebook output.
@@ -141,7 +142,7 @@ public class HtmlNotebookOutput implements NotebookOutput {
   }
   
   @Override
-  public <T> T code(Supplier<T> fn, int maxLog, int framesNo) {
+  public <T> T code(UncheckedSupplier<T> fn, int maxLog, int framesNo) {
     try {
       StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
       StackTraceElement callingFrame = stackTrace[framesNo];
@@ -224,6 +225,22 @@ public class HtmlNotebookOutput implements NotebookOutput {
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
+  }
+  
+  int excerptNumber = 0;
+  @Override
+  public String file(String data, String caption) {
+    return file(data, excerptNumber + ".txt", caption);
+  }
+  
+  @Override
+  public String file(String data, String fileName, String caption) {
+    try {
+      IOUtils.write(data , new FileOutputStream(new File(getResourceDir(), fileName)));
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+    return "<a href='etc/" + fileName + "'>"+caption+"</a>";
   }
   
   @Override

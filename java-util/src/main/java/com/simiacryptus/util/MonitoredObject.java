@@ -89,7 +89,9 @@ public class MonitoredObject implements MonitoredItem {
   @Override
   public Map<String, Object> getMetrics() {
     HashMap<String, Object> returnValue = new HashMap<>();
-    items.forEach((k, v) -> {
+    items.entrySet().stream().parallel().forEach(e->{
+      String k = e.getKey();
+      Object v = e.getValue();
       if (v instanceof MonitoredItem) {
         returnValue.put(k, ((MonitoredItem) v).getMetrics());
       }

@@ -48,7 +48,7 @@ Logging:
 
 Returns: 
 ```
-    com.simiacryptus.util.text.CharTrieIndex@8bd95a7
+    com.simiacryptus.text.CharTrieIndex@8bd95a7
 ```
 Code from [TrieClassificationBlog.java:135](../../src/test/java/com/simiacryptus/util/text/TrieClassificationBlog.java#L135) executed in 75.28 seconds: 
 ```java
@@ -68,7 +68,7 @@ Logging:
 
 Returns: 
 ```
-    com.simiacryptus.util.text.CharTrieIndex@ca9f628d
+    com.simiacryptus.text.CharTrieIndex@ca9f628d
 ```
 
 

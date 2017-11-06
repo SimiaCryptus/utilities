@@ -30,7 +30,7 @@ import java.util.function.Supplier;
 public class SupplierWeakCache<T> implements Supplier<T> {
   private final Supplier<T> fn;
   private WeakReference<T> ptr;
-
+  
   /**
    * Instantiates a new Supplier weak cache.
    *

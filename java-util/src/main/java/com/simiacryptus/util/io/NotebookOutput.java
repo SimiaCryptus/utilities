@@ -19,11 +19,12 @@
 
 package com.simiacryptus.util.io;
 
+import com.simiacryptus.util.lang.UncheckedSupplier;
+
 import java.awt.image.BufferedImage;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.function.Supplier;
 
 /**
  * The interface Notebook output.
@@ -81,7 +82,11 @@ public interface NotebookOutput extends Closeable {
    * @param framesNo the frames no
    * @return the t
    */
-  <T> T code(Supplier<T> fn, int maxLog, int framesNo);
+  <T> T code(UncheckedSupplier<T> fn, int maxLog, int framesNo);
+  
+  String file(String data, String caption);
+  
+  String file(String data, String fileName, String caption);
   
   /**
    * Image string.
@@ -108,8 +113,8 @@ public interface NotebookOutput extends Closeable {
    * @param fn  the fn
    * @return the t
    */
-  default <T> T code(Supplier<T> fn) {
-    return code(fn, 8 * 1024, 3);
+  default <T> T code(UncheckedSupplier<T> fn) {
+    return code(fn, 2 * 1024, 3);
   }
   
   /**
@@ -135,7 +140,7 @@ public interface NotebookOutput extends Closeable {
     this.code(() -> {
       fn.run();
       return null;
-    }, 8 * 1024, 3);
+    }, 2 * 1024, 3);
   }
   
 }

@@ -9,7 +9,7 @@ Code from [TrieDemo.java:35](../../src/test/java/com/simiacryptus/util/text/Trie
 ```
 Returns: 
 ```
-    com.simiacryptus.util.text.CharTrieIndex@6e83f283
+    com.simiacryptus.text.CharTrieIndex@6e83f283
 ```
 
 Code from [TrieDemo.java:38](../../src/test/java/com/simiacryptus/util/text/TrieDemo.java#L38) executed in 0.24 seconds: 

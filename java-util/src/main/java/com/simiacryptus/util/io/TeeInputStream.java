@@ -31,8 +31,8 @@ public class TeeInputStream extends InputStream {
   
   private final InputStream inputStream;
   private final OutputStream cache;
-
-
+  
+  
   /**
    * Instantiates a new Tee input stream.
    *

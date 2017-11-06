@@ -24,7 +24,7 @@ import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.simiacryptus.util.text.CompressionUtil;
+import com.simiacryptus.text.CompressionUtil;
 import com.twitter.chill.KryoInstantiator;
 import de.javakaffee.kryoserializers.KryoReflectionFactorySupport;
 import org.apache.commons.io.IOUtils;

@@ -43,7 +43,7 @@ public class StaticResourcePool<T> {
     super();
     this.maxItems = items.size();
     this.all = items;
-    pool.addAll(all);
+    pool.addAll(getAll());
   }
   
   /**
@@ -53,7 +53,7 @@ public class StaticResourcePool<T> {
    * @param f   the f
    * @return the u
    */
-  public <U> U map(final Function<T, U> f) {
+  public <U> U run(final Function<T, U> f) {
     T poll = this.pool.poll();
     if (null == poll) {
       try {
@@ -72,10 +72,10 @@ public class StaticResourcePool<T> {
   /**
    * With u.
    *
-   * @param f   the f
+   * @param f the f
    * @return the u
    */
-  public void foreach(final Consumer<T> f) {
+  public void apply(final Consumer<T> f) {
     T poll = this.pool.poll();
     if (null == poll) {
       try {
@@ -91,5 +91,19 @@ public class StaticResourcePool<T> {
     }
   }
   
-  public int size() { return all.size(); }
+  /**
+   * Size int.
+   *
+   * @return the int
+   */
+  public int size() { return getAll().size(); }
+  
+  /**
+   * Gets all.
+   *
+   * @return the all
+   */
+  public List<T> getAll() {
+    return all;
+  }
 }

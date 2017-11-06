@@ -31,7 +31,7 @@ import java.util.stream.IntStream;
  * The type Array util.
  */
 public class ArrayUtil {
-
+  
   /**
    * Minus list.
    *
@@ -42,7 +42,7 @@ public class ArrayUtil {
   public static List<double[]> minus(List<double[]> a, List<double[]> b) {
     return op(a, b, (x, y) -> x - y);
   }
-
+  
   /**
    * Add list.
    *
@@ -53,7 +53,7 @@ public class ArrayUtil {
   public static List<double[]> add(List<double[]> a, List<double[]> b) {
     return op(a, b, (x, y) -> x + y);
   }
-
+  
   /**
    * Dot double.
    *
@@ -64,7 +64,7 @@ public class ArrayUtil {
   public static double dot(List<double[]> a, List<double[]> b) {
     return sum(multiply(a, b));
   }
-
+  
   /**
    * Multiply list.
    *
@@ -75,7 +75,7 @@ public class ArrayUtil {
   public static List<double[]> multiply(List<double[]> a, List<double[]> b) {
     return op(a, b, (x, y) -> x * y);
   }
-
+  
   /**
    * Multiply list.
    *
@@ -86,7 +86,7 @@ public class ArrayUtil {
   public static List<double[]> multiply(List<double[]> a, double b) {
     return op(a, x -> x * b);
   }
-
+  
   /**
    * Add double [ ].
    *
@@ -97,7 +97,7 @@ public class ArrayUtil {
   public static double[] add(double[] a, double[] b) {
     return op(a, b, (x, y) -> x + y);
   }
-
+  
   /**
    * Subtract double [ ].
    *
@@ -108,7 +108,7 @@ public class ArrayUtil {
   public static double[] subtract(double[] a, double[] b) {
     return op(a, b, (x, y) -> x - y);
   }
-
+  
   /**
    * Multiply double [ ].
    *
@@ -119,7 +119,7 @@ public class ArrayUtil {
   public static double[] multiply(double[] a, double[] b) {
     return op(a, b, (x, y) -> x * y);
   }
-
+  
   /**
    * Dot double.
    *
@@ -130,7 +130,7 @@ public class ArrayUtil {
   public static double dot(double[] a, double[] b) {
     return sum(op(a, b, (x, y) -> x * y));
   }
-
+  
   /**
    * Magnitude double.
    *
@@ -140,7 +140,7 @@ public class ArrayUtil {
   public static double magnitude(double[] a) {
     return Math.sqrt(dot(a, a));
   }
-
+  
   /**
    * Sum double.
    *
@@ -150,7 +150,7 @@ public class ArrayUtil {
   public static double sum(double[] op) {
     return Arrays.stream(op).sum();
   }
-
+  
   /**
    * Mean double.
    *
@@ -160,7 +160,7 @@ public class ArrayUtil {
   public static double mean(double[] op) {
     return sum(op) / op.length;
   }
-
+  
   /**
    * Multiply double [ ].
    *
@@ -171,7 +171,7 @@ public class ArrayUtil {
   public static double[] multiply(double[] a, double b) {
     return op(a, (x) -> x * b);
   }
-
+  
   /**
    * Sum double [ ].
    *
@@ -182,7 +182,7 @@ public class ArrayUtil {
   public static double[] sum(double[] a, double b) {
     return op(a, (x) -> x + b);
   }
-
+  
   /**
    * Sum double.
    *
@@ -192,7 +192,7 @@ public class ArrayUtil {
   public static double sum(List<double[]> a) {
     return a.stream().parallel().mapToDouble(x -> Arrays.stream(x).sum()).sum();
   }
-
+  
   /**
    * Op list.
    *
@@ -212,7 +212,7 @@ public class ArrayUtil {
       return c;
     }).collect(Collectors.toList());
   }
-
+  
   /**
    * Op double [ ].
    *
@@ -229,7 +229,7 @@ public class ArrayUtil {
     }
     return c;
   }
-
+  
   /**
    * Op list.
    *
@@ -248,7 +248,7 @@ public class ArrayUtil {
     }
     return list;
   }
-
+  
   /**
    * Op double [ ].
    *

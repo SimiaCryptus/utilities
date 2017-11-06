@@ -59,31 +59,46 @@ public abstract class ResourcePool<T> {
     if (null != prior) {
       f.accept(prior);
     } else {
-      T poll = this.pool.poll();
-      if (null == poll) {
-        synchronized (this.all) {
-          if (this.all.size() < this.maxItems) {
-            poll = create();
-            this.all.add(poll);
-          }
-        }
-      }
-      if (null == poll) {
-        try {
-          poll = this.pool.take();
-        } catch (final InterruptedException e) {
-          throw new java.lang.RuntimeException(e);
-        }
-      }
+      T poll = get();
       try {
         currentValue.set(poll);
         f.accept(poll);
       } finally {
         this.pool.add(poll);
-        currentValue.set(null);
+        currentValue.remove();
       }
     }
   }
   
+  /**
+   * Get t.
+   *
+   * @return the t
+   */
+  public T get() {
+    T poll = this.pool.poll();
+    if (null == poll) {
+      synchronized (this.all) {
+        if (this.all.size() < this.maxItems) {
+          poll = create();
+          this.all.add(poll);
+        }
+      }
+    }
+    if (null == poll) {
+      try {
+        poll = this.pool.take();
+      } catch (final InterruptedException e) {
+        throw new RuntimeException(e);
+      }
+    }
+    return poll;
+  }
+  
+  /**
+   * Size int.
+   *
+   * @return the int
+   */
   public int size() { return all.size(); }
 }

@@ -26,7 +26,7 @@ import org.json.JSONObject;
  * The interface Json formattable.
  */
 public interface JsonFormattable {
-
+  
   /**
    * To json json object.
    *

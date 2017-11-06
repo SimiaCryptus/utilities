@@ -147,7 +147,7 @@ Logging:
 
 Returns: 
 ```
-    com.simiacryptus.util.text.ClassificationTree$$Lambda$188/1818402158@44e81672
+    com.simiacryptus.text.ClassificationTree$$Lambda$188/1818402158@44e81672
 ```
 Code from [TrieClassificationBlog.java:192](../../src/test/java/com/simiacryptus/util/text/TrieClassificationBlog.java#L192) executed in 0.26 seconds: 
 ```java

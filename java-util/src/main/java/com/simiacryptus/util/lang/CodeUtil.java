@@ -36,12 +36,24 @@ public class CodeUtil {
   /**
    * The constant projectRoot.
    */
-  public static File projectRoot = new File(System.getProperty("codeRoot", "."));
-  private static List<File> codeRoots = Arrays.asList(
-    "src/main/java", "src/test/java", "src/main/scala", "src/test/scala"
-  ).stream().map(x -> new File(projectRoot, x)).collect(Collectors.toList());
-
-
+  public static File projectRoot = new File(System.getProperty("codeRoot", ".."));
+  private static List<File> codeRoots = loadCodeRoots();
+  
+  private static List<File> loadCodeRoots() {
+    List<String> folders = Arrays.asList(
+      "src/main/java", "src/test/java", "src/main/scala", "src/test/scala"
+    );
+    List<File> codeLocation = folders.stream().map(name -> new File(projectRoot, name))
+                                .filter(file -> file.exists() && file.isDirectory()).collect(Collectors.toList());
+    if(codeLocation.isEmpty()) {
+      codeLocation = Arrays.stream(projectRoot.listFiles()).filter(x->x.isDirectory()).flatMap(childRoot->
+        folders.stream().map(name -> new File(childRoot, name)).filter(file -> file.exists() && file.isDirectory()))
+       .collect(Collectors.toList());
+    }
+    return codeLocation;
+  }
+  
+  
   /**
    * Find file file.
    *
@@ -51,7 +63,7 @@ public class CodeUtil {
   public static File findFile(StackTraceElement callingFrame) {
     return findFile(callingFrame.getClassName(), callingFrame.getFileName());
   }
-
+  
   /**
    * Find file file.
    *
@@ -64,7 +76,7 @@ public class CodeUtil {
     String path = Arrays.stream(packagePath).limit(packagePath.length - 1).collect(Collectors.joining(File.separator)) + File.separator + fileName;
     return findFile(path);
   }
-
+  
   /**
    * Gets indent.
    *
@@ -75,7 +87,7 @@ public class CodeUtil {
     Matcher matcher = Pattern.compile("^\\s+").matcher(txt);
     return matcher.find() ? matcher.group(0) : "";
   }
-
+  
   /**
    * Find file file.
    *
@@ -89,7 +101,7 @@ public class CodeUtil {
     }
     throw new RuntimeException(String.format("Not Found: %s; Project Root = %s", path, projectRoot.getAbsolutePath()));
   }
-
+  
   /**
    * Gets inner text.
    *

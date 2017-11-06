@@ -34,7 +34,7 @@ public class AsyncListIterator<T> implements Iterator<T> {
    * The Index.
    */
   int index = -1;
-
+  
   /**
    * Instantiates a new Async list iterator.
    *
