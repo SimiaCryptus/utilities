@@ -300,6 +300,7 @@ public class Util {
    * @return the buffered image
    */
   public static BufferedImage resize(BufferedImage image) {
+    if(null==image) return image;
     int width = image.getWidth();
     if (width < 800) return image;
     int height = image.getHeight() * width / image.getWidth();

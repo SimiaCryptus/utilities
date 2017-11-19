@@ -28,7 +28,7 @@ public class TimedResult<T> {
   /**
    * The Obj.
    */
-  public final T obj;
+  public final T result;
   /**
    * The Time nanos.
    */
@@ -37,11 +37,11 @@ public class TimedResult<T> {
   /**
    * Instantiates a new Timed result.
    *
-   * @param obj       the obj
+   * @param result       the obj
    * @param timeNanos the time nanos
    */
-  public TimedResult(T obj, long timeNanos) {
-    this.obj = obj;
+  public TimedResult(T result, long timeNanos) {
+    this.result = result;
     this.timeNanos = timeNanos;
   }
   

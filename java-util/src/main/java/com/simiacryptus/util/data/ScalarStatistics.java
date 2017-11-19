@@ -82,7 +82,7 @@ public class ScalarStatistics implements MonitoredItem, Serializable {
       }
     }
     synchronized (this) {
-      sum0 += 1;
+      sum0 += values.length;
       sum1 += v1;
       sum2 += v2;
       min = Math.min(min, vmin);
@@ -94,11 +94,29 @@ public class ScalarStatistics implements MonitoredItem, Serializable {
     }
   }
   
-  /**
-   * Add.
-   *
-   * @param v the v
-   */
+  public synchronized final ScalarStatistics add(ScalarStatistics right) {
+    ScalarStatistics sum = new ScalarStatistics();
+    sum.sum0 += this.sum0;
+    sum.sum0 += right.sum0;
+    sum.sum1 += this.sum1;
+    sum.sum1 += right.sum1;
+    sum.sum2 += this.sum2;
+    sum.sum2 += right.sum2;
+    return sum;
+  }
+  
+  
+  public synchronized final ScalarStatistics subtract(ScalarStatistics right) {
+    ScalarStatistics sum = new ScalarStatistics();
+    sum.sum0 += this.sum0;
+    sum.sum0 -= right.sum0;
+    sum.sum1 += this.sum1;
+    sum.sum1 -= right.sum1;
+    sum.sum2 += this.sum2;
+    sum.sum2 -= right.sum2;
+    return sum;
+  }
+
   public synchronized final void add(double v) {
     sum0 += 1;
     sum1 += v;

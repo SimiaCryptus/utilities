@@ -64,16 +64,16 @@ public interface Compressor {
           rowWide.put(name + ".uncompressed", item.getText().length());
           rowTall.put("uncompressed", item.getText().length());
           TimedResult<byte[]> compress = TimedResult.time(() -> compressor.compress(item.getText()));
-          rowWide.put(name + ".compressed", compress.obj.length);
-          rowTall.put("compressed", compress.obj.length);
+          rowWide.put(name + ".compressed", compress.result.length);
+          rowTall.put("compressed", compress.result.length);
           double ONE_MILLION = 1000000.0;
           rowWide.put(name + ".compressMs", compress.timeNanos / ONE_MILLION);
           rowTall.put("compressMs", compress.timeNanos / ONE_MILLION);
-          TimedResult<String> uncompress = TimedResult.time(() -> compressor.uncompress(compress.obj));
+          TimedResult<String> uncompress = TimedResult.time(() -> compressor.uncompress(compress.result));
           rowWide.put(name + ".uncompressMs", uncompress.timeNanos / ONE_MILLION);
           rowTall.put("uncompressMs", uncompress.timeNanos / ONE_MILLION);
-          rowWide.put(name + ".verified", uncompress.obj.equals(item.getText()));
-          rowTall.put("verified", uncompress.obj.equals(item.getText()));
+          rowWide.put(name + ".verified", uncompress.result.equals(item.getText()));
+          rowTall.put("verified", uncompress.result.equals(item.getText()));
           tallTable.putRow(rowTall);
           //System.p.println(String.format("Evaluated #%s: %s run %s - %s chars -> %s bytes in %s sec", index.incrementAndGet(), name, title, item.text.length(), compress.obj.length, compress.timeNanos / 1000000000.0));
         } catch (Exception ex) {
@@ -131,13 +131,13 @@ public interface Compressor {
           rowTall.put("compressor", name);
 
           TimedResult<Double> compress = TimedResult.time(() -> compressor.apply(item));
-          rowWide.put(name + ".value", compress.obj);
-          rowTall.put("value", compress.obj);
+          rowWide.put(name + ".value", compress.result);
+          rowTall.put("value", compress.result);
 //          double ONE_MILLION = 1000000.0;
 //          rowWide.put(name + ".compressMs", compress.timeNanos / ONE_MILLION);
 //          rowTall.put("compressMs", compress.timeNanos / ONE_MILLION);
           tallTable.putRow(rowTall);
-          System.out.println(String.format("Evaluated #%s: %s run %s - %s chars -> %s in %s sec", index.incrementAndGet(), name, title, item.getText().length(), compress.obj, compress.timeNanos / 1000000000.0));
+          System.out.println(String.format("Evaluated #%s: %s run %s - %s chars -> %s in %s sec", index.incrementAndGet(), name, title, item.getText().length(), compress.result, compress.timeNanos / 1000000000.0));
         } catch (Exception ex) {
           ex.printStackTrace();
         }

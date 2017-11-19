@@ -689,12 +689,12 @@ public class TrieDemo {
           String text = article.getText();
           String title = article.getTitle();
           TimedResult<Bits> compressed = TimedResult.time(() -> codec.encodePPM(text, Integer.MAX_VALUE));
-          TimedResult<String> decompressed = TimedResult.time(() -> codec.decodePPM(compressed.obj.getBytes(), Integer.MAX_VALUE));
+          TimedResult<String> decompressed = TimedResult.time(() -> codec.decodePPM(compressed.result.getBytes(), Integer.MAX_VALUE));
           System.out.println(String.format("Serialized %s: %s chars -> %s bytes (%s%%) in %s sec; %s",
-            title, article.getText().length(), compressed.obj.bitLength / 8.0,
-            compressed.obj.bitLength * 100.0 / (8.0 * article.getText().length()),
-            compressed.timeNanos / 1000000000.0, text.equals(decompressed.obj) ? "Verified" : "Failed Validation"));
-          return compressed.obj.getBytes();
+            title, article.getText().length(), compressed.result.bitLength / 8.0,
+            compressed.result.bitLength * 100.0 / (8.0 * article.getText().length()),
+            compressed.timeNanos / 1000000000.0, text.equals(decompressed.result) ? "Verified" : "Failed Validation"));
+          return compressed.result.getBytes();
         }).collect(Collectors.toList());
       });
       int totalSize = compressedArticles.stream().mapToInt(x -> x.length).sum();
@@ -708,7 +708,7 @@ public class TrieDemo {
         compressedArticles.forEach(article -> {
           TimedResult<String> decompressed = TimedResult.time(() -> codec.decodePPM(article, Integer.MAX_VALUE));
           System.out.println(String.format("Deserialized %s bytes -> %s chars in %s sec",
-            article.length, decompressed.obj.length(),
+            article.length, decompressed.result.length(),
             decompressed.timeNanos / 1000000000.0));
         });
       });
@@ -926,10 +926,10 @@ public class TrieDemo {
         int totalSize = WikiArticle.ENGLISH.stream().limit(100).map(article -> {
           TimedResult<Bits> compressed = TimedResult.time(() -> codec.encodePPM(article.getText(), 4));
           System.out.println(String.format("Serialized %s: %s chars -> %s bytes (%s%%) in %s ms",
-            article.getTitle(), article.getText().length(), compressed.obj.bitLength / 8.0,
-            compressed.obj.bitLength * 100.0 / (8.0 * article.getText().length()),
+            article.getTitle(), article.getText().length(), compressed.result.bitLength / 8.0,
+            compressed.result.bitLength * 100.0 / (8.0 * article.getText().length()),
             compressed.timeNanos / 1000000.0));
-          return compressed.obj.getBytes();
+          return compressed.result.getBytes();
         }).mapToInt(bytes -> bytes.length).sum();
         return String.format("Compressed %s KB of documents -> %s KB (%s dictionary + %s ppm)",
           index.getIndexedSize() / 1024, (totalSize + dictionaryLength) / 1024,
@@ -942,8 +942,8 @@ public class TrieDemo {
         WikiArticle.ENGLISH.stream().skip(100).limit(10).forEach(article -> {
           TimedResult<Bits> compressed = TimedResult.time(() -> codec.encodePPM(article.getText(), 4));
           System.out.println(String.format("Serialized %s: %s chars -> %s bytes (%s%%) in %s ms",
-            article.getTitle(), article.getText().length(), compressed.obj.bitLength / 8.0,
-            compressed.obj.bitLength * 100.0 / (8.0 * article.getText().length()),
+            article.getTitle(), article.getText().length(), compressed.result.bitLength / 8.0,
+            compressed.result.bitLength * 100.0 / (8.0 * article.getText().length()),
             compressed.timeNanos / 1000000.0));
         });
       });

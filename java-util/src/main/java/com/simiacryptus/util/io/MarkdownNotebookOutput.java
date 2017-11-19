@@ -152,7 +152,7 @@ public class MarkdownNotebookOutput implements NotebookOutput {
       }
       out("");
       
-      Object eval = result.obj.obj;
+      Object eval = result.obj.result;
       if (null != eval) {
         out("Returns: \n");
         String str;
@@ -184,7 +184,7 @@ public class MarkdownNotebookOutput implements NotebookOutput {
         if (escape) out("```");
         out("\n\n");
         if (eval instanceof Throwable) {
-          throw new RuntimeException((Throwable) result.obj.obj);
+          throw new RuntimeException((Throwable) result.obj.result);
         }
       }
       return (T) eval;
@@ -224,6 +224,7 @@ public class MarkdownNotebookOutput implements NotebookOutput {
   
   @Override
   public String image(BufferedImage rawImage, String caption) throws IOException {
+    if(null == rawImage) return "";
     ByteArrayOutputStream out = new ByteArrayOutputStream();
     int thisImage = ++imageNumber;
     String fileName = this.name + "." + thisImage + ".png";

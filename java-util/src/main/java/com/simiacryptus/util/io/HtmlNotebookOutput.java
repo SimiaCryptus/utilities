@@ -181,7 +181,7 @@ public class HtmlNotebookOutput implements NotebookOutput {
       }
       out("");
       
-      Object eval = result.obj.obj;
+      Object eval = result.obj.result;
       if (null != eval) {
         out("Returns: <br/>");
         String str;
@@ -217,7 +217,7 @@ public class HtmlNotebookOutput implements NotebookOutput {
         if (escape) out("</pre>");
         out("\n\n");
         if (eval instanceof Throwable) {
-          throw new RuntimeException((Throwable) result.obj.obj);
+          throw new RuntimeException((Throwable) result.obj.result);
         }
       }
       out("</p>");
