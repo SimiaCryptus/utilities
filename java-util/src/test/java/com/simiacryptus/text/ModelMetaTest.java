@@ -160,7 +160,7 @@ public abstract class ModelMetaTest {
   @Test
   @Category(TestCategories.Report.class)
   public void calcCompressorPPM() throws Exception {
-    try (NotebookOutput log = MarkdownNotebookOutput.get(this).addCopy(System.out);) {
+    try (NotebookOutput log = MarkdownNotebookOutput.get(this).addCopy(System.out)) {
       CharTrieIndex baseTree = new CharTrieIndex();
       log.p("Preparing %s documents", getModelCount());
       source().limit(getModelCount()).forEach(txt -> {

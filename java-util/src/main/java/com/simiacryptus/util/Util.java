@@ -68,8 +68,8 @@ public class Util {
       return new Random(this.r.nextLong());
     }
   };
-  private final static java.util.concurrent.atomic.AtomicInteger idcounter = new java.util.concurrent.atomic.AtomicInteger(0);
-  private final static String jvmId = UUID.randomUUID().toString();
+  private static final java.util.concurrent.atomic.AtomicInteger idcounter = new java.util.concurrent.atomic.AtomicInteger(0);
+  private static final String jvmId = UUID.randomUUID().toString();
   
   /**
    * Add.
@@ -138,7 +138,7 @@ public class Util {
    * @throws FileNotFoundException the file not found exception
    * @throws IOException           the io exception
    */
-  public static void report(final Stream<String> fragments) throws FileNotFoundException, IOException {
+  public static void report(final Stream<String> fragments) throws IOException {
     final File outDir = new File("reports");
     outDir.mkdirs();
     final StackTraceElement caller = getLast(Arrays.stream(Thread.currentThread().getStackTrace())//
@@ -172,7 +172,7 @@ public class Util {
    * @throws FileNotFoundException the file not found exception
    * @throws IOException           the io exception
    */
-  public static void report(final String... fragments) throws FileNotFoundException, IOException {
+  public static void report(final String... fragments) throws IOException {
     Util.report(Stream.of(fragments));
   }
   
@@ -398,9 +398,9 @@ public class Util {
       return new FileInputStream(file);
     }
     else {
-      TrustManager[] trustManagers = new TrustManager[]{
+      TrustManager[] trustManagers = {
         new X509TrustManager() {
-          public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+          public X509Certificate[] getAcceptedIssuers() {
             return new X509Certificate[0];
           }
           

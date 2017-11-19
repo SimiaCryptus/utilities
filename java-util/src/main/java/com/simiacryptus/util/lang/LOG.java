@@ -62,8 +62,7 @@ public class LOG {
         return true;
       }
       if (clazz == Thread.class) return false;
-      if (clazz == LOG.class) return false;
-      return true;
+      return clazz != LOG.class;
     }).findFirst().get();
     final double time = (System.nanoTime() - LOG.startTime) / 1000000000.;
     final String line = String.format("[%.5f] (%s:%s) %s", time, caller.getFileName(), caller.getLineNumber(), formatted.replaceAll("\n", "\n\t"));
@@ -104,7 +103,7 @@ public class LOG {
       }
       sb.append(String.format("%.3f", v));
     }
-    return "[" + sb.toString() + "]";
+    return "[" + sb + "]";
   }
   
   /**

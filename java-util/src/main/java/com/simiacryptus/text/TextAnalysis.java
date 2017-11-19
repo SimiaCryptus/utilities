@@ -154,8 +154,7 @@ public class TextAnalysis {
       ToDoubleFunction<WordSpelling> fitness = mutant -> mutant.sum * 1.0 / mutant.text.length();
       WordSpelling mutant = wordSpelling.mutate().filter(x -> {
         if (!x.text.startsWith("|")) return false;
-        if (!x.text.endsWith("|")) return false;
-        return true;
+        return x.text.endsWith("|");
       }).min(Comparator.comparingDouble(fitness::applyAsDouble)).get();
       if (fitness.applyAsDouble(mutant) < fitness.applyAsDouble(wordSpelling)) {
         if (null != verbose) verbose.println(String.format("IMPROVEMENT: \"%s\"\t%.5f", mutant.text, mutant.sum));
@@ -204,7 +203,6 @@ public class TextAnalysis {
       else if (accumulator.isEmpty() && node.getDepth() > prevDepth) {
         accumulator = node.getString();
       }
-      ;
     }
     List<String> tokenization = new ArrayList<>();
     for (String match : matches) {

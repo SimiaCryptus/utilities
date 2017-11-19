@@ -40,7 +40,7 @@ import java.util.Arrays;
  * The type Io util.
  */
 public class IOUtil {
-  private final static ObjectMapper objectMapper = new ObjectMapper().enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL);
+  private static final ObjectMapper objectMapper = new ObjectMapper().enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL);
   private static final ThreadLocal<Kryo> kryo = new ThreadLocal<Kryo>() {
     @Override
     protected Kryo initialValue() {

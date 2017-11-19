@@ -154,21 +154,19 @@ public class TrieDemo {
       String dictionary = log.code(() -> {
         return trie.getGenerator().generateDictionary(8 * 1024, 3, "", 1, true);
       });
-      {
-        log.p("\n\nThen, we use it to encode strings:");
-        String compressed = log.code(() -> {
-          byte[] bits = CompressionUtil.encodeLZ(wikiArticle.getText(), dictionary);
-          System.out.print("Compressed Bytes: " + bits.length);
-          return Base64.getEncoder().encodeToString(bits);
-        });
-        
-        log.p("\n\nAnd decompress to verify:");
-        String uncompressed = log.code(() -> {
-          byte[] bytes = Base64.getDecoder().decode(compressed);
-          return CompressionUtil.decodeLZToString(bytes, dictionary);
-        });
-      }
-      
+      log.p("\n\nThen, we use it to encode strings:");
+      String compressed = log.code(() -> {
+        byte[] bits = CompressionUtil.encodeLZ(wikiArticle.getText(), dictionary);
+        System.out.print("Compressed Bytes: " + bits.length);
+        return Base64.getEncoder().encodeToString(bits);
+      });
+  
+      log.p("\n\nAnd decompress to verify:");
+      String uncompressed = log.code(() -> {
+        byte[] bytes = Base64.getDecoder().decode(compressed);
+        return CompressionUtil.decodeLZToString(bytes, dictionary);
+      });
+  
     }
   }
   

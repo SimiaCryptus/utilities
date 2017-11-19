@@ -29,7 +29,7 @@ import java.util.Arrays;
  */
 public class BitInputStream {
   
-  private InputStream inner;
+  private final InputStream inner;
   private Bits remainder = new Bits(0);
   
   /**
@@ -247,7 +247,7 @@ public class BitInputStream {
    * @throws IOException the io exception
    */
   public short readVarShort(int optimal) throws IOException {
-    int[] varShortDepths = new int[]{optimal, 16};
+    int[] varShortDepths = {optimal, 16};
     final int type = (int) this.read(1).toLong();
     return (short) this.read(varShortDepths[type]).toLong();
   }

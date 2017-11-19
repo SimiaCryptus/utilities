@@ -37,10 +37,10 @@ import java.util.stream.Stream;
  */
 public class LanguageModelBuilder {
 
-  private int trainingSize = 1000;
-  private int minWeight = 0;
-  private int maxLevels = 4;
-  private int minArticleSize = 4 * 1024;
+  private final int trainingSize = 1000;
+  private final int minWeight = 0;
+  private final int maxLevels = 4;
+  private final int minArticleSize = 4 * 1024;
 
   private static void print(CharTrie trie) {
     System.out.println("Total Indexed Document (KB): " + trie.getIndexedSize() / 1024);

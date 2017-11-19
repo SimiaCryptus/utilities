@@ -26,7 +26,7 @@ import java.io.Serializable;
 import java.util.*;
 
 public class ScalarStatistics implements MonitoredItem, Serializable {
-  private final static double zeroTol = 1e-20;
+  private static final double zeroTol = 1e-20;
   private volatile int zeros = 0;
   private volatile int negatives = 0;
   private volatile int positives = 0;
@@ -94,7 +94,7 @@ public class ScalarStatistics implements MonitoredItem, Serializable {
     }
   }
   
-  public synchronized final ScalarStatistics add(ScalarStatistics right) {
+  public final synchronized ScalarStatistics add(ScalarStatistics right) {
     ScalarStatistics sum = new ScalarStatistics();
     sum.sum0 += this.sum0;
     sum.sum0 += right.sum0;
@@ -106,7 +106,7 @@ public class ScalarStatistics implements MonitoredItem, Serializable {
   }
   
   
-  public synchronized final ScalarStatistics subtract(ScalarStatistics right) {
+  public final synchronized ScalarStatistics subtract(ScalarStatistics right) {
     ScalarStatistics sum = new ScalarStatistics();
     sum.sum0 += this.sum0;
     sum.sum0 -= right.sum0;
@@ -117,7 +117,7 @@ public class ScalarStatistics implements MonitoredItem, Serializable {
     return sum;
   }
 
-  public synchronized final void add(double v) {
+  public final synchronized void add(double v) {
     sum0 += 1;
     sum1 += v;
     sum2 += v * v;

@@ -417,9 +417,7 @@ public class CountTreeBitsCollection extends
       assert 0 == branch.zeroCount;
       assert 0 == branch.oneCount;
     }
-    else if (currentCodeType == CodeType.Prefix) {
-      assert 0 == branch.terminals;
-    }
+    else assert currentCodeType != CodeType.Prefix || 0 == branch.terminals;
     maximum -= branch.terminals;
 
     assert maximum >= branch.zeroCount;
@@ -484,7 +482,7 @@ public class CountTreeBitsCollection extends
   /**
    * The enum Serialization checks.
    */
-  public static enum SerializationChecks {
+  public enum SerializationChecks {
     /**
      * Start tree serialization checks.
      */

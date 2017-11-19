@@ -64,7 +64,7 @@ public class TrieTest {
     }
   }
 
-  static private void testRow(int maxLevels, int minWeight, Stream<String> documents) {
+  private static void testRow(int maxLevels, int minWeight, Stream<String> documents) {
     CharTrieIndex tree = new CharTrieIndex();
     long startTime = System.currentTimeMillis();
     documents.forEach(i -> tree.addDocument(i));
@@ -75,7 +75,7 @@ public class TrieTest {
         elapsed / 1000., tree.getMemorySize() / 1024, tree.truncate().getMemorySize() / 1024));
   }
 
-  static private Map<String, Object> evaluateDictionary(List<String> sentances, String dictionary, Map<String, Object> map) {
+  private static Map<String, Object> evaluateDictionary(List<String> sentances, String dictionary, Map<String, Object> map) {
     Arrays.asList(1, 4, 16, 32).stream().forEach(k -> {
       DoubleStatistics statistics = sentances.stream().map(line -> {
         int length0 = CompressionUtil.encodeLZ(line, "").length;
@@ -142,7 +142,7 @@ public class TrieTest {
   @Category(TestCategories.UnitTest.class)
   public void testPerformanceMatrix() throws IOException {
     for (int count = 100; count < 50000; count *= 2) {
-      for (int maxLevels = 1; maxLevels < 64; maxLevels = Math.max((int) (maxLevels * 4), maxLevels + 1)) {
+      for (int maxLevels = 1; maxLevels < 64; maxLevels = Math.max(maxLevels * 4, maxLevels + 1)) {
         for (int minWeight = 1; minWeight < 64; minWeight *= 4) {
           testRow(maxLevels, minWeight,
             IntStream.range(0, count).parallel().mapToObj(i -> UUID.randomUUID().toString()));
@@ -178,7 +178,7 @@ public class TrieTest {
     {
       String commonTerms = wordCounts.entrySet().stream()
                              .sorted(Comparator.<Map.Entry<String, Long>>comparingLong(e -> -e.getValue())
-                                       .thenComparing(Comparator.<Map.Entry<String, Long>>comparingLong(e -> -e.getKey().length())))
+                                       .thenComparing(Comparator.comparingLong(e -> -e.getKey().length())))
                              .map(x -> x.getKey()).reduce((a, b) -> a + " " + b).get().substring(0, size);
       Map<String, Object> map = new LinkedHashMap<>();
       map.put("type", "CommonTerm");
@@ -195,7 +195,7 @@ public class TrieTest {
       String meritTerms = wordCounts.entrySet().stream()
                             .sorted(Comparator.<Map.Entry<String, Long>>comparingLong(
                               e -> -e.getValue() * (e.getKey().length() - _encodingPenalty))
-                                      .thenComparing(Comparator.<Map.Entry<String, Long>>comparingLong(e -> -e.getKey().length())))
+                                      .thenComparing(Comparator.comparingLong(e -> -e.getKey().length())))
                             .map(x -> x.getKey()).reduce((a, b) -> a + " " + b).get().substring(0, size);
       Map<String, Object> map = new LinkedHashMap<>();
       map.put("type", "MeritTerm");
@@ -211,7 +211,7 @@ public class TrieTest {
     {
       String uncommonTerms = wordCounts.entrySet().stream()
                                .sorted(Comparator.<Map.Entry<String, Long>>comparingLong(e -> e.getValue())
-                                         .thenComparing(Comparator.<Map.Entry<String, Long>>comparingLong(e -> e.getKey().length())))
+                                         .thenComparing(Comparator.comparingLong(e -> e.getKey().length())))
                                .map(x -> x.getKey()).reduce((a, b) -> a + " " + b).get().substring(0, size);
       Map<String, Object> map = new LinkedHashMap<>();
       map.put("type", "UncommonTerm,");

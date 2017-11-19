@@ -139,7 +139,7 @@ public class CharTrieSerializer {
     else {
       root.streamDecendents(level).forEach(node -> {
         TrieNode godparent = node.godparent();
-        List<NodeData> list = godparent.getChildren().map(x -> ((TrieNode) x).getData()).collect(Collectors.toList());
+        List<NodeData> list = godparent.getChildren().map(x -> x.getData()).collect(Collectors.toList());
         TreeMap<Character, ? extends TrieNode> godchildren = godparent.getChildrenMap();
         TreeMap<Character, Long> children = new TreeMap<>();
         godchildren.forEach((token, godchild) -> {

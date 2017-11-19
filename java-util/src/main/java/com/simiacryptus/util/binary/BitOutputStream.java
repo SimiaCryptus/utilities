@@ -34,7 +34,7 @@ public class BitOutputStream implements AutoCloseable {
    * The Var long depths.
    */
   static final int varLongDepths[] = {6, 14, 30, 62};
-  private OutputStream inner;
+  private final OutputStream inner;
   
   private Bits remainder = Bits.NULL;
   private int totalBitsWritten = 0;
@@ -226,7 +226,7 @@ public class BitOutputStream implements AutoCloseable {
    */
   public void writeVarShort(final short value, int optimal) throws IOException {
     if (value < 0) throw new IllegalArgumentException();
-    int[] varShortDepths = new int[]{optimal, 16};
+    int[] varShortDepths = {optimal, 16};
     final int bitLength = new Bits(value).bitLength;
     int type = Arrays.binarySearch(varShortDepths, bitLength);
     if (type < 0) {

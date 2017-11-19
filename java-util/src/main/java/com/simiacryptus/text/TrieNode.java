@@ -389,10 +389,7 @@ public class TrieNode {
     if (cursorId < getData().firstCursorIndex) {
       return false;
     }
-    if (cursorId >= (getData().firstCursorIndex + getData().cursorCount)) {
-      return false;
-    }
-    return true;
+    return cursorId < (getData().firstCursorIndex + getData().cursorCount);
   }
   
   /**

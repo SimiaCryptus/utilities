@@ -32,6 +32,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.URI;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
@@ -236,7 +237,7 @@ public class HtmlNotebookOutput implements NotebookOutput {
   @Override
   public String file(String data, String fileName, String caption) {
     try {
-      IOUtils.write(data , new FileOutputStream(new File(getResourceDir(), fileName)));
+      IOUtils.write(data , new FileOutputStream(new File(getResourceDir(), fileName)), Charset.forName("UTF-8"));
     } catch (IOException e) {
       throw new RuntimeException(e);
     }

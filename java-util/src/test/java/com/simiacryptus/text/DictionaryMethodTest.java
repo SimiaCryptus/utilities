@@ -103,7 +103,7 @@ public class DictionaryMethodTest {
                                      .map(s -> s.trim()).filter(s -> !s.isEmpty()).collect(Collectors.groupingBy(x -> x, Collectors.counting()));
     String dictionary = wordCounts.entrySet().stream()
                           .sorted(Comparator.<Map.Entry<String, Long>>comparingLong(e -> -e.getValue())
-                                    .thenComparing(Comparator.<Map.Entry<String, Long>>comparingLong(e -> -e.getKey().length())))
+                                    .thenComparing(Comparator.comparingLong(e -> -e.getKey().length())))
                           .map(x -> x.getKey()).reduce((a, b) -> a + " " + b).get().substring(0, 8 * 1024);
     String key = "LZ8k_commonWords";
     int dictSampleSize = 512;

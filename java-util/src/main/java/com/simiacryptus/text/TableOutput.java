@@ -127,7 +127,7 @@ public class TableOutput {
       try (PrintStream printStream = new PrintStream(file)) {
         for (Map<String, Object> row : rows) {
           printStream.println(urlCols.stream()
-                                .map(e -> ((URL) row.get(e.getKey())).toString())
+                                .map(e -> row.get(e.getKey()).toString())
                                 .collect(Collectors.joining("\t")));
         }
       }

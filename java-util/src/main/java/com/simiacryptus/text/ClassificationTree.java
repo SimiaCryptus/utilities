@@ -31,11 +31,11 @@ import java.util.stream.Stream;
 public class ClassificationTree {
   
   private PrintStream verbose = null;
-  private double minLeafWeight = 10;
-  private int maxLevels = 8;
-  private int minWeight = 5;
-  private double depthBias = 0.0005;
-  private int smoothing = 3;
+  private final double minLeafWeight = 10;
+  private final int maxLevels = 8;
+  private final int minWeight = 5;
+  private final double depthBias = 0.0005;
+  private final int smoothing = 3;
   
   /**
    * Categorization tree function.

@@ -44,7 +44,7 @@ public interface Compressor {
    * @param wide        the wide
    * @return the table output
    */
-  public static <T> TableOutput evalCompressor(Stream<? extends TestDocument> data, Map<String, Compressor> compressors, boolean wide) {
+  static <T> TableOutput evalCompressor(Stream<? extends TestDocument> data, Map<String, Compressor> compressors, boolean wide) {
     TableOutput wideTable = new TableOutput();
     TableOutput tallTable = new TableOutput();
     AtomicInteger index = new AtomicInteger(0);
@@ -94,7 +94,7 @@ public interface Compressor {
    * @param wide        the wide
    * @return the table output
    */
-  public static <T> TableOutput evalCompressorCluster(Stream<? extends TestDocument> data, Map<String, Compressor> compressors, boolean wide) {
+  static <T> TableOutput evalCompressorCluster(Stream<? extends TestDocument> data, Map<String, Compressor> compressors, boolean wide) {
     Stream<Map.Entry<String, Compressor>> stream = compressors.entrySet().stream();
     Collector<Map.Entry<String, Compressor>, ?, Map<String, Function<TestDocument, Double>>> collector =
       Collectors.toMap(e -> e.getKey(), e -> {
@@ -113,7 +113,7 @@ public interface Compressor {
    * @param wide        the wide
    * @return the table output
    */
-  public static <T> TableOutput evalCluster(Stream<? extends TestDocument> data, Map<String, Function<TestDocument, Double>> compressors, boolean wide) {
+  static <T> TableOutput evalCluster(Stream<? extends TestDocument> data, Map<String, Function<TestDocument, Double>> compressors, boolean wide) {
     TableOutput wideTable = new TableOutput();
     TableOutput tallTable = new TableOutput();
     AtomicInteger index = new AtomicInteger(0);
@@ -152,7 +152,7 @@ public interface Compressor {
    *
    * @param compressors the compressors
    */
-  public static void addGenericCompressors(Map<String, Compressor> compressors) {
+  static void addGenericCompressors(Map<String, Compressor> compressors) {
     compressors.put("BZ0", new Compressor() {
       @Override
       public byte[] compress(String text) {
@@ -184,7 +184,7 @@ public interface Compressor {
    * @param encodingContext the encoding context
    * @return the compressor
    */
-  public static Compressor buildPPMCompressor(CharTrie baseTree, final int encodingContext) {
+  static Compressor buildPPMCompressor(CharTrie baseTree, final int encodingContext) {
     NodewalkerCodec codec = baseTree.getCodec();
     System.out.println(String.format("Encoding Tree Memory Size = %s KB", codec.inner.getMemorySize() / 1024));
     return new Compressor() {

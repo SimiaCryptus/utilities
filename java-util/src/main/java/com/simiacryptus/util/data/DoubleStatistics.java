@@ -32,7 +32,7 @@ public class DoubleStatistics extends DoubleSummaryStatistics {
   /**
    * The Collector.
    */
-  public static Collector<Double, DoubleStatistics, DoubleStatistics> COLLECTOR = Collector.<Double, DoubleStatistics, DoubleStatistics>of(
+  public static Collector<Double, DoubleStatistics, DoubleStatistics> COLLECTOR = Collector.of(
     DoubleStatistics::new,
     DoubleStatistics::accept,
     DoubleStatistics::combine,
@@ -42,7 +42,7 @@ public class DoubleStatistics extends DoubleSummaryStatistics {
   /**
    * The Numbers.
    */
-  public static Collector<Number, DoubleStatistics, DoubleStatistics> NUMBERS = Collector.<Number, DoubleStatistics, DoubleStatistics>of(
+  public static Collector<Number, DoubleStatistics, DoubleStatistics> NUMBERS = Collector.of(
     DoubleStatistics::new,
     (a, n) -> a.accept(n.doubleValue()),
     DoubleStatistics::combine,

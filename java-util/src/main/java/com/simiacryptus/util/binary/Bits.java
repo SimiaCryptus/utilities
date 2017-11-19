@@ -432,10 +432,7 @@ public class Bits implements Comparable<Bits> {
     if (!Arrays.equals(this.bytes, other.bytes)) {
       return false;
     }
-    if (this.bitLength != other.bitLength) {
-      return false;
-    }
-    return true;
+    return this.bitLength == other.bitLength;
   }
   
   /**
@@ -558,7 +555,7 @@ public class Bits implements Comparable<Bits> {
       while (sb.length() + n.length() < this.bitLength) {
         sb.append("0");
       }
-      return sb.toString() + n;
+      return sb + n;
     }
   }
   

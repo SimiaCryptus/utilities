@@ -42,10 +42,10 @@ public class CachedSupplier<T> implements Supplier<T> {
   
   @Override
   public T get() {
-    T obj = null==cached?null:cached;
+    T obj = cached;
     if(null == obj) {
       synchronized (this) {
-        obj = null==cached?null:cached;
+        obj = cached;
         if(null == obj) {
           obj = fn.get();
           cached = (obj);

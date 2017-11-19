@@ -240,10 +240,7 @@ public class HammingCode<T extends Comparable<T>> {
         return false;
       }
     }
-    if (this.reverseIndex.size() != this.forwardIndex.size()) {
-      return false;
-    }
-    return true;
+    return this.reverseIndex.size() == this.forwardIndex.size();
   }
   
   /**

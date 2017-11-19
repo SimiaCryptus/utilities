@@ -29,7 +29,7 @@ public class FastRandom {
     return Math.random();
   }
   
-  private static volatile long mask = 0xABADC0DE;
+  private static final long mask = 0xABADC0DE;
   
   /**
    * Random double.

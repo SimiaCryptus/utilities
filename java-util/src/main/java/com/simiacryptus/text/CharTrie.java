@@ -308,8 +308,8 @@ public class CharTrie {
     TreeMap<Character, ? extends TrieNode> sourceChildrenA = null == sourceNodeA ? null : sourceNodeA.getChildrenMap();
     TreeMap<Character, ? extends TrieNode> sourceChildrenB = null == sourceNodeB ? null : sourceNodeB.getChildrenMap();
     destNode.getChildrenMap().forEach((key, newChild) -> {
-      boolean containsA = null == sourceChildrenA ? false : sourceChildrenA.containsKey(key);
-      boolean containsB = null == sourceChildrenB ? false : sourceChildrenB.containsKey(key);
+      boolean containsA = null != sourceChildrenA && sourceChildrenA.containsKey(key);
+      boolean containsB = null != sourceChildrenB && sourceChildrenB.containsKey(key);
       if (containsA && containsB) {
         reduceSubtree(sourceChildrenA.get(key), sourceChildrenB.get(key), newChild, fn);
       }

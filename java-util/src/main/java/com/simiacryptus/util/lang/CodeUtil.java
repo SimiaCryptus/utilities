@@ -37,7 +37,7 @@ public class CodeUtil {
    * The constant projectRoot.
    */
   public static File projectRoot = new File(System.getProperty("codeRoot", ".."));
-  private static List<File> codeRoots = loadCodeRoots();
+  private static final List<File> codeRoots = loadCodeRoots();
   
   private static List<File> loadCodeRoots() {
     List<String> folders = Arrays.asList(

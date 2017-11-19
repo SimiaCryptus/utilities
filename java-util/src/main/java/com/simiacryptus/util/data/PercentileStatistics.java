@@ -27,7 +27,7 @@ import java.util.stream.DoubleStream;
 
 public class PercentileStatistics extends ScalarStatistics {
   
-  private List<double[]> values = new ArrayList<>();
+  private final List<double[]> values = new ArrayList<>();
   
   @Override
   public synchronized void add(double... values) {

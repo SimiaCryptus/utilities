@@ -33,13 +33,13 @@ public class SysOutInterceptor extends PrintStream {
    * The constant INSTANCE.
    */
   public static final SysOutInterceptor INSTANCE = init();
-  private ThreadLocal<PrintStream> threadHandler = new ThreadLocal<PrintStream>() {
+  private final ThreadLocal<PrintStream> threadHandler = new ThreadLocal<PrintStream>() {
     @Override
     protected PrintStream initialValue() {
       return (PrintStream) out;
     }
   };
-  private ThreadLocal<Boolean> isMonitoring = new ThreadLocal<Boolean>() {
+  private final ThreadLocal<Boolean> isMonitoring = new ThreadLocal<Boolean>() {
     @Override
     protected Boolean initialValue() {
       return false;

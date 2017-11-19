@@ -32,8 +32,8 @@ import java.util.stream.StreamSupport;
  */
 public final class BinaryChunkIterator implements Iterator<byte[]> {
   
-  private DataInputStream in;
-  private int recordSize;
+  private final DataInputStream in;
+  private final int recordSize;
   
   /**
    * Instantiates a new Binary chunk iterator.

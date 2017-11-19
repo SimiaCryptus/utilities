@@ -33,6 +33,6 @@ public interface JsonFormattable {
    * @return the json object
    * @throws JSONException the json exception
    */
-  public abstract JSONObject toJson() throws JSONException;
+  JSONObject toJson() throws JSONException;
   
 }
