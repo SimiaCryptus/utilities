@@ -170,14 +170,7 @@ public class HtmlNotebookOutput implements NotebookOutput {
       if (!result.log.isEmpty()) {
         out("Logging: <br/>");
         out("<pre>");
-        String logSrc = result.log;
-        if (logSrc.length() > maxLog * 2) {
-          logSrc = logSrc.substring(0, maxLog) + String.format("\n...skipping %s bytes...\n", logSrc.length() - 2 * maxLog) + logSrc.substring(logSrc.length() - maxLog);
-        }
-        else if (logSrc.length() > 0) {
-          logSrc = logSrc;
-        }
-        out(logSrc);
+        out(summarize(maxLog, result.log));
         out("</pre>");
       }
       out("");
@@ -211,10 +204,7 @@ public class HtmlNotebookOutput implements NotebookOutput {
         }
         if (escape) out("<pre>");
         String valTxt = str;
-        if (escape && valTxt.length() > maxLog) {
-          valTxt = valTxt.substring(0, maxLog) + String.format("... and %s more bytes", valTxt.length() - maxLog);
-        }
-        out(valTxt);
+        out(summarize(maxLog, str));
         if (escape) out("</pre>");
         out("\n\n");
         if (eval instanceof Throwable) {
@@ -228,10 +218,21 @@ public class HtmlNotebookOutput implements NotebookOutput {
     }
   }
   
+  public String summarize(int maxLog, String string) {
+    if (string.length() > maxLog * 2) {
+      String left = string.substring(0, maxLog);
+      String right = string.substring(string.length() - maxLog);
+      String link = String.format(file(string, "\n...skipping %s bytes...\n"), string.length() - 2 * maxLog);
+      return left + link + right;
+    } else {
+      return string;
+    }
+  }
+  
   int excerptNumber = 0;
   @Override
   public String file(String data, String caption) {
-    return file(data, excerptNumber + ".txt", caption);
+    return file(data, excerptNumber++ + ".txt", caption);
   }
   
   @Override

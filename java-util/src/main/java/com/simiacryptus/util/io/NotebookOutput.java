@@ -25,6 +25,7 @@ import java.awt.image.BufferedImage;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.PrintStream;
 
 /**
  * The interface Notebook output.
@@ -142,5 +143,7 @@ public interface NotebookOutput extends Closeable {
       return null;
     }, 2 * 1024, 3);
   }
+  
+  NotebookOutput addCopy(PrintStream out);
   
 }

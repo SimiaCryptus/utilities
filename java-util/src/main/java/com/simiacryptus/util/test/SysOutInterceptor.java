@@ -22,6 +22,7 @@ package com.simiacryptus.util.test;
 import com.simiacryptus.util.lang.UncheckedSupplier;
 
 import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
 import java.io.PrintStream;
 
 /**
@@ -36,9 +37,14 @@ public class SysOutInterceptor extends PrintStream {
   private final ThreadLocal<PrintStream> threadHandler = new ThreadLocal<PrintStream>() {
     @Override
     protected PrintStream initialValue() {
-      return (PrintStream) out;
+      return getInner();
     }
   };
+  
+  public PrintStream getInner() {
+    return (PrintStream) out;
+  }
+  
   private final ThreadLocal<Boolean> isMonitoring = new ThreadLocal<Boolean>() {
     @Override
     protected Boolean initialValue() {
@@ -114,12 +120,20 @@ public class SysOutInterceptor extends PrintStream {
   
   @Override
   public void print(String s) {
-    threadHandler.get().print(s);
+    currentHandler().print(s);
   }
   
   @Override
   public void println(String x) {
-    threadHandler.get().println(x);
+    currentHandler().println(x);
+  }
+  
+  public PrintStream currentHandler() {
+    return threadHandler.get();
+  }
+  
+  public void setCurrentHandler(PrintStream out) {
+    threadHandler.set(out);
   }
   
   /**
