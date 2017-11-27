@@ -85,8 +85,23 @@ public interface NotebookOutput extends Closeable {
    */
   <T> T code(UncheckedSupplier<T> fn, int maxLog, int framesNo);
   
+  /**
+   * File string.
+   *
+   * @param data    the data
+   * @param caption the caption
+   * @return the string
+   */
   String file(String data, String caption);
   
+  /**
+   * File string.
+   *
+   * @param data     the data
+   * @param fileName the file name
+   * @param caption  the caption
+   * @return the string
+   */
   String file(String data, String fileName, String caption);
   
   /**
@@ -144,6 +159,12 @@ public interface NotebookOutput extends Closeable {
     }, 2 * 1024, 3);
   }
   
+  /**
+   * Add copy notebook output.
+   *
+   * @param out the out
+   * @return the notebook output
+   */
   NotebookOutput addCopy(PrintStream out);
   
 }

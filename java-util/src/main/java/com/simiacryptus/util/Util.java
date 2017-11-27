@@ -135,8 +135,7 @@ public class Util {
    * Report.
    *
    * @param fragments the fragments
-   * @throws FileNotFoundException the file not found exception
-   * @throws IOException           the io exception
+   * @throws IOException the io exception
    */
   public static void report(final Stream<String> fragments) throws IOException {
     final File outDir = new File("reports");
@@ -169,8 +168,7 @@ public class Util {
    * Report.
    *
    * @param fragments the fragments
-   * @throws FileNotFoundException the file not found exception
-   * @throws IOException           the io exception
+   * @throws IOException the io exception
    */
   public static void report(final String... fragments) throws IOException {
     Util.report(Stream.of(fragments));

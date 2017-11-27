@@ -53,6 +53,9 @@ public class HtmlNotebookOutput implements NotebookOutput {
    * The constant DEFAULT_ROOT.
    */
   public static String DEFAULT_ROOT = "https://github.com/SimiaCryptus/utilities/tree/master/";
+  /**
+   * The Source root.
+   */
   public String sourceRoot = DEFAULT_ROOT;
   
   /**
@@ -218,6 +221,13 @@ public class HtmlNotebookOutput implements NotebookOutput {
     }
   }
   
+  /**
+   * Summarize string.
+   *
+   * @param maxLog the max log
+   * @param string the string
+   * @return the string
+   */
   public String summarize(int maxLog, String string) {
     if (string.length() > maxLog * 2) {
       String left = string.substring(0, maxLog);
@@ -229,6 +239,9 @@ public class HtmlNotebookOutput implements NotebookOutput {
     }
   }
   
+  /**
+   * The Excerpt number.
+   */
   int excerptNumber = 0;
   @Override
   public String file(String data, String caption) {

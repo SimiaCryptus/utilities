@@ -25,6 +25,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.DoubleStream;
 
+/**
+ * The type Percentile statistics.
+ */
 public class PercentileStatistics extends ScalarStatistics {
   
   private final List<double[]> values = new ArrayList<>();

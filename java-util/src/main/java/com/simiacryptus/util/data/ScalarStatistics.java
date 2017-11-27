@@ -25,6 +25,9 @@ import com.simiacryptus.util.MonitoredItem;
 import java.io.Serializable;
 import java.util.*;
 
+/**
+ * The type Scalar statistics.
+ */
 public class ScalarStatistics implements MonitoredItem, Serializable {
   private static final double zeroTol = 1e-20;
   private volatile int zeros = 0;
@@ -94,6 +97,12 @@ public class ScalarStatistics implements MonitoredItem, Serializable {
     }
   }
   
+  /**
+   * Add scalar statistics.
+   *
+   * @param right the right
+   * @return the scalar statistics
+   */
   public final synchronized ScalarStatistics add(ScalarStatistics right) {
     ScalarStatistics sum = new ScalarStatistics();
     sum.sum0 += this.sum0;
@@ -106,6 +115,12 @@ public class ScalarStatistics implements MonitoredItem, Serializable {
   }
   
   
+  /**
+   * Subtract scalar statistics.
+   *
+   * @param right the right
+   * @return the scalar statistics
+   */
   public final synchronized ScalarStatistics subtract(ScalarStatistics right) {
     ScalarStatistics sum = new ScalarStatistics();
     sum.sum0 += this.sum0;
@@ -117,6 +132,11 @@ public class ScalarStatistics implements MonitoredItem, Serializable {
     return sum;
   }
 
+  /**
+   * Add.
+   *
+   * @param v the v
+   */
   public final synchronized void add(double v) {
     sum0 += 1;
     sum1 += v;

@@ -41,6 +41,11 @@ public class SysOutInterceptor extends PrintStream {
     }
   };
   
+  /**
+   * Gets inner.
+   *
+   * @return the inner
+   */
   public PrintStream getInner() {
     return (PrintStream) out;
   }
@@ -128,10 +133,20 @@ public class SysOutInterceptor extends PrintStream {
     currentHandler().println(x);
   }
   
+  /**
+   * Current handler print stream.
+   *
+   * @return the print stream
+   */
   public PrintStream currentHandler() {
     return threadHandler.get();
   }
   
+  /**
+   * Sets current handler.
+   *
+   * @param out the out
+   */
   public void setCurrentHandler(PrintStream out) {
     threadHandler.set(out);
   }

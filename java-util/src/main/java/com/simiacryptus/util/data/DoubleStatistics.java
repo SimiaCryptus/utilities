@@ -120,6 +120,12 @@ public class DoubleStatistics extends DoubleSummaryStatistics {
     return toString(1);
   }
   
+  /**
+   * To string string.
+   *
+   * @param scale the scale
+   * @return the string
+   */
   public String toString(double scale) {
     return String.format("%.4e +- %.4e [%.4e - %.4e] (%d#)",getAverage() * scale, getStandardDeviation() * scale, getMin() * scale, getMax() * scale, getCount());
   }

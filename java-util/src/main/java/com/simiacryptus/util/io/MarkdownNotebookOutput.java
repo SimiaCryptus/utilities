@@ -194,7 +194,18 @@ public class MarkdownNotebookOutput implements NotebookOutput {
     }
   }
   
+  /**
+   * The Excerpt number.
+   */
   int excerptNumber = 0;
+  
+  /**
+   * Summarize string.
+   *
+   * @param logSrc the log src
+   * @param maxLog the max log
+   * @return the string
+   */
   public String summarize(String logSrc, int maxLog) {
     if (logSrc.length() > maxLog * 2) {
       String prefix = logSrc.substring(0, maxLog);
