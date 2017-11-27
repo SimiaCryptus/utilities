@@ -43,9 +43,9 @@ public class FastRandom {
       assert(Double.isFinite(prev));
       double next = 4 * prev * (1 - prev);
       if(!Double.isFinite(next)) next = seed();
-      if(i++<3) FastRandom.randomA = next;
-      else {
-        //System.err.println(randomA);
+      if(i++<3) {
+        FastRandom.randomA = next;
+        //System.err.println(next);
         return next;
       }
     }

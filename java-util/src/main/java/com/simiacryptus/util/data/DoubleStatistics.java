@@ -114,5 +114,13 @@ public class DoubleStatistics extends DoubleSummaryStatistics {
   public final double getStandardDeviation() {
     return getCount() > 0 ? Math.sqrt((getSumOfSquare() / getCount()) - Math.pow(getAverage(), 2)) : 0.0d;
   }
-
+  
+  @Override
+  public String toString() {
+    return toString(1);
+  }
+  
+  public String toString(double scale) {
+    return String.format("%.4e +- %.4e [%.4e - %.4e] (%d#)",getAverage() * scale, getStandardDeviation() * scale, getMin() * scale, getMax() * scale, getCount());
+  }
 }

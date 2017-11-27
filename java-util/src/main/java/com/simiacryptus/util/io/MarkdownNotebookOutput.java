@@ -72,7 +72,7 @@ public class MarkdownNotebookOutput implements NotebookOutput {
       String className = null == source ? callingFrame.getClassName() : source.getClass().getCanonicalName();
       String methodName = callingFrame.getMethodName();
       String fileName = methodName + ".md";
-      File path = new File(Util.mkString(File.separator, "reports", className, fileName));
+      File path = new File(Util.mkString(File.separator, "reports", className.replaceAll("\\.","/").replaceAll("\\$","/"), fileName));
       path.getParentFile().mkdirs();
       return new MarkdownNotebookOutput(path, methodName);
     } catch (FileNotFoundException e) {
