@@ -62,7 +62,7 @@ public class SysOutInterceptor extends PrintStream {
    *
    * @param out the out
    */
-  public SysOutInterceptor(PrintStream out) {
+  private SysOutInterceptor(PrintStream out) {
     super(out);
   }
   
@@ -75,6 +75,7 @@ public class SysOutInterceptor extends PrintStream {
    */
   public static <T> LoggedResult<T> withOutput(UncheckedSupplier<T> fn) {
     //init();
+    PrintStream prev = INSTANCE.threadHandler.get();
     try {
       ByteArrayOutputStream buff = new ByteArrayOutputStream();
       try (PrintStream ps = new PrintStream(buff)) {
@@ -86,7 +87,7 @@ public class SysOutInterceptor extends PrintStream {
     } catch (Exception e) {
       throw new RuntimeException(e);
     } finally {
-      INSTANCE.threadHandler.remove();
+      INSTANCE.threadHandler.set(prev);
     }
   }
   
@@ -130,7 +131,8 @@ public class SysOutInterceptor extends PrintStream {
   
   @Override
   public void println(String x) {
-    currentHandler().println(x);
+    PrintStream currentHandler = currentHandler();
+    currentHandler.println(x);
   }
   
   /**

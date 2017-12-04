@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.DoubleStream;
 
 /**
  * The type Percentile statistics.
@@ -33,9 +32,10 @@ public class PercentileStatistics extends ScalarStatistics {
   private final List<double[]> values = new ArrayList<>();
   
   @Override
-  public synchronized void add(double... values) {
+  public synchronized ScalarStatistics add(double... values) {
     if(null != this.values) this.values.add(Arrays.copyOf(values,values.length));
     super.add(values);
+    return null;
   }
   
   @Override

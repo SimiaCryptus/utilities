@@ -57,7 +57,7 @@ public class ScalarStatistics implements MonitoredItem, Serializable {
    *
    * @param values the values
    */
-  public void add(double... values) {
+  public ScalarStatistics add(double... values) {
     double v1 = 0;
     double v2 = 0;
     double vmax = max;
@@ -95,6 +95,7 @@ public class ScalarStatistics implements MonitoredItem, Serializable {
       sumLog += vlog;
       zeros += z;
     }
+    return this;
   }
   
   /**
@@ -260,4 +261,8 @@ public class ScalarStatistics implements MonitoredItem, Serializable {
     this.sumLog = json.get("sumLog").getAsDouble();
   }
   
+  @Override
+  public String toString() {
+    return getMetrics().toString();
+  }
 }

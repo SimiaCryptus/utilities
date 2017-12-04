@@ -65,7 +65,7 @@ public class DoubleStatistics extends DoubleSummaryStatistics {
   }
   
   @Override
-  public void accept(double value) {
+  public synchronized void accept(double value) {
     super.accept(value);
     double squareValue = value * value;
     simpleSumOfSquare += squareValue;
