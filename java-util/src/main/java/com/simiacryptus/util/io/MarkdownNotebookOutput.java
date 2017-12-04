@@ -138,9 +138,12 @@ public class MarkdownNotebookOutput implements NotebookOutput {
           return new TimedResult(e, 0);
         }
       });
+      File callingFile = CodeUtil.findFile(callingFrame).getCanonicalFile();
+      File contextPath = fileName.getParentFile().getCanonicalFile();
+      String relativePath = Util.pathTo(contextPath, callingFile);
       out("Code from [%s:%s](%s#L%s) executed in %.2f seconds: ",
         callingFrame.getFileName(), callingFrame.getLineNumber(),
-        Util.pathTo(fileName.getParentFile(), CodeUtil.findFile(callingFrame)), callingFrame.getLineNumber(), result.obj.seconds());
+        relativePath, callingFrame.getLineNumber(), result.obj.seconds());
       out("```java");
       out("  " + sourceCode.replaceAll("\n", "\n  "));
       out("```");
