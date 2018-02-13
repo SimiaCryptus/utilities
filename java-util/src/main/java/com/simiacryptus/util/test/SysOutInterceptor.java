@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 by Andrew Charneski.
+ * Copyright (c) 2018 by Andrew Charneski.
  *
  * The author licenses this file to you under the
  * Apache License, Version 2.0 (the "License");
@@ -20,10 +20,13 @@
 package com.simiacryptus.util.test;
 
 import com.simiacryptus.util.lang.UncheckedSupplier;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
-import java.io.OutputStream;
+import java.io.IOException;
 import java.io.PrintStream;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * The type Sys out interceptor.
@@ -33,37 +36,61 @@ public class SysOutInterceptor extends PrintStream {
   /**
    * The constant INSTANCE.
    */
-  public static final SysOutInterceptor INSTANCE = init();
-  private final ThreadLocal<PrintStream> threadHandler = new ThreadLocal<PrintStream>() {
-    @Override
-    protected PrintStream initialValue() {
-      return getInner();
-    }
-  };
-  
+  public static final PrintStream ORIGINAL_OUT = System.out;
   /**
-   * Gets inner.
-   *
-   * @return the inner
+   * The constant INSTANCE.
    */
-  public PrintStream getInner() {
-    return (PrintStream) out;
-  }
-  
+  public static final com.simiacryptus.util.test.SysOutInterceptor INSTANCE = new com.simiacryptus.util.test.SysOutInterceptor(ORIGINAL_OUT);
+  private static final Logger log = LoggerFactory.getLogger(com.simiacryptus.util.test.SysOutInterceptor.class);
   private final ThreadLocal<Boolean> isMonitoring = new ThreadLocal<Boolean>() {
     @Override
     protected Boolean initialValue() {
       return false;
     }
   };
+  private final ThreadLocal<PrintStream> threadHandler = new ThreadLocal<PrintStream>() {
+    @javax.annotation.Nonnull
+    @Override
+    protected PrintStream initialValue() {
+      return getInner();
+    }
+  };
+  
+  private final AtomicBoolean initialized = new AtomicBoolean(false);
   
   /**
    * Instantiates a new Sys out interceptor.
    *
    * @param out the out
    */
-  private SysOutInterceptor(PrintStream out) {
+  private SysOutInterceptor(@javax.annotation.Nonnull final PrintStream out) {
     super(out);
+  }
+  
+  /**
+   * With output logged result.
+   *
+   * @param fn the fn
+   * @return the logged result
+   */
+  public static LoggedResult<Void> withOutput(@javax.annotation.Nonnull final Runnable fn) {
+    try {
+      @javax.annotation.Nonnull final ByteArrayOutputStream buff = new ByteArrayOutputStream();
+      try (@javax.annotation.Nonnull PrintStream ps = new PrintStream(buff)) {
+        if (com.simiacryptus.util.test.SysOutInterceptor.INSTANCE.isMonitoring.get()) throw new IllegalStateException();
+        com.simiacryptus.util.test.SysOutInterceptor.INSTANCE.threadHandler.set(ps);
+        com.simiacryptus.util.test.SysOutInterceptor.INSTANCE.isMonitoring.set(true);
+        fn.run();
+        return new LoggedResult<>(null, buff.toString());
+      }
+    } catch (@javax.annotation.Nonnull final RuntimeException e) {
+      throw e;
+    } catch (@javax.annotation.Nonnull final Exception e) {
+      throw new RuntimeException(e);
+    } finally {
+      com.simiacryptus.util.test.SysOutInterceptor.INSTANCE.threadHandler.remove();
+      com.simiacryptus.util.test.SysOutInterceptor.INSTANCE.isMonitoring.remove();
+    }
   }
   
   /**
@@ -73,84 +100,87 @@ public class SysOutInterceptor extends PrintStream {
    * @param fn  the fn
    * @return the logged result
    */
-  public static <T> LoggedResult<T> withOutput(UncheckedSupplier<T> fn) {
+  public static <T> LoggedResult<T> withOutput(@javax.annotation.Nonnull final UncheckedSupplier<T> fn) {
     //init();
-    PrintStream prev = INSTANCE.threadHandler.get();
+    final PrintStream prev = com.simiacryptus.util.test.SysOutInterceptor.INSTANCE.threadHandler.get();
     try {
-      ByteArrayOutputStream buff = new ByteArrayOutputStream();
-      try (PrintStream ps = new PrintStream(buff)) {
-        INSTANCE.threadHandler.set(ps);
-        T result = fn.get();
+      @javax.annotation.Nonnull final ByteArrayOutputStream buff = new ByteArrayOutputStream();
+      try (@javax.annotation.Nonnull PrintStream ps = new PrintStream(buff)) {
+        com.simiacryptus.util.test.SysOutInterceptor.INSTANCE.threadHandler.set(ps);
+        final T result = fn.get();
         ps.close();
-        return new LoggedResult<T>(result, buff.toString());
+        return new LoggedResult<>(result, buff.toString());
       }
-    } catch (Exception e) {
+    } catch (@javax.annotation.Nonnull final RuntimeException e) {
+      throw e;
+    } catch (@javax.annotation.Nonnull final Exception e) {
       throw new RuntimeException(e);
     } finally {
-      INSTANCE.threadHandler.set(prev);
+      com.simiacryptus.util.test.SysOutInterceptor.INSTANCE.threadHandler.set(prev);
     }
   }
   
   /**
-   * With output logged result.
+   * Init sys out interceptor.
    *
-   * @param fn the fn
-   * @return the logged result
+   * @return the sys out interceptor
    */
-  public static LoggedResult<Void> withOutput(Runnable fn) {
-    try {
-      ByteArrayOutputStream buff = new ByteArrayOutputStream();
-      try (PrintStream ps = new PrintStream(buff)) {
-        if(INSTANCE.isMonitoring.get()) throw new IllegalStateException();
-        INSTANCE.threadHandler.set(ps);
-        INSTANCE.isMonitoring.set(true);
-        fn.run();
-        return new LoggedResult<Void>(null, buff.toString());
-      }
-    } catch (Exception e) {
-      throw new RuntimeException(e);
-    } finally {
-      INSTANCE.threadHandler.remove();
-      INSTANCE.isMonitoring.remove();
+  @javax.annotation.Nonnull
+  public com.simiacryptus.util.test.SysOutInterceptor init() {
+    if (!initialized.getAndSet(true)) {
+      ch.qos.logback.classic.Logger root = ((ch.qos.logback.classic.Logger) log).getLoggerContext().getLogger("ROOT");
+      @javax.annotation.Nonnull ch.qos.logback.core.ConsoleAppender stdout = (ch.qos.logback.core.ConsoleAppender) root.getAppender("STDOUT");
+      stdout.setOutputStream(this);
+      System.setOut(this);
     }
-  }
-  
-  private static SysOutInterceptor init() {
-    if (!(System.out instanceof SysOutInterceptor)) {
-      SysOutInterceptor out = new SysOutInterceptor(System.out);
-      System.setOut(out);
-      return out;
-    }
-    return (SysOutInterceptor) System.out;
-  }
-  
-  @Override
-  public void print(String s) {
-    currentHandler().print(s);
-  }
-  
-  @Override
-  public void println(String x) {
-    PrintStream currentHandler = currentHandler();
-    currentHandler.println(x);
+    return this;
   }
   
   /**
-   * Current handler print stream.
+   * Current handler printGroups stream.
    *
-   * @return the print stream
+   * @return the printGroups stream
    */
   public PrintStream currentHandler() {
     return threadHandler.get();
   }
   
   /**
+   * Gets heapCopy.
+   *
+   * @return the heapCopy
+   */
+  @javax.annotation.Nonnull
+  public PrintStream getInner() {
+    return (PrintStream) out;
+  }
+  
+  @Override
+  public void print(final String s) {
+    currentHandler().print(s);
+  }
+  
+  @Override
+  public void write(byte[] b) throws IOException {
+    currentHandler().print(new String(b));
+  }
+  
+  @Override
+  public void println(final String x) {
+    final PrintStream currentHandler = currentHandler();
+    currentHandler.println(x);
+  }
+  
+  /**
    * Sets current handler.
    *
    * @param out the out
+   * @return the current handler
    */
-  public void setCurrentHandler(PrintStream out) {
+  public PrintStream setCurrentHandler(final PrintStream out) {
+    PrintStream previous = threadHandler.get();
     threadHandler.set(out);
+    return previous;
   }
   
   /**
@@ -160,21 +190,21 @@ public class SysOutInterceptor extends PrintStream {
    */
   public static class LoggedResult<T> {
     /**
-     * The Obj.
-     */
-    public final T obj;
-    /**
      * The Log.
      */
     public final String log;
-  
+    /**
+     * The Obj.
+     */
+    public final T obj;
+    
     /**
      * Instantiates a new Logged result.
      *
      * @param obj the obj
      * @param log the log
      */
-    public LoggedResult(T obj, String log) {
+    public LoggedResult(final T obj, final String log) {
       this.obj = obj;
       this.log = log;
     }

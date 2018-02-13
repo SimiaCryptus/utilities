@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 by Andrew Charneski.
+ * Copyright (c) 2018 by Andrew Charneski.
  *
  * The author licenses this file to you under the
  * Apache License, Version 2.0 (the "License");
@@ -19,6 +19,8 @@
 
 package com.simiacryptus.util.lang;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -30,57 +32,32 @@ import java.util.function.Function;
  */
 public class StaticResourcePool<T> {
   
-  private final java.util.List<T> all;
+  @javax.annotation.Nonnull
+  private final List<T> all;
   private final java.util.concurrent.LinkedBlockingQueue<T> pool = new java.util.concurrent.LinkedBlockingQueue<>();
-  private final int maxItems;
   
   /**
    * Instantiates a new Static resource pool.
    *
    * @param items the items
    */
-  public StaticResourcePool(List<T> items) {
+  public StaticResourcePool(@javax.annotation.Nonnull final List<T> items) {
     super();
-    this.maxItems = items.size();
-    this.all = items;
+    this.all = Collections.unmodifiableList(new ArrayList<>(items));
     pool.addAll(getAll());
   }
   
   /**
    * With u.
    *
-   * @param <U> the type parameter
-   * @param f   the f
-   * @return the u
-   */
-  public <U> U run(final Function<T, U> f) {
-    T poll = this.pool.poll();
-    if (null == poll) {
-      try {
-        poll = this.pool.take();
-      } catch (final InterruptedException e) {
-        throw new RuntimeException(e);
-      }
-    }
-    try {
-      return f.apply(poll);
-    } finally {
-      this.pool.add(poll);
-    }
-  }
-  
-  /**
-   * With u.
-   *
    * @param f the f
-   * @return the u
    */
-  public void apply(final Consumer<T> f) {
+  public void apply(@javax.annotation.Nonnull final Consumer<T> f) {
     T poll = this.pool.poll();
     if (null == poll) {
       try {
         poll = this.pool.take();
-      } catch (final InterruptedException e) {
+      } catch (@javax.annotation.Nonnull final InterruptedException e) {
         throw new RuntimeException(e);
       }
     }
@@ -92,18 +69,58 @@ public class StaticResourcePool<T> {
   }
   
   /**
-   * Size int.
+   * Take t.
    *
-   * @return the int
+   * @return the t
    */
-  public int size() { return getAll().size(); }
+  public T take() {
+    try {
+      return this.pool.take();
+    } catch (InterruptedException e) {
+      throw new RuntimeException(e);
+    }
+  }
   
   /**
    * Gets all.
    *
    * @return the all
    */
+  @javax.annotation.Nonnull
   public List<T> getAll() {
     return all;
+  }
+  
+  /**
+   * With u.
+   *
+   * @param <U> the type parameter
+   * @param f   the f
+   * @return the u
+   */
+  public <U> U run(@javax.annotation.Nonnull final Function<T, U> f) {
+    if (all.isEmpty()) throw new IllegalStateException();
+    T poll = this.pool.poll();
+    if (null == poll) {
+      try {
+        poll = this.pool.take();
+      } catch (@javax.annotation.Nonnull final InterruptedException e) {
+        throw new RuntimeException(e);
+      }
+    }
+    try {
+      return f.apply(poll);
+    } finally {
+      this.pool.add(poll);
+    }
+  }
+  
+  /**
+   * Size int.
+   *
+   * @return the int
+   */
+  public int size() {
+    return getAll().size();
   }
 }

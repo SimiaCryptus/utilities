@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 by Andrew Charneski.
+ * Copyright (c) 2018 by Andrew Charneski.
  *
  * The author licenses this file to you under the
  * Apache License, Version 2.0 (the "License");
@@ -33,13 +33,14 @@ import java.util.EnumSet;
  * The type Kryo util.
  */
 public class KryoUtil {
-
+  
   private static final ThreadLocal<Kryo> threadKryo = new ThreadLocal<Kryo>() {
-
+    
+    @javax.annotation.Nonnull
     @Override
     protected Kryo initialValue() {
-      final Kryo kryo = new KryoReflectionFactorySupport() {
-
+      @javax.annotation.Nonnull final Kryo kryo = new KryoReflectionFactorySupport() {
+        
         @Override
         public Serializer<?> getDefaultSerializer(@SuppressWarnings("rawtypes") final Class clazz) {
           if (EnumSet.class.isAssignableFrom(clazz)) {
@@ -48,18 +49,17 @@ public class KryoUtil {
           if (EnumMap.class.isAssignableFrom(clazz)) {
             return new EnumMapSerializer();
           }
-          Serializer<?> serializer = super.getDefaultSerializer(clazz);
-          if(serializer instanceof FieldSerializer)
-          {
-            ((FieldSerializer)serializer).setCopyTransient(false);
+          final Serializer<?> serializer = super.getDefaultSerializer(clazz);
+          if (serializer instanceof FieldSerializer) {
+            ((FieldSerializer<?>) serializer).setCopyTransient(false);
           }
           return serializer;
         }
-
+        
       };
       return kryo;
     }
-
+    
   };
   
   /**
@@ -68,6 +68,6 @@ public class KryoUtil {
    * @return the kryo
    */
   public static Kryo kryo() {
-    return threadKryo.get();
+    return com.simiacryptus.util.io.KryoUtil.threadKryo.get();
   }
 }

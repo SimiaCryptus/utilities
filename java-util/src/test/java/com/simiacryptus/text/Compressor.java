@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 by Andrew Charneski.
+ * Copyright (c) 2018 by Andrew Charneski.
  *
  * The author licenses this file to you under the
  * Apache License, Version 2.0 (the "License");
@@ -19,6 +19,7 @@
 
 package com.simiacryptus.text;
 
+import com.simiacryptus.util.TableOutput;
 import com.simiacryptus.util.lang.TimedResult;
 import com.simiacryptus.util.test.TestDocument;
 
@@ -60,7 +61,7 @@ public interface Compressor {
           HashMap<String, Object> rowTall = new LinkedHashMap<>();
           rowTall.put("title", title);
           rowTall.put("compressor", name);
-
+          
           rowWide.put(name + ".uncompressed", item.getText().length());
           rowTall.put("uncompressed", item.getText().length());
           TimedResult<byte[]> compress = TimedResult.time(() -> compressor.compress(item.getText()));
@@ -129,7 +130,7 @@ public interface Compressor {
           HashMap<String, Object> rowTall = new LinkedHashMap<>();
           rowTall.put("title", title);
           rowTall.put("compressor", name);
-
+          
           TimedResult<Double> compress = TimedResult.time(() -> compressor.apply(item));
           rowWide.put(name + ".value", compress.result);
           rowTall.put("value", compress.result);
@@ -158,7 +159,7 @@ public interface Compressor {
       public byte[] compress(String text) {
         return CompressionUtil.encodeBZ(text);
       }
-
+      
       @Override
       public String uncompress(byte[] data) {
         return CompressionUtil.decodeBZ(data);
@@ -169,7 +170,7 @@ public interface Compressor {
       public byte[] compress(String text) {
         return CompressionUtil.encodeLZ(text);
       }
-
+      
       @Override
       public String uncompress(byte[] data) {
         return CompressionUtil.decodeLZToString(data);
@@ -192,7 +193,7 @@ public interface Compressor {
       public byte[] compress(String text) {
         return codec.encodePPM(text, encodingContext).getBytes();
       }
-
+      
       @Override
       public String uncompress(byte[] data) {
         return codec.decodePPM(data, encodingContext);

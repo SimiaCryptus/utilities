@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 by Andrew Charneski.
+ * Copyright (c) 2018 by Andrew Charneski.
  *
  * The author licenses this file to you under the
  * Apache License, Version 2.0 (the "License");
@@ -244,7 +244,7 @@ public class NodewalkerCodec {
      * The Node.
      */
     protected TrieNode node = inner.root();
-  
+    
     /**
      * Instantiates a new Decoder.
      *
@@ -255,7 +255,7 @@ public class NodewalkerCodec {
       this.data = data;
       this.context = context;
     }
-  
+    
     /**
      * Encode ppm string.
      *
@@ -308,7 +308,7 @@ public class NodewalkerCodec {
      * The From node.
      */
     protected TrieNode fromNode = inner.root();
-  
+    
     /**
      * Instantiates a new Encoder.
      *
@@ -320,7 +320,7 @@ public class NodewalkerCodec {
       this.text = text;
       this.context = context;
     }
-  
+    
     /**
      * Encode ppm bits.
      *

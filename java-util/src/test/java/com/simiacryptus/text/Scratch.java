@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 by Andrew Charneski.
+ * Copyright (c) 2018 by Andrew Charneski.
  *
  * The author licenses this file to you under the
  * Apache License, Version 2.0 (the "License");
@@ -71,7 +71,7 @@ public class Scratch {
      * The Time.
      */
     Apfloat time;
-  
+    
     /**
      * Instantiates a new Position.
      *
@@ -82,7 +82,7 @@ public class Scratch {
       this.space = space;
       this.time = time;
     }
-  
+    
     /**
      * Distance apfloat.
      *
@@ -97,7 +97,7 @@ public class Scratch {
       }
       return total;
     }
-  
+    
     /**
      * Add position.
      *
@@ -106,14 +106,14 @@ public class Scratch {
      */
     public Position add(Position to) {
       assert to.space.length == space.length;
-
+      
       Apfloat[] newSpace = new Apfloat[space.length];
       for (int i = 0; i < space.length; i++) {
         newSpace[i] = to.space[i].add(space[i]);
       }
       return new Position(to.time.add(time), newSpace);
     }
-  
+    
     /**
      * Multiply position.
      *
@@ -137,7 +137,7 @@ public class Scratch {
      * The Positions.
      */
     List<Position> positions = new ArrayList<>();
-  
+    
     /**
      * Position at index position.
      *
@@ -152,7 +152,7 @@ public class Scratch {
       Position b = positions.get(intPart.intValue() + 1);
       return a.multiply(aFrac).add(b.multiply(bFrac));
     }
-  
+    
     /**
      * Connected point position.
      *
@@ -164,7 +164,7 @@ public class Scratch {
         return positionAtIndex(i).distance(to);
       }, new Apfloat(0), new Apfloat(positions.size())));
     }
-
+    
   }
-
+  
 }

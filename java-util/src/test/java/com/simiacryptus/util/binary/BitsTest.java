@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 by Andrew Charneski.
+ * Copyright (c) 2018 by Andrew Charneski.
  *
  * The author licenses this file to you under the
  * Apache License, Version 2.0 (the "License");
@@ -195,13 +195,13 @@ public class BitsTest {
     Assert.assertEquals("01", new Bits(17).range(3).toBitString());
     Assert.assertEquals("111", new Bits(7).toBitString());
     Assert.assertEquals("10111", new Bits(2).concatenate(new Bits(7))
-                                   .toBitString());
+      .toBitString());
     Assert.assertEquals("00110", new Bits(6l, 5).toBitString());
     Assert.assertEquals("111000000", new Bits(7l).leftShift(6).toBitString());
     Assert.assertEquals("1110", new Bits(7l).leftShift(6).range(0, 4)
-                                  .toBitString());
+      .toBitString());
     Assert.assertEquals("00000", new Bits(7l).leftShift(6).range(4)
-                                   .toBitString());
+      .toBitString());
     Assert.assertEquals("110", new Bits(6l).toBitString());
     Assert.assertEquals("11100", new Bits(7l).leftShift(2).toBitString());
     Assert.assertEquals("11000",
@@ -239,7 +239,7 @@ public class BitsTest {
   }
   
   private void testSubrange(final Bits bits, final String asString,
-                            final int from, final int to) {
+    final int from, final int to) {
     final String subStr = asString.substring(from, to);
     final Bits subBits = bits.range(from, to - from);
     Assert.assertEquals(

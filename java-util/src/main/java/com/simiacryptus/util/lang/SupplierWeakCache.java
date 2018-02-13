@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 by Andrew Charneski.
+ * Copyright (c) 2018 by Andrew Charneski.
  *
  * The author licenses this file to you under the
  * Apache License, Version 2.0 (the "License");
@@ -19,6 +19,7 @@
 
 package com.simiacryptus.util.lang;
 
+import javax.annotation.Nullable;
 import java.lang.ref.WeakReference;
 import java.util.function.Supplier;
 
@@ -29,6 +30,7 @@ import java.util.function.Supplier;
  */
 public class SupplierWeakCache<T> implements Supplier<T> {
   private final Supplier<T> fn;
+  @Nullable
   private WeakReference<T> ptr;
   
   /**
@@ -36,16 +38,18 @@ public class SupplierWeakCache<T> implements Supplier<T> {
    *
    * @param fn the fn
    */
-  public SupplierWeakCache(Supplier<T> fn) {
+  public SupplierWeakCache(final Supplier<T> fn) {
     this.fn = fn;
     this.ptr = null;
   }
   
+  @Nullable
+  @Override
   public T get() {
-    T x = null == ptr ? null : ptr.get();
+    @Nullable T x = null == ptr ? null : ptr.get();
     if (null == x) {
       x = fn.get();
-      ptr = new WeakReference<T>(x);
+      ptr = new WeakReference<>(x);
     }
     return x;
   }

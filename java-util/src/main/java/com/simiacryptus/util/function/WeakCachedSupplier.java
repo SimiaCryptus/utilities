@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 by Andrew Charneski.
+ * Copyright (c) 2018 by Andrew Charneski.
  *
  * The author licenses this file to you under the
  * Apache License, Version 2.0 (the "License");
@@ -19,6 +19,7 @@
 
 package com.simiacryptus.util.function;
 
+import javax.annotation.Nullable;
 import java.lang.ref.WeakReference;
 import java.util.function.Supplier;
 
@@ -30,6 +31,7 @@ import java.util.function.Supplier;
 public class WeakCachedSupplier<T> implements Supplier<T> {
   
   private final Supplier<T> fn;
+  @Nullable
   private volatile WeakReference<T> cached;
   
   /**
@@ -37,8 +39,26 @@ public class WeakCachedSupplier<T> implements Supplier<T> {
    *
    * @param fn the fn
    */
-  public WeakCachedSupplier(Supplier<T> fn) {
+  public WeakCachedSupplier(final Supplier<T> fn) {
     this.fn = fn;
+  }
+  
+  @Nullable
+  @Override
+  public T get() {
+    @Nullable T obj = null == cached ? null : cached.get();
+    if (null == obj) {
+      synchronized (this) {
+        obj = null == cached ? null : cached.get();
+        if (null == obj) {
+          obj = fn.get();
+          if (null != obj) {
+            cached = new WeakReference<>(obj);
+          }
+        }
+      }
+    }
+    return obj;
   }
   
   /**
@@ -46,22 +66,8 @@ public class WeakCachedSupplier<T> implements Supplier<T> {
    *
    * @return the soft ref
    */
+  @javax.annotation.Nonnull
   public SoftCachedSupplier<T> getSoftRef() {
-    return new SoftCachedSupplier<T>(this::get);
-  }
-  
-  @Override
-  public T get() {
-    T obj = null==cached?null:cached.get();
-    if(null == obj) {
-      synchronized (this) {
-        obj = null==cached?null:cached.get();
-        if(null == obj) {
-          obj = fn.get();
-          if(null != obj) cached = new WeakReference<T>(obj);
-        }
-      }
-    }
-    return obj;
+    return new SoftCachedSupplier<>(this::get);
   }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 by Andrew Charneski.
+ * Copyright (c) 2018 by Andrew Charneski.
  *
  * The author licenses this file to you under the
  * Apache License, Version 2.0 (the "License");
@@ -24,34 +24,43 @@ import java.util.DoubleSummaryStatistics;
 import java.util.stream.Collector;
 
 /**
- * From: http://stackoverflow.com/questions/36263352/java-streams-standard-deviation
- * Author: Tunaki
+ * From: http://stackoverflow.com/questions/36263352/java-streams-standard-deviation Author: Tunaki
  */
 public class DoubleStatistics extends DoubleSummaryStatistics {
   
   /**
    * The Collector.
    */
-  public static Collector<Double, DoubleStatistics, DoubleStatistics> COLLECTOR = Collector.of(
-    DoubleStatistics::new,
-    DoubleStatistics::accept,
-    DoubleStatistics::combine,
+  @javax.annotation.Nonnull
+  public static Collector<Double, com.simiacryptus.util.data.DoubleStatistics, com.simiacryptus.util.data.DoubleStatistics> COLLECTOR = Collector.of(
+    com.simiacryptus.util.data.DoubleStatistics::new,
+    com.simiacryptus.util.data.DoubleStatistics::accept,
+    com.simiacryptus.util.data.DoubleStatistics::combine,
     d -> d
   );
   
   /**
    * The Numbers.
    */
-  public static Collector<Number, DoubleStatistics, DoubleStatistics> NUMBERS = Collector.of(
-    DoubleStatistics::new,
+  @javax.annotation.Nonnull
+  public static Collector<Number, com.simiacryptus.util.data.DoubleStatistics, com.simiacryptus.util.data.DoubleStatistics> NUMBERS = Collector.of(
+    com.simiacryptus.util.data.DoubleStatistics::new,
     (a, n) -> a.accept(n.doubleValue()),
-    DoubleStatistics::combine,
+    com.simiacryptus.util.data.DoubleStatistics::combine,
     d -> d
   );
-
+  
+  private double simpleSumOfSquare; // Used to compute right sum for non-finite inputs
   private double sumOfSquare = 0.0d;
   private double sumOfSquareCompensation; // Low order bits of sum
-  private double simpleSumOfSquare; // Used to compute right sum for non-finite inputs
+  
+  @Override
+  public synchronized void accept(final double value) {
+    super.accept(value);
+    final double squareValue = value * value;
+    simpleSumOfSquare += squareValue;
+    sumOfSquareWithCompensation(squareValue);
+  }
   
   /**
    * Accept double statistics.
@@ -59,17 +68,10 @@ public class DoubleStatistics extends DoubleSummaryStatistics {
    * @param value the value
    * @return the double statistics
    */
-  public DoubleStatistics accept(double[] value) {
+  @javax.annotation.Nonnull
+  public com.simiacryptus.util.data.DoubleStatistics accept(@javax.annotation.Nonnull final double[] value) {
     Arrays.stream(value).forEach(this::accept);
     return this;
-  }
-  
-  @Override
-  public synchronized void accept(double value) {
-    super.accept(value);
-    double squareValue = value * value;
-    simpleSumOfSquare += squareValue;
-    sumOfSquareWithCompensation(squareValue);
   }
   
   /**
@@ -78,32 +80,13 @@ public class DoubleStatistics extends DoubleSummaryStatistics {
    * @param other the other
    * @return the double statistics
    */
-  public DoubleStatistics combine(DoubleStatistics other) {
+  @javax.annotation.Nonnull
+  public com.simiacryptus.util.data.DoubleStatistics combine(@javax.annotation.Nonnull final com.simiacryptus.util.data.DoubleStatistics other) {
     super.combine(other);
     simpleSumOfSquare += other.simpleSumOfSquare;
     sumOfSquareWithCompensation(other.sumOfSquare);
     sumOfSquareWithCompensation(other.sumOfSquareCompensation);
     return this;
-  }
-
-  private void sumOfSquareWithCompensation(double value) {
-    double tmp = value - sumOfSquareCompensation;
-    double velvel = sumOfSquare + tmp; // Little wolf of rounding error
-    sumOfSquareCompensation = (velvel - sumOfSquare) - tmp;
-    sumOfSquare = velvel;
-  }
-  
-  /**
-   * Gets sum of square.
-   *
-   * @return the sum of square
-   */
-  public double getSumOfSquare() {
-    double tmp = sumOfSquare + sumOfSquareCompensation;
-    if (Double.isNaN(tmp) && Double.isInfinite(simpleSumOfSquare)) {
-      return simpleSumOfSquare;
-    }
-    return tmp;
   }
   
   /**
@@ -112,7 +95,27 @@ public class DoubleStatistics extends DoubleSummaryStatistics {
    * @return the standard deviation
    */
   public final double getStandardDeviation() {
-    return getCount() > 0 ? Math.sqrt((getSumOfSquare() / getCount()) - Math.pow(getAverage(), 2)) : 0.0d;
+    return getCount() > 0 ? Math.sqrt(getSumOfSquare() / getCount() - Math.pow(getAverage(), 2)) : 0.0d;
+  }
+  
+  /**
+   * Gets sum of square.
+   *
+   * @return the sum of square
+   */
+  public double getSumOfSquare() {
+    final double tmp = sumOfSquare + sumOfSquareCompensation;
+    if (Double.isNaN(tmp) && Double.isInfinite(simpleSumOfSquare)) {
+      return simpleSumOfSquare;
+    }
+    return tmp;
+  }
+  
+  private void sumOfSquareWithCompensation(final double value) {
+    final double tmp = value - sumOfSquareCompensation;
+    final double velvel = sumOfSquare + tmp; // Little wolf of rounding error
+    sumOfSquareCompensation = velvel - sumOfSquare - tmp;
+    sumOfSquare = velvel;
   }
   
   @Override
@@ -126,7 +129,7 @@ public class DoubleStatistics extends DoubleSummaryStatistics {
    * @param scale the scale
    * @return the string
    */
-  public String toString(double scale) {
-    return String.format("%.4e +- %.4e [%.4e - %.4e] (%d#)",getAverage() * scale, getStandardDeviation() * scale, getMin() * scale, getMax() * scale, getCount());
+  public String toString(final double scale) {
+    return String.format("%.4e +- %.4e [%.4e - %.4e] (%d#)", getAverage() * scale, getStandardDeviation() * scale, getMin() * scale, getMax() * scale, getCount());
   }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 by Andrew Charneski.
+ * Copyright (c) 2018 by Andrew Charneski.
  *
  * The author licenses this file to you under the
  * Apache License, Version 2.0 (the "License");
@@ -19,10 +19,10 @@
 
 package com.simiacryptus.util.binary.bitset;
 
+import com.simiacryptus.util.CountCollection;
 import com.simiacryptus.util.binary.BitInputStream;
 import com.simiacryptus.util.binary.BitOutputStream;
 import com.simiacryptus.util.binary.Bits;
-import com.simiacryptus.util.CountCollection;
 
 import java.io.IOException;
 import java.util.Map;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 by Andrew Charneski.
+ * Copyright (c) 2018 by Andrew Charneski.
  *
  * The author licenses this file to you under the
  * Apache License, Version 2.0 (the "License");
@@ -90,7 +90,7 @@ public class HammingCode<T extends Comparable<T>> {
     for (final Bits code : keySet) {
       final Bits ceiling = check.ceiling(code);
       if (null != ceiling
-            && (ceiling.startsWith(code) || code.startsWith(ceiling))) {
+        && (ceiling.startsWith(code) || code.startsWith(ceiling))) {
         return false;
       }
       final Bits floor = check.floor(code);
@@ -169,7 +169,7 @@ public class HammingCode<T extends Comparable<T>> {
   public SortedMap<Bits, T> getCodes(final Bits fromKey) {
     final Bits next = fromKey.next();
     final SortedMap<Bits, T> subMap = null == next ? this.forwardIndex
-                                                       .tailMap(fromKey) : this.forwardIndex.subMap(fromKey, next);
+      .tailMap(fromKey) : this.forwardIndex.subMap(fromKey, next);
     return subMap;
   }
   
@@ -267,7 +267,7 @@ public class HammingCode<T extends Comparable<T>> {
      * The Index.
      */
     final TreeMap<X, Bits> index;
-  
+
     /**
      * Instantiates a new Sub code.
      *
@@ -282,7 +282,7 @@ public class HammingCode<T extends Comparable<T>> {
       this.codes.put(Bits.NULL, item);
       this.index.put(item, Bits.NULL);
     }
-  
+
     /**
      * Instantiates a new Sub code.
      *
@@ -336,7 +336,7 @@ public class HammingCode<T extends Comparable<T>> {
     public HammingCodeCollection() {
       super();
     }
-  
+
     /**
      * Instantiates a new Hamming code collection.
      *
@@ -346,7 +346,7 @@ public class HammingCode<T extends Comparable<T>> {
     public HammingCodeCollection(final BitInputStream data) throws IOException {
       super(data);
     }
-  
+
     /**
      * Instantiates a new Hamming code collection.
      *

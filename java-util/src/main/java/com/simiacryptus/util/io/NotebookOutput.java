@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 by Andrew Charneski.
+ * Copyright (c) 2018 by Andrew Charneski.
  *
  * The author licenses this file to you under the
  * Apache License, Version 2.0 (the "License");
@@ -21,11 +21,13 @@ package com.simiacryptus.util.io;
 
 import com.simiacryptus.util.lang.UncheckedSupplier;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.awt.image.BufferedImage;
 import java.io.Closeable;
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.PrintStream;
 
 /**
  * The interface Notebook output.
@@ -33,22 +35,118 @@ import java.io.PrintStream;
 public interface NotebookOutput extends Closeable {
   
   /**
-   * Out.
+   * Code.
    *
-   * @param fmt  the fmt
-   * @param args the args
+   * @param fn the fn
    */
-  default void out(String fmt, Object... args) {
-    p(fmt, args);
+  default void code(@Nonnull final Runnable fn) {
+    this.code(() -> {
+      fn.run();
+      return null;
+    }, getMaxOutSize(), 3);
   }
   
   /**
-   * P.
+   * Code.
    *
-   * @param fmt  the fmt
-   * @param args the args
+   * @param fn   the fn
+   * @param size the size
    */
-  void p(String fmt, Object... args);
+  default void code(@Nonnull final Runnable fn, int size) {
+    this.code(() -> {
+      fn.run();
+      return null;
+    }, size, 3);
+  }
+  
+  /**
+   * Code.
+   *
+   * @param fn       the fn
+   * @param maxLog   the max log
+   * @param framesNo the frames no
+   */
+  default void code(@Nonnull final Runnable fn, final int maxLog, final int framesNo) {
+    this.code(() -> {
+      fn.run();
+      return null;
+    }, maxLog, framesNo);
+  }
+  
+  /**
+   * Code t.
+   *
+   * @param <T> the type parameter
+   * @param fn  the fn
+   * @return the t
+   */
+  default <T> T code(final UncheckedSupplier<T> fn) {
+    return code(fn, getMaxOutSize(), 3);
+  }
+  
+  /**
+   * Code t.
+   *
+   * @param <T>  the type parameter
+   * @param fn   the fn
+   * @param size the size
+   * @return the t
+   */
+  default <T> T code(final UncheckedSupplier<T> fn, int size) {
+    return code(fn, size, 3);
+  }
+  
+  /**
+   * Code t.
+   *
+   * @param <T>      the type parameter
+   * @param fn       the fn
+   * @param maxLog   the max log
+   * @param framesNo the frames no
+   * @return the t
+   */
+  <T> T code(UncheckedSupplier<T> fn, int maxLog, int framesNo);
+  
+  /**
+   * File output stream.
+   *
+   * @param name the name
+   * @return the output stream
+   */
+  @Nonnull
+  OutputStream file(String name);
+  
+  /**
+   * File string.
+   *
+   * @param data    the data
+   * @param caption the caption
+   * @return the string
+   */
+  @Nonnull
+  String file(String data, String caption);
+  
+  /**
+   * File string.
+   *
+   * @param data     the data
+   * @param filename the filename
+   * @param caption  the caption
+   * @return the string
+   */
+  @Nonnull
+  String file(byte[] data, String filename, String caption);
+  
+  /**
+   * File string.
+   *
+   * @param data     the data
+   * @param fileName the file name
+   * @param caption  the caption
+   * @return the string
+   */
+  @Nonnull
+  String file(String data, String fileName, String caption);
   
   /**
    * H 1.
@@ -75,36 +173,6 @@ public interface NotebookOutput extends Closeable {
   void h3(String fmt, Object... args);
   
   /**
-   * Code t.
-   *
-   * @param <T>      the type parameter
-   * @param fn       the fn
-   * @param maxLog   the max log
-   * @param framesNo the frames no
-   * @return the t
-   */
-  <T> T code(UncheckedSupplier<T> fn, int maxLog, int framesNo);
-  
-  /**
-   * File string.
-   *
-   * @param data    the data
-   * @param caption the caption
-   * @return the string
-   */
-  String file(String data, String caption);
-  
-  /**
-   * File string.
-   *
-   * @param data     the data
-   * @param fileName the file name
-   * @param caption  the caption
-   * @return the string
-   */
-  String file(String data, String fileName, String caption);
-  
-  /**
    * Image string.
    *
    * @param rawImage the raw image
@@ -112,59 +180,103 @@ public interface NotebookOutput extends Closeable {
    * @return the string
    * @throws IOException the io exception
    */
+  @Nonnull
   String image(BufferedImage rawImage, String caption) throws IOException;
   
   /**
-   * File output stream.
+   * Link string.
    *
-   * @param name the name
-   * @return the output stream
+   * @param file the file
+   * @param text the text
+   * @return the string
    */
-  OutputStream file(String name);
+  String link(File file, String text);
   
   /**
-   * Code t.
+   * Out.
    *
-   * @param <T> the type parameter
-   * @param fn  the fn
-   * @return the t
+   * @param fmt  the fmt
+   * @param args the args
    */
-  default <T> T code(UncheckedSupplier<T> fn) {
-    return code(fn, 2 * 1024, 3);
+  default void out(final String fmt, final Object... args) {
+    p(fmt, args);
   }
   
   /**
-   * Code.
+   * P.
    *
-   * @param fn       the fn
-   * @param maxLog   the max log
-   * @param framesNo the frames no
+   * @param fmt  the fmt
+   * @param args the args
    */
-  default void code(Runnable fn, int maxLog, int framesNo) {
-    this.code(() -> {
-      fn.run();
-      return null;
-    }, maxLog, framesNo);
+  void p(String fmt, Object... args);
+  
+  /**
+   * Sets fm prop.
+   *
+   * @param key   the key
+   * @param value the value
+   */
+  default void setFrontMatterProperty(String key, String value) {
   }
   
   /**
-   * Code.
+   * Append front matter property.
    *
-   * @param fn the fn
+   * @param key   the key
+   * @param value the value
    */
-  default void code(Runnable fn) {
-    this.code(() -> {
-      fn.run();
-      return null;
-    }, 2 * 1024, 3);
+  default void appendFrontMatterProperty(String key, String value) {appendFrontMatterProperty(key, value, "");}
+  
+  /**
+   * Append front matter property.
+   *
+   * @param key       the key
+   * @param value     the value
+   * @param delimiter the delimiter
+   */
+  default void appendFrontMatterProperty(String key, String value, String delimiter) {
+    @Nullable String prior = getFrontMatterProperty(key);
+    if (null == prior) setFrontMatterProperty(key, value);
+    else setFrontMatterProperty(key, prior + delimiter + value);
   }
   
   /**
-   * Add copy notebook output.
+   * Gets front matter property.
    *
-   * @param out the out
-   * @return the notebook output
+   * @param key the key
+   * @return the front matter property
    */
-  NotebookOutput addCopy(PrintStream out);
+  @Nullable
+  String getFrontMatterProperty(String key);
   
+  /**
+   * Gets name.
+   *
+   * @return the name
+   */
+  String getName();
+  
+  /**
+   * Gets resource dir.
+   *
+   * @return the resource dir
+   */
+  @Nonnull
+  File getResourceDir();
+  
+  /**
+   * Gets max out size.
+   *
+   * @return the max out size
+   */
+  int getMaxOutSize();
+  
+  /**
+   * Sets max out size.
+   *
+   * @param size the size
+   * @return the max out size
+   */
+  @Nonnull
+  com.simiacryptus.util.io.NotebookOutput setMaxOutSize(int size);
 }

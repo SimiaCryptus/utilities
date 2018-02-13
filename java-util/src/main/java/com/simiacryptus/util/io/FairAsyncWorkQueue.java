@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 by Andrew Charneski.
+ * Copyright (c) 2018 by Andrew Charneski.
  *
  * The author licenses this file to you under the
  * Apache License, Version 2.0 (the "License");
@@ -19,6 +19,8 @@
 
 package com.simiacryptus.util.io;
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
+
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingDeque;
@@ -28,15 +30,16 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * The type Fair async work queue.
  */
 public class FairAsyncWorkQueue implements Runnable {
-  private final ExecutorService pool = Executors.newCachedThreadPool();
-  private final LinkedBlockingDeque<Runnable> queue = new LinkedBlockingDeque<Runnable>();
   private final AtomicBoolean isRunning = new AtomicBoolean(false);
+  private final ExecutorService pool = Executors.newCachedThreadPool(new ThreadFactoryBuilder().setDaemon(true).build());
+  private final LinkedBlockingDeque<Runnable> queue = new LinkedBlockingDeque<>();
   
+  @Override
   public void run() {
     if (isRunning.getAndSet(true)) {
       try {
         while (true) {
-          Runnable poll = queue.poll();
+          final Runnable poll = queue.poll();
           if (null != poll) {
             poll.run();
           }
@@ -55,7 +58,7 @@ public class FairAsyncWorkQueue implements Runnable {
    *
    * @param task the task
    */
-  public void submit(Runnable task) {
+  public void submit(final Runnable task) {
     queue.add(task);
     pool.submit(this);
   }

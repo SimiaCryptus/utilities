@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 by Andrew Charneski.
+ * Copyright (c) 2018 by Andrew Charneski.
  *
  * The author licenses this file to you under the
  * Apache License, Version 2.0 (the "License");
@@ -55,7 +55,7 @@ public class CharTrieSerializer {
     }
     return buffer.toByteArray();
   }
-
+  
   private int serialize(TrieNode root, BitOutputStream out, int level) {
     AtomicInteger nodesWritten = new AtomicInteger(0);
     if (0 == level) {
@@ -100,7 +100,7 @@ public class CharTrieSerializer {
       });
     }
     return nodesWritten.get();
-
+    
   }
   
   /**
@@ -118,7 +118,7 @@ public class CharTrieSerializer {
     trie.recomputeCursorDetails();
     return trie;
   }
-
+  
   private int deserialize(TrieNode root, BitInputStream in, int level) {
     AtomicInteger nodesRead = new AtomicInteger(0);
     if (0 == level) {
@@ -156,7 +156,7 @@ public class CharTrieSerializer {
         node.writeChildren(children);
       });
     }
-
+    
     return nodesRead.get();
   }
 }

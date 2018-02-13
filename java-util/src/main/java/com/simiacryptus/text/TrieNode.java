@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 by Andrew Charneski.
+ * Copyright (c) 2018 by Andrew Charneski.
  *
  * The author licenses this file to you under the
  * Apache License, Version 2.0 (the "License");
@@ -119,7 +119,7 @@ public class TrieNode {
       }
       else {
         godparent = greatgodparent.getChild(getChar())
-                      .map(x -> (TrieNode) x).orElseGet(() -> root);
+          .map(x -> (TrieNode) x).orElseGet(() -> root);
       }
       //assert(getString().isEmpty() || getString().substring(1).equals(godparent.getString()));
     }
@@ -316,7 +316,7 @@ public class TrieNode {
   public Stream<? extends TrieNode> getChildren() {
     if (getData().firstChildIndex >= 0) {
       return IntStream.range(0, getData().numberOfChildren)
-               .mapToObj(i -> new TrieNode(this.trie, getData().firstChildIndex + i, TrieNode.this));
+        .mapToObj(i -> new TrieNode(this.trie, getData().firstChildIndex + i, TrieNode.this));
     }
     else {
       return Stream.empty();
@@ -403,7 +403,7 @@ public class TrieNode {
       throw new IllegalArgumentException();
     }
     return getChildren().filter(n -> n.containsCursor(cursorId)).findFirst().map(n -> n.traverse(cursorId))
-             .orElse(this);
+      .orElse(this);
   }
   
   /**
@@ -432,7 +432,7 @@ public class TrieNode {
    */
   public Interval intervalTo(TrieNode toNode) {
     return new Interval(toNode.getCursorIndex() - this.getCursorIndex(),
-                         toNode.getCursorCount(), this.getCursorCount());
+      toNode.getCursorCount(), this.getCursorCount());
   }
   
   /**

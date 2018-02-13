@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 by Andrew Charneski.
+ * Copyright (c) 2018 by Andrew Charneski.
  *
  * The author licenses this file to you under the
  * Apache License, Version 2.0 (the "License");
@@ -55,13 +55,15 @@ public class LabeledObject<T> {
    * @param f   the f
    * @return the labeled object
    */
-  public <U> LabeledObject<U> map(final Function<T, U> f) {
-    return new LabeledObject<U>(f.apply(this.data), this.label);
+  @javax.annotation.Nonnull
+  public <U> com.simiacryptus.util.test.LabeledObject<U> map(@javax.annotation.Nonnull final Function<T, U> f) {
+    return new com.simiacryptus.util.test.LabeledObject<>(f.apply(this.data), this.label);
   }
   
+  @javax.annotation.Nonnull
   @Override
   public String toString() {
-    final StringBuffer sb = new StringBuffer("LabeledObject{");
+    @javax.annotation.Nonnull final StringBuffer sb = new StringBuffer("LabeledObject{");
     sb.append("data=").append(data);
     sb.append(", label='").append(label).append('\'');
     sb.append('}');

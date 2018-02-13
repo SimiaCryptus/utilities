@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 by Andrew Charneski.
+ * Copyright (c) 2018 by Andrew Charneski.
  *
  * The author licenses this file to you under the
  * Apache License, Version 2.0 (the "License");
@@ -30,12 +30,12 @@ import java.util.stream.Stream;
  */
 public class ClassificationTree {
   
-  private PrintStream verbose = null;
   private final double minLeafWeight = 10;
   private final int maxLevels = 8;
   private final int minWeight = 5;
   private final double depthBias = 0.0005;
   private final int smoothing = 3;
+  private PrintStream verbose = null;
   
   /**
    * Categorization tree function.
@@ -64,10 +64,10 @@ public class ClassificationTree {
       String split = info.get().node.getString();
       Map<String, List<String>> lSet = categories.entrySet().stream().collect(
         Collectors.toMap(e -> e.getKey(), e -> e.getValue().stream().filter(str -> str.contains(split))
-                                                 .collect(Collectors.toList())));
+          .collect(Collectors.toList())));
       Map<String, List<String>> rSet = categories.entrySet().stream().collect(
         Collectors.toMap(e -> e.getKey(), e -> e.getValue().stream().filter(str -> !str.contains(split))
-                                                 .collect(Collectors.toList())));
+          .collect(Collectors.toList())));
       int lSum = lSet.values().stream().mapToInt(x -> x.size()).sum();
       int rSum = rSet.values().stream().mapToInt(x -> x.size()).sum();
       if (0 == lSum || 0 == rSum) {
@@ -103,10 +103,10 @@ public class ClassificationTree {
       Long leftCnt = left.getOrDefault(category, 0l);
       return leftCnt * Math.log((leftCnt + smoothing) * 1.0 / (leftSum + smoothing * sum.size()));
     }).sum() +
-              sum.keySet().stream().mapToDouble(category -> {
-                Long rightCnt = sum.getOrDefault(category, 0l) - left.getOrDefault(category, 0l);
-                return rightCnt * Math.log((rightCnt + smoothing) * 1.0 / (rightSum + smoothing * sum.size()));
-              }).sum()) / (sumSum * Math.log(2));
+      sum.keySet().stream().mapToDouble(category -> {
+        Long rightCnt = sum.getOrDefault(category, 0l) - left.getOrDefault(category, 0l);
+        return rightCnt * Math.log((rightCnt + smoothing) * 1.0 / (rightSum + smoothing * sum.size()));
+      }).sum()) / (sumSum * Math.log(2));
   }
   
   private Optional<NodeInfo> categorizationSubstring(Collection<List<String>> categories) {
@@ -153,19 +153,19 @@ public class ClassificationTree {
   
   private Map<Integer, Long> summarize(IndexNode node, Map<Integer, Integer> categoryMap) {
     return node.getCursors().map(x -> x.getDocumentId())
-             .distinct()
-             .map(x -> categoryMap.get(x))
-             .collect(Collectors.toList()).stream()
-             .collect(Collectors.groupingBy(x -> x, Collectors.counting()));
+      .distinct()
+      .map(x -> categoryMap.get(x))
+      .collect(Collectors.toList()).stream()
+      .collect(Collectors.groupingBy(x -> x, Collectors.counting()));
   }
   
   private Optional<NodeInfo> categorizationSubstring(IndexNode node, Map<Integer, Integer> categoryMap, Map<Integer, Long> sum) {
     List<NodeInfo> childrenInfo = node.getChildren().map(n -> categorizationSubstring(n, categoryMap, sum))
-                                    .filter(x -> x.isPresent()).map(x -> x.get()).collect(Collectors.toList());
+      .filter(x -> x.isPresent()).map(x -> x.get()).collect(Collectors.toList());
     NodeInfo info = info(node, sum, categoryMap);
     if (info.node.getString().isEmpty() || !Double.isFinite(info.entropy)) info = null;
     Optional<NodeInfo> max = Stream.concat(null == info ? Stream.empty() : Stream.of(info), childrenInfo.stream())
-                               .max(Comparator.comparing(x -> x.entropy));
+      .max(Comparator.comparing(x -> x.entropy));
     return max;
   }
   
@@ -182,7 +182,7 @@ public class ClassificationTree {
      * The Entropy.
      */
     double entropy;
-  
+    
     /**
      * Instantiates a new Node info.
      *

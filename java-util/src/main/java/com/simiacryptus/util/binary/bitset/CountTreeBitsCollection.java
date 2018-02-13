@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 by Andrew Charneski.
+ * Copyright (c) 2018 by Andrew Charneski.
  *
  * The author licenses this file to you under the
  * Apache License, Version 2.0 (the "License");
@@ -73,7 +73,7 @@ public class CountTreeBitsCollection extends
    * @throws IOException the io exception
    */
   public CountTreeBitsCollection(final BitInputStream bitStream,
-                                 final int bitDepth) throws IOException {
+    final int bitDepth) throws IOException {
     this(bitDepth);
     this.read(bitStream);
   }
@@ -189,7 +189,7 @@ public class CountTreeBitsCollection extends
    * @throws IOException the io exception
    */
   protected BranchCounts readBranchCounts(final BitInputStream in,
-                                          final Bits code, final long size) throws IOException {
+    final Bits code, final long size) throws IOException {
     final BranchCounts branchCounts = new BranchCounts(code, size);
     final CodeType currentCodeType = this.getType(code);
     long maximum = size;
@@ -246,7 +246,7 @@ public class CountTreeBitsCollection extends
    * @throws IOException the io exception
    */
   protected long readZeroBranchSize(final BitInputStream in, final long max,
-                                    final Bits code) throws IOException {
+    final Bits code) throws IOException {
     if (0 == max) {
       return 0;
     }
@@ -325,12 +325,12 @@ public class CountTreeBitsCollection extends
   }
   
   private void write(final BitOutputStream out, final Bits currentCode,
-                     final NavigableMap<Bits, Long> sums) throws IOException {
+    final NavigableMap<Bits, Long> sums) throws IOException {
     final Entry<Bits, Long> firstEntry = sums.firstEntry();
     final NavigableMap<Bits, Long> remainder = sums.tailMap(currentCode, false);
     final Bits splitCode = currentCode.concatenate(Bits.ONE);
     final NavigableMap<Bits, Long> zeroMap = remainder
-                                               .headMap(splitCode, false);
+      .headMap(splitCode, false);
     final NavigableMap<Bits, Long> oneMap = remainder.tailMap(splitCode, true);
 
     final int firstEntryCount = this.map.get(firstEntry.getKey()).get();
@@ -339,9 +339,9 @@ public class CountTreeBitsCollection extends
     final long size = endCount - baseCount;
 
     final long terminals = firstEntry.getKey().equals(currentCode) ? firstEntryCount
-                             : 0;
+      : 0;
     final long zeroCount = 0 == zeroMap.size() ? 0 : zeroMap.lastEntry()
-                                                       .getValue() - baseCount - terminals;
+      .getValue() - baseCount - terminals;
     final long oneCount = size - terminals - zeroCount;
 
     final EntryTransformer<Bits, Long, Long> transformer = new EntryTransformer<Bits, Long, Long>() {
@@ -352,16 +352,16 @@ public class CountTreeBitsCollection extends
     };
     assert size == this.sum(Maps.transformEntries(sums, transformer).values());
     assert zeroCount == this.sum(Maps.transformEntries(zeroMap, transformer)
-                                   .values());
+      .values());
     assert oneCount == this.sum(Maps.transformEntries(oneMap, transformer)
-                                  .values());
+      .values());
 
     final BranchCounts branchCounts = new BranchCounts(
-                                                        currentCode,
-                                                        size,
-                                                        terminals,
-                                                        zeroCount,
-                                                        oneCount);
+      currentCode,
+      size,
+      terminals,
+      zeroCount,
+      oneCount);
 
     if (SERIALIZATION_CHECKS) {
       out.write(SerializationChecks.StartTree);
@@ -405,7 +405,7 @@ public class CountTreeBitsCollection extends
    * @throws IOException the io exception
    */
   protected void writeBranchCounts(final BranchCounts branch,
-                                   final BitOutputStream out) throws IOException {
+    final BitOutputStream out) throws IOException {
     final CodeType currentCodeType = this.getType(branch.path);
     long maximum = branch.size;
     assert maximum >= branch.terminals;
@@ -440,7 +440,7 @@ public class CountTreeBitsCollection extends
    * @throws IOException the io exception
    */
   protected void writeTerminalCount(final BitOutputStream out,
-                                    final long value, final long max) throws IOException {
+    final long value, final long max) throws IOException {
     assert 0 <= value;
     assert max >= value;
     if (SERIALIZATION_CHECKS) {
@@ -462,7 +462,7 @@ public class CountTreeBitsCollection extends
    * @throws IOException the io exception
    */
   protected void writeZeroBranchSize(final BitOutputStream out,
-                                     final long value, final long max, final Bits bits) throws IOException {
+    final long value, final long max, final Bits bits) throws IOException {
     assert 0 <= value;
     assert max >= value;
     if (SERIALIZATION_CHECKS) {
@@ -528,7 +528,7 @@ public class CountTreeBitsCollection extends
      * The One count.
      */
     public long oneCount;
-  
+
     /**
      * Instantiates a new Branch counts.
      *
@@ -539,7 +539,7 @@ public class CountTreeBitsCollection extends
       this.path = path;
       this.size = size;
     }
-  
+
     /**
      * Instantiates a new Branch counts.
      *
@@ -550,7 +550,7 @@ public class CountTreeBitsCollection extends
      * @param oneCount  the one count
      */
     public BranchCounts(final Bits path, final long size, final long terminals,
-                        final long zeroCount, final long oneCount) {
+      final long zeroCount, final long oneCount) {
       this.path = path;
       this.size = size;
       this.terminals = terminals;

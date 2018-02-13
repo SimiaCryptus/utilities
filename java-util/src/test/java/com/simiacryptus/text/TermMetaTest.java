@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 by Andrew Charneski.
+ * Copyright (c) 2018 by Andrew Charneski.
  *
  * The author licenses this file to you under the
  * Apache License, Version 2.0 (the "License");
@@ -19,6 +19,7 @@
 
 package com.simiacryptus.text;
 
+import com.simiacryptus.util.TableOutput;
 import com.simiacryptus.util.io.MarkdownNotebookOutput;
 import com.simiacryptus.util.io.NotebookOutput;
 import com.simiacryptus.util.test.EnglishWords;
@@ -63,7 +64,7 @@ public class TermMetaTest {
   @Test
   @Category(TestCategories.Report.class)
   public void calcCompressorPPM() throws Exception {
-    NotebookOutput log = MarkdownNotebookOutput.get(this).addCopy(System.out);
+    NotebookOutput log = MarkdownNotebookOutput.get(this);
     CharTrieIndex baseTree = new CharTrieIndex();
     log.p("Preparing %s documents", modelCount);
     source().limit(modelCount).forEach(txt -> {

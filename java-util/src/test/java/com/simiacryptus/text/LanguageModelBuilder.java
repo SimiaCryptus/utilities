@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 by Andrew Charneski.
+ * Copyright (c) 2018 by Andrew Charneski.
  *
  * The author licenses this file to you under the
  * Apache License, Version 2.0 (the "License");
@@ -36,12 +36,12 @@ import java.util.stream.Stream;
  * The type Language model builder.
  */
 public class LanguageModelBuilder {
-
+  
   private final int trainingSize = 1000;
   private final int minWeight = 0;
   private final int maxLevels = 4;
   private final int minArticleSize = 4 * 1024;
-
+  
   private static void print(CharTrie trie) {
     System.out.println("Total Indexed Document (KB): " + trie.getIndexedSize() / 1024);
     System.out.println("Total Node Count: " + trie.getNodeCount());
@@ -56,25 +56,25 @@ public class LanguageModelBuilder {
   @Test
   @Category(TestCategories.Report.class)
   public void buildLanguageModels() throws IOException {
-    try (NotebookOutput log = MarkdownNotebookOutput.get(this).addCopy(System.out)) {
+    try (NotebookOutput log = MarkdownNotebookOutput.get(this)) {
       process(log, "English", WikiArticle.ENGLISH.stream());
       process(log, "French", WikiArticle.FRENCH.stream());
       process(log, "German", WikiArticle.GERMAN.stream());
     }
   }
-
+  
   private void process(NotebookOutput log, String languageName, Stream<WikiArticle> load) {
     log.p("\n\n");
     log.h2(languageName);
     CharTrie trie = log.code(() -> {
       List<String> data = load.map(x -> x.getText()).filter(x -> x.length() > minArticleSize)
-                            .skip(100)
-                            .map(str -> str.replaceAll("\\{\\{.*\\}\\}", ""))
-                            .map(str -> str.replaceAll("\\[\\[.*\\]\\]", ""))
-                            .map(str -> str.replaceAll("\\[[^\\]]*\\]", ""))
-                            .map(str -> str.replaceAll("\\{[^\\}]*\\}", ""))
-                            .map(str -> str.replaceAll("\\<[^\\>]*\\>", ""))
-                            .limit(trainingSize).collect(Collectors.toList());
+        .skip(100)
+        .map(str -> str.replaceAll("\\{\\{.*\\}\\}", ""))
+        .map(str -> str.replaceAll("\\[\\[.*\\]\\]", ""))
+        .map(str -> str.replaceAll("\\[[^\\]]*\\]", ""))
+        .map(str -> str.replaceAll("\\{[^\\}]*\\}", ""))
+        .map(str -> str.replaceAll("\\<[^\\>]*\\>", ""))
+        .limit(trainingSize).collect(Collectors.toList());
       CharTrie charTrie = CharTrieIndex.indexFulltext(data, maxLevels, minWeight);
       print(charTrie);
       return charTrie;
@@ -89,6 +89,6 @@ public class LanguageModelBuilder {
       }
     });
   }
-
-
+  
+  
 }

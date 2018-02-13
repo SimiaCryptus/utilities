@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 by Andrew Charneski.
+ * Copyright (c) 2018 by Andrew Charneski.
  *
  * The author licenses this file to you under the
  * Apache License, Version 2.0 (the "License");
@@ -43,7 +43,7 @@ public class CharTrieIndex extends CharTrie {
   protected final ArrayList<String> documents;
   
   private CharTrieIndex(SerialArrayList<NodeData> nodes, SerialArrayList<CursorData> cursors,
-                        ArrayList<String> documents) {
+    ArrayList<String> documents) {
     super(nodes);
     this.cursors = cursors;
     this.documents = documents;
@@ -128,8 +128,8 @@ public class CharTrieIndex extends CharTrie {
   }
   
   /**
-   * Removes cursor data, retaining only the tree of tokens and counts.
-   * Subsequent calls to methods dealing run cursors will fail.
+   * Removes cursor data, retaining only the tree of tokens and counts. Subsequent calls to methods dealing run cursors
+   * will fail.
    *
    * @return this
    */

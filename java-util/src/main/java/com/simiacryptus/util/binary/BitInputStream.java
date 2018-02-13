@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 by Andrew Charneski.
+ * Copyright (c) 2018 by Andrew Charneski.
  *
  * The author licenses this file to you under the
  * Apache License, Version 2.0 (the "License");
@@ -170,8 +170,7 @@ public class BitInputStream {
   }
   
   /**
-   * Reads a single positive bounded integral value (up to 64-bit, including 0,
-   * excluding max)
+   * Reads a single positive bounded integral value (up to 64-bit, including 0, excluding max)
    *
    * @param max Maximum value (exclusive)
    * @return A long within the range [0, max)

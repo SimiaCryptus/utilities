@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 by Andrew Charneski.
+ * Copyright (c) 2018 by Andrew Charneski.
  *
  * The author licenses this file to you under the
  * Apache License, Version 2.0 (the "License");
@@ -26,17 +26,18 @@ package com.simiacryptus.util.lang;
  */
 public abstract class ResourcePool<T> {
   
-  private final ThreadLocal<T> currentValue = new ThreadLocal<>();
+  @javax.annotation.Nonnull
   private final java.util.HashSet<T> all;
-  private final java.util.concurrent.LinkedBlockingQueue<T> pool = new java.util.concurrent.LinkedBlockingQueue<>();
+  private final ThreadLocal<T> currentValue = new ThreadLocal<>();
   private final int maxItems;
+  private final java.util.concurrent.LinkedBlockingQueue<T> pool = new java.util.concurrent.LinkedBlockingQueue<>();
   
   /**
    * Instantiates a new Resource pool.
    *
    * @param maxItems the max items
    */
-  public ResourcePool(int maxItems) {
+  public ResourcePool(final int maxItems) {
     super();
     this.maxItems = maxItems;
     this.all = new java.util.HashSet<>(this.maxItems);
@@ -48,27 +49,6 @@ public abstract class ResourcePool<T> {
    * @return the t
    */
   public abstract T create();
-  
-  /**
-   * With.
-   *
-   * @param f the f
-   */
-  public void with(final java.util.function.Consumer<T> f) {
-    T prior = currentValue.get();
-    if (null != prior) {
-      f.accept(prior);
-    } else {
-      T poll = get();
-      try {
-        currentValue.set(poll);
-        f.accept(poll);
-      } finally {
-        this.pool.add(poll);
-        currentValue.remove();
-      }
-    }
-  }
   
   /**
    * Get t.
@@ -88,7 +68,7 @@ public abstract class ResourcePool<T> {
     if (null == poll) {
       try {
         poll = this.pool.take();
-      } catch (final InterruptedException e) {
+      } catch (@javax.annotation.Nonnull final InterruptedException e) {
         throw new RuntimeException(e);
       }
     }
@@ -100,5 +80,29 @@ public abstract class ResourcePool<T> {
    *
    * @return the int
    */
-  public int size() { return all.size(); }
+  public int size() {
+    return all.size();
+  }
+  
+  /**
+   * With.
+   *
+   * @param f the f
+   */
+  public void with(@javax.annotation.Nonnull final java.util.function.Consumer<T> f) {
+    final T prior = currentValue.get();
+    if (null != prior) {
+      f.accept(prior);
+    }
+    else {
+      final T poll = get();
+      try {
+        currentValue.set(poll);
+        f.accept(poll);
+      } finally {
+        this.pool.add(poll);
+        currentValue.remove();
+      }
+    }
+  }
 }

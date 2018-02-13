@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 by Andrew Charneski.
+ * Copyright (c) 2018 by Andrew Charneski.
  *
  * The author licenses this file to you under the
  * Apache License, Version 2.0 (the "License");
@@ -43,10 +43,10 @@ public class CachedSupplier<T> implements Supplier<T> {
   @Override
   public T get() {
     T obj = cached;
-    if(null == obj) {
+    if (null == obj) {
       synchronized (this) {
         obj = cached;
-        if(null == obj) {
+        if (null == obj) {
           obj = fn.get();
           cached = (obj);
         }

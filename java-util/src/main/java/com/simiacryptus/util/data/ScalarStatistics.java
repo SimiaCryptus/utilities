@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 by Andrew Charneski.
+ * Copyright (c) 2018 by Andrew Charneski.
  *
  * The author licenses this file to you under the
  * Apache License, Version 2.0 (the "License");
@@ -22,23 +22,27 @@ package com.simiacryptus.util.data;
 import com.google.gson.JsonObject;
 import com.simiacryptus.util.MonitoredItem;
 
+import javax.annotation.Nullable;
 import java.io.Serializable;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * The type Scalar statistics.
  */
+@SuppressWarnings("serial")
 public class ScalarStatistics implements MonitoredItem, Serializable {
   private static final double zeroTol = 1e-20;
-  private volatile int zeros = 0;
+  private volatile double max = -Double.POSITIVE_INFINITY;
+  private volatile double min = Double.POSITIVE_INFINITY;
   private volatile int negatives = 0;
   private volatile int positives = 0;
-  private volatile double sum0 = 0;
+  private volatile int sum0 = 0;
   private volatile double sum1 = 0;
   private volatile double sum2 = 0;
   private volatile double sumLog = 0;
-  private volatile double min = Double.POSITIVE_INFINITY;
-  private volatile double max = -Double.POSITIVE_INFINITY;
+  private volatile int zeros = 0;
   
   /**
    * Stats scalar statistics.
@@ -46,8 +50,9 @@ public class ScalarStatistics implements MonitoredItem, Serializable {
    * @param data the data
    * @return the scalar statistics
    */
-  public static ScalarStatistics stats(double[] data) {
-    ScalarStatistics statistics = new PercentileStatistics();
+  @javax.annotation.Nonnull
+  public static com.simiacryptus.util.data.ScalarStatistics stats(@javax.annotation.Nonnull final double[] data) {
+    @javax.annotation.Nonnull final com.simiacryptus.util.data.ScalarStatistics statistics = new PercentileStatistics();
     Arrays.stream(data).forEach(statistics::add);
     return statistics;
   }
@@ -56,8 +61,10 @@ public class ScalarStatistics implements MonitoredItem, Serializable {
    * Add.
    *
    * @param values the values
+   * @return the scalar statistics
    */
-  public ScalarStatistics add(double... values) {
+  @Nullable
+  public com.simiacryptus.util.data.ScalarStatistics add(@javax.annotation.Nonnull final double... values) {
     double v1 = 0;
     double v2 = 0;
     double vmax = max;
@@ -66,12 +73,12 @@ public class ScalarStatistics implements MonitoredItem, Serializable {
     double vlog = 0;
     int n = 0;
     int p = 0;
-    for (double v : values) {
+    for (final double v : values) {
       v1 += v;
       v2 += v * v;
       vmin = Math.min(min, v);
       vmax = Math.max(max, v);
-      if (Math.abs(v) < zeroTol) {
+      if (Math.abs(v) < com.simiacryptus.util.data.ScalarStatistics.zeroTol) {
         z++;
       }
       else {
@@ -99,52 +106,17 @@ public class ScalarStatistics implements MonitoredItem, Serializable {
   }
   
   /**
-   * Add scalar statistics.
-   *
-   * @param right the right
-   * @return the scalar statistics
-   */
-  public final synchronized ScalarStatistics add(ScalarStatistics right) {
-    ScalarStatistics sum = new ScalarStatistics();
-    sum.sum0 += this.sum0;
-    sum.sum0 += right.sum0;
-    sum.sum1 += this.sum1;
-    sum.sum1 += right.sum1;
-    sum.sum2 += this.sum2;
-    sum.sum2 += right.sum2;
-    return sum;
-  }
-  
-  
-  /**
-   * Subtract scalar statistics.
-   *
-   * @param right the right
-   * @return the scalar statistics
-   */
-  public final synchronized ScalarStatistics subtract(ScalarStatistics right) {
-    ScalarStatistics sum = new ScalarStatistics();
-    sum.sum0 += this.sum0;
-    sum.sum0 -= right.sum0;
-    sum.sum1 += this.sum1;
-    sum.sum1 -= right.sum1;
-    sum.sum2 += this.sum2;
-    sum.sum2 -= right.sum2;
-    return sum;
-  }
-
-  /**
    * Add.
    *
    * @param v the v
    */
-  public final synchronized void add(double v) {
+  public final synchronized void add(final double v) {
     sum0 += 1;
     sum1 += v;
     sum2 += v * v;
     min = Math.min(min, v);
     max = Math.max(max, v);
-    if (Math.abs(v) < zeroTol) {
+    if (Math.abs(v) < com.simiacryptus.util.data.ScalarStatistics.zeroTol) {
       zeros++;
     }
     else {
@@ -158,46 +130,23 @@ public class ScalarStatistics implements MonitoredItem, Serializable {
     }
   }
   
-  @Override
-  public Map<String, Object> getMetrics() {
-    HashMap<String, Object> map = new HashMap<>();
-    map.put("count", sum0);
-    map.put("negative", negatives);
-    map.put("positive", positives);
-    map.put("min", min);
-    map.put("max", max);
-    map.put("mean", getMean());
-    map.put("stdDev", getStdDev());
-    map.put("meanExponent", getMeanPower());
-    map.put("zeros", zeros);
-    return map;
-  }
   
   /**
-   * Gets mean power.
+   * Add scalar statistics.
    *
-   * @return the mean power
+   * @param right the right
+   * @return the scalar statistics
    */
-  public double getMeanPower() {
-    return sumLog / (sum0 - zeros);
-  }
-  
-  /**
-   * Gets std dev.
-   *
-   * @return the std dev
-   */
-  public double getStdDev() {
-    return Math.sqrt(Math.abs(Math.pow(getMean(), 2) - sum2 / sum0));
-  }
-  
-  /**
-   * Gets mean.
-   *
-   * @return the mean
-   */
-  public double getMean() {
-    return sum1 / sum0;
+  @javax.annotation.Nonnull
+  public final synchronized com.simiacryptus.util.data.ScalarStatistics add(@javax.annotation.Nonnull final com.simiacryptus.util.data.ScalarStatistics right) {
+    @javax.annotation.Nonnull final com.simiacryptus.util.data.ScalarStatistics sum = new com.simiacryptus.util.data.ScalarStatistics();
+    sum.sum0 += sum0;
+    sum.sum0 += right.sum0;
+    sum.sum1 += sum1;
+    sum.sum1 += right.sum1;
+    sum.sum2 += sum2;
+    sum.sum2 += right.sum2;
+    return sum;
   }
   
   /**
@@ -220,7 +169,7 @@ public class ScalarStatistics implements MonitoredItem, Serializable {
    *
    * @return the count
    */
-  public double getCount() {
+  public int getCount() {
     return sum0;
   }
   
@@ -229,8 +178,9 @@ public class ScalarStatistics implements MonitoredItem, Serializable {
    *
    * @return the json
    */
+  @javax.annotation.Nonnull
   public JsonObject getJson() {
-    JsonObject json = new JsonObject();
+    @javax.annotation.Nonnull final JsonObject json = new JsonObject();
     json.addProperty("min", min);
     json.addProperty("max", max);
     json.addProperty("negatives", negatives);
@@ -244,21 +194,81 @@ public class ScalarStatistics implements MonitoredItem, Serializable {
   }
   
   /**
+   * Gets mean.
+   *
+   * @return the mean
+   */
+  public double getMean() {
+    return sum1 / sum0;
+  }
+  
+  /**
+   * Gets mean power.
+   *
+   * @return the mean power
+   */
+  public double getMeanPower() {
+    return sumLog / (sum0 - zeros);
+  }
+  
+  @Override
+  public Map<String, Object> getMetrics() {
+    @javax.annotation.Nonnull final HashMap<String, Object> map = new HashMap<>();
+    map.put("count", sum0);
+    map.put("negative", negatives);
+    map.put("positive", positives);
+    map.put("min", min);
+    map.put("max", max);
+    map.put("mean", getMean());
+    map.put("stdDev", getStdDev());
+    map.put("meanExponent", getMeanPower());
+    map.put("zeros", zeros);
+    return map;
+  }
+  
+  /**
+   * Gets std dev.
+   *
+   * @return the std dev
+   */
+  public double getStdDev() {
+    return Math.sqrt(Math.abs(Math.pow(getMean(), 2) - sum2 / sum0));
+  }
+  
+  /**
    * Read json.
    *
    * @param json the json
    */
-  public void readJson(JsonObject json) {
+  public void readJson(@Nullable final JsonObject json) {
     if (null == json) return;
-    this.min = json.get("min").getAsDouble();
-    this.max = json.get("max").getAsDouble();
-    this.negatives = json.get("negatives").getAsInt();
-    this.positives = json.get("positives").getAsInt();
-    this.zeros = json.get("zeros").getAsInt();
-    this.sum0 = json.get("sum0").getAsDouble();
-    this.sum1 = json.get("sum1").getAsDouble();
-    this.sum2 = json.get("sum2").getAsDouble();
-    this.sumLog = json.get("sumLog").getAsDouble();
+    min = json.get("min").getAsDouble();
+    max = json.get("max").getAsDouble();
+    negatives = json.get("negatives").getAsInt();
+    positives = json.get("positives").getAsInt();
+    zeros = json.get("zeros").getAsInt();
+    sum0 = json.get("sum0").getAsInt();
+    sum1 = json.get("sum1").getAsDouble();
+    sum2 = json.get("sum2").getAsDouble();
+    sumLog = json.get("sumLog").getAsDouble();
+  }
+  
+  /**
+   * Subtract scalar statistics.
+   *
+   * @param right the right
+   * @return the scalar statistics
+   */
+  @javax.annotation.Nonnull
+  public final synchronized com.simiacryptus.util.data.ScalarStatistics subtract(@javax.annotation.Nonnull final com.simiacryptus.util.data.ScalarStatistics right) {
+    @javax.annotation.Nonnull final com.simiacryptus.util.data.ScalarStatistics sum = new com.simiacryptus.util.data.ScalarStatistics();
+    sum.sum0 += sum0;
+    sum.sum0 -= right.sum0;
+    sum.sum1 += sum1;
+    sum.sum1 -= right.sum1;
+    sum.sum2 += sum2;
+    sum.sum2 -= right.sum2;
+    return sum;
   }
   
   @Override

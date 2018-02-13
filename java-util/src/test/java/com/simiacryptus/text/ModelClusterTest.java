@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 by Andrew Charneski.
+ * Copyright (c) 2018 by Andrew Charneski.
  *
  * The author licenses this file to you under the
  * Apache License, Version 2.0 (the "License");
@@ -19,6 +19,7 @@
 
 package com.simiacryptus.text;
 
+import com.simiacryptus.util.TableOutput;
 import com.simiacryptus.util.io.MarkdownNotebookOutput;
 import com.simiacryptus.util.io.NotebookOutput;
 import com.simiacryptus.util.test.TestCategories;
@@ -72,8 +73,8 @@ public abstract class ModelClusterTest {
   @Test
   @Category(TestCategories.ResearchCode.class)
   public void clusterSharedDictionariesLZ() throws Exception {
-    try (NotebookOutput log = MarkdownNotebookOutput.get(this).addCopy(System.out)) {
-
+    try (NotebookOutput log = MarkdownNotebookOutput.get(this)) {
+      
       int dictionary_context = 7;
       int model_minPathWeight = 3;
       int dictionary_lookahead = 2;
@@ -86,34 +87,34 @@ public abstract class ModelClusterTest {
         int i = index.incrementAndGet();
         compressors.put(String.format("LZ_%s", i), new Compressor() {
           String dictionary = dictionaryTree.copy().getGenerator().generateDictionary(8 * 1024, dictionary_context, "", dictionary_lookahead, true);
-
+          
           @Override
           public byte[] compress(String text) {
             return CompressionUtil.encodeLZ(text, dictionary);
           }
-
+          
           @Override
           public String uncompress(byte[] data) {
             return CompressionUtil.decodeLZToString(data, dictionary);
           }
         });
-
+        
         compressors.put(String.format("LZ_raw_%s", i), new Compressor() {
           String dictionary = text.getText();
-
+          
           @Override
           public byte[] compress(String text) {
             return CompressionUtil.encodeLZ(text, dictionary);
           }
-
+          
           @Override
           public String uncompress(byte[] data) {
             return CompressionUtil.decodeLZToString(data, dictionary);
           }
         });
       });
-
-
+      
+      
       TableOutput output = Compressor.evalCompressorCluster(source().skip(getModelCount()), compressors, true);
       log.p(output.toTextTable());
       log.p(output.calcNumberStats().toTextTable());
@@ -131,12 +132,12 @@ public abstract class ModelClusterTest {
   @Test
   @Category(TestCategories.ResearchCode.class)
   public void calcCompressorPPM() throws Exception {
-    try (NotebookOutput log = MarkdownNotebookOutput.get(this).addCopy(System.out)) {
+    try (NotebookOutput log = MarkdownNotebookOutput.get(this)) {
       int ppmModelDepth = 6;
       int model_minPathWeight = 3;
       AtomicInteger index = new AtomicInteger(0);
       int encodingContext = 2;
-
+      
       log.p("Generating Compressor Models");
       Map<String, Compressor> compressors = new LinkedHashMap<>();
       source().parallel().limit(getModelCount()).forEach(text -> {
@@ -150,7 +151,7 @@ public abstract class ModelClusterTest {
         }
         log.p("Completed Model %s", name);
       });
-
+      
       log.p("Calculating Metrics Table");
       TableOutput output = Compressor.evalCompressorCluster(source().skip(getModelCount()), compressors, true);
       log.p(output.calcNumberStats().toTextTable());
@@ -168,12 +169,12 @@ public abstract class ModelClusterTest {
   @Ignore
   @Category(TestCategories.ResearchCode.class)
   public void calcEntropyPPM() throws Exception {
-    try (NotebookOutput log = MarkdownNotebookOutput.get(this).addCopy(System.out)) {
+    try (NotebookOutput log = MarkdownNotebookOutput.get(this)) {
       int ppmModelDepth = 6;
       int model_minPathWeight = 3;
       AtomicInteger index = new AtomicInteger(0);
       int encodingContext = 2;
-
+      
       log.p("Generating Compressor Models");
       Map<String, Function<TestDocument, Double>> compressors = new LinkedHashMap<>();
       source().parallel().limit(getModelCount()).forEach(text -> {
@@ -188,7 +189,7 @@ public abstract class ModelClusterTest {
         }
         log.p("Completed Model %s", name);
       });
-
+      
       log.p("Calculating Metrics Table");
       TableOutput output = Compressor.evalCluster(source().skip(getModelCount()), compressors, true);
       log.p(output.calcNumberStats().toTextTable());
@@ -205,7 +206,7 @@ public abstract class ModelClusterTest {
      * The Test count.
      */
     int testCount = 1000;
-
+    
     @Override
     protected Stream<? extends TestDocument> source() {
       return WikiArticle.ENGLISH.stream().filter(wikiArticle -> {
@@ -213,12 +214,12 @@ public abstract class ModelClusterTest {
         return kb > 50 && kb < 150;
       }).limit(getModelCount() + testCount);
     }
-
+    
     @Override
     public int getModelCount() {
       return 20;
     }
   }
-
-
+  
+  
 }

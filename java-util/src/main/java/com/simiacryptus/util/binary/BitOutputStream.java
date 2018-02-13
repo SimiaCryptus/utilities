@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 by Andrew Charneski.
+ * Copyright (c) 2018 by Andrew Charneski.
  *
  * The author licenses this file to you under the
  * Apache License, Version 2.0 (the "License");
@@ -180,7 +180,7 @@ public class BitOutputStream implements AutoCloseable {
   public Bits writeBoundedLong(final long value, final long max)
     throws IOException {
     final int bits = 0 >= max ? 0 : (int) (Math
-                                             .floor(Math.log(max) / Math.log(2)) + 1);
+      .floor(Math.log(max) / Math.log(2)) + 1);
     if (0 < bits) {
       Bits toWrite = new Bits(value, bits);
       this.write(toWrite);

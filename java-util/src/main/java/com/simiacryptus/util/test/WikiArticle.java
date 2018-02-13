@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 by Andrew Charneski.
+ * Copyright (c) 2018 by Andrew Charneski.
  *
  * The author licenses this file to you under the
  * Apache License, Version 2.0 (the "License");
@@ -42,6 +42,31 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class WikiArticle extends TestDocument {
   
   /**
+   * The constant ENGLISH.
+   */
+  public static WikiDataLoader ENGLISH = new WikiDataLoader(URI.create(
+    "https://dumps.wikimedia.org/enwiki/latest/enwiki-latest-pages-articles.xml.bz2"), 10000);
+  /**
+   * The constant GERMAN.
+   */
+  public static WikiDataLoader GERMAN = new WikiDataLoader(URI.create(
+    "https://dumps.wikimedia.org/dewiki/latest/dewiki-latest-pages-articles.xml.bz2"), 10000);
+  /**
+   * The constant FRENCH.
+   */
+  public static WikiDataLoader FRENCH = new WikiDataLoader(URI.create(
+    "https://dumps.wikimedia.org/frwiki/latest/frwiki-latest-pages-articles.xml.bz2"), 10000);
+  /**
+   * Instantiates a new Wiki article.
+   *
+   * @param title the title
+   * @param text  the text
+   */
+  public WikiArticle(String title, String text) {
+    super(title, text);
+  }
+  
+  /**
    * The type Wiki data loader.
    */
   public static class WikiDataLoader extends DataLoader<WikiArticle> {
@@ -57,7 +82,7 @@ public class WikiArticle extends TestDocument {
      * The Article limit.
      */
     protected final int articleLimit;
-  
+    
     /**
      * Instantiates a new Wiki data loader.
      *
@@ -88,7 +113,7 @@ public class WikiArticle extends TestDocument {
             
             @Override
             public void characters(final char[] ch, final int start,
-                                   final int length) throws SAXException {
+              final int length) throws SAXException {
               if (Thread.currentThread().isInterrupted()) {
                 throw new RuntimeException(new InterruptedException());
               }
@@ -103,7 +128,7 @@ public class WikiArticle extends TestDocument {
             
             @Override
             public void endElement(final String uri, final String localName,
-                                   final String qName) throws SAXException {
+              final String qName) throws SAXException {
               if (Thread.currentThread().isInterrupted()) {
                 throw new RuntimeException(new InterruptedException());
               }
@@ -137,7 +162,7 @@ public class WikiArticle extends TestDocument {
             
             @Override
             public void startElement(final String uri, final String localName,
-                                     final String qName, final Attributes attributes)
+              final String qName, final Attributes attributes)
               throws SAXException {
               if (Thread.currentThread().isInterrupted()) {
                 throw new RuntimeException(new InterruptedException());
@@ -174,32 +199,6 @@ public class WikiArticle extends TestDocument {
         System.err.println("Read thread exit");
       }
     }
-  }
-  
-  /**
-   * The constant ENGLISH.
-   */
-  public static WikiDataLoader ENGLISH = new WikiDataLoader(URI.create(
-    "https://dumps.wikimedia.org/enwiki/latest/enwiki-latest-pages-articles.xml.bz2"), 10000);
-  /**
-   * The constant GERMAN.
-   */
-  public static WikiDataLoader GERMAN = new WikiDataLoader(URI.create(
-    "https://dumps.wikimedia.org/dewiki/latest/dewiki-latest-pages-articles.xml.bz2"), 10000);
-  /**
-   * The constant FRENCH.
-   */
-  public static WikiDataLoader FRENCH = new WikiDataLoader(URI.create(
-    "https://dumps.wikimedia.org/frwiki/latest/frwiki-latest-pages-articles.xml.bz2"), 10000);
-  
-  /**
-   * Instantiates a new Wiki article.
-   *
-   * @param title the title
-   * @param text  the text
-   */
-  public WikiArticle(String title, String text) {
-    super(title, text);
   }
   
 }

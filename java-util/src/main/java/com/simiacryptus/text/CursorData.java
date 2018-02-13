@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 by Andrew Charneski.
+ * Copyright (c) 2018 by Andrew Charneski.
  *
  * The author licenses this file to you under the
  * Apache License, Version 2.0 (the "License");
@@ -64,7 +64,7 @@ class CursorData {
     this.position = position;
     return this;
   }
-
+  
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -73,20 +73,20 @@ class CursorData {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-
+    
     CursorData that = (CursorData) o;
-
+    
     if (documentId != that.documentId) {
       return false;
     }
     return position == that.position;
   }
-
+  
   @Override
   public int hashCode() {
     int result = documentId;
     result = 31 * result + position;
     return result;
   }
-
+  
 }

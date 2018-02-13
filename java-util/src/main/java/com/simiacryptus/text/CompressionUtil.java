@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 by Andrew Charneski.
+ * Copyright (c) 2018 by Andrew Charneski.
  *
  * The author licenses this file to you under the
  * Apache License, Version 2.0 (the "License");
@@ -284,8 +284,8 @@ public class CompressionUtil {
     try {
       byte[] dictBytes = dictionary.getBytes("UTF-8");
       VCDiffEncoder<OutputStream> encoder = VCDiffEncoderBuilder.builder()
-                                              .withDictionary(dictBytes)
-                                              .buildSimple();
+        .withDictionary(dictBytes)
+        .buildSimple();
       ByteArrayOutputStream buffer = new ByteArrayOutputStream();
       encoder.encode(asBytes, buffer);
       return encodeBZ(buffer.toByteArray());

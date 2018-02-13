@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 by Andrew Charneski.
+ * Copyright (c) 2018 by Andrew Charneski.
  *
  * The author licenses this file to you under the
  * Apache License, Version 2.0 (the "License");
@@ -19,6 +19,7 @@
 
 package com.simiacryptus.text;
 
+import com.simiacryptus.util.TableOutput;
 import com.simiacryptus.util.io.MarkdownNotebookOutput;
 import com.simiacryptus.util.io.NotebookOutput;
 import com.simiacryptus.util.test.*;
@@ -43,7 +44,7 @@ public class DictionaryMethodTest {
   @Test
   @Category(TestCategories.Report.class)
   public void dictionariesTweets() throws Exception {
-    try (NotebookOutput log = MarkdownNotebookOutput.get(this).addCopy(System.out)) {
+    try (NotebookOutput log = MarkdownNotebookOutput.get(this)) {
       int modelCount = 10000;
       int testCount = 100;
       log.p("This notebook uses a variety of methods to generate compression dictionaries for a database of Tweets\n");
@@ -59,7 +60,7 @@ public class DictionaryMethodTest {
   @Test
   @Category(TestCategories.Report.class)
   public void dictionariesShakespeare() throws Exception {
-    try (NotebookOutput log = MarkdownNotebookOutput.get(this).addCopy(System.out)) {
+    try (NotebookOutput log = MarkdownNotebookOutput.get(this)) {
       int modelCount = 100;
       int testCount = 100;
       log.p("This notebook uses a variety of methods to generate compression dictionaries for a database of Shakespeare text\n");
@@ -75,14 +76,14 @@ public class DictionaryMethodTest {
   @Test
   @Category(TestCategories.Report.class)
   public void dictionariesWiki() throws Exception {
-    try (NotebookOutput log = MarkdownNotebookOutput.get(this).addCopy(System.out)) {
+    try (NotebookOutput log = MarkdownNotebookOutput.get(this)) {
       int modelCount = 100;
       int testCount = 100;
       log.p("This notebook uses a variety of methods to generate compression dictionaries for a database of Wikipedia articles\n");
       test(log, () -> WikiArticle.ENGLISH.stream().limit(modelCount + testCount), modelCount);
     }
   }
-
+  
   private void test(NotebookOutput log, Supplier<Stream<? extends TestDocument>> source, int modelCount) {
     CharTrieIndex baseTree = new CharTrieIndex();
     source.get().limit(modelCount).forEach(txt -> baseTree.addDocument(txt.getText()));
@@ -97,14 +98,14 @@ public class DictionaryMethodTest {
     //log.p(output.toTextTable());
     log.p(output.calcNumberStats().toTextTable());
   }
-
+  
   private void addWordCountCompressor(NotebookOutput log, Map<String, Compressor> compressors, List<? extends TestDocument> content) {
     Map<String, Long> wordCounts = content.stream().flatMap(c -> Arrays.stream(c.getText().replaceAll("[^\\w\\s]", "").split(" +")))
-                                     .map(s -> s.trim()).filter(s -> !s.isEmpty()).collect(Collectors.groupingBy(x -> x, Collectors.counting()));
+      .map(s -> s.trim()).filter(s -> !s.isEmpty()).collect(Collectors.groupingBy(x -> x, Collectors.counting()));
     String dictionary = wordCounts.entrySet().stream()
-                          .sorted(Comparator.<Map.Entry<String, Long>>comparingLong(e -> -e.getValue())
-                                    .thenComparing(Comparator.comparingLong(e -> -e.getKey().length())))
-                          .map(x -> x.getKey()).reduce((a, b) -> a + " " + b).get().substring(0, 8 * 1024);
+      .sorted(Comparator.<Map.Entry<String, Long>>comparingLong(e -> -e.getValue())
+        .thenComparing(Comparator.comparingLong(e -> -e.getKey().length())))
+      .map(x -> x.getKey()).reduce((a, b) -> a + " " + b).get().substring(0, 8 * 1024);
     String key = "LZ8k_commonWords";
     int dictSampleSize = 512;
     log.p("Common Words Dictionary %s: %s...\n", key, dictionary.length() > dictSampleSize ? (dictionary.substring(0, dictSampleSize) + "...") : dictionary);
@@ -113,14 +114,14 @@ public class DictionaryMethodTest {
       public byte[] compress(String text) {
         return CompressionUtil.encodeLZ(text, dictionary);
       }
-
+      
       @Override
       public String uncompress(byte[] data) {
         return CompressionUtil.decodeLZToString(data, dictionary);
       }
     });
   }
-
+  
   private void addCompressors(NotebookOutput log, Map<String, Compressor> compressors, CharTrieIndex baseTree, final int dictionary_context, final int dictionary_lookahead, int model_minPathWeight) {
     CharTrie dictionaryTree = baseTree.copy().index(dictionary_context + dictionary_lookahead, model_minPathWeight);
     String genDictionary = dictionaryTree.copy().getGenerator().generateDictionary(8 * 1024, dictionary_context, "", dictionary_lookahead, true);
@@ -128,12 +129,12 @@ public class DictionaryMethodTest {
     int dictSampleSize = 512;
     log.p("Adding Compressor %s: %s...\n", keyDictionary, genDictionary.length() > dictSampleSize ? (genDictionary.substring(0, dictSampleSize) + "...") : genDictionary);
     compressors.put(keyDictionary, new Compressor() {
-
+      
       @Override
       public byte[] compress(String text) {
         return CompressionUtil.encodeLZ(text, genDictionary);
       }
-
+      
       @Override
       public String uncompress(byte[] data) {
         return CompressionUtil.decodeLZToString(data, genDictionary);
@@ -143,18 +144,18 @@ public class DictionaryMethodTest {
     String keyMarkov = String.format("LZ8k_%s_%s_%s_generateMarkov", dictionary_context, dictionary_lookahead, model_minPathWeight);
     log.p("Adding Compressor %s: %s...\n", keyMarkov, genMarkov.length() > dictSampleSize ? (genMarkov.substring(0, dictSampleSize) + "...") : genMarkov);
     compressors.put(keyMarkov, new Compressor() {
-
+      
       @Override
       public byte[] compress(String text) {
         return CompressionUtil.encodeLZ(text, genMarkov);
       }
-
+      
       @Override
       public String uncompress(byte[] data) {
         return CompressionUtil.decodeLZToString(data, genMarkov);
       }
     });
   }
-
-
+  
+  
 }

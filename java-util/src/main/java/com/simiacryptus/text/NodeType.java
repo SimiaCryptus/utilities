@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 by Andrew Charneski.
+ * Copyright (c) 2018 by Andrew Charneski.
  *
  * The author licenses this file to you under the
  * Apache License, Version 2.0 (the "License");
@@ -33,17 +33,17 @@ class NodeType implements SerialType<NodeData> {
    * The Instance.
    */
   static NodeType INSTANCE = new NodeType();
-
+  
   @Override
   public int getSize() {
     return 24;
   }
-
+  
   @Override
   public NodeData read(ByteBuffer input) throws IOException {
     return new NodeData(input.getChar(), input.getShort(), input.getInt(), input.getLong(), input.getLong());
   }
-
+  
   @Override
   public void write(ByteBuffer output, NodeData value) throws IOException {
     output.putChar(value.token);

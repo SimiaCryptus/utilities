@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 by Andrew Charneski.
+ * Copyright (c) 2018 by Andrew Charneski.
  *
  * The author licenses this file to you under the
  * Apache License, Version 2.0 (the "License");
@@ -19,6 +19,7 @@
 
 package com.simiacryptus.util.data;
 
+import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.stream.IntStream;
@@ -50,7 +51,8 @@ public class DensityTree {
    * @param points the points
    * @return the bounds
    */
-  public Bounds getBounds(double[][] points) {
+  @javax.annotation.Nonnull
+  public Bounds getBounds(@javax.annotation.Nonnull double[][] points) {
     int dim = points[0].length;
     double[] max = IntStream.range(0, dim).mapToDouble(d -> {
       return Arrays.stream(points).mapToDouble(pt -> pt[d]).filter(x -> Double.isFinite(x)).max().orElse(Double.NaN);
@@ -76,7 +78,8 @@ public class DensityTree {
    * @param minSplitFract the min split fract
    * @return the min split fract
    */
-  public DensityTree setMinSplitFract(double minSplitFract) {
+  @javax.annotation.Nonnull
+  public com.simiacryptus.util.data.DensityTree setMinSplitFract(double minSplitFract) {
     this.minSplitFract = minSplitFract;
     return this;
   }
@@ -96,7 +99,8 @@ public class DensityTree {
    * @param splitSizeThreshold the split size threshold
    * @return the split size threshold
    */
-  public DensityTree setSplitSizeThreshold(int splitSizeThreshold) {
+  @javax.annotation.Nonnull
+  public com.simiacryptus.util.data.DensityTree setSplitSizeThreshold(int splitSizeThreshold) {
     this.splitSizeThreshold = splitSizeThreshold;
     return this;
   }
@@ -125,7 +129,8 @@ public class DensityTree {
    * @param minFitness the min fitness
    * @return the min fitness
    */
-  public DensityTree setMinFitness(double minFitness) {
+  @javax.annotation.Nonnull
+  public com.simiacryptus.util.data.DensityTree setMinFitness(double minFitness) {
     this.minFitness = minFitness;
     return this;
   }
@@ -145,7 +150,8 @@ public class DensityTree {
    * @param maxDepth the max depth
    * @return the max depth
    */
-  public DensityTree setMaxDepth(int maxDepth) {
+  @javax.annotation.Nonnull
+  public com.simiacryptus.util.data.DensityTree setMaxDepth(int maxDepth) {
     this.maxDepth = maxDepth;
     return this;
   }
@@ -157,32 +163,35 @@ public class DensityTree {
     /**
      * The Max.
      */
+    @javax.annotation.Nonnull
     public final double[] max;
     /**
      * The Min.
      */
+    @javax.annotation.Nonnull
     public final double[] min;
-  
+
     /**
      * Instantiates a new Bounds.
      *
      * @param max the max
      * @param min the min
      */
-    public Bounds(double[] max, double[] min) {
+    public Bounds(@javax.annotation.Nonnull double[] max, @javax.annotation.Nonnull double[] min) {
       this.max = max;
       this.min = min;
       assert (max.length == min.length);
       assert (IntStream.range(0, max.length).filter(i -> Double.isFinite(max[i])).allMatch(i -> max[i] >= min[i]));
     }
-  
+
     /**
      * Union bounds.
      *
      * @param pt the pt
      * @return the bounds
      */
-    public Bounds union(double[] pt) {
+    @javax.annotation.Nonnull
+    public Bounds union(@javax.annotation.Nonnull double[] pt) {
       int dim = pt.length;
       return new Bounds(IntStream.range(0, dim).mapToDouble(d -> {
         return Double.isFinite(pt[d]) ? Math.max(max[d], pt[d]) : max[d];
@@ -190,7 +199,7 @@ public class DensityTree {
         return Double.isFinite(pt[d]) ? Math.min(min[d], pt[d]) : min[d];
       }).toArray());
     }
-  
+
     /**
      * Gets volume.
      *
@@ -202,7 +211,8 @@ public class DensityTree {
         return max[d] - min[d];
       }).filter(x -> Double.isFinite(x) && x > 0.0).reduce((a, b) -> a * b).orElse(Double.NaN);
     }
-    
+
+    @javax.annotation.Nonnull
     public String toString() {
       return "[" + IntStream.range(0, min.length).mapToObj(d -> {
         return String.format("%s: %s - %s", columnNames[d], min[d], max[d]);
@@ -217,7 +227,7 @@ public class DensityTree {
   public class OrthoRule extends Rule {
     private final int dim;
     private final double value;
-  
+
     /**
      * Instantiates a new Ortho rule.
      *
@@ -248,7 +258,7 @@ public class DensityTree {
      * The Fitness.
      */
     public double fitness;
-  
+
     /**
      * Instantiates a new Rule.
      *
@@ -257,7 +267,7 @@ public class DensityTree {
     public Rule(String name) {
       this.name = name;
     }
-  
+
     /**
      * Eval boolean.
      *
@@ -279,38 +289,43 @@ public class DensityTree {
     /**
      * The Points.
      */
+    @javax.annotation.Nonnull
     public final double[][] points;
     /**
      * The Bounds.
      */
+    @javax.annotation.Nonnull
     public final Bounds bounds;
     private final int depth;
+    @Nullable
     private Node left = null;
+    @Nullable
     private Node right = null;
+    @Nullable
     private Rule rule = null;
-  
+
     /**
      * Instantiates a new Node.
      *
      * @param points the points
      */
-    public Node(double[][] points) {
+    public Node(@javax.annotation.Nonnull double[][] points) {
       this(points, 0);
     }
-  
+
     /**
      * Instantiates a new Node.
      *
      * @param points the points
      * @param depth  the depth
      */
-    public Node(double[][] points, int depth) {
+    public Node(@javax.annotation.Nonnull double[][] points, int depth) {
       this.points = points;
       this.bounds = getBounds(points);
       this.depth = depth;
       split();
     }
-  
+
     /**
      * Predict int.
      *
@@ -333,7 +348,7 @@ public class DensityTree {
     public String toString() {
       return code();
     }
-  
+
     /**
      * Code string.
      *
@@ -354,7 +369,7 @@ public class DensityTree {
     private String dataInfo() {
       return String.format("Count: %s Volume: %s Region: %s", points.length, bounds.getVolume(), bounds);
     }
-  
+
     /**
      * Split.
      */
@@ -362,7 +377,7 @@ public class DensityTree {
       if (points.length <= splitSizeThreshold) return;
       if (maxDepth <= depth) return;
       this.rule = IntStream.range(0, points[0].length).mapToObj(x -> x).flatMap(dim -> split_ortho(dim)).filter(x -> Double.isFinite(x.fitness))
-                    .max(Comparator.comparing(x -> x.fitness)).orElse(null);
+        .max(Comparator.comparing(x -> x.fitness)).orElse(null);
       if (null == this.rule) return;
       double[][] leftPts = Arrays.stream(this.points).filter(pt -> rule.eval(pt)).toArray(i -> new double[i][]);
       double[][] rightPts = Arrays.stream(this.points).filter(pt -> !rule.eval(pt)).toArray(i -> new double[i][]);
@@ -371,7 +386,7 @@ public class DensityTree {
       this.left = new Node(leftPts, depth + 1);
       this.right = new Node(rightPts, depth + 1);
     }
-  
+
     /**
      * Split ortho stream.
      *
@@ -382,8 +397,8 @@ public class DensityTree {
       double[][] sortedPoints = Arrays.stream(points).filter(pt -> Double.isFinite(pt[dim])).sorted(Comparator.comparing(pt -> pt[dim])).toArray(i -> new double[i][]);
       if (0 == sortedPoints.length) return Stream.empty();
       final int minSize = (int) Math.max(sortedPoints.length * minSplitFract, 1);
-      Bounds[] left = new Bounds[sortedPoints.length];
-      Bounds[] right = new Bounds[sortedPoints.length];
+      @javax.annotation.Nonnull Bounds[] left = new Bounds[sortedPoints.length];
+      @javax.annotation.Nonnull Bounds[] right = new Bounds[sortedPoints.length];
       left[0] = getBounds(new double[][]{sortedPoints[0]});
       right[sortedPoints.length - 1] = getBounds(new double[][]{sortedPoints[sortedPoints.length - 1]});
       for (int i = 1; i < sortedPoints.length; i++) {
@@ -396,74 +411,80 @@ public class DensityTree {
         int leftCount = i;
         int rightCount = sortedPoints.length - leftCount;
         if (minSize >= leftCount || minSize >= rightCount) return null;
-        OrthoRule rule = new OrthoRule(dim, sortedPoints[i][dim]);
+        @javax.annotation.Nonnull OrthoRule rule = new OrthoRule(dim, sortedPoints[i][dim]);
         Bounds l = left[i - 1];
         Bounds r = right[i];
         rule.fitness = -(leftCount * Math.log(l.getVolume() / Node.this.bounds.getVolume()) + rightCount * Math.log(r.getVolume() / Node.this.bounds.getVolume())) / (sortedPoints.length * Math.log(2));
         return (Rule) rule;
       }).filter(i -> null != i && i.fitness > minFitness);
     }
-  
+
     /**
      * Gets rule.
      *
      * @return the rule
      */
+    @Nullable
     public Rule getRule() {
       return rule;
     }
-  
+
     /**
      * Sets rule.
      *
      * @param rule the rule
      * @return the rule
      */
+    @javax.annotation.Nonnull
     protected Node setRule(Rule rule) {
       this.rule = rule;
       return this;
     }
-  
+
     /**
      * Gets right.
      *
      * @return the right
      */
+    @Nullable
     public Node getRight() {
       return right;
     }
-  
+
     /**
      * Sets right.
      *
      * @param right the right
      * @return the right
      */
+    @javax.annotation.Nonnull
     protected Node setRight(Node right) {
       this.right = right;
       return this;
     }
-  
+
     /**
      * Gets left.
      *
      * @return the left
      */
+    @Nullable
     public Node getLeft() {
       return left;
     }
-  
+
     /**
      * Sets left.
      *
      * @param left the left
      * @return the left
      */
+    @javax.annotation.Nonnull
     protected Node setLeft(Node left) {
       this.left = left;
       return this;
     }
-  
+
     /**
      * Gets depth.
      *

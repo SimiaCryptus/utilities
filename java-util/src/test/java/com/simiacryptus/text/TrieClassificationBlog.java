@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 by Andrew Charneski.
+ * Copyright (c) 2018 by Andrew Charneski.
  *
  * The author licenses this file to you under the
  * Apache License, Version 2.0 (the "License");
@@ -19,6 +19,7 @@
 
 package com.simiacryptus.text;
 
+import com.simiacryptus.util.TableOutput;
 import com.simiacryptus.util.binary.Bits;
 import com.simiacryptus.util.io.MarkdownNotebookOutput;
 import com.simiacryptus.util.io.NotebookOutput;
@@ -37,7 +38,7 @@ import java.util.stream.Collectors;
  * The type Trie classification blog.
  */
 public class TrieClassificationBlog {
-
+  
   private static void print(CharTrie trie) {
     System.out.println("Total Indexed Document (KB): " + trie.getIndexedSize() / 1024);
     System.out.println("Total Node Count: " + trie.getNodeCount());
@@ -52,7 +53,7 @@ public class TrieClassificationBlog {
   @Test
   @Category(TestCategories.Report.class)
   public void language_detection_ppm() throws IOException {
-    try (NotebookOutput log = MarkdownNotebookOutput.get(this).addCopy(System.out)) {
+    try (NotebookOutput log = MarkdownNotebookOutput.get(this)) {
       log.h1("Language Detection via PPM Compression");
       int testingSize = 100;
       int trainingSize = 100;
@@ -62,22 +63,22 @@ public class TrieClassificationBlog {
       log.p("First, we cache English and French wikipedia articles into two collections");
       List<WikiArticle> english = log.code(() -> {
         return new ArrayList<>(WikiArticle.ENGLISH.stream().filter(x -> x.getText().length() > minArticleSize)
-                                 .limit(testingSize + trainingSize).collect(Collectors.toList()));
+          .limit(testingSize + trainingSize).collect(Collectors.toList()));
       });
       List<WikiArticle> french = log.code(() -> {
         return new ArrayList<>(WikiArticle.FRENCH.stream().filter(x -> x.getText().length() > minArticleSize)
-                                 .limit(testingSize + trainingSize).collect(Collectors.toList()));
+          .limit(testingSize + trainingSize).collect(Collectors.toList()));
       });
       log.p("Then, we process each into separate language models");
       CharTrie trieEnglish = log.code(() -> {
         CharTrie charTrie = CharTrieIndex.indexFulltext(english.subList(0, trainingSize)
-                                                          .stream().map(x -> x.getText()).collect(Collectors.toList()), maxLevels, minWeight);
+          .stream().map(x -> x.getText()).collect(Collectors.toList()), maxLevels, minWeight);
         print(charTrie);
         return charTrie;
       });
       CharTrie trieFrench = log.code(() -> {
         CharTrie charTrie = CharTrieIndex.indexFulltext(french.subList(testingSize, french.size())
-                                                          .stream().map(x -> x.getText()).collect(Collectors.toList()), maxLevels, minWeight);
+          .stream().map(x -> x.getText()).collect(Collectors.toList()), maxLevels, minWeight);
         print(charTrie);
         return charTrie;
       });
@@ -108,7 +109,7 @@ public class TrieClassificationBlog {
   @Test
   @Category(TestCategories.Report.class)
   public void prebuilt_language_models() throws IOException {
-    try (NotebookOutput log = MarkdownNotebookOutput.get(this).addCopy(System.out)) {
+    try (NotebookOutput log = MarkdownNotebookOutput.get(this)) {
       log.h1("Language Detection using prebuilt models");
       TableOutput table = new TableOutput();
       evaluateLanguage(log, "English", WikiArticle.ENGLISH, table);
@@ -118,7 +119,7 @@ public class TrieClassificationBlog {
       log.p(table.toTextTable());
     }
   }
-
+  
   private void evaluateLanguage(NotebookOutput log, String sourceLanguage, WikiArticle.WikiDataLoader sourceData, TableOutput table) {
     int testingSize = 100;
     int minArticleSize = 4 * 1024;
@@ -148,7 +149,7 @@ public class TrieClassificationBlog {
   @Test
   @Category(TestCategories.Report.class)
   public void sentiment_analysis_ppm() throws IOException {
-    try (NotebookOutput log = MarkdownNotebookOutput.get(this).addCopy(System.out)) {
+    try (NotebookOutput log = MarkdownNotebookOutput.get(this)) {
       log.h1("Sentiment Analysis via PPM Compression");
       int testingSize = 10000;
       int trainingSize = 100000;
@@ -158,13 +159,13 @@ public class TrieClassificationBlog {
       log.p("First, we cache positive and negative sentiment tweets into two separate models");
       List<TweetSentiment> tweetsPositive = log.code(() -> {
         ArrayList<TweetSentiment> list = new ArrayList<>(TweetSentiment.load()
-                                                           .filter(x -> x.category == 1).limit(testingSize + trainingSize).collect(Collectors.toList()));
+          .filter(x -> x.category == 1).limit(testingSize + trainingSize).collect(Collectors.toList()));
         Collections.shuffle(list);
         return list;
       });
       List<TweetSentiment> tweetsNegative = log.code(() -> {
         ArrayList<TweetSentiment> list = new ArrayList<>(TweetSentiment.load()
-                                                           .filter(x -> x.category == 0).limit(testingSize + trainingSize).collect(Collectors.toList()));
+          .filter(x -> x.category == 0).limit(testingSize + trainingSize).collect(Collectors.toList()));
         Collections.shuffle(list);
         return list;
       });
@@ -213,20 +214,20 @@ public class TrieClassificationBlog {
   @Test
   @Category(TestCategories.Report.class)
   public void sentiment_analysis_decision_tree() throws IOException {
-    try (NotebookOutput log = MarkdownNotebookOutput.get(this).addCopy(System.out)) {
+    try (NotebookOutput log = MarkdownNotebookOutput.get(this)) {
       log.h1("Sentiment Analysis using a Decision Tree");
       int testingSize = 1000;
       int trainingSize = 50000;
       log.p("First, we cache positive and negative sentiment tweets into two seperate models");
       List<TweetSentiment> tweetsPositive = log.code(() -> {
         ArrayList<TweetSentiment> list = new ArrayList<>(TweetSentiment.load()
-                                                           .filter(x -> x.category == 1).limit(testingSize + trainingSize).collect(Collectors.toList()));
+          .filter(x -> x.category == 1).limit(testingSize + trainingSize).collect(Collectors.toList()));
         Collections.shuffle(list);
         return list;
       });
       List<TweetSentiment> tweetsNegative = log.code(() -> {
         ArrayList<TweetSentiment> list = new ArrayList<>(TweetSentiment.load()
-                                                           .filter(x -> x.category == 0).limit(testingSize + trainingSize).collect(Collectors.toList()));
+          .filter(x -> x.category == 0).limit(testingSize + trainingSize).collect(Collectors.toList()));
         Collections.shuffle(list);
         return list;
       });
@@ -264,6 +265,6 @@ public class TrieClassificationBlog {
       //log.p(table.toTextTable());
     }
   }
-
-
+  
+  
 }

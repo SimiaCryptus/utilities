@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 by Andrew Charneski.
+ * Copyright (c) 2018 by Andrew Charneski.
  *
  * The author licenses this file to you under the
  * Apache License, Version 2.0 (the "License");
@@ -32,9 +32,8 @@ import java.util.stream.StreamSupport;
 import static com.simiacryptus.text.NodewalkerCodec.*;
 
 /**
- * A character sequence index using a prefix tree, commonly known as a full-text
- * index or as the data structure behind markov chains. This implementation uses
- * serialized fixed-length ephemeral objects and a raw byte data store,
+ * A character sequence index using a prefix tree, commonly known as a full-text index or as the data structure behind
+ * markov chains. This implementation uses serialized fixed-length ephemeral objects and a raw byte data store,
  * preventing object/reference count overhead.
  */
 public class CharTrie {
@@ -471,8 +470,8 @@ public class CharTrie {
    */
   public Set<Character> tokens() {
     return root().getChildrenMap().keySet().stream()
-             .filter(c -> c != END_OF_STRING && c != FALLBACK && c != ESCAPE)
-             .collect(Collectors.toSet());
+      .filter(c -> c != END_OF_STRING && c != FALLBACK && c != ESCAPE)
+      .collect(Collectors.toSet());
   }
   
   /**

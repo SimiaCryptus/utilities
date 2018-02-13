@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 by Andrew Charneski.
+ * Copyright (c) 2018 by Andrew Charneski.
  *
  * The author licenses this file to you under the
  * Apache License, Version 2.0 (the "License");
@@ -117,7 +117,7 @@ class NodeData {
     this.firstCursorIndex = firstCursorIndex;
     return this;
   }
-
+  
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -126,9 +126,9 @@ class NodeData {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-
+    
     NodeData nodeData = (NodeData) o;
-
+    
     if (token != nodeData.token) {
       return false;
     }
@@ -143,7 +143,7 @@ class NodeData {
     }
     return firstCursorIndex == nodeData.firstCursorIndex;
   }
-
+  
   @Override
   public int hashCode() {
     int result = (int) token;
@@ -153,5 +153,5 @@ class NodeData {
     result = 31 * result + Long.hashCode(firstCursorIndex);
     return result;
   }
-
+  
 }

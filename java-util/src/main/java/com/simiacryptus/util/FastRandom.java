@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 by Andrew Charneski.
+ * Copyright (c) 2018 by Andrew Charneski.
  *
  * The author licenses this file to you under the
  * Apache License, Version 2.0 (the "License");
@@ -20,16 +20,13 @@
 package com.simiacryptus.util;
 
 /**
- * The type Fast random.
+ * The type Fast randomize.
  */
 public class FastRandom {
-  private static volatile double randomA = seed();
-  
-  private static double seed() {
-    return Math.random();
-  }
-  
-  private static final long mask = 0xABADC0DE;
+  private static final long t = System.nanoTime() >>> 24;
+  private static long x = System.nanoTime();
+  private static long y = System.nanoTime() >>> 8;
+  private static long z = System.nanoTime() >>> 16;
   
   /**
    * Random double.
@@ -37,17 +34,46 @@ public class FastRandom {
    * @return the double
    */
   public static double random() {
-    int i=0;
-    while(true) {
-      double prev = FastRandom.randomA;
-      assert(Double.isFinite(prev));
-      double next = 4 * prev * (1 - prev);
-      if(!Double.isFinite(next)) next = seed();
-      if(i++<3) {
-        FastRandom.randomA = next;
-        //System.err.println(next);
-        return next;
-      }
+    long z = next();
+    int exponentMag = 4;
+    double resolution = 1e8;
+    double x = ((z / 2) % resolution) / resolution;
+    double y = z % exponentMag - exponentMag / 2;
+    while (y > 1) {
+      y--;
+      x = 2;
     }
+    while (y < -1) {
+      y++;
+      x /= 2;
+    }
+    return x;
   }
+  
+  /**
+   * Next long.
+   *
+   * @return the long
+   */
+  public static long next() {
+    long x = xorshift(com.simiacryptus.util.FastRandom.x);
+    com.simiacryptus.util.FastRandom.x = y;
+    y = z;
+    z = com.simiacryptus.util.FastRandom.x ^ x ^ y;
+    return z;
+  }
+  
+  /**
+   * Xorshift long.
+   *
+   * @param x the x
+   * @return the long
+   */
+  public static long xorshift(long x) {
+    x ^= x << 16;
+    x ^= x >> 5;
+    x ^= x << 1;
+    return x;
+  }
+  
 }

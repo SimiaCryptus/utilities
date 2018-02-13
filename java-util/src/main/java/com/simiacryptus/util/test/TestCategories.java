@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 by Andrew Charneski.
+ * Copyright (c) 2018 by Andrew Charneski.
  *
  * The author licenses this file to you under the
  * Apache License, Version 2.0 (the "License");
@@ -25,9 +25,9 @@ package com.simiacryptus.util.test;
 public class TestCategories {
   
   /**
-   * The type Unit test.
+   * The type Report.
    */
-  public static class UnitTest {
+  public static class Report {
   }
   
   /**
@@ -37,8 +37,8 @@ public class TestCategories {
   }
   
   /**
-   * The type Report.
+   * The type Unit eval.
    */
-  public static class Report {
+  public static class UnitTest {
   }
 }

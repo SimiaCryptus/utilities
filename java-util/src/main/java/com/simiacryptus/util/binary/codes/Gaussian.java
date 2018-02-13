@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 by Andrew Charneski.
+ * Copyright (c) 2018 by Andrew Charneski.
  *
  * The author licenses this file to you under the
  * Apache License, Version 2.0 (the "License");
@@ -77,7 +77,7 @@ public class Gaussian {
    * @return the gaussian
    */
   public static Gaussian fromBinomial(final double probability,
-                                      final long totalPopulation) {
+    final long totalPopulation) {
     if (0. >= totalPopulation) {
       throw new IllegalArgumentException();
     }
@@ -94,8 +94,8 @@ public class Gaussian {
       throw new IllegalArgumentException();
     }
     return new Gaussian(
-                         probability * totalPopulation,
-                         Math.sqrt(totalPopulation * probability * (1 - probability)));
+      probability * totalPopulation,
+      Math.sqrt(totalPopulation * probability * (1 - probability)));
   }
   
   /**

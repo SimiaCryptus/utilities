@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 by Andrew Charneski.
+ * Copyright (c) 2018 by Andrew Charneski.
  *
  * The author licenses this file to you under the
  * Apache License, Version 2.0 (the "License");
@@ -19,6 +19,7 @@
 
 package com.simiacryptus.util.function;
 
+import javax.annotation.Nullable;
 import java.lang.ref.SoftReference;
 import java.util.function.Supplier;
 
@@ -30,6 +31,7 @@ import java.util.function.Supplier;
 public class SoftCachedSupplier<T> implements Supplier<T> {
   
   private final Supplier<T> fn;
+  @Nullable
   private volatile SoftReference<T> cached;
   
   /**
@@ -37,19 +39,22 @@ public class SoftCachedSupplier<T> implements Supplier<T> {
    *
    * @param fn the fn
    */
-  public SoftCachedSupplier(Supplier<T> fn) {
+  public SoftCachedSupplier(final Supplier<T> fn) {
     this.fn = fn;
   }
   
+  @Nullable
   @Override
   public T get() {
-    T obj = null==cached?null:cached.get();
-    if(null == obj) {
+    @Nullable T obj = null == cached ? null : cached.get();
+    if (null == obj) {
       synchronized (this) {
-        obj = null==cached?null:cached.get();
-        if(null == obj) {
+        obj = null == cached ? null : cached.get();
+        if (null == obj) {
           obj = fn.get();
-          if(null != obj) cached = new SoftReference<T>(obj);
+          if (null != obj) {
+            cached = new SoftReference<>(obj);
+          }
         }
       }
     }

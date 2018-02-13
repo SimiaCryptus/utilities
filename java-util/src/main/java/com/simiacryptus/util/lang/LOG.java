@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 by Andrew Charneski.
+ * Copyright (c) 2018 by Andrew Charneski.
  *
  * The author licenses this file to you under the
  * Apache License, Version 2.0 (the "License");
@@ -27,7 +27,7 @@ import java.util.Arrays;
  * The type Log.
  */
 public class LOG {
-
+  
   private static final long startTime = System.nanoTime();
   
   /**
@@ -51,7 +51,7 @@ public class LOG {
   public static void d(final Throwable e, final String msg, final Object... args) {
     LOG.d(msg + "\n  " + LOG.toString(e).replace("\n", "\n  "), args);
   }
-
+  
   private static void log(final Severity debug, final String msg, final Object[] args) {
     final String formatted = String.format(msg, args);
     final StackTraceElement caller = Arrays.stream(Thread.currentThread().getStackTrace()).filter((stack) -> {
@@ -68,7 +68,7 @@ public class LOG {
     final String line = String.format("[%.5f] (%s:%s) %s", time, caller.getFileName(), caller.getLineNumber(), formatted.replaceAll("\n", "\n\t"));
     System.out.println(line);
   }
-
+  
   private static void preprocessArgs(final Object... args) {
     for (int i = 0; i < args.length; i++) {
       if (null == args[i]) {
@@ -94,7 +94,7 @@ public class LOG {
       }
     }
   }
-
+  
   private static String toString(final double[] point) {
     final StringBuffer sb = new StringBuffer();
     for (final double v : point) {
@@ -133,5 +133,5 @@ public class LOG {
      */
     Debug
   }
-
+  
 }

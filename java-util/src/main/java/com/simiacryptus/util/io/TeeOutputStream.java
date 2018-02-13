@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 by Andrew Charneski.
+ * Copyright (c) 2018 by Andrew Charneski.
  *
  * The author licenses this file to you under the
  * Apache License, Version 2.0 (the "License");
@@ -19,6 +19,7 @@
 
 package com.simiacryptus.util.io;
 
+import javax.annotation.Nullable;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,14 +30,14 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 public class TeeOutputStream extends OutputStream {
   /**
-   * The Primary.
-   */
-  public final OutputStream primary;
-  /**
    * The Branches.
    */
   public final List<OutputStream> branches = new ArrayList<>();
-  
+  /**
+   * The Primary.
+   */
+  public final OutputStream primary;
+  @Nullable
   private final ByteArrayOutputStream heapBuffer;
   
   /**
@@ -45,7 +46,7 @@ public class TeeOutputStream extends OutputStream {
    * @param primary the primary
    * @param buffer  the buffer
    */
-  public TeeOutputStream(OutputStream primary, boolean buffer) {
+  public TeeOutputStream(final OutputStream primary, final boolean buffer) {
     this.primary = primary;
     if (buffer) {
       heapBuffer = new ByteArrayOutputStream();
@@ -56,29 +57,20 @@ public class TeeOutputStream extends OutputStream {
     }
   }
   
-  public synchronized void write(byte[] b) throws IOException {
-    this.primary.write(b);
-    for (OutputStream branch : this.branches) branch.write(b);
-  }
-  
-  public synchronized void write(byte[] b, int off, int len) throws IOException {
-    this.primary.write(b, off, len);
-    for (OutputStream branch : this.branches) branch.write(b, off, len);
-  }
-  
-  public synchronized void write(int b) throws IOException {
-    this.primary.write(b);
-    for (OutputStream branch : this.branches) branch.write(b);
-  }
-  
-  public void flush() throws IOException {
-    this.primary.flush();
-    for (OutputStream branch : this.branches) branch.flush();
-  }
-  
+  @Override
   public void close() throws IOException {
-    this.primary.close();
-    for (OutputStream branch : this.branches) branch.close();
+    primary.close();
+    for (@javax.annotation.Nonnull final OutputStream branch : branches) {
+      branch.close();
+    }
+  }
+  
+  @Override
+  public void flush() throws IOException {
+    primary.flush();
+    for (@javax.annotation.Nonnull final OutputStream branch : branches) {
+      branch.flush();
+    }
   }
   
   /**
@@ -87,11 +79,12 @@ public class TeeOutputStream extends OutputStream {
    * @return the piped input stream
    * @throws IOException the io exception
    */
+  @javax.annotation.Nonnull
   public PipedInputStream newInputStream() throws IOException {
-    TeeOutputStream outTee = this;
-    final AtomicReference<Runnable> onClose = new AtomicReference<>();
-    final PipedOutputStream outPipe = new PipedOutputStream();
-    PipedInputStream in = new PipedInputStream() {
+    @javax.annotation.Nonnull final com.simiacryptus.util.io.TeeOutputStream outTee = this;
+    @javax.annotation.Nonnull final AtomicReference<Runnable> onClose = new AtomicReference<>();
+    @javax.annotation.Nonnull final PipedOutputStream outPipe = new PipedOutputStream();
+    @javax.annotation.Nonnull final PipedInputStream in = new PipedInputStream() {
       @Override
       public void close() throws IOException {
         outPipe.close();
@@ -99,7 +92,7 @@ public class TeeOutputStream extends OutputStream {
       }
     };
     outPipe.connect(in);
-    OutputStream outAsync = new AsyncOutputStream(outPipe);
+    @javax.annotation.Nonnull final OutputStream outAsync = new AsyncOutputStream(outPipe);
     new Thread(() -> {
       try {
         if (null != heapBuffer) {
@@ -107,7 +100,7 @@ public class TeeOutputStream extends OutputStream {
           outAsync.flush();
         }
         outTee.branches.add(outAsync);
-      } catch (IOException e) {
+      } catch (@javax.annotation.Nonnull final IOException e) {
         e.printStackTrace();
       }
     }).start();
@@ -116,5 +109,29 @@ public class TeeOutputStream extends OutputStream {
       System.err.println("END HTTP Session");
     });
     return in;
+  }
+  
+  @Override
+  public synchronized void write(final byte[] b) throws IOException {
+    primary.write(b);
+    for (@javax.annotation.Nonnull final OutputStream branch : branches) {
+      branch.write(b);
+    }
+  }
+  
+  @Override
+  public synchronized void write(final byte[] b, final int off, final int len) throws IOException {
+    primary.write(b, off, len);
+    for (@javax.annotation.Nonnull final OutputStream branch : branches) {
+      branch.write(b, off, len);
+    }
+  }
+  
+  @Override
+  public synchronized void write(final int b) throws IOException {
+    primary.write(b);
+    for (@javax.annotation.Nonnull final OutputStream branch : branches) {
+      branch.write(b);
+    }
   }
 }

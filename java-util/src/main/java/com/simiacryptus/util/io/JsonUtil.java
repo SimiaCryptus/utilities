@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 by Andrew Charneski.
+ * Copyright (c) 2018 by Andrew Charneski.
  *
  * The author licenses this file to you under the
  * Apache License, Version 2.0 (the "License");
@@ -24,6 +24,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonPrimitive;
 
+import javax.annotation.Nullable;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -35,30 +36,13 @@ import java.util.stream.IntStream;
 public class JsonUtil {
   
   /**
-   * Gets json.
+   * Get double array double [ ].
    *
-   * @param kernelDims the kernel dims
-   * @return the json
+   * @param array the array
+   * @return the double [ ]
    */
-  public static JsonArray getJson(int[] kernelDims) {
-    JsonArray array = new JsonArray();
-    for (int k : kernelDims) array.add(new JsonPrimitive(k));
-    return array;
-  }
-  
-  /**
-   * Write json.
-   *
-   * @param out the out
-   * @param obj the obj
-   * @throws IOException the io exception
-   */
-  public static void writeJson(OutputStream out, Object obj) throws IOException {
-    ObjectMapper mapper = new ObjectMapper().enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL)
-                            .enable(SerializationFeature.INDENT_OUTPUT);
-    ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-    mapper.writeValue(buffer, obj);
-    out.write(buffer.toByteArray());
+  public static double[] getDoubleArray(@javax.annotation.Nonnull final JsonArray array) {
+    return IntStream.range(0, array.size()).mapToDouble(i -> array.get(i).getAsDouble()).toArray();
   }
   
   /**
@@ -67,7 +51,8 @@ public class JsonUtil {
    * @param array the array
    * @return the int [ ]
    */
-  public static int[] getIntArray(JsonArray array) {
+  @Nullable
+  public static int[] getIntArray(@Nullable final JsonArray array) {
     if (null == array) return null;
     return IntStream.range(0, array.size()).map(i -> array.get(i).getAsInt()).toArray();
   }
@@ -78,19 +63,42 @@ public class JsonUtil {
    * @param kernelDims the kernel dims
    * @return the json
    */
-  public static JsonArray getJson(double[] kernelDims) {
-    JsonArray array = new JsonArray();
-    for (double k : kernelDims) array.add(new JsonPrimitive(k));
+  @javax.annotation.Nonnull
+  public static JsonArray getJson(@javax.annotation.Nonnull final double[] kernelDims) {
+    @javax.annotation.Nonnull final JsonArray array = new JsonArray();
+    for (final double k : kernelDims) {
+      array.add(new JsonPrimitive(k));
+    }
     return array;
   }
   
   /**
-   * Get double array double [ ].
+   * Gets json.
    *
-   * @param array the array
-   * @return the double [ ]
+   * @param kernelDims the kernel dims
+   * @return the json
    */
-  public static double[] getDoubleArray(JsonArray array) {
-    return IntStream.range(0, array.size()).mapToDouble(i -> array.get(i).getAsDouble()).toArray();
+  @javax.annotation.Nonnull
+  public static JsonArray getJson(@javax.annotation.Nonnull final int[] kernelDims) {
+    @javax.annotation.Nonnull final JsonArray array = new JsonArray();
+    for (final int k : kernelDims) {
+      array.add(new JsonPrimitive(k));
+    }
+    return array;
+  }
+  
+  /**
+   * Write json.
+   *
+   * @param out the out
+   * @param obj the obj
+   * @throws IOException the io exception
+   */
+  public static void writeJson(@javax.annotation.Nonnull final OutputStream out, final Object obj) throws IOException {
+    final ObjectMapper mapper = new ObjectMapper().enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL)
+      .enable(SerializationFeature.INDENT_OUTPUT);
+    @javax.annotation.Nonnull final ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+    mapper.writeValue(buffer, obj);
+    out.write(buffer.toByteArray());
   }
 }

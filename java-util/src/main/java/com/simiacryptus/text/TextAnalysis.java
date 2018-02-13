@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 by Andrew Charneski.
+ * Copyright (c) 2018 by Andrew Charneski.
  *
  * The author licenses this file to you under the
  * Apache License, Version 2.0 (the "License");
@@ -48,50 +48,6 @@ public class TextAnalysis {
   }
   
   /**
-   * Keywords list.
-   *
-   * @param source the source
-   * @return the list
-   */
-  public List<String> keywords(final String source) {
-    Map<String, Long> wordCounts = splitChars(source, DEFAULT_THRESHOLD).stream().collect(Collectors.groupingBy(x -> x, Collectors.counting()));
-    wordCounts = aggregateKeywords(wordCounts);
-    return wordCounts.entrySet().stream().filter(x -> x.getValue() > 1)
-             .sorted(Comparator.comparing(x -> -entropy(x.getKey()) * Math.pow(x.getValue(), 0.3)))
-             .map(e -> {
-               if (isVerbose()) {
-                 verbose.println(String.format("KEYWORD: \"%s\" - %s * %.3f / %s", e.getKey(), e.getValue(), entropy(e.getKey()), e.getKey().length()));
-               }
-               return e.getKey();
-             }).collect(Collectors.toList());
-  }
-  
-  private Map<String, Long> aggregateKeywords(Map<String, Long> wordCounts) {
-    Map<String, Long> accumulator = new HashMap<>();
-    wordCounts.forEach((key, count) -> {
-      boolean added = false;
-      for (Map.Entry<String, Long> e : accumulator.entrySet()) {
-        String combine = combine(key, e.getKey(), 4);
-        if (null != combine) {
-          accumulator.put(combine, e.getValue() + count);
-          accumulator.remove(e.getKey());
-          added = true;
-          break;
-        }
-      }
-      if (!added) {
-        accumulator.put(key, count);
-      }
-    });
-    if (wordCounts.size() > accumulator.size()) {
-      return aggregateKeywords(accumulator);
-    }
-    else {
-      return accumulator;
-    }
-  }
-  
-  /**
    * Combine string.
    *
    * @param left       the left
@@ -127,6 +83,54 @@ public class TextAnalysis {
     }
     else {
       return null;
+    }
+  }
+  
+  private static double entropy(TrieNode tokenNode, TrieNode contextNode) {
+    return -0.0 + (null == contextNode ? Double.POSITIVE_INFINITY : (-Math.log(tokenNode.getCursorCount() * 1.0 / contextNode.getCursorCount())));
+  }
+  
+  /**
+   * Keywords list.
+   *
+   * @param source the source
+   * @return the list
+   */
+  public List<String> keywords(final String source) {
+    Map<String, Long> wordCounts = splitChars(source, DEFAULT_THRESHOLD).stream().collect(Collectors.groupingBy(x -> x, Collectors.counting()));
+    wordCounts = aggregateKeywords(wordCounts);
+    return wordCounts.entrySet().stream().filter(x -> x.getValue() > 1)
+      .sorted(Comparator.comparing(x -> -entropy(x.getKey()) * Math.pow(x.getValue(), 0.3)))
+      .map(e -> {
+        if (isVerbose()) {
+          verbose.println(String.format("KEYWORD: \"%s\" - %s * %.3f / %s", e.getKey(), e.getValue(), entropy(e.getKey()), e.getKey().length()));
+        }
+        return e.getKey();
+      }).collect(Collectors.toList());
+  }
+  
+  private Map<String, Long> aggregateKeywords(Map<String, Long> wordCounts) {
+    Map<String, Long> accumulator = new HashMap<>();
+    wordCounts.forEach((key, count) -> {
+      boolean added = false;
+      for (Map.Entry<String, Long> e : accumulator.entrySet()) {
+        String combine = combine(key, e.getKey(), 4);
+        if (null != combine) {
+          accumulator.put(combine, e.getValue() + count);
+          accumulator.remove(e.getKey());
+          added = true;
+          break;
+        }
+      }
+      if (!added) {
+        accumulator.put(key, count);
+      }
+    });
+    if (wordCounts.size() > accumulator.size()) {
+      return aggregateKeywords(accumulator);
+    }
+    else {
+      return accumulator;
     }
   }
   
@@ -173,7 +177,6 @@ public class TextAnalysis {
     return wordSpelling;
   }
   
-  
   /**
    * Split matches list.
    *
@@ -215,7 +218,6 @@ public class TextAnalysis {
     tokenization.add(text);
     return tokenization;
   }
-  
   
   /**
    * Split chars list.
@@ -328,10 +330,6 @@ public class TextAnalysis {
     }));
   }
   
-  private static double entropy(TrieNode tokenNode, TrieNode contextNode) {
-    return -0.0 + (null == contextNode ? Double.POSITIVE_INFINITY : (-Math.log(tokenNode.getCursorCount() * 1.0 / contextNode.getCursorCount())));
-  }
-  
   /**
    * Entropy double.
    *
@@ -374,6 +372,16 @@ public class TextAnalysis {
   }
   
   /**
+   * Split chars list.
+   *
+   * @param text the text
+   * @return the list
+   */
+  public List<String> splitChars(String text) {
+    return splitChars(text, DEFAULT_THRESHOLD);
+  }
+  
+  /**
    * The type Word spelling.
    */
   public class WordSpelling {
@@ -386,7 +394,7 @@ public class TextAnalysis {
      * The Sum.
      */
     double sum = 0;
-  
+    
     /**
      * Instantiates a new Word spelling.
      *
@@ -423,7 +431,7 @@ public class TextAnalysis {
       double sumLinkNats = Arrays.stream(linkNatsArray).sum();
       for (int i = 0; i < linkNatsArray.length; i++) linkNatsArray[i] /= sumLinkNats;
     }
-  
+    
     /**
      * Mutate stream.
      *
@@ -431,8 +439,8 @@ public class TextAnalysis {
      */
     public Stream<WordSpelling> mutate() {
       return IntStream.range(0, linkNatsArray.length).mapToObj(x -> x)
-               .sorted(Comparator.comparingDouble(i1 -> linkNatsArray[i1]))
-               .flatMap(i -> mutateAt(i));
+        .sorted(Comparator.comparingDouble(i1 -> linkNatsArray[i1]))
+        .flatMap(i -> mutateAt(i));
 //      double fate = Math.random();
 //      for (int i=0;i<linkNatsArray.length;i++) {
 //        fate -= linkNatsArray[i];
@@ -524,15 +532,5 @@ public class TextAnalysis {
     }
     
     
-  }
-  
-  /**
-   * Split chars list.
-   *
-   * @param text the text
-   * @return the list
-   */
-  public List<String> splitChars(String text) {
-    return splitChars(text, DEFAULT_THRESHOLD);
   }
 }

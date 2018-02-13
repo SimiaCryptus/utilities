@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 by Andrew Charneski.
+ * Copyright (c) 2018 by Andrew Charneski.
  *
  * The author licenses this file to you under the
  * Apache License, Version 2.0 (the "License");
@@ -19,6 +19,7 @@
 
 package com.simiacryptus.util.data;
 
+import javax.annotation.Nullable;
 import java.util.Arrays;
 
 /**
@@ -36,8 +37,18 @@ public class IntArray {
    *
    * @param data the data
    */
-  public IntArray(int[] data) {
+  public IntArray(final int[] data) {
     this.data = data;
+  }
+  
+  @Override
+  public boolean equals(@Nullable final Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+
+    @javax.annotation.Nonnull final com.simiacryptus.util.data.IntArray intArray = (com.simiacryptus.util.data.IntArray) o;
+
+    return Arrays.equals(data, intArray.data);
   }
   
   /**
@@ -46,18 +57,8 @@ public class IntArray {
    * @param i the
    * @return the int
    */
-  public int get(int i) {
+  public int get(final int i) {
     return data[i];
-  }
-  
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-    
-    IntArray intArray = (IntArray) o;
-
-    return Arrays.equals(data, intArray.data);
   }
   
   @Override

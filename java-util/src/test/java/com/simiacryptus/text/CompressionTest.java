@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 by Andrew Charneski.
+ * Copyright (c) 2018 by Andrew Charneski.
  *
  * The author licenses this file to you under the
  * Apache License, Version 2.0 (the "License");
@@ -19,6 +19,7 @@
 
 package com.simiacryptus.text;
 
+import com.simiacryptus.util.TableOutput;
 import com.simiacryptus.util.binary.Bits;
 import com.simiacryptus.util.io.MarkdownNotebookOutput;
 import com.simiacryptus.util.io.NotebookOutput;
@@ -46,30 +47,30 @@ public class CompressionTest {
    * @param model_minPathWeight  the model min path weight
    */
   static void addSharedDictionaryCompressors(
-                                              Map<String, Compressor> compressors, final CharTrieIndex baseTree, final int dictionary_lookahead, final int dictionary_context, int model_minPathWeight) {
+    Map<String, Compressor> compressors, final CharTrieIndex baseTree, final int dictionary_lookahead, final int dictionary_context, int model_minPathWeight) {
     CharTrie dictionaryTree = baseTree.copy().index(dictionary_context + dictionary_lookahead, model_minPathWeight);
     compressors.put("LZ8k", new Compressor() {
       String dictionary = dictionaryTree.copy().getGenerator().generateDictionary(8 * 1024, dictionary_context, "", dictionary_lookahead, true);
-
+      
       @Override
       public byte[] compress(String text) {
         return CompressionUtil.encodeLZ(text, dictionary);
       }
-
+      
       @Override
       public String uncompress(byte[] data) {
         return CompressionUtil.decodeLZToString(data, dictionary);
       }
     });
-
+    
     compressors.put("BZ64k", new Compressor() {
       String dictionary = dictionaryTree.copy().getGenerator().generateDictionary(64 * 1024, dictionary_context, "", dictionary_lookahead, true);
-
+      
       @Override
       public byte[] compress(String text) {
         return CompressionUtil.encodeBZ(text, dictionary);
       }
-
+      
       @Override
       public String uncompress(byte[] data) {
         return CompressionUtil.decodeBZ(data, dictionary);
@@ -108,7 +109,7 @@ public class CompressionTest {
     long modelCount = 10000;
     int encodingContext = 3;
     int modelDepth = 9;
-
+    
     final CharTrieIndex tree = new CharTrieIndex();
     TweetSentiment.load().skip(articleCount).limit(modelCount).map(t -> t.getText())
       .forEach(txt -> tree.addDocument(txt));
@@ -156,8 +157,8 @@ public class CompressionTest {
     int modelCount = 10000;
     int testCount = 100;
     Supplier<Stream<? extends TestDocument>> source = () -> TweetSentiment.load().limit(modelCount + testCount);
-
-    try (NotebookOutput log = MarkdownNotebookOutput.get(this).addCopy(System.out)) {
+    
+    try (NotebookOutput log = MarkdownNotebookOutput.get(this)) {
       Map<String, Compressor> compressors = buildCompressors(source, ppmModelDepth, model_minPathWeight, dictionary_lookahead, dictionary_context, encodingContext, modelCount);
       TableOutput output = Compressor.evalCompressor(source.get().skip(modelCount), compressors, true);
       //log.p(output.toTextTable());
@@ -181,7 +182,7 @@ public class CompressionTest {
     int modelCount = 15000;
     int testCount = 100;
     Supplier<Stream<? extends TestDocument>> source = () -> EnglishWords.load().limit(modelCount + testCount);
-    NotebookOutput log = MarkdownNotebookOutput.get(this).addCopy(System.out);
+    NotebookOutput log = MarkdownNotebookOutput.get(this);
     Map<String, Compressor> compressors = buildCompressors(source, ppmModelDepth, model_minPathWeight, dictionary_lookahead, dictionary_context, encodingContext, modelCount);
     TableOutput output = Compressor.evalCompressor(source.get().skip(modelCount), compressors, true);
     //log.p(output.toTextTable());
@@ -205,8 +206,8 @@ public class CompressionTest {
     int modelCount = 100;
     int testCount = 100;
     Supplier<Stream<? extends TestDocument>> source = () -> WikiArticle.ENGLISH.stream().filter(x -> x.getText().length() > 8 * 1024).limit(modelCount + testCount);
-
-    NotebookOutput log = MarkdownNotebookOutput.get(this).addCopy(System.out);
+    
+    NotebookOutput log = MarkdownNotebookOutput.get(this);
     Map<String, Compressor> compressors = buildCompressors(source, ppmModelDepth, model_minPathWeight, dictionary_lookahead, dictionary_context, encodingContext, modelCount);
     TableOutput output = Compressor.evalCompressor(source.get().skip(modelCount), compressors, true);
     //log.p(output.toTextTable());
@@ -242,5 +243,5 @@ public class CompressionTest {
     compressors.put("PPM" + encodingContext, Compressor.buildPPMCompressor(baseTree, encodingContext));
     return compressors;
   }
-
+  
 }

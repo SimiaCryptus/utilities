@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 by Andrew Charneski.
+ * Copyright (c) 2018 by Andrew Charneski.
  *
  * The author licenses this file to you under the
  * Apache License, Version 2.0 (the "License");
@@ -32,13 +32,14 @@ public class MonitoredObject implements MonitoredItem {
   private final Map<String, Object> items = new HashMap<>();
   
   /**
-   * Add obj monitored object.
+   * Add const monitored object.
    *
    * @param key  the key
    * @param item the item
    * @return the monitored object
    */
-  public MonitoredObject addObj(String key, MonitoredItem item) {
+  @javax.annotation.Nonnull
+  public com.simiacryptus.util.MonitoredObject addConst(final String key, final Object item) {
     items.put(key, item);
     return this;
   }
@@ -50,7 +51,21 @@ public class MonitoredObject implements MonitoredItem {
    * @param item the item
    * @return the monitored object
    */
-  public MonitoredObject addField(String key, Supplier<Object> item) {
+  @javax.annotation.Nonnull
+  public com.simiacryptus.util.MonitoredObject addField(final String key, final Supplier<Object> item) {
+    items.put(key, item);
+    return this;
+  }
+  
+  /**
+   * Add obj monitored object.
+   *
+   * @param key  the key
+   * @param item the item
+   * @return the monitored object
+   */
+  @javax.annotation.Nonnull
+  public com.simiacryptus.util.MonitoredObject addObj(final String key, final MonitoredItem item) {
     items.put(key, item);
     return this;
   }
@@ -60,12 +75,13 @@ public class MonitoredObject implements MonitoredItem {
    *
    * @return the monitored object
    */
-  public MonitoredObject clearConstants() {
-    HashSet<String> keys = new HashSet<>(items.keySet());
-    for (String k : keys) {
-      Object v = items.get(k);
-      if (v instanceof MonitoredObject) {
-        ((MonitoredObject) v).clearConstants();
+  @javax.annotation.Nonnull
+  public com.simiacryptus.util.MonitoredObject clearConstants() {
+    @javax.annotation.Nonnull final HashSet<String> keys = new HashSet<>(items.keySet());
+    for (final String k : keys) {
+      final Object v = items.get(k);
+      if (v instanceof com.simiacryptus.util.MonitoredObject) {
+        ((com.simiacryptus.util.MonitoredObject) v).clearConstants();
       }
       else if (!(v instanceof Supplier) && !(v instanceof MonitoredItem)) {
         items.remove(k);
@@ -74,29 +90,18 @@ public class MonitoredObject implements MonitoredItem {
     return this;
   }
   
-  /**
-   * Add const monitored object.
-   *
-   * @param key  the key
-   * @param item the item
-   * @return the monitored object
-   */
-  public MonitoredObject addConst(String key, Object item) {
-    items.put(key, item);
-    return this;
-  }
-  
+  @javax.annotation.Nonnull
   @Override
   public Map<String, Object> getMetrics() {
-    HashMap<String, Object> returnValue = new HashMap<>();
-    items.entrySet().stream().parallel().forEach(e->{
-      String k = e.getKey();
-      Object v = e.getValue();
+    @javax.annotation.Nonnull final HashMap<String, Object> returnValue = new HashMap<>();
+    items.entrySet().stream().parallel().forEach(e -> {
+      final String k = e.getKey();
+      final Object v = e.getValue();
       if (v instanceof MonitoredItem) {
         returnValue.put(k, ((MonitoredItem) v).getMetrics());
       }
       else if (v instanceof Supplier) {
-        returnValue.put(k, ((Supplier) v).get());
+        returnValue.put(k, ((Supplier<?>) v).get());
       }
       else {
         returnValue.put(k, v);

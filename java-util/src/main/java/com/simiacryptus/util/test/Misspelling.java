@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 by Andrew Charneski.
+ * Copyright (c) 2018 by Andrew Charneski.
  *
  * The author licenses this file to you under the
  * Apache License, Version 2.0 (the "License");
@@ -59,7 +59,7 @@ public class Misspelling extends TestDocument {
     private final int articleLimit;
     private final List<Misspelling> queue = Collections.synchronizedList(new ArrayList<>());
     private volatile Thread thread;
-  
+    
     /**
      * Instantiates a new Loader.
      *
@@ -73,7 +73,7 @@ public class Misspelling extends TestDocument {
       String[] split = path.split("/");
       file = split[split.length - 1];
     }
-  
+    
     /**
      * Clear.
      *
@@ -91,7 +91,7 @@ public class Misspelling extends TestDocument {
         }
       }
     }
-  
+    
     /**
      * Load stream.
      *

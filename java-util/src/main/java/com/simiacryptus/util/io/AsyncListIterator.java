@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 by Andrew Charneski.
+ * Copyright (c) 2018 by Andrew Charneski.
  *
  * The author licenses this file to you under the
  * Apache License, Version 2.0 (the "License");
@@ -19,6 +19,7 @@
 
 package com.simiacryptus.util.io;
 
+import javax.annotation.Nullable;
 import java.util.Iterator;
 import java.util.List;
 
@@ -41,9 +42,14 @@ public class AsyncListIterator<T> implements Iterator<T> {
    * @param queue  the queue
    * @param thread the thread
    */
-  public AsyncListIterator(List<T> queue, Thread thread) {
+  public AsyncListIterator(final List<T> queue, final Thread thread) {
     this.thread = thread;
     this.queue = queue;
+  }
+  
+  @Override
+  protected void finalize() throws Throwable {
+    super.finalize();
   }
   
   @Override
@@ -51,6 +57,7 @@ public class AsyncListIterator<T> implements Iterator<T> {
     return index < queue.size() || thread.isAlive();
   }
   
+  @Nullable
   @Override
   public T next() {
     try {
@@ -63,13 +70,8 @@ public class AsyncListIterator<T> implements Iterator<T> {
         }
       }
       return null;
-    } catch (InterruptedException e) {
+    } catch (@javax.annotation.Nonnull final InterruptedException e) {
       throw new RuntimeException(e);
     }
-  }
-  
-  @Override
-  protected void finalize() throws Throwable {
-    super.finalize();
   }
 }

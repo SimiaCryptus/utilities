@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 by Andrew Charneski.
+ * Copyright (c) 2018 by Andrew Charneski.
  *
  * The author licenses this file to you under the
  * Apache License, Version 2.0 (the "License");
@@ -33,17 +33,17 @@ class CursorType implements SerialType<CursorData> {
    * The Instance.
    */
   static CursorType INSTANCE = new CursorType();
-
+  
   @Override
   public int getSize() {
     return 8;
   }
-
+  
   @Override
   public CursorData read(ByteBuffer input) throws IOException {
     return new CursorData(input.getInt(), input.getInt());
   }
-
+  
   @Override
   public void write(ByteBuffer output, CursorData value) throws IOException {
     output.putInt(value.documentId);

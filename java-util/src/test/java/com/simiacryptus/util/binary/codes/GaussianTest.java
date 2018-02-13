@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 by Andrew Charneski.
+ * Copyright (c) 2018 by Andrew Charneski.
  *
  * The author licenses this file to you under the
  * Apache License, Version 2.0 (the "License");
@@ -36,9 +36,9 @@ import java.util.Random;
  */
 public class GaussianTest {
   private long decode(final Gaussian gaussian, final int max,
-                      final byte[] serializedData) throws IOException {
+    final byte[] serializedData) throws IOException {
     final ByteArrayInputStream inBuffer = new ByteArrayInputStream(
-                                                                    serializedData);
+      serializedData);
     final BitInputStream in = new BitInputStream(inBuffer);
     final long decoded = gaussian.decode(in, max);
     return decoded;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 by Andrew Charneski.
+ * Copyright (c) 2018 by Andrew Charneski.
  *
  * The author licenses this file to you under the
  * Apache License, Version 2.0 (the "License");
@@ -19,6 +19,9 @@
 
 package com.simiacryptus.util.lang;
 
+import javax.annotation.Nullable;
+import java.lang.management.ManagementFactory;
+
 /**
  * The type Timed result.
  *
@@ -33,16 +36,22 @@ public class TimedResult<T> {
    * The Time nanos.
    */
   public final long timeNanos;
+  /**
+   * The Gc ms.
+   */
+  public final long gcMs;
   
   /**
    * Instantiates a new Timed result.
    *
    * @param result    the obj
    * @param timeNanos the time nanos
+   * @param gcMs      the gc ms
    */
-  public TimedResult(T result, long timeNanos) {
+  public TimedResult(final T result, final long timeNanos, long gcMs) {
     this.result = result;
     this.timeNanos = timeNanos;
+    this.gcMs = gcMs;
   }
   
   /**
@@ -52,15 +61,42 @@ public class TimedResult<T> {
    * @param fn  the fn
    * @return the timed result
    */
-  public static <T> TimedResult<T> time(UncheckedSupplier<T> fn) {
-    long start = System.nanoTime();
-    T result = null;
+  public static <T> com.simiacryptus.util.lang.TimedResult<T> time(@javax.annotation.Nonnull final UncheckedSupplier<T> fn) {
+    long priorGcMs = ManagementFactory.getGarbageCollectorMXBeans().stream().mapToLong(x -> x.getCollectionTime()).sum();
+    final long start = System.nanoTime();
+    @Nullable T result = null;
     try {
       result = fn.get();
-    } catch (Exception e) {
+    } catch (@javax.annotation.Nonnull final RuntimeException e) {
+      throw e;
+    } catch (@javax.annotation.Nonnull final Exception e) {
       throw new RuntimeException(e);
     }
-    return new TimedResult(result, System.nanoTime() - start);
+    long gcTime = ManagementFactory.getGarbageCollectorMXBeans().stream().mapToLong(x -> x.getCollectionTime()).sum() - priorGcMs;
+    long wallClockTime = System.nanoTime() - start;
+    return new com.simiacryptus.util.lang.TimedResult<T>(result, wallClockTime, gcTime);
+  }
+  
+  /**
+   * Time timed result.
+   *
+   * @param <T> the type parameter
+   * @param fn  the fn
+   * @return the timed result
+   */
+  public static <T> com.simiacryptus.util.lang.TimedResult<Void> time(@javax.annotation.Nonnull final UncheckedRunnable<T> fn) {
+    long priorGcMs = ManagementFactory.getGarbageCollectorMXBeans().stream().mapToLong(x -> x.getCollectionTime()).sum();
+    final long start = System.nanoTime();
+    try {
+      fn.get();
+    } catch (@javax.annotation.Nonnull final RuntimeException e) {
+      throw e;
+    } catch (@javax.annotation.Nonnull final Exception e) {
+      throw new RuntimeException(e);
+    }
+    long gcTime = ManagementFactory.getGarbageCollectorMXBeans().stream().mapToLong(x -> x.getCollectionTime()).sum() - priorGcMs;
+    long wallClockTime = System.nanoTime() - start;
+    return new com.simiacryptus.util.lang.TimedResult<Void>(null, wallClockTime, gcTime);
   }
   
   /**
@@ -69,6 +105,15 @@ public class TimedResult<T> {
    * @return the double
    */
   public double seconds() {
-    return timeNanos / 1000000000.0;
+    return timeNanos / 1e9;
+  }
+  
+  /**
+   * Gc seconds double.
+   *
+   * @return the double
+   */
+  public double gc_seconds() {
+    return gcMs / 1e3;
   }
 }

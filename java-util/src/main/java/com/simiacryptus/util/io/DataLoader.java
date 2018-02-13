@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 by Andrew Charneski.
+ * Copyright (c) 2018 by Andrew Charneski.
  *
  * The author licenses this file to you under the
  * Apache License, Version 2.0 (the "License");
@@ -19,6 +19,7 @@
 
 package com.simiacryptus.util.io;
 
+import javax.annotation.Nullable;
 import java.util.*;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -31,6 +32,7 @@ import java.util.stream.StreamSupport;
  */
 public abstract class DataLoader<T> {
   private final List<T> queue = Collections.synchronizedList(new ArrayList<>());
+  @Nullable
   private volatile Thread thread;
   
   /**
@@ -52,6 +54,27 @@ public abstract class DataLoader<T> {
   }
   
   /**
+   * Read.
+   *
+   * @param queue the queue
+   */
+  protected abstract void read(List<T> queue);
+  
+  /**
+   * Stop.
+   */
+  public void stop() {
+    if (thread != null) {
+      thread.interrupt();
+    }
+    try {
+      thread.join();
+    } catch (@javax.annotation.Nonnull final InterruptedException e) {
+      Thread.currentThread().interrupt();
+    }
+  }
+  
+  /**
    * Stream stream.
    *
    * @return the stream
@@ -66,26 +89,7 @@ public abstract class DataLoader<T> {
         }
       }
     }
-    Iterator<T> iterator = new AsyncListIterator<>(queue, thread);
+    @Nullable final Iterator<T> iterator = new AsyncListIterator<>(queue, thread);
     return StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator, Spliterator.DISTINCT), false).filter(x -> x != null);
-  }
-  
-  /**
-   * Read.
-   *
-   * @param queue the queue
-   */
-  protected abstract void read(List<T> queue);
-  
-  /**
-   * Stop.
-   */
-  public void stop() {
-    if (thread != null) thread.interrupt();
-    try {
-      thread.join();
-    } catch (InterruptedException e) {
-      Thread.currentThread().interrupt();
-    }
   }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 by Andrew Charneski.
+ * Copyright (c) 2018 by Andrew Charneski.
  *
  * The author licenses this file to you under the
  * Apache License, Version 2.0 (the "License");
@@ -83,10 +83,10 @@ public class IndexNode extends TrieNode {
   public TrieNode split() {
     if (getData().firstChildIndex < 0) {
       TreeMap<Character, SerialArrayList<CursorData>> sortedChildren = new TreeMap<>(getCursors().parallel()
-                                                                                       .collect(Collectors.groupingBy(y -> y.next().getToken(),
-                                                                                         Collectors.reducing(new SerialArrayList<>(CursorType.INSTANCE, 0),
-                                                                                           cursor -> new SerialArrayList<>(CursorType.INSTANCE, cursor.data),
-                                                                                           (left, right) -> left.add(right)))));
+        .collect(Collectors.groupingBy(y -> y.next().getToken(),
+          Collectors.reducing(new SerialArrayList<>(CursorType.INSTANCE, 0),
+            cursor -> new SerialArrayList<>(CursorType.INSTANCE, cursor.data),
+            (left, right) -> left.add(right)))));
       long cursorWriteIndex = getData().firstCursorIndex;
       //System.err.println(String.format("Splitting %s into children: %s", getDebugString(), sortedChildren.keySet()));
       ArrayList<NodeData> childNodes = new ArrayList<>(sortedChildren.size());
@@ -101,8 +101,8 @@ public class IndexNode extends TrieNode {
       trie.ensureParentIndexCapacity(firstChildIndex, size, index);
       this.trie.nodes.update(index, data -> {
         return data
-                 .setFirstChildIndex(firstChildIndex)
-                 .setNumberOfChildren(size);
+          .setFirstChildIndex(firstChildIndex)
+          .setNumberOfChildren(size);
       });
       return new IndexNode(this.trie, getDepth(), index, getParent());
     }
@@ -110,17 +110,17 @@ public class IndexNode extends TrieNode {
       return this;
     }
   }
-
+  
   @Override
   protected TrieNode newNode(int index) {
     return new IndexNode(trie, index);
   }
-
+  
   @Override
   public IndexNode godparent() {
     return (IndexNode) super.godparent();
   }
-
+  
   @Override
   public IndexNode refresh() {
     return (IndexNode) super.refresh();
@@ -150,18 +150,18 @@ public class IndexNode extends TrieNode {
     visitor.accept(this);
     return refresh();
   }
-
+  
   @Override
   public Stream<? extends IndexNode> getChildren() {
     if (getData().firstChildIndex >= 0) {
       return IntStream.range(0, getData().numberOfChildren)
-               .mapToObj(i -> new IndexNode(this.trie, (short) (getDepth() + 1), getData().firstChildIndex + i, this));
+        .mapToObj(i -> new IndexNode(this.trie, (short) (getDepth() + 1), getData().firstChildIndex + i, this));
     }
     else {
       return Stream.empty();
     }
   }
-
+  
   @Override
   public Optional<? extends IndexNode> getChild(char token) {
     NodeData data = getData();
@@ -187,12 +187,12 @@ public class IndexNode extends TrieNode {
     //assert !getChildren().keywords(x -> x.getChar() == token).findFirst().isPresent();
     return Optional.empty();
   }
-
+  
   @Override
   public IndexNode traverse(String str) {
     return (IndexNode) super.traverse(str);
   }
-
+  
   @Override
   public IndexNode traverse(long cursorId) {
     return (IndexNode) super.traverse(cursorId);
