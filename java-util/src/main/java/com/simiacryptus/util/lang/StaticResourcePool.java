@@ -19,11 +19,14 @@
 
 package com.simiacryptus.util.lang;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 /**
  * The type Static resource pool.
@@ -52,15 +55,16 @@ public class StaticResourcePool<T> {
    *
    * @param f the f
    */
-  public void apply(@javax.annotation.Nonnull final Consumer<T> f) {
-    T poll = this.pool.poll();
-    if (null == poll) {
-      try {
-        poll = this.pool.take();
-      } catch (@javax.annotation.Nonnull final InterruptedException e) {
-        throw new RuntimeException(e);
-      }
-    }
+  public void apply(@Nonnull final Consumer<T> f) {apply(f, x -> true);}
+  
+  /**
+   * With u.
+   *
+   * @param f the f
+   * @param filter
+   */
+  public void apply(@javax.annotation.Nonnull final Consumer<T> f, final Predicate<T> filter) {
+    T poll = get(filter);
     try {
       f.accept(poll);
     } finally {
@@ -68,15 +72,28 @@ public class StaticResourcePool<T> {
     }
   }
   
-  /**
-   * Take t.
-   *
-   * @return the t
-   */
-  public T take() {
+  @Nonnull
+  private T get(Predicate<T> filter) {
+    ArrayList<T> sampled = new ArrayList<>();
     try {
-      return this.pool.take();
-    } catch (InterruptedException e) {
+      T poll = this.pool.poll();
+      while (null != poll) {
+        if(filter.test(poll)) {
+          return poll;
+        } else {
+          sampled.add(poll);
+          poll = this.pool.poll();
+        }
+      }
+    } finally {
+      pool.addAll(sampled);
+    }
+    try {
+      final T poll;
+      poll = this.pool.poll(1, TimeUnit.MINUTES);
+      if(null == poll) throw new RuntimeException("Timeout awaiting item from pool");
+      return poll;
+    } catch (@javax.annotation.Nonnull final InterruptedException e) {
       throw new RuntimeException(e);
     }
   }
@@ -98,16 +115,19 @@ public class StaticResourcePool<T> {
    * @param f   the f
    * @return the u
    */
-  public <U> U run(@javax.annotation.Nonnull final Function<T, U> f) {
+  public <U> U run(@Nonnull final Function<T, U> f) {return run(f, x -> true);}
+  
+  /**
+   * With u.
+   *
+   * @param <U> the type parameter
+   * @param f   the f
+   * @param filter
+   * @return the u
+   */
+  public <U> U run(@javax.annotation.Nonnull final Function<T, U> f, final Predicate<T> filter) {
     if (all.isEmpty()) throw new IllegalStateException();
-    T poll = this.pool.poll();
-    if (null == poll) {
-      try {
-        poll = this.pool.take();
-      } catch (@javax.annotation.Nonnull final InterruptedException e) {
-        throw new RuntimeException(e);
-      }
-    }
+    T poll = get(filter);
     try {
       return f.apply(poll);
     } finally {

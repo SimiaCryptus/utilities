@@ -271,12 +271,4 @@ public interface NotebookOutput extends Closeable {
    */
   int getMaxOutSize();
   
-  /**
-   * Sets max out size.
-   *
-   * @param size the size
-   * @return the max out size
-   */
-  @Nonnull
-  com.simiacryptus.util.io.NotebookOutput setMaxOutSize(int size);
 }

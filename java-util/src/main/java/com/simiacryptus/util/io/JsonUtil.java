@@ -35,6 +35,8 @@ import java.util.stream.IntStream;
  */
 public class JsonUtil {
   
+  public static final ObjectMapper MAPPER = new ObjectMapper();
+  
   /**
    * Get double array double [ ].
    *

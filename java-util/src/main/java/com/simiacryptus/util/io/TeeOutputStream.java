@@ -22,6 +22,7 @@ package com.simiacryptus.util.io;
 import javax.annotation.Nullable;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -39,6 +40,7 @@ public class TeeOutputStream extends OutputStream {
   public final OutputStream primary;
   @Nullable
   private final ByteArrayOutputStream heapBuffer;
+  private boolean chainCloses;
   
   /**
    * Instantiates a new Tee output stream.
@@ -47,6 +49,7 @@ public class TeeOutputStream extends OutputStream {
    * @param buffer  the buffer
    */
   public TeeOutputStream(final OutputStream primary, final boolean buffer) {
+    setChainCloses(false);
     this.primary = primary;
     if (buffer) {
       heapBuffer = new ByteArrayOutputStream();
@@ -56,11 +59,15 @@ public class TeeOutputStream extends OutputStream {
       heapBuffer = null;
     }
   }
+  public TeeOutputStream(final OutputStream primary, final OutputStream... secondaries) {
+    this(primary, false);
+    branches.addAll(Arrays.asList(secondaries));
+  }
   
   @Override
   public void close() throws IOException {
     primary.close();
-    for (@javax.annotation.Nonnull final OutputStream branch : branches) {
+    if(isChainCloses()) for (@javax.annotation.Nonnull final OutputStream branch : branches) {
       branch.close();
     }
   }
@@ -133,5 +140,14 @@ public class TeeOutputStream extends OutputStream {
     for (@javax.annotation.Nonnull final OutputStream branch : branches) {
       branch.write(b);
     }
+  }
+  
+  public boolean isChainCloses() {
+    return chainCloses;
+  }
+  
+  public TeeOutputStream setChainCloses(boolean chainCloses) {
+    this.chainCloses = chainCloses;
+    return this;
   }
 }

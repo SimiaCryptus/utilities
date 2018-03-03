@@ -74,7 +74,7 @@ public class MarkdownNotebookOutput implements NotebookOutput {
   int anchor = 0;
   @Nullable
   private String absoluteUrl = null;
-  private int maxOutSize = 8 * 1024;
+  public static int MAX_OUTPUT = 4 * 1024;
   
   /**
    * Instantiates a new Markdown notebook output.
@@ -382,13 +382,6 @@ public class MarkdownNotebookOutput implements NotebookOutput {
     return etc;
   }
   
-  @javax.annotation.Nonnull
-  @Override
-  public NotebookOutput setMaxOutSize(int size) {
-    this.maxOutSize = size;
-    return this;
-  }
-  
   @Override
   public void h1(@javax.annotation.Nonnull final String fmt, final Object... args) {
     String anchorId = anchorId();
@@ -527,7 +520,7 @@ public class MarkdownNotebookOutput implements NotebookOutput {
   }
   
   public int getMaxOutSize() {
-    return maxOutSize;
+    return MAX_OUTPUT;
   }
   
 }

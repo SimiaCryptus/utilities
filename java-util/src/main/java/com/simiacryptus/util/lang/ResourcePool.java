@@ -19,6 +19,9 @@
 
 package com.simiacryptus.util.lang;
 
+import java.util.ArrayList;
+import java.util.function.Predicate;
+
 /**
  * The type Resource pool.
  *
@@ -56,23 +59,35 @@ public abstract class ResourcePool<T> {
    * @return the t
    */
   public T get() {
-    T poll = this.pool.poll();
-    if (null == poll) {
-      synchronized (this.all) {
-        if (this.all.size() < this.maxItems) {
-          poll = create();
-          this.all.add(poll);
+    return get(x->true);
+  }
+  
+  public T get(Predicate<T> filter) {
+    ArrayList<T> sampled = new ArrayList<>();
+    try {
+      T poll = this.pool.poll();
+      while (null != poll) {
+        if(filter.test(poll)) {
+          return poll;
+        } else {
+          sampled.add(poll);
         }
       }
+    } finally {
+      pool.addAll(sampled);
     }
-    if (null == poll) {
-      try {
-        poll = this.pool.take();
-      } catch (@javax.annotation.Nonnull final InterruptedException e) {
-        throw new RuntimeException(e);
+    synchronized (this.all) {
+      if (this.all.size() < this.maxItems) {
+        T poll = create();
+        this.all.add(poll);
+        return poll;
       }
     }
-    return poll;
+    try {
+      return this.pool.take();
+    } catch (@javax.annotation.Nonnull final InterruptedException e) {
+      throw new RuntimeException(e);
+    }
   }
   
   /**
@@ -89,13 +104,21 @@ public abstract class ResourcePool<T> {
    *
    * @param f the f
    */
-  public void with(@javax.annotation.Nonnull final java.util.function.Consumer<T> f) {
+  public void with(@javax.annotation.Nonnull final java.util.function.Consumer<T> f) {with(f, x -> true);}
+  
+  /**
+   * With.
+   *
+   * @param f the f
+   * @param filter
+   */
+  public void with(@javax.annotation.Nonnull final java.util.function.Consumer<T> f, final Predicate<T> filter) {
     final T prior = currentValue.get();
     if (null != prior) {
       f.accept(prior);
     }
     else {
-      final T poll = get();
+      final T poll = get(filter);
       try {
         currentValue.set(poll);
         f.accept(poll);

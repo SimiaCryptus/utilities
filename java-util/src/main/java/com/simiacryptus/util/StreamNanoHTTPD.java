@@ -65,16 +65,16 @@ public class StreamNanoHTTPD extends NanoHTTPD {
    * @param file     the file
    * @throws IOException the io exception
    */
-  public StreamNanoHTTPD(final int port, final String mimeType, @javax.annotation.Nonnull final File file) throws IOException {
+  public StreamNanoHTTPD(final int port, final String mimeType, final File file) throws IOException {
     super(port);
     this.file = file;
     this.mimeType = mimeType;
     try {
-      gatewayUri = new URI(String.format("http://localhost:%s/%s", port, file.getName()));
+      gatewayUri = null == file?null:new URI(String.format("http://localhost:%s/%s", port, file.getName()));
     } catch (@javax.annotation.Nonnull final URISyntaxException e) {
       throw new RuntimeException(e);
     }
-    dataReciever = new TeeOutputStream(new FileOutputStream(file), true) {
+    dataReciever = null == file?null:new TeeOutputStream(new FileOutputStream(file), true) {
       @Override
       public void close() throws IOException {
         try {
@@ -85,6 +85,10 @@ public class StreamNanoHTTPD extends NanoHTTPD {
         }
       }
     };
+  }
+  
+  public StreamNanoHTTPD(final int port) throws IOException {
+    this(port, null, null);
   }
   
   /**
@@ -207,7 +211,7 @@ public class StreamNanoHTTPD extends NanoHTTPD {
     new Thread(() -> {
       try {
         Thread.sleep(100);
-        Desktop.getDesktop().browse(gatewayUri);
+        if(null != gatewayUri) Desktop.getDesktop().browse(gatewayUri);
       } catch (@javax.annotation.Nonnull final Exception e) {
         e.printStackTrace();
       }
@@ -221,7 +225,7 @@ public class StreamNanoHTTPD extends NanoHTTPD {
     while (requestPath.startsWith("/")) {
       requestPath = requestPath.substring(1);
     }
-    if (requestPath.equals(file.getName())) {
+    if (null != file && requestPath.equals(file.getName())) {
       try {
         @javax.annotation.Nonnull final Response response = NanoHTTPD.newChunkedResponse(Response.Status.OK, mimeType, new BufferedInputStream(dataReciever.newInputStream()));
         response.setGzipEncoding(false);
@@ -231,19 +235,21 @@ public class StreamNanoHTTPD extends NanoHTTPD {
       }
     }
     else {
-      @javax.annotation.Nonnull final File file = new File(this.file.getParent(), requestPath);
       if (customHandlers.containsKey(requestPath)) {
         return customHandlers.get(requestPath).apply(session);
       }
-      else if (file.exists()) {
-        try {
-          return NanoHTTPD.newFixedLengthResponse(Response.Status.OK, null, new FileInputStream(file), file.length());
-        } catch (@javax.annotation.Nonnull final FileNotFoundException e) {
-          throw new RuntimeException(e);
-        }
-      }
       else {
-        return NanoHTTPD.newFixedLengthResponse(Response.Status.NOT_FOUND, "text/plain", "Not Found");
+        @javax.annotation.Nonnull final File file = null==this.file?null:new File(this.file.getParent(), requestPath);
+        if (null!=file&&file.exists()) {
+          try {
+            return NanoHTTPD.newFixedLengthResponse(Response.Status.OK, null, new FileInputStream(file), file.length());
+          } catch (@javax.annotation.Nonnull final FileNotFoundException e) {
+            throw new RuntimeException(e);
+          }
+        }
+        else {
+          return NanoHTTPD.newFixedLengthResponse(Response.Status.NOT_FOUND, "text/plain", "Not Found");
+        }
       }
     }
   }

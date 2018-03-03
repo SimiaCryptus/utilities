@@ -256,13 +256,6 @@ public class HtmlNotebookOutput implements NotebookOutput {
     return etc;
   }
   
-  @javax.annotation.Nonnull
-  @Override
-  public NotebookOutput setMaxOutSize(int size) {
-    this.maxOutSize = size;
-    return this;
-  }
-  
   /**
    * Gets source root.
    *

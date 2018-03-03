@@ -19,6 +19,7 @@
 
 package com.simiacryptus.util.test;
 
+import com.simiacryptus.util.io.TeeOutputStream;
 import com.simiacryptus.util.lang.UncheckedSupplier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,8 +41,8 @@ public class SysOutInterceptor extends PrintStream {
   /**
    * The constant INSTANCE.
    */
-  public static final com.simiacryptus.util.test.SysOutInterceptor INSTANCE = new com.simiacryptus.util.test.SysOutInterceptor(ORIGINAL_OUT);
-  private static final Logger log = LoggerFactory.getLogger(com.simiacryptus.util.test.SysOutInterceptor.class);
+  public static final SysOutInterceptor INSTANCE = new SysOutInterceptor(ORIGINAL_OUT);
+  private static final Logger log = LoggerFactory.getLogger(SysOutInterceptor.class);
   private final ThreadLocal<Boolean> isMonitoring = new ThreadLocal<Boolean>() {
     @Override
     protected Boolean initialValue() {
@@ -75,12 +76,14 @@ public class SysOutInterceptor extends PrintStream {
    */
   public static LoggedResult<Void> withOutput(@javax.annotation.Nonnull final Runnable fn) {
     try {
+      if (SysOutInterceptor.INSTANCE.isMonitoring.get()) throw new IllegalStateException();
+      PrintStream prev = SysOutInterceptor.INSTANCE.threadHandler.get();
       @javax.annotation.Nonnull final ByteArrayOutputStream buff = new ByteArrayOutputStream();
-      try (@javax.annotation.Nonnull PrintStream ps = new PrintStream(buff)) {
-        if (com.simiacryptus.util.test.SysOutInterceptor.INSTANCE.isMonitoring.get()) throw new IllegalStateException();
-        com.simiacryptus.util.test.SysOutInterceptor.INSTANCE.threadHandler.set(ps);
-        com.simiacryptus.util.test.SysOutInterceptor.INSTANCE.isMonitoring.set(true);
+      try (@javax.annotation.Nonnull PrintStream ps = new PrintStream(new TeeOutputStream(buff, prev))) {
+        SysOutInterceptor.INSTANCE.threadHandler.set(ps);
+        SysOutInterceptor.INSTANCE.isMonitoring.set(true);
         fn.run();
+        ps.close();
         return new LoggedResult<>(null, buff.toString());
       }
     } catch (@javax.annotation.Nonnull final RuntimeException e) {
@@ -88,10 +91,11 @@ public class SysOutInterceptor extends PrintStream {
     } catch (@javax.annotation.Nonnull final Exception e) {
       throw new RuntimeException(e);
     } finally {
-      com.simiacryptus.util.test.SysOutInterceptor.INSTANCE.threadHandler.remove();
-      com.simiacryptus.util.test.SysOutInterceptor.INSTANCE.isMonitoring.remove();
+      SysOutInterceptor.INSTANCE.threadHandler.remove();
+      SysOutInterceptor.INSTANCE.isMonitoring.remove();
     }
   }
+  
   
   /**
    * With output logged result.
@@ -101,13 +105,14 @@ public class SysOutInterceptor extends PrintStream {
    * @return the logged result
    */
   public static <T> LoggedResult<T> withOutput(@javax.annotation.Nonnull final UncheckedSupplier<T> fn) {
-    //init();
-    final PrintStream prev = com.simiacryptus.util.test.SysOutInterceptor.INSTANCE.threadHandler.get();
     try {
+      if (SysOutInterceptor.INSTANCE.isMonitoring.get()) throw new IllegalStateException();
+      PrintStream prev = SysOutInterceptor.INSTANCE.threadHandler.get();
       @javax.annotation.Nonnull final ByteArrayOutputStream buff = new ByteArrayOutputStream();
-      try (@javax.annotation.Nonnull PrintStream ps = new PrintStream(buff)) {
-        com.simiacryptus.util.test.SysOutInterceptor.INSTANCE.threadHandler.set(ps);
-        final T result = fn.get();
+      try (@javax.annotation.Nonnull PrintStream ps = new PrintStream(new TeeOutputStream(buff, prev))) {
+        SysOutInterceptor.INSTANCE.threadHandler.set(ps);
+        SysOutInterceptor.INSTANCE.isMonitoring.set(true);
+        T result = fn.get();
         ps.close();
         return new LoggedResult<>(result, buff.toString());
       }
@@ -116,9 +121,11 @@ public class SysOutInterceptor extends PrintStream {
     } catch (@javax.annotation.Nonnull final Exception e) {
       throw new RuntimeException(e);
     } finally {
-      com.simiacryptus.util.test.SysOutInterceptor.INSTANCE.threadHandler.set(prev);
+      SysOutInterceptor.INSTANCE.threadHandler.remove();
+      SysOutInterceptor.INSTANCE.isMonitoring.remove();
     }
   }
+  
   
   /**
    * Init sys out interceptor.
@@ -126,7 +133,7 @@ public class SysOutInterceptor extends PrintStream {
    * @return the sys out interceptor
    */
   @javax.annotation.Nonnull
-  public com.simiacryptus.util.test.SysOutInterceptor init() {
+  public SysOutInterceptor init() {
     if (!initialized.getAndSet(true)) {
       ch.qos.logback.classic.Logger root = ((ch.qos.logback.classic.Logger) log).getLoggerContext().getLogger("ROOT");
       @javax.annotation.Nonnull ch.qos.logback.core.ConsoleAppender stdout = (ch.qos.logback.core.ConsoleAppender) root.getAppender("STDOUT");
