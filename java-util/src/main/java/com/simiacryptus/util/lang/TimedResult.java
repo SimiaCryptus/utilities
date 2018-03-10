@@ -72,8 +72,8 @@ public class TimedResult<T> {
     } catch (@javax.annotation.Nonnull final Exception e) {
       throw new RuntimeException(e);
     }
-    long gcTime = ManagementFactory.getGarbageCollectorMXBeans().stream().mapToLong(x -> x.getCollectionTime()).sum() - priorGcMs;
     long wallClockTime = System.nanoTime() - start;
+    long gcTime = ManagementFactory.getGarbageCollectorMXBeans().stream().mapToLong(x -> x.getCollectionTime()).sum() - priorGcMs;
     return new com.simiacryptus.util.lang.TimedResult<T>(result, wallClockTime, gcTime);
   }
   
@@ -94,8 +94,8 @@ public class TimedResult<T> {
     } catch (@javax.annotation.Nonnull final Exception e) {
       throw new RuntimeException(e);
     }
-    long gcTime = ManagementFactory.getGarbageCollectorMXBeans().stream().mapToLong(x -> x.getCollectionTime()).sum() - priorGcMs;
     long wallClockTime = System.nanoTime() - start;
+    long gcTime = ManagementFactory.getGarbageCollectorMXBeans().stream().mapToLong(x -> x.getCollectionTime()).sum() - priorGcMs;
     return new com.simiacryptus.util.lang.TimedResult<Void>(null, wallClockTime, gcTime);
   }
   
