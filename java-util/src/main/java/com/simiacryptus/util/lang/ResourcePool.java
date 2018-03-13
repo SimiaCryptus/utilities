@@ -104,7 +104,14 @@ public abstract class ResourcePool<T> {
    *
    * @param f the f
    */
-  public void with(@javax.annotation.Nonnull final java.util.function.Consumer<T> f) {with(f, x -> true);}
+  public <U> U apply(@javax.annotation.Nonnull final java.util.function.Function<T,U> f) { return apply(f, x -> true);}
+  
+  /**
+   * With.
+   *
+   * @param f the f
+   */
+  public void apply(@javax.annotation.Nonnull final java.util.function.Consumer<T> f) {apply(f, x -> true);}
   
   /**
    * With.
@@ -112,7 +119,29 @@ public abstract class ResourcePool<T> {
    * @param f the f
    * @param filter
    */
-  public void with(@javax.annotation.Nonnull final java.util.function.Consumer<T> f, final Predicate<T> filter) {
+  public <U> U apply(@javax.annotation.Nonnull final java.util.function.Function<T,U> f, final Predicate<T> filter) {
+    final T prior = currentValue.get();
+    if (null != prior) {
+      return f.apply(prior);
+    }
+    else {
+      final T poll = get(filter);
+      try {
+        currentValue.set(poll);
+        return f.apply(poll);
+      } finally {
+        this.pool.add(poll);
+        currentValue.remove();
+      }
+    }
+  }
+  /**
+   * With.
+   *
+   * @param f the f
+   * @param filter
+   */
+  public void apply(@javax.annotation.Nonnull final java.util.function.Consumer<T> f, final Predicate<T> filter) {
     final T prior = currentValue.get();
     if (null != prior) {
       f.accept(prior);

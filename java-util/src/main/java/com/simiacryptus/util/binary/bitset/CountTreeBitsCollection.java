@@ -122,9 +122,9 @@ public class CountTreeBitsCollection extends
   }
   
   /**
-   * Compute sums tree run.
+   * Compute sums tree apply.
    *
-   * @return the tree run
+   * @return the tree apply
    */
   public TreeMap<Bits, Long> computeSums() {
     final TreeMap<Bits, Long> sums = new TreeMap<Bits, Long>();

@@ -216,7 +216,7 @@ public class CompressionTest {
   }
   
   /**
-   * Build compressors run.
+   * Build compressors apply.
    *
    * @param source               the source
    * @param ppmModelDepth        the ppm model depth
@@ -225,7 +225,7 @@ public class CompressionTest {
    * @param dictionary_context   the dictionary context
    * @param encodingContext      the encoding context
    * @param modelCount           the model count
-   * @return the run
+   * @return the apply
    */
   protected Map<String, Compressor> buildCompressors(Supplier<Stream<? extends TestDocument>> source, int ppmModelDepth, int model_minPathWeight, final int dictionary_lookahead, final int dictionary_context, final int encodingContext, int modelCount) {
     Map<String, Compressor> compressors = new LinkedHashMap<>();

@@ -322,7 +322,7 @@ public class CharTrie {
   }
   
   /**
-   * Locate a node by finding the maximum prefix match run the given string
+   * Locate a node by finding the maximum prefix match apply the given string
    *
    * @param search the search
    * @return trie node

@@ -515,7 +515,7 @@ public class Bits implements Comparable<Bits> {
   }
   
   /**
-   * Starts run boolean.
+   * Starts apply boolean.
    *
    * @param key the key
    * @return the boolean

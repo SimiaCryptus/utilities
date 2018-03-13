@@ -128,7 +128,7 @@ public class CharTrieIndex extends CharTrie {
   }
   
   /**
-   * Removes cursor data, retaining only the tree of tokens and counts. Subsequent calls to methods dealing run cursors
+   * Removes cursor data, retaining only the tree of tokens and counts. Subsequent calls to methods dealing apply cursors
    * will fail.
    *
    * @return this

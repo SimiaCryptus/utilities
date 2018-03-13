@@ -55,16 +55,17 @@ public class StaticResourcePool<T> {
    *
    * @param f the f
    */
-  public void apply(@Nonnull final Consumer<T> f) {apply(f, x -> true);}
+  public void apply(@Nonnull final Consumer<T> f) {apply(f, x -> true, false);}
   
   /**
    * With u.
    *
    * @param f the f
    * @param filter
+   * @param exclusive
    */
-  public void apply(@javax.annotation.Nonnull final Consumer<T> f, final Predicate<T> filter) {
-    T poll = get(filter);
+  public void apply(@javax.annotation.Nonnull final Consumer<T> f, final Predicate<T> filter, final boolean exclusive) {
+    T poll = get(filter, exclusive);
     try {
       f.accept(poll);
     } finally {
@@ -73,7 +74,7 @@ public class StaticResourcePool<T> {
   }
   
   @Nonnull
-  private T get(Predicate<T> filter) {
+  private T get(Predicate<T> filter, final boolean exclusive) {
     ArrayList<T> sampled = new ArrayList<>();
     try {
       T poll = this.pool.poll();
@@ -89,10 +90,17 @@ public class StaticResourcePool<T> {
       pool.addAll(sampled);
     }
     try {
-      final T poll;
-      poll = this.pool.poll(1, TimeUnit.MINUTES);
-      if(null == poll) throw new RuntimeException("Timeout awaiting item from pool");
-      return poll;
+      while(true) {
+        final T poll;
+        poll = this.pool.poll(5, TimeUnit.MINUTES);
+        if(null == poll) throw new RuntimeException("Timeout awaiting item from pool");
+        if(exclusive && !filter.test(poll)) {
+          this.pool.add(poll);
+          Thread.sleep(0);
+        } else {
+          return poll;
+        }
+      }
     } catch (@javax.annotation.Nonnull final InterruptedException e) {
       throw new RuntimeException(e);
     }
@@ -115,7 +123,7 @@ public class StaticResourcePool<T> {
    * @param f   the f
    * @return the u
    */
-  public <U> U run(@Nonnull final Function<T, U> f) {return run(f, x -> true);}
+  public <U> U run(@Nonnull final Function<T, U> f) {return run(f, x -> true, false);}
   
   /**
    * With u.
@@ -123,11 +131,12 @@ public class StaticResourcePool<T> {
    * @param <U> the type parameter
    * @param f   the f
    * @param filter
+   * @param exclusive
    * @return the u
    */
-  public <U> U run(@javax.annotation.Nonnull final Function<T, U> f, final Predicate<T> filter) {
+  public <U> U run(@javax.annotation.Nonnull final Function<T, U> f, final Predicate<T> filter, final boolean exclusive) {
     if (all.isEmpty()) throw new IllegalStateException();
-    T poll = get(filter);
+    T poll = get(filter, exclusive);
     try {
       return f.apply(poll);
     } finally {

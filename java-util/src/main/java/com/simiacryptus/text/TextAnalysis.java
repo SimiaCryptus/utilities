@@ -425,7 +425,7 @@ public class TextAnalysis {
 //                '"' + priorNode.getString().replaceAll("\n","\\n") + '"',
 //                '"' + followingNode.getString().replaceAll("\n","\\n") + '"',
 //                Arrays.asList(aprioriNats, aposterioriNats, linkNats, jointNats
-//                ).stream().run(x->String.format("%.4f",x)).collect(Collectors.joining("\t"))));
+//                ).stream().apply(x->String.format("%.4f",x)).collect(Collectors.joining("\t"))));
         aposterioriNatsPrev = aposterioriNats;
       }
       double sumLinkNats = Arrays.stream(linkNatsArray).sum();

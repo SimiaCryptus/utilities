@@ -150,7 +150,7 @@ public class TrieDemo {
       }
       
       
-      log.p("\n\nFor faster compression, we can define a dictionary for use run Deflate:");
+      log.p("\n\nFor faster compression, we can define a dictionary for use apply Deflate:");
       String dictionary = log.code(() -> {
         return trie.getGenerator().generateDictionary(8 * 1024, 3, "", 1, true);
       });
@@ -235,7 +235,7 @@ public class TrieDemo {
       log.code(() -> {
         return triePositive.reverse().getGenerator().generateDictionary(dictionarySampleSize, context, "", lookahead, true);
       });
-      log.p("And can be combined run a variety of operations:");
+      log.p("And can be combined apply a variety of operations:");
       CharTrie trieProduct = log.code(() -> {
         return triePositive.product(trieNegative);
       });
@@ -254,19 +254,19 @@ public class TrieDemo {
       IntStream.range(0, 3).forEach(l -> {
         IntStream.range(1, context).forEach(ctx -> {
           log.code(() -> {
-            System.out.println(String.format("Sum characteristic string run %s context and %s lookahead", ctx, l));
+            System.out.println(String.format("Sum characteristic string apply %s context and %s lookahead", ctx, l));
             return trieSum.getGenerator().generateDictionary(dictionarySampleSize, ctx, "", l, true);
           });
           log.code(() -> {
-            System.out.println(String.format("Product characteristic string run %s context and %s lookahead", ctx, l));
+            System.out.println(String.format("Product characteristic string apply %s context and %s lookahead", ctx, l));
             return trieProduct.getGenerator().generateDictionary(dictionarySampleSize, ctx, "", l, true);
           });
           log.code(() -> {
-            System.out.println(String.format("Negative characteristic string run %s context and %s lookahead", ctx, l));
+            System.out.println(String.format("Negative characteristic string apply %s context and %s lookahead", ctx, l));
             return negativeVector.getGenerator().generateDictionary(dictionarySampleSize, ctx, "", l, true);
           });
           log.code(() -> {
-            System.out.println(String.format("Positive characteristic string run %s context and %s lookahead", ctx, l));
+            System.out.println(String.format("Positive characteristic string apply %s context and %s lookahead", ctx, l));
             return positiveVector.getGenerator().generateDictionary(dictionarySampleSize, ctx, "", l, true);
           });
         });
@@ -341,7 +341,7 @@ public class TrieDemo {
       });
       for (int penalty = 0; penalty < 10; penalty++) {
         int _penalty = penalty;
-        log.p("We can then search for high-entropy keywords run encoding penalty %s:", penalty);
+        log.p("We can then search for high-entropy keywords apply encoding penalty %s:", penalty);
         log.code(() -> {
           List<String> candidates = triePositive.max(node -> {
             return (node.getDepth() - _penalty) * (node.getCursorCount());
@@ -394,7 +394,7 @@ public class TrieDemo {
     }
     else {
       links = root.getChildren().filter(n -> n.getChar() != Character.MIN_VALUE).map(child -> {
-        Node childNode = buildNode(child, levels); //node(child.getDebugString()).run(Label.of(child.getString()));
+        Node childNode = buildNode(child, levels); //node(child.getDebugString()).apply(Label.of(child.getString()));
         Link linkNode = to(childNode).with(Label.of(Integer.toString((int) child.getCursorCount())));
         return linkNode;
         
@@ -472,7 +472,7 @@ public class TrieDemo {
         }).average().getAsDouble();
         return String.format("Accuracy = %.3f%%, %.3f%%", positiveAccuracy, negativeAccuracy);
       });
-      log.p("Or can be combined run a variety of operations:");
+      log.p("Or can be combined apply a variety of operations:");
       CharTrie trieSum = log.code(() -> {
         return triePositive.add(trieNegative);
       });
@@ -601,7 +601,7 @@ public class TrieDemo {
         }).average().getAsDouble();
         return String.format("Accuracy = %.3f%%, %.3f%%", englishAccuracy, frenchAccuracy);
       });
-      log.p("Or can be combined run a variety of operations:");
+      log.p("Or can be combined apply a variety of operations:");
       CharTrie trieSum = log.code(() -> {
         return trieEnglish.add(trieFrench);
       });
